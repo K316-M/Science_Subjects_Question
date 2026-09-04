@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-MY">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>独中理科自主学习系统 (Data-Driven)</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --bg-dark: #0b1120;
+      --bg-card: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --danger: #f43f5e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif; }
+    body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 24px 16px; }
+    .container { max-width: 960px; margin: 0 auto; }
+    
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #334155; }
+    .brand { font-size: 20px; font-weight: 700; color: var(--primary); }
+
+    /* 小节排版规范：标题 + 下底线 + 间距 */
+    .section-block { margin-bottom: 36px; }
+    .section-header { margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: flex-end; }
+    .section-title { font-size: 17px; font-weight: 700; color: var(--text-main); }
+    .section-count { font-size: 12px; color: var(--accent); }
+
+    .flashcard { background: var(--bg-card); border: 1px solid #334155; border-radius: 14px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+    .mcq-question { font-size: 16px; font-weight: 600; line-height: 1.6; margin-bottom: 16px; white-space: pre-line; }
+    
+    .figure-container { margin: 12px 0 18px 0; background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .figure-caption { font-size: 12px; color: var(--accent); margin-top: 8px; font-weight: 500; }
+
+    .mcq-options { display: flex; flex-direction: column; gap: 10px; }
+    .option-btn { background: #0f172a; border: 1px solid #334155; color: var(--text-main); text-align: left; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+    .option-btn:hover:not(.disabled) { border-color: var(--accent); background: #1a2638; }
+    .option-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--primary); color: #6ee7b7; font-weight: 600; }
+    .option-btn.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--danger); color: #fda4af; }
+    .explanation { margin-top: 16px; padding: 12px 16px; background: #0f172a; border-radius: 8px; font-size: 14px; line-height: 1.6; border-left: 4px solid var(--accent); display: none; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid #334155; }
+    .btn-nav { background: #334155; border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .btn-nav:hover { background: #475569; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="brand">🧬 独中理科学习系统</div>
+  </header>
+  <div id="sectionsContainer">
+    <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">正在读取题库数据...</div>
+  </div>
+</div>
+
+<script>
+  let sectionsData = [];
+  let currentIdxMap = {};
+
+  async function loadData() {
+    try {
+      const res = await fetch('./biology_question_bank.json');
+      const data = await res.json();
+      sectionsData = data.sections || [];
+      sectionsData.forEach(s => { currentIdxMap[s.id] = 0; });
+      renderSections();
+    } catch (e) {
+      document.getElementById('sectionsContainer').innerHTML = `
+        <div style="color: var(--danger); text-align: center; padding: 40px 0;">
+          未能加载 biology_question_bank.json 题库文件，请确保该文件与 index.html 放置在同一目录下。
+        </div>`;
+    }
+  }
+
+  function renderSections() {
+    const container = document.getElementById('sectionsContainer');
+    container.innerHTML = '';
+    sectionsData.forEach(sec => {
+      const block = document.createElement('div');
+      block.className = 'section-block';
+      block.innerHTML = `
+        <div class="section-header">
+          <div class="section-title">📌 ${sec.title}</div>
+          <div class="section-count" id="counter_${sec.id}">第 1 / ${sec.mcqs.length} 题</div>
+        </div>
+        <div class="flashcard">
+          <div class="mcq-question" id="q_text_${sec.id}"></div>
+          <div id="fig_box_${sec.id}"></div>
+          <div class="mcq-options" id="opt_box_${sec.id}"></div>
+          <div class="explanation" id="exp_box_${sec.id}"></div>
+          <div class="card-footer">
+            <button class="btn-nav" onclick="changeSectionMcq('${sec.id}', -1)">⬅️ 上一题</button>
+            <button class="btn-nav" onclick="changeSectionMcq('${sec.id}', 1)">下一题 ➡️</button>
+          </div>
+        </div>
+      `;
+      container.appendChild(block);
+      loadCard(sec.id);
+    });
+  }
+
+  function loadCard(secId) {
+    const sec = sectionsData.find(s => s.id === secId);
+    const idx = currentIdxMap[secId];
+    const item = sec.mcqs[idx];
+
+    document.getElementById(`counter_${secId}`).innerText = `第 ${idx + 1} / ${sec.mcqs.length} 题`;
+    document.getElementById(`q_text_${secId}`).innerText = item.q;
+
+    const figBox = document.getElementById(`fig_box_${secId}`);
+    if (item.figure) {
+      figBox.innerHTML = `
+        <div class="figure-container">
+          ${item.figure}
+          ${item.caption ? `<div class="figure-caption">${item.caption}</div>` : ''}
+        </div>`;
+      figBox.style.display = 'block';
+    } else {
+      figBox.innerHTML = '';
+      figBox.style.display = 'none';
+    }
+
+    const optBox = document.getElementById(`opt_box_${secId}`);
+    optBox.innerHTML = '';
+    const expBox = document.getElementById(`exp_box_${secId}`);
+    expBox.style.display = 'none';
+    expBox.innerText = item.explanation;
+
+    item.options.forEach((opt, oIdx) => {
+      const btn = document.createElement('div');
+      btn.className = 'option-btn';
+      btn.innerText = opt;
+      btn.onclick = () => {
+        optBox.querySelectorAll('.option-btn').forEach((b, i) => {
+          b.classList.add('disabled');
+          if (i === item.answer) b.classList.add('correct');
+          if (i === oIdx && oIdx !== item.answer) b.classList.add('wrong');
+        });
+        expBox.style.display = 'block';
+      };
+      optBox.appendChild(btn);
+    });
+  }
+
+  function changeSectionMcq(secId, delta) {
+    const sec = sectionsData.find(s => s.id === secId);
+    const newIdx = currentIdxMap[secId] + delta;
+    if (newIdx >= 0 && newIdx < sec.mcqs.length) {
+      currentIdxMap[secId] = newIdx;
+      loadCard(secId);
+    }
+  }
+
+  window.onload = loadData;
+</script>
+
+</body>
+</html>
+
