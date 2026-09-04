@@ -7,7 +7,6 @@
   <style>
     :root {
       --primary: #10b981;
-      --primary-dark: #059669;
       --bg-dark: #0b1120;
       --bg-card: #1e293b;
       --text-main: #f8fafc;
@@ -19,79 +18,73 @@
       --hl-pink: #fbcfe8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 24px 16px; }
-    .container { max-width: 960px; margin: 0 auto; }
+    body { background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 20px 14px; }
+    .container { max-width: 900px; margin: 0 auto; }
 
     /* 顶部导航与面包屑 */
-    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #334155; }
-    .brand { font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-    .breadcrumbs { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted); }
-    .breadcrumb-item { cursor: pointer; transition: color 0.2s; }
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #334155; }
+    .brand { font-size: 19px; font-weight: 700; color: var(--primary); }
+    .breadcrumbs { font-size: 13px; color: var(--text-muted); }
+    .breadcrumb-item { cursor: pointer; }
     .breadcrumb-item:hover { color: var(--accent); text-decoration: underline; }
     .breadcrumb-item.active { color: var(--text-main); font-weight: 600; cursor: default; text-decoration: none; }
 
-    /* 视图切换控制 */
+    /* 视图切换 */
     .view { display: none; }
-    .view.active { display: block; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .view.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* 学科容器网格 */
-    .grid-subjects { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
-    .subject-card { background: var(--bg-card); border: 1px solid #334155; border-radius: 12px; padding: 24px; cursor: pointer; transition: all 0.2s; text-align: center; }
-    .subject-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2); }
-    .subject-icon { font-size: 40px; margin-bottom: 12px; }
-    .subject-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    /* 学科网格卡片 */
+    .grid-subjects { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 16px; }
+    .subject-card { background: var(--bg-card); border: 1px solid #334155; border-radius: 12px; padding: 20px; cursor: pointer; text-align: center; transition: 0.2s; }
+    .subject-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+    .subject-icon { font-size: 36px; margin-bottom: 8px; }
+    .subject-title { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
     .subject-desc { font-size: 12px; color: var(--text-muted); }
 
-    /* 模式切换 Tabs */
-    .mode-tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid #334155; padding-bottom: 12px; }
-    .tab-btn { background: transparent; border: 1px solid #334155; color: var(--text-muted); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+    /* 模式切换 */
+    .mode-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+    .tab-btn { background: transparent; border: 1px solid #334155; color: var(--text-muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
     .tab-btn.active { background: var(--primary); color: #000; font-weight: 600; border-color: var(--primary); }
 
-    /* 小节规范：标题 + 下底线 + 间距 */
-    .section-block { margin-bottom: 36px; }
-    .section-header { margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: flex-end; }
-    .section-title { font-size: 17px; font-weight: 700; color: var(--text-main); }
+    /* 小节标题规范：标题 + 下底线 + 间距 */
+    .section-block { margin-bottom: 30px; }
+    .section-header { margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: flex-end; }
+    .section-title { font-size: 16px; font-weight: 700; color: var(--text-main); }
     .section-count { font-size: 12px; color: var(--accent); }
 
-    /* 闪卡卡片 */
-    .flashcard { background: var(--bg-card); border: 1px solid #334155; border-radius: 14px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
-    .mcq-question { font-size: 16px; font-weight: 600; line-height: 1.6; margin-bottom: 16px; white-space: pre-line; }
-
-    /* 矢量图容器 */
-    .figure-container { margin: 12px 0 18px 0; background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .figure-caption { font-size: 12px; color: var(--accent); margin-top: 8px; font-weight: 500; }
-
-    /* 选项与解析 */
-    .mcq-options { display: flex; flex-direction: column; gap: 10px; }
-    .option-btn { background: #0f172a; border: 1px solid #334155; color: var(--text-main); text-align: left; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+    /* 闪卡与选项 */
+    .flashcard { background: var(--bg-card); border: 1px solid #334155; border-radius: 12px; padding: 20px; }
+    .mcq-question { font-size: 15px; font-weight: 600; line-height: 1.6; margin-bottom: 14px; white-space: pre-line; }
+    .figure-container { margin: 10px 0 16px 0; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; align-items: center; }
+    .figure-caption { font-size: 11px; color: var(--accent); margin-top: 6px; }
+    .mcq-options { display: flex; flex-direction: column; gap: 8px; }
+    .option-btn { background: #0f172a; border: 1px solid #334155; color: var(--text-main); text-align: left; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
     .option-btn:hover:not(.disabled) { border-color: var(--accent); background: #1a2638; }
     .option-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--primary); color: #6ee7b7; font-weight: 600; }
     .option-btn.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--danger); color: #fda4af; }
-    .explanation { margin-top: 16px; padding: 12px 16px; background: #0f172a; border-radius: 8px; font-size: 14px; line-height: 1.6; border-left: 4px solid var(--accent); display: none; }
-    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid #334155; }
-    .btn-nav { background: #334155; border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-    .btn-nav:hover { background: #475569; }
+    .explanation { margin-top: 14px; padding: 12px; background: #0f172a; border-radius: 6px; font-size: 13px; line-height: 1.6; border-left: 3px solid var(--accent); display: none; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid #334155; }
+    .btn-nav { background: #334155; border: none; color: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
 
-    /* 主观题划线与高亮 */
-    .hl-toolbar { display: flex; align-items: center; gap: 10px; background: #1e293b; padding: 10px 16px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 16px; flex-wrap: wrap; }
-    .hl-color-btn { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+    /* 主观题划线工具 */
+    .hl-toolbar { display: flex; align-items: center; gap: 8px; background: #1e293b; padding: 8px 14px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 14px; flex-wrap: wrap; }
+    .hl-color-btn { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
     .hl-color-btn.selected { border-color: #fff; transform: scale(1.15); }
-    .hl-btn-action { background: #334155; border: none; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-    .hl-btn-action:hover { background: #475569; }
-    .subjective-box { background: var(--bg-card); border: 1px solid #334155; border-radius: 12px; padding: 24px; margin-bottom: 28px; line-height: 1.8; }
-    .subjective-question { font-size: 15px; font-weight: 600; margin-bottom: 16px; line-height: 1.7; white-space: pre-line; }
-    .subjective-answer { background: #0f172a; padding: 18px; border-radius: 8px; border: 1px dashed #334155; font-size: 14px; }
-    .hl-mark-yellow { background-color: rgba(254, 240, 138, 0.4); color: #fef08a; padding: 1px 4px; border-radius: 3px; }
-    .hl-mark-green { background-color: rgba(187, 247, 208, 0.4); color: #86efac; padding: 1px 4px; border-radius: 3px; }
-    .hl-mark-pink { background-color: rgba(251, 207, 232, 0.4); color: #f472b6; padding: 1px 4px; border-radius: 3px; }
-    .status-toast { font-size: 12px; color: var(--primary); margin-left: auto; }
+    .hl-btn-action { background: #334155; border: none; color: #fff; padding: 5px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; }
+    .subjective-box { background: var(--bg-card); border: 1px solid #334155; border-radius: 10px; padding: 18px; margin-bottom: 20px; line-height: 1.7; }
+    .subjective-question { font-size: 14px; font-weight: 600; margin-bottom: 12px; white-space: pre-line; }
+    .subjective-answer { background: #0f172a; padding: 14px; border-radius: 6px; border: 1px dashed #334155; font-size: 13px; }
+    .hl-mark-yellow { background-color: rgba(254, 240, 138, 0.4); color: #fef08a; padding: 1px 3px; border-radius: 3px; }
+    .hl-mark-green { background-color: rgba(187, 247, 208, 0.4); color: #86efac; padding: 1px 3px; border-radius: 3px; }
+    .hl-mark-pink { background-color: rgba(251, 207, 232, 0.4); color: #f472b6; padding: 1px 3px; border-radius: 3px; }
+    .status-toast { font-size: 11px; color: var(--primary); margin-left: auto; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- 顶部面包屑容器 -->
+  <!-- 顶部导航栏 -->
   <header>
     <div class="brand">🧬 独中理科学习系统</div>
     <div class="breadcrumbs" id="breadcrumbNav">
@@ -99,30 +92,30 @@
     </div>
   </header>
 
-  <!-- 视图 1: 主学科选择容器 -->
+  <!-- 视图 1: 主学科选择列表 -->
   <div id="viewSubjects" class="view active">
     <h2>选择学习学科</h2>
-    <p style="color: var(--text-muted); margin-top: 4px;">点击科目进入分小节练习与重点划线：</p>
+    <p style="color: var(--text-muted); margin-top: 4px; font-size: 13px;">请选择董总高中统考理科科目：</p>
     <div class="grid-subjects">
       <div class="subject-card" onclick="openSubject('biology')">
         <div class="subject-icon">🌱</div>
         <div class="subject-title">生物 (Biology)</div>
-        <div class="subject-desc">光合作用、神经系统、生殖发育与分子遗传</div>
+        <div class="subject-desc">光合作用、神经系统、生殖发育与遗传</div>
       </div>
       <div class="subject-card" style="opacity: 0.5; cursor: not-allowed;">
         <div class="subject-icon">🧪</div>
         <div class="subject-title">化学 (Chemistry)</div>
-        <div class="subject-desc">物质结构与化学平衡（整理中）</div>
+        <div class="subject-desc">整理中</div>
       </div>
       <div class="subject-card" style="opacity: 0.5; cursor: not-allowed;">
         <div class="subject-icon">⚡</div>
         <div class="subject-title">物理 (Physics)</div>
-        <div class="subject-desc">力学与电磁学（整理中）</div>
+        <div class="subject-desc">整理中</div>
       </div>
       <div class="subject-card" style="opacity: 0.5; cursor: not-allowed;">
         <div class="subject-icon">📐</div>
         <div class="subject-title">高级数学 (Adv. Maths)</div>
-        <div class="subject-desc">微积分与代数（整理中）</div>
+        <div class="subject-desc">整理中</div>
       </div>
     </div>
   </div>
@@ -134,20 +127,20 @@
       <button class="tab-btn" id="tabSubj" onclick="switchMode('subj')">🖍️ 重点划线主观题</button>
     </div>
 
-    <!-- 选择题区域 -->
+    <!-- 选择题展示区 -->
     <div id="modeMcqArea">
       <div id="mcqSectionsContainer"></div>
     </div>
 
-    <!-- 主观题区域 -->
+    <!-- 主观题展示区 -->
     <div id="modeSubjArea" style="display: none;">
       <div class="hl-toolbar">
-        <span style="font-size: 13px;">划线颜色：</span>
+        <span style="font-size: 12px;">划线颜色：</span>
         <div class="hl-color-btn selected" style="background: var(--hl-yellow);" onclick="setColor('yellow', this)"></div>
         <div class="hl-color-btn" style="background: var(--hl-green);" onclick="setColor('green', this)"></div>
         <div class="hl-color-btn" style="background: var(--hl-pink);" onclick="setColor('pink', this)"></div>
         <button class="hl-btn-action" onclick="applyHighlight()">✏️ 高亮选中文本</button>
-        <button class="hl-btn-action" onclick="clearHighlights()">🗑️ 清除全部划线</button>
+        <button class="hl-btn-action" onclick="clearHighlights()">🗑️ 清除所有划线</button>
         <span class="status-toast" id="saveToast">划线状态已自动同步</span>
       </div>
       <div id="subjSectionsContainer"></div>
@@ -156,7 +149,7 @@
 </div>
 
 <script>
-  // 兜底默认题库（确保即使未读取到外部 JSON 也能 100% 完整显示）
+  // 兜底基础题库（确保即使未载入外部 JSON 也能正常使用）
   const DEFAULT_DATABASE = {
     "mcq_sections": [
       {
@@ -168,7 +161,7 @@
             "caption": "图：不同温度与 CO₂ 浓度下的光合速率曲线",
             "options": ["A. I, II", "B. I, IV", "C. II, III", "D. III, IV"],
             "answer": 2,
-            "explanation": "【解析】：探究单一自变量（CO₂ 浓度）对光合速率的影响时，必须严格控制无关变量（温度）保持恒定：\n1. 在 30°C 条件下：对比 P 与 R -> 组合 II\n2. 在 20°C 条件下：对比 Q 与 S -> 组合 III\n因此正确答案为 C (II, III)。"
+            "explanation": "【解析】：探究单一变量（CO₂ 浓度）对光合速率的影响时，必须严格控制温度相同：\n1. 30°C 条件下：对比 P 与 R -> 对应组合 II\n2. 20°C 条件下：对比 Q 与 S -> 对应组合 III\n因此正确答案为 C (II, III)。"
           }
         ]
       },
@@ -181,26 +174,7 @@
             "caption": "图：脊髓横切面及神经根结构",
             "options": ["A. A", "B. B", "C. C", "D. D"],
             "answer": 3,
-            "explanation": "【解析】：渐冻症是运动神经元退化导致肌肉随意运动丧失。在脊髓中，D 为腹根（前根），内含运动神经纤维（传出神经），由灰质前角发出支配骨骼肌。"
-          }
-        ]
-      },
-      {
-        "title": "第三节：生殖系统与双受精机制",
-        "mcqs": [
-          {
-            "q": "女性生殖系统中子宫的主要功能是__________。",
-            "options": ["A. 分泌雌性激素", "B. 产生卵细胞", "C. 卵细胞发育的主要场所", "D. 胚胎发育的主要场所"],
-            "answer": 3,
-            "explanation": "【解析】：卵巢产生卵细胞并分泌激素；子宫是受精卵着床和胚胎发育的主要场所。"
-          },
-          {
-            "q": "下图所示为被子植物的胚囊结构，双受精过程是指图中的哪些细胞结合？",
-            "figure": "<svg viewBox='0 0 320 200' width='100%' style='max-width: 320px;' xmlns='http://www.w3.org/2000/svg'><path d='M 100 20 C 220 20, 220 180, 100 180 C 40 180, 40 20, 100 20 Z' fill='#1e293b' stroke='#38bdf8' stroke-width='2'/><circle cx='90' cy='40' r='10' fill='#475569'/><circle cx='115' cy='40' r='10' fill='#475569'/><circle cx='140' cy='40' r='10' fill='#475569'/><text x='175' y='45' fill='#94a3b8' font-size='11'>反足细胞</text><circle cx='105' cy='95' r='9' fill='#fef08a'/><circle cx='125' cy='95' r='9' fill='#fef08a'/><line x1='135' y1='95' x2='190' y2='95' stroke='#fef08a' stroke-width='1.5'/><text x='195' y='99' fill='#fef08a' font-size='12' font-weight='bold'>极核 (P, 2个)</text><circle cx='90' cy='155' r='9' fill='#64748b'/><circle cx='115' cy='152' r='12' fill='#10b981'/><circle cx='140' cy='155' r='9' fill='#64748b'/><line x1='128' y1='152' x2='190' y2='152' stroke='#10b981' stroke-width='1.5'/><text x='195' y='156' fill='#10b981' font-size='12' font-weight='bold'>卵细胞 (Q, 1个)</text><circle cx='65' cy='165' r='6' fill='#f43f5e'/><circle cx='50' cy='170' r='6' fill='#f43f5e'/><text x='15' y='160' fill='#f43f5e' font-size='11'>精子(R)</text></svg>",
-            "caption": "图：被子植物胚囊与双受精示意图",
-            "options": ["A. 2 个 P 与 2 个 R", "B. 1 个 P 与 1 个 R, 1 个 Q 与 1 个 S", "C. 1 个 Q 与 1 个 R, 2 个 P 与 1 个 R", "D. 1 个 Q 与 2 个 R, 1 个 P 与 1 个 S"],
-            "answer": 2,
-            "explanation": "【解析】：双受精为：1 个精子(R)与卵细胞(Q)结合成受精卵；另 1 个精子(R)与 2 个极核(P)结合成受精极核。"
+            "explanation": "【解析】：渐冻症是由于运动神经元（传出神经元）退化所致。在脊髓中，D 为腹根（前根），内含传出神经纤维（运动神经），直接由脊髓灰质前角发出支配骨骼肌。"
           }
         ]
       }
@@ -211,8 +185,8 @@
         "questions": [
           {
             "id": "subj_1",
-            "question": "图 2 是人体的消化系统结构示意图，请回答：\n(1) 脂肪、蛋白质、淀粉分别在哪个部位开始被消化？\n(2) 现有四种消化液：III 和 IV 无肽酶；仅 I 和 III 能消化淀粉；II 的 pH 极低；I 加入 IV 后能消化脂肪而 III 加 IV 不能。写出四种消化液名称。\n(3) 写出小肠有利于吸收营养的三个特征。",
-            "answer": "<strong>【参考标准答案与得分点】：</strong><br><br>1. 消化起始部位：脂肪在<span class=\"hl-mark-yellow\">小肠</span>、蛋白质在<span class=\"hl-mark-yellow\">胃</span>、淀粉在<span class=\"hl-mark-yellow\">口腔</span>。<br>2. 消化液推断：I 为<span class=\"hl-mark-green\">胰液</span>、II 为<span class=\"hl-mark-pink\">胃液</span>、III 为<span class=\"hl-mark-green\">唾液</span>、IV 为<span class=\"hl-mark-yellow\">胆汁</span>。<br>3. 小肠特征：<span class=\"hl-mark-green\">长达5~6米吸收充分</span>；<span class=\"hl-mark-yellow\">有环形皱襞与绒毛极大增加面积</span>；<span class=\"hl-mark-pink\">绒毛壁仅由单层上皮细胞构成</span>。"
+            "question": "图 2 是人体的消化系统结构示意图，请回答下列各题：\n(1) 脂肪、蛋白质、淀粉分别在哪个部位开始被消化？\n(2) 现有四种消化液：III 和 IV 无肽酶；仅 I 和 III 能消化淀粉；II 的 pH 极低；I 加入 IV 后能消化脂肪而 III 加 IV 不能。写出这四种消化液的名称。\n(3) 写出小肠有利于吸收营养的三个特征。",
+            "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br>1. 消化起始部位：脂肪在<span class=\"hl-mark-yellow\">小肠</span>、蛋白质在<span class=\"hl-mark-yellow\">胃</span>、淀粉在<span class=\"hl-mark-yellow\">口腔</span>。<br>2. 消化液推断：I 为<span class=\"hl-mark-green\">胰液</span>、II 为<span class=\"hl-mark-pink\">胃液</span>、III 为<span class=\"hl-mark-green\">唾液</span>、IV 为<span class=\"hl-mark-yellow\">胆汁</span>。<br>3. 小肠特征：<span class=\"hl-mark-green\">长达 5~6 米吸收时间充分</span>；<span class=\"hl-mark-yellow\">内表面有环形皱襞与绒毛极大增加面积</span>；<span class=\"hl-mark-pink\">绒毛壁仅由单层上皮细胞构成利于透过</span>。"
           }
         ]
       }
@@ -222,12 +196,12 @@
   let fullDatabase = DEFAULT_DATABASE;
   let currentIdxMap = {};
   let currentColor = 'yellow';
-  const HL_STORAGE_KEY = 'UEC_BIO_HL_STORE_V6';
+  const HL_STORAGE_KEY = 'UEC_BIO_HL_STORE_FINAL';
 
-  // 导航逻辑
+  // 导航跳转控制
   function navigateHome() {
     showView('viewSubjects');
-    document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active">学科选择</span>`;
+    document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>`;
   }
 
   function openSubject(subject) {
@@ -245,28 +219,32 @@
 
   function showView(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
+    const target = document.getElementById(viewId);
+    if (target) target.classList.add('active');
   }
 
-  // 尝试读取外部 JSON（有则热更新，无则用内置兜底数据）
+  // 尝试读取同级 JSON 文件（存在则覆盖默认数据）
   async function loadData() {
     try {
       const res = await fetch('./biology_question_bank.json');
       if (res.ok) {
-        const externalData = await res.json();
-        if (externalData && externalData.mcq_sections) {
-          fullDatabase = externalData;
+        const data = await res.json();
+        if (data && (data.mcq_sections || data.sections)) {
+          fullDatabase = data.mcq_sections ? data : { mcq_sections: data.sections, subjective_sections: data.subjective_sections || [] };
         }
       }
     } catch (e) {
-      console.log('使用内置兜底题库运行。');
+      console.log('采用内置题库数据运行。');
     }
   }
 
+  // 渲染选择题模块
   function renderMcqSections() {
     const container = document.getElementById('mcqSectionsContainer');
+    if (!container) return;
     container.innerHTML = '';
-    (fullDatabase.mcq_sections || []).forEach((sec, sIdx) => {
+    const sections = fullDatabase.mcq_sections || [];
+    sections.forEach((sec, sIdx) => {
       currentIdxMap[sIdx] = 0;
       const block = document.createElement('div');
       block.className = 'section-block';
@@ -292,9 +270,11 @@
   }
 
   function loadMcqCard(sIdx) {
-    const sec = fullDatabase.mcq_sections[sIdx];
-    const idx = currentIdxMap[sIdx];
+    const sec = (fullDatabase.mcq_sections || [])[sIdx];
+    if (!sec) return;
+    const idx = currentIdxMap[sIdx] || 0;
     const item = sec.mcqs[idx];
+    if (!item) return;
 
     document.getElementById(`counter_${sIdx}`).innerText = `第 ${idx + 1} / ${sec.mcqs.length} 题`;
     document.getElementById(`q_text_${sIdx}`).innerText = item.q;
@@ -335,6 +315,115 @@
   }
 
   function changeSectionMcq(sIdx, delta) {
-    const sec = fullDatabase.mcq_sections[sIdx];
-    const newIdx = currentIdxMap[sIdx] + delta;
-    if (newIdx >= 0 && newIdx < sec.mcq
+    const sec = (fullDatabase.mcq_sections || [])[sIdx];
+    if (!sec) return;
+    const newIdx = (currentIdxMap[sIdx] || 0) + delta;
+    if (newIdx >= 0 && newIdx < sec.mcqs.length) {
+      currentIdxMap[sIdx] = newIdx;
+      loadMcqCard(sIdx);
+    }
+  }
+
+  // 渲染主观题模块
+  function renderSubjectiveSections() {
+    const container = document.getElementById('subjSectionsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    const sections = fullDatabase.subjective_sections || [];
+    sections.forEach(sec => {
+      const block = document.createElement('div');
+      block.className = 'section-block';
+      let qHtml = '';
+      sec.questions.forEach(q => {
+        qHtml += `
+          <div class="subjective-box">
+            <div class="subjective-question">${q.question}</div>
+            <div class="subjective-answer" id="${q.id}">${q.answer}</div>
+          </div>
+        `;
+      });
+      block.innerHTML = `
+        <div class="section-header">
+          <div class="section-title">📌 ${sec.title}</div>
+        </div>
+        ${qHtml}
+      `;
+      container.appendChild(block);
+    });
+  }
+
+  function switchMode(mode) {
+    const isMcq = mode === 'mcq';
+    document.getElementById('tabMcq').classList.toggle('active', isMcq);
+    document.getElementById('tabSubj').classList.toggle('active', !isMcq);
+    document.getElementById('modeMcqArea').style.display = isMcq ? 'block' : 'none';
+    document.getElementById('modeSubjArea').style.display = !isMcq ? 'block' : 'none';
+  }
+
+  // 高亮与划线持久化
+  function setColor(color, el) {
+    currentColor = color;
+    document.querySelectorAll('.hl-color-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function applyHighlight() {
+    const selection = window.getSelection();
+    if (!selection.rangeCount || selection.isCollapsed) return;
+    const range = selection.getRangeAt(0);
+    const container = document.getElementById('subjSectionsContainer');
+    if (!container.contains(range.commonAncestorContainer)) return;
+    const span = document.createElement('span');
+    span.className = `hl-mark-${currentColor}`;
+    try {
+      range.surroundContents(span);
+      saveAllHighlights();
+    } catch (e) {
+    alert("请选取同一段落中的文字进行划线。");
+    }
+    selection.removeAllRanges();
+  }
+
+  function saveAllHighlights() {
+    const htmlData = document.getElementById('subjSectionsContainer').innerHTML;
+    localStorage.setItem(HL_STORAGE_KEY, htmlData);
+    showToast("划线状态已自动同步");
+  }
+
+  function loadAllHighlights() {
+    const saved = localStorage.getItem(HL_STORAGE_KEY);
+    if (saved) {
+      document.getElementById('subjSectionsContainer').innerHTML = saved;
+    }
+  }
+
+  function clearHighlights() {
+    const container = document.getElementById('subjSectionsContainer');
+    const marks = container.querySelectorAll('[class^="hl-mark-"]');
+    marks.forEach(m => {
+      const parent = m.parentNode;
+      while (m.firstChild) parent.insertBefore(m.firstChild, m);
+      parent.removeChild(m);
+    });
+    saveAllHighlights();
+    showToast("已清除全部划线");
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('saveToast');
+    if (toast) {
+      toast.innerText = msg;
+      setTimeout(() => { toast.innerText = "划线状态已自动同步"; }, 2500);
+    }
+  }
+
+  // 页面加载触发
+  window.onload = loadData;
+</script>
+</body>
+</html>
+替换后在手机上刷新 https://science-subjects-question.vercel.app/，点击“生物”即可立即进入练习！
+
+Ask study lover
+
+Generative 
