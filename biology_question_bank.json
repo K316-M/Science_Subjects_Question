@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "version": "2.2.0",
+    "subject": "biology",
+    "title": "高三生物科题库"
+  },
+  "mcq_sections": [
+    {
+      "title": "第一节：细胞的化学分子与跨膜运输",
+      "mcqs": [
+        {
+          "q": "植物细胞和动物细胞中贮存能量的物质分别是__________。",
+          "options": [
+            "A. 淀粉和糖原",
+            "B. 糖原和淀粉",
+            "C. 蛋白质和脂肪",
+            "D. 脂肪和淀粉"
+          ],
+          "answer": 0,
+          "explanation": "【解析】：植物细胞的多糖储能物质是淀粉；动物细胞的多糖储能物质是糖原（肝糖原和肌糖原）。"
+        },
+        {
+          "q": "淀粉酶、纤维素和 DNA 都含有的元素是__________。",
+          "options": [
+            "A. C, H, O",
+            "B. C, H, O, N, S, P",
+            "C. C, H, O, N",
+            "D. C, H, O, N, P"
+          ],
+          "answer": 0,
+          "explanation": "【解析】：淀粉酶（蛋白质：含C, H, O, N等）、纤维素（多糖：C, H, O）、DNA（核酸：C, H, O, N, P），三者共同含有的基本元素为 C、H、O。"
+        },
+        {
+          "q": "两个氨基酸缩合成二肽并生成水，这个水分子中的氢来自__________。",
+          "options": [
+            "A. 羧基",
+            "B. 氨基",
+            "C. 连接碳原子的氢",
+            "D. 氨基和羧基中的氢"
+          ],
+          "answer": 3,
+          "explanation": "【解析】：脱水缩合反应中，一个氨基酸脱去羧基中的 -OH，另一个脱去氨基中的 -H 结合生成水分子，因此水中的氢来自氨基和羧基。"
+        },
+        {
+          "q": "在胰岛细胞中，与合成和分泌胰岛素有关的一组细胞器是__________。",
+          "options": [
+            "A. 线粒体，中心体，高尔基体，内质网",
+            "B. 内质网，核糖体，叶绿体，高尔基体",
+            "C. 核糖体，内质网，高尔基体，线粒体",
+            "D. 内质网，核糖体，高尔基体，中心体"
+          ],
+          "answer": 2,
+          "explanation": "【解析】：胰岛素属于分泌蛋白，在核糖体上合成，经内质网初加工，高尔基体进一步修饰包装并形成囊泡分泌，全程由线粒体提供 ATP 能量。"
+        },
+        {
+          "q": "ATP 是细胞内的能源物质。若人体静脉滴注 ATP 药物，ATP 到达心肌细胞内最少要通过几层细胞膜？",
+          "options": [
+            "A. 2 层",
+            "B. 3 层",
+            "C. 4 层",
+            "D. 5 层"
+          ],
+          "answer": 3,
+          "explanation": "【解析】：静脉滴注路径：进出注射部位毛细血管壁细胞（进1层+出1层=2层）➔ 随血流到达心肌毛细血管壁细胞（进1层+出1层=2层）➔ 进入心肌细胞（1层），总计最少穿过 5 层细胞膜。"
+        },
+        {
+          "q": "下列何项生理活动不涉及 ATP 的水解分解？",
+          "options": [
+            "A. 植物自土壤中吸收钠离子",
+            "B. 氧分子自微血管进入组织细胞",
+            "C. 草履虫利用伸缩泡排出体内过多的水分",
+            "D. 肾小管再吸收葡萄糖与氨基酸"
+          ],
+          "answer": 1,
+          "explanation": "【解析】：氧气进出组织细胞属于简单自由扩散，顺浓度梯度跨膜进行，不需要载体也不消耗 ATP。"
+        }
+      ]
+    },
+    {
+      "title": "第二节：光合作用与环境因素影响",
+      "mcqs": [
+        {
+          "q": "下图所示曲线显示在不同温度和二氧化碳浓度下，光强度对光合速率的影响。\n通过比较哪两条曲线可看出二氧化碳浓度会影响光合速率？\n\nI  P 和 Q\nII P 和 R\nIII Q 和 S\nIV R 和 S",
+          "figure": "<svg viewBox='0 0 400 240' width='100%' style='max-width:380px;' xmlns='http://www.w3.org/2000/svg'><line x1='50' y1='200' x2='380' y2='200' stroke='#94a3b8' stroke-width='2'/><line x1='50' y1='200' x2='50' y2='20' stroke='#94a3b8' stroke-width='2'/><polygon points='380,196 390,200 380,204' fill='#94a3b8'/><polygon points='46,20 50,10 54,20' fill='#94a3b8'/><text x='340' y='225' fill='#94a3b8' font-size='13'>光强度</text><text x='25' y='110' fill='#94a3b8' font-size='13' writing-mode='vertical-rl'>光合速率</text><path d='M 50 200 Q 180 50 350 40' fill='none' stroke='#38bdf8' stroke-width='2.5'/><text x='230' y='35' fill='#38bdf8' font-size='12'>30°C, 0.2% CO₂</text><text x='360' y='44' fill='#38bdf8' font-size='14' font-weight='bold'>P</text><path d='M 50 200 Q 180 90 350 85' fill='none' stroke='#10b981' stroke-width='2.5'/><text x='230' y='80' fill='#10b981' font-size='12'>20°C, 0.2% CO₂</text><text x='360' y='89' fill='#10b981' font-size='14' font-weight='bold'>Q</text><path d='M 50 200 Q 180 125 350 120' fill='none' stroke='#f59e0b' stroke-width='2.5'/><text x='230' y='115' fill='#f59e0b' font-size='12'>30°C, 0.1% CO₂</text><text x='360' y='124' fill='#f59e0b' font-size='14' font-weight='bold'>R</text><path d='M 50 200 Q 180 155 350 150' fill='none' stroke='#f43f5e' stroke-width='2.5'/><text x='230' y='145' fill='#f43f5e' font-size='12'>20°C, 0.1% CO₂</text><text x='360' y='154' fill='#f43f5e' font-size='14' font-weight='bold'>S</text></svg>",
+          "caption": "图：不同温度与 CO₂ 浓度下的光合速率曲线",
+          "options": [
+            "A. I, II",
+            "B. I, IV",
+            "C. II, III",
+            "D. III, IV"
+          ],
+          "answer": 2,
+          "explanation": "【解析】：探究单一自变量（CO₂ 浓度）对光合速率的影响时，必须严格控制无关变量（温度）相同：\n1. 30°C 条件下：对比 P（0.2% CO₂）与 R（0.1% CO₂）-> 对应组合 II\n2. 20°C 条件下：对比 Q（0.2% CO₂）与 S（0.1% CO₂）-> 对应组合 III\n因此正确答案为 C (II, III)。"
+        }
+      ]
+    },
+    {
+      "title": "第三节：神经调节与脊髓反射结构",
+      "mcqs": [
+        {
+          "q": "“渐冻症”（Amyotrophic Lateral Sclerosis）是一种因神经元 X 退化或死亡而导致骨骼肌逐渐弱化的疾病。患者最终无法控制全身的随意运动，但仍保有正常的意识、智力与感觉能力。下图哪个部分能找到神经元 X？",
+          "figure": "<svg viewBox='0 0 460 240' width='100%' style='max-width:420px;' xmlns='http://www.w3.org/2000/svg'><path d='M 60 120 C 60 70, 160 30, 230 50 C 300 30, 400 70, 400 120 C 400 170, 290 190, 230 190 C 170 190, 60 170, 60 120 Z' fill='#1e293b' stroke='#94a3b8' stroke-width='2'/><path d='M 170 85 C 190 85, 200 105, 230 105 C 260 105, 270 85, 290 85 C 310 85, 330 120, 310 155 C 290 155, 270 135, 230 135 C 190 135, 170 155, 150 155 C 130 120, 150 85, 170 85 Z' fill='#334155' stroke='#38bdf8' stroke-width='2'/><line x1='180' y1='95' x2='150' y2='40' stroke='#f8fafc' stroke-width='1.5'/><text x='140' y='35' fill='#f8fafc' font-size='15' font-weight='bold'>A (灰质)</text><line x1='230' y1='50' x2='230' y2='25' stroke='#f8fafc' stroke-width='1.5'/><text x='230' y='18' fill='#f8fafc' font-size='15' font-weight='bold' text-anchor='middle'>B (白质)</text><path d='M 400 100 Q 430 80 450 110' fill='none' stroke='#10b981' stroke-width='3'/><line x1='425' y1='90' x2='390' y2='45' stroke='#f8fafc' stroke-width='1.5'/><text x='385' y='40' fill='#f8fafc' font-size='15' font-weight='bold'>C (背根/感觉)</text><path d='M 400 140 Q 430 160 450 130' fill='none' stroke='#f43f5e' stroke-width='3'/><line x1='425' y1='150' x2='425' y2='200' stroke='#f8fafc' stroke-width='1.5'/><text x='425' y='220' fill='#f8fafc' font-size='15' font-weight='bold' text-anchor='middle'>D (腹根/运动)</text></svg>",
+          "caption": "图：脊髓横切面及神经根结构",
+          "options": [
+            "A. A",
+            "B. B",
+            "C. C",
+            "D. D"
+          ],
+          "answer": 3,
+          "explanation": "【解析】：渐冻症是由于运动神经元（传出神经元）退化导致支配骨骼肌的随意运动丧失，感觉功能正常。在脊髓结构中，D 为腹根（前根），内含传出神经纤维（运动神经），直接由脊髓灰质前角发出支配效应器骨骼肌。"
+        }
+      ]
+    },
+    {
+      "title": "第四节：生殖发育与双受精机制",
+      "mcqs": [
+        {
+          "q": "女性的卵细胞什么时候进入减数第二次分裂？",
+          "options": [
+            "A. 胎儿期",
+            "B. 青春期",
+            "C. 排卵时",
+            "D. 受精时"
+          ],
+          "answer": 3,
+          "explanation": "【解析】：次级卵母细胞在排卵后停留在减数第二次分裂中期（M II），只有在受精（精子穿入）刺激后才被激活完成减数第二次分裂。"
+        },
+        {
+          "q": "女性生殖系统中子宫的主要功能是__________。",
+          "options": [
+            "A. 分泌雌性激素",
+            "B. 产生卵细胞",
+            "C. 卵细胞发育的主要场所",
+            "D. 胚胎发育的主要场所"
+          ],
+          "answer": 3,
+          "explanation": "【解析】：卵巢的主要功能是产生卵细胞并分泌雌孕激素；子宫是受精卵着床和胚胎/胎儿发育的主要场所。"
+        },
+        {
+          "q": "下列哪条是精子进入尿道的路径？",
+          "options": [
+            "A. 附睾 → 睾丸 → 输精管 → 射精管 → 尿道",
+            "B. 睾丸 → 附睾 → 输精管 → 射精管 → 尿道",
+            "C. 睾丸 → 附睾 → 射精管 → 输精管 → 尿道",
+            "D. 睾丸 → 射精管 → 输精管 → 附睾 → 尿道"
+          ],
+          "answer": 1,
+          "explanation": "【解析】：精子由睾丸曲细精管产生，随后进入附睾储存成熟，射精时依次经输精管、射精管进入尿道排出体外。"
+        },
+        {
+          "q": "下列有关试管婴儿知识的叙述，不正确的是__________。",
+          "options": [
+            "A. 这项技术可以帮助一些不能生育的夫妇实现想要孩子的愿望",
+            "B. 试管内培育出一个孩子",
+            "C. 试管婴儿是用人工方法将精子和卵细胞分别从人体内取出，在体外受精",
+            "D. 体外进行早期胚胎发育，将胚胎移植到子宫内发育成胎儿"
+          ],
+          "answer": 1,
+          "explanation": "【解析】：试管婴儿是在体外完成人工受精与早期胚胎发育，随后必须移植回母体子宫内着床完成妊娠发育，而非全程在试管中发育成婴儿。"
+        },
+        {
+          "q": "下图所示为被子植物的胚囊结构，双受精过程是指图中的哪些细胞结合？",
+          "figure": "<svg viewBox='0 0 320 200' width='100%' style='max-width: 320px;' xmlns='http://www.w3.org/2000/svg'><path d='M 100 20 C 220 20, 220 180, 100 180 C 40 180, 40 20, 100 20 Z' fill='#1e293b' stroke='#38bdf8' stroke-width='2'/><circle cx='90' cy='40' r='10' fill='#475569'/><circle cx='115' cy='40' r='10' fill='#475569'/><circle cx='140' cy='40' r='10' fill='#475569'/><text x='175' y='45' fill='#94a3b8' font-size='11'>反足细胞</text><circle cx='105' cy='95' r='9' fill='#fef08a'/><circle cx='125' cy='95' r='9' fill='#fef08a'/><line x1='135' y1='95' x2='190' y2='95' stroke='#fef08a' stroke-width='1.5'/><text x='195' y='99' fill='#fef08a' font-size='12' font-weight='bold'>极核 (P, 2个)</text><circle cx='90' cy='155' r='9' fill='#64748b'/><circle cx='115' cy='152' r='12' fill='#10b981'/><circle cx='140' cy='155' r='9' fill='#64748b'/><line x1='128' y1='152' x2='190' y2='152' stroke='#10b981' stroke-width='1.5'/><text x='195' y='156' fill='#10b981' font-size='12' font-weight='bold'>卵细胞 (Q, 1个)</text><circle cx='65' cy='165' r='6' fill='#f43f5e'/><circle cx='50' cy='170' r='6' fill='#f43f5e'/><text x='15' y='160' fill='#f43f5e' font-size='11'>精子(R)</text></svg>",
+          "caption": "图：被子植物胚囊与双受精示意图",
+          "options": [
+            "A. 2 个 P 与 2 个 R",
+            "B. 1 个 P 与 1 个 R, 1 个 Q 与 1 个 S",
+            "C. 1 个 Q 与 1 个 R, 2 个 P 与 1 个 R",
+            "D. 1 个 Q 与 2 个 R, 1 个 P 与 1 个 S"
+          ],
+          "answer": 2,
+          "explanation": "【解析】：双受精为：1 个精子(R)与卵细胞(Q)结合形成受精卵；另 1 个精子(R)与 2 个极核(P)结合形成受精极核（胚乳核）。"
+        }
+      ]
+    },
+    {
+      "title": "第五节：分子遗传与核酸机制",
+      "mcqs": [
+        {
+          "q": "小麦细胞内所含核酸、核苷酸、碱基的种类分别有__________种。",
+          "options": [
+            "A. 1、4、4",
+            "B. 2、5、5",
+            "C. 2、5、8",
+            "D. 2、8、5"
+          ],
+          "answer": 3,
+          "explanation": "【解析】：小麦属于真核生物，细胞内核酸有 2 种（DNA、RNA）；核苷酸有 8 种（4种脱氧核苷酸 + 4种核糖核苷酸）；碱基共有 5 种（A、T、C、G、U）。"
+        },
+        {
+          "q": "如果一个基因的中部缺失了 1 个核苷酸对，不可能的后果是__________。",
+          "options": [
+            "A. 没有蛋白质产物",
+            "B. 翻译为蛋白质时在缺失位置终止",
+            "C. 所控制合成的蛋白质减少多个氨基酸",
+            "D. 翻译的蛋白质中，缺失部位以后的氨基酸序列发生变化"
+          ],
+          "answer": 0,
+          "explanation": "【解析】：缺失中部碱基会导致移码突变或提前终止，但启动子和起始密码子完好，依然会转录翻译出多肽链产物，不可能完全“没有蛋白质产物”。"
+        },
+        {
+          "q": "有关真核细胞 DNA 复制和转录这两种过程的叙述，错误的是__________。",
+          "options": [
+            "A. 两种过程都可在细胞核中发生",
+            "B. 两种过程都有酶参与反应",
+            "C. 两种过程都以脱氧核糖核苷酸为原料",
+            "D. 两种过程都以 DNA 为模板"
+          ],
+          "answer": 2,
+          "explanation": "【解析】：转录合成的是 RNA，所用原料为核糖核苷酸（NTP），而不是脱氧核糖核苷酸（dNTP）。"
+        },
+        {
+          "q": "基因型为 AaBbCcDD 的二倍体生物，可产生__________种不同基因型的配子种类。",
+          "options": [
+            "A. 2",
+            "B. 4",
+            "C. 8",
+            "D. 16"
+          ],
+          "answer": 2,
+          "explanation": "【解析】：各对等位基因独立遗传，配子种类数 = 2(Aa) × 2(Bb) × 2(Cc) × 1(DD) = 8 种。"
+        },
+        {
+          "q": "具有 100 个碱基对的一个 DNA 分子区段，内含 40 个胸腺嘧啶，如果复制 2 次，则需要游离的胞嘧啶脱氧核苷酸数为__________。",
+          "options": [
+            "A. 60 个",
+            "B. 80 个",
+            "C. 120 个",
+            "D. 180 个"
+          ],
+          "answer": 3,
+          "explanation": "【解析】：总碱基数 = 200，T = 40，则 A = 40，C = G = (200 - 80) / 2 = 60 个。复制 2 次净增 3 个 DNA 分子，消耗游离胞嘧啶 = 3 × 60 = 180 个。"
+        }
+      ]
+    }
+  ],
+  "subjective_sections": [
+    {
+      "title": "第一节：消化系统结构与消化液推断",
+      "questions": [
+        {
+          "id": "subj_1",
+          "question": "图 2 是人体的消化系统结构示意图，请回答下列各题：\n(1) 用标号 A 到 J 回答下列各题：\n  (I) 脂肪开始被消化是位于哪一个部位？\n  (II) 蛋白质开始被消化是位于哪一个部位？\n  (III) 淀粉开始被消化是位于哪一个部位？\n(2) 在一次分析中，有四种消化液 I, II, III 和 IV。已知：\n  - 消化液 III 和 IV 都不含促使多肽水解的酶；\n  - 只有消化液 I 和消化液 III 能消化淀粉；\n  - 消化液 II 的 pH 值很低；\n  - 在消化液 I 和消化液 III 分别加入等量的消化液 IV 后，消化液 I 与 IV 的混合液能消化脂肪，消化液 III 与 IV 的混合液不能。\n  请写出这四种消化液的名称。\n(3) 写出部位 J (小肠) 有利于吸收营养的其中三个特征。",
+          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 消化起始部位标号：</strong><br>• (I) 脂肪开始被消化部位：<span class=\"hl-mark-yellow\">J (小肠)</span><br>• (II) 蛋白质开始被消化部位：<span class=\"hl-mark-yellow\">H (胃)</span><br>• (III) 淀粉开始被消化部位：<span class=\"hl-mark-yellow\">A (口腔)</span><br><br><strong>(2) 四种消化液名称推断：</strong><br>• <strong>消化液 I</strong>：<span class=\"hl-mark-green\">胰液（或肠液）</span>（含淀粉酶、脂肪酶和蛋白酶）<br>• <strong>消化液 II</strong>：<span class=\"hl-mark-pink\">胃液</span>（pH值极低，含胃酸与胃蛋白酶）<br>• <strong>消化液 III</strong>：<span class=\"hl-mark-green\">唾液</span>（含唾液淀粉酶，但不含脂肪酶）<br>• <strong>消化液 IV</strong>：<span class=\"hl-mark-yellow\">胆汁</span>（不含消化酶，能乳化脂肪协助消化）<br><br><strong>(3) 部位 J (小肠) 有利于吸收营养的特征（任写三点即可）：</strong><br>1. 小肠长约 5~6 米，食物停留时间长，<span class=\"hl-mark-green\">吸收时间充分</span>。<br>2. 内表面有环形皱襞和小肠绒毛，<span class=\"hl-mark-yellow\">极大增加了吸收表面积</span>。<br>3. 绒毛壁和毛细血管壁均很薄，<span class=\"hl-mark-pink\">仅由一层上皮细胞构成</span>。<br>4. 绒毛内富含<span class=\"hl-mark-green\">毛细血管和毛细淋巴管（乳糜管）</span>，利于营养快速转运。"
+        }
+      ]
+    },
+    {
+      "title": "第二节：循环系统血压与含氧量变化分析",
+      "questions": [
+        {
+          "id": "subj_2",
+          "question": "在哺乳动物的某段循环途径中，从心脏流出的血液顺次流经三种血管 A、B、C，始流回心脏。图 3 曲线图显示当血液流经血管 A、B、C 时，血液含氧量与血压的变化。\n(1) 当血液流经血管 B 时，血液含氧量有什么变化？这变化能在哪一个器官内发生？\n(2) 写出血管 C 的名称。血液自血管 C 流入心脏的哪一个心腔？\n(3) 列表比较血管 A 和血管 C 在结构上的两个不同点。",
+          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 含氧量变化与发生器官：</strong><br>• <strong>含氧量变化</strong>：血液流经血管 B 时，<span class=\"hl-mark-yellow\">含氧量显著增加（静脉血转变成动脉血）</span>。<br>• <strong>发生器官</strong>：在 <span class=\"hl-mark-green\">肺（肺泡毛细血管网）</span> 内发生。<br><br><strong>(2) 血管名称与回流心腔：</strong><br>• <strong>血管 C 名称</strong>：<span class=\"hl-mark-yellow\">肺静脉</span>。<br>• <strong>流入心腔</strong>：流入心脏的 <span class=\"hl-mark-pink\">左心房</span>。<br><br><strong>(3) 血管 A（肺动脉）与血管 C（肺静脉）的结构差异：</strong><br>1. <strong>管壁厚薄与弹性</strong>：血管 A <span class=\"hl-mark-green\">管壁较厚、弹性大</span>；血管 C <span class=\"hl-mark-yellow\">管壁较薄、弹性小</span>。<br>2. <strong>管腔大小</strong>：血管 A <span class=\"hl-mark-pink\">管腔较小</span>；血管 C <span class=\"hl-mark-green\">管腔相对较大</span>。"
+        }
+      ]
+    },
+    {
+      "title": "第三节：基因自由组合定律与遗传育种",
+      "questions": [
+        {
+          "id": "subj_3",
+          "question": "麦抗锈病 (T) 对易染病 (t) 为显性，易倒伏 (D) 对抗倒伏 (d) 为显性。两对等位基因独立遗传。现用抗病易倒伏纯种和易染病抗倒伏纯种杂交，培育既抗病又抗倒伏的高产品种。\n(1) 子一代自交产生子二代，写出子一代的基因型和表现型。\n(2) 试写出子二代的所有表现型及其比例。\n(3) 写出子二代中抗病又抗倒伏个体中的基因型和所占概率。",
+          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 子一代 (F1) 基因型与表现型：</strong><br>• <strong>F1 基因型</strong>：<span class=\"hl-mark-yellow\">TtDd</span><br>• <strong>F1 表现型</strong>：<span class=\"hl-mark-green\">抗病易倒伏</span><br><br><strong>(2) 子二代 (F2) 表现型比例：</strong><br>• 抗病易倒伏 (T_D_) : <span class=\"hl-mark-yellow\">9/16</span><br>• 抗病抗倒伏 (T_dd) : <span class=\"hl-mark-green\">3/16</span><br>• 易染病易倒伏 (ttD_) : <span class=\"hl-mark-pink\">3/16</span><br>• 易染病抗倒伏 (ttdd) : <span class=\"hl-mark-yellow\">1/16</span><br><br><strong>(3) 抗病抗倒伏个体基因型与概率：</strong><br>• <strong>基因型</strong>：<span class=\"hl-mark-yellow\">TTdd 和 Ttdd</span>。<br>• <strong>概率</strong>：占 F2 全部的 <span class=\"hl-mark-green\">3/16</span>（其中纯合子 TTdd 占 1/16，杂合子 Ttdd 占 2/16）。"
+        }
+      ]
+    },
+    {
+      "title": "第四节：遗传信息传递与逆转录模拟实验",
+      "questions": [
+        {
+          "id": "subj_4",
+          "question": "为研究某病毒致病过程，实验室做了如图模拟实验：\n(1) 从病毒分离得到单链大分子 A，碱基序列为 -GAACAUGUU-。加入试管甲反应后得到产物 X，其碱基序列是 -CTTGTACAA-。试管甲模拟什么过程？\n(2) 将提纯产物 X 加入试管乙，得到能与核糖体结合的单链大分子 Y。产物 Y 是什么？试管乙模拟什么过程？\n(3) 将产物 Y 加入试管丙，反应得到组成该病毒外壳的化合物 Z。产物 Z 是什么？\n(4) 写出该病毒遗传信息的传递过程。",
+          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 试管甲模拟过程：</strong><br>• 物质 A 含 U 为单链 RNA，产物 X 含 T 为单链 DNA。<br>• 试管甲模拟以 RNA 为模板合成 DNA 的 <span class=\"hl-mark-yellow\">逆转录过程 (Reverse Transcription)</span>。<br><br><strong>(2) 产物 Y 与试管乙模拟过程：</strong><br>• <strong>产物 Y</strong>：能与核糖体结合的单链大分子为 <span class=\"hl-mark-green\">mRNA（信使 RNA）</span>。<br>• <strong>试管乙模拟过程</strong>：以 DNA 为模板合成 RNA 的 <span class=\"hl-mark-pink\">转录过程 (Transcription)</span>。<br><br><strong>(3) 产物 Z 名称：</strong><br>• 病毒外壳化合物是 <span class=\"hl-mark-yellow\">蛋白质 (衣壳蛋白)</span>，试管丙模拟翻译过程。<br><br><strong>(4) 遗传信息传递途径（中心法则）：</strong><br>• 传递过程：<span class=\"hl-mark-green\">RNA → DNA → RNA → 蛋白质</span>。"
+        }
+      ]
+    }
+  ]
+}
+
