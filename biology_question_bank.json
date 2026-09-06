@@ -572,23 +572,33 @@
             "D. 1 个 Q 与 2 个 R, 1 个 P 与 1 个 S"
           ],
           "answer": 2,
-          "explanation": "【解析】：双受精为：1 个精子(R)与卵细胞(Q)结合形成受精卵；另 1 个精子(R)与 2 个极核(P)结合形成受精极核（胚乳核）。"
+          "explanation": "【解析】：被子植物双受精为：1 个精子(R)与卵细胞(Q)结合形成受精卵；另 1 个精子(R)与 2 个极核(P)结合形成受精极核。"
         }
-      ]
+      ],
+      "subjectives": []
     },
     {
-      "title": "第五节：分子遗传与核酸机制",
+      "id": "chap13",
+      "title": "第13章：细胞分裂",
+      "mcqs": [
+        {
+          "q": "女性的卵细胞什么时候进入并完成减数第二次分裂？",
+          "options": ["A. 胎儿期", "B. 青春期", "C. 排卵时", "D. 受精时"],
+          "answer": 3,
+          "explanation": "【解析】：排卵时次级卵母细胞停留在减数第二次分裂中期（M II），只有受精刺激后才被激活完成减数第二次分裂。"
+        }
+      ],
+      "subjectives": []
+    },
+    {
+      "id": "chap14",
+      "title": "第14章：遗传的物质基础",
       "mcqs": [
         {
           "q": "小麦细胞内所含核酸、核苷酸、碱基的种类分别有__________种。",
-          "options": [
-            "A. 1、4、4",
-            "B. 2、5、5",
-            "C. 2、5、8",
-            "D. 2、8、5"
-          ],
+          "options": ["A. 1、4、4", "B. 2、5、5", "C. 2、5、8", "D. 2、8、5"],
           "answer": 3,
-          "explanation": "【解析】：小麦属于真核生物，细胞内核酸有 2 种（DNA、RNA）；核苷酸有 8 种（4种脱氧核苷酸 + 4种核糖核苷酸）；碱基共有 5 种（A、T、C、G、U）。"
+          "explanation": "【解析】：真核细胞含核酸 2 种（DNA、RNA）；核苷酸 8 种（4种脱氧+4种核糖）；碱基 5 种（A、T、C、G、U）。"
         },
         {
           "q": "如果一个基因的中部缺失了 1 个核苷酸对，不可能的后果是__________。",
@@ -599,7 +609,7 @@
             "D. 翻译的蛋白质中，缺失部位以后的氨基酸序列发生变化"
           ],
           "answer": 0,
-          "explanation": "【解析】：缺失中部碱基会导致移码突变或提前终止，但启动子和起始密码子完好，依然会转录翻译出多肽链产物，不可能完全“没有蛋白质产物”。"
+          "explanation": "【解析】：缺失中部碱基会导致移码或提前终止，但起始密码子正常，依然会翻译出肽链产物，不可能完全“没有蛋白质产物”。"
         },
         {
           "q": "有关真核细胞 DNA 复制和转录这两种过程的叙述，错误的是__________。",
@@ -610,74 +620,48 @@
             "D. 两种过程都以 DNA 为模板"
           ],
           "answer": 2,
-          "explanation": "【解析】：转录合成的是 RNA，所用原料为核糖核苷酸（NTP），而不是脱氧核糖核苷酸（dNTP）。"
+          "explanation": "【解析】：转录合成 RNA，原料是核糖核苷酸（NTP），而非脱氧核糖核苷酸（dNTP）。"
         },
         {
-          "q": "基因型为 AaBbCcDD 的二倍体生物，可产生__________种不同基因型的配子种类。",
-          "options": [
-            "A. 2",
-            "B. 4",
-            "C. 8",
-            "D. 16"
-          ],
-          "answer": 2,
-          "explanation": "【解析】：各对等位基因独立遗传，配子种类数 = 2(Aa) × 2(Bb) × 2(Cc) × 1(DD) = 8 种。"
+          "q": "如果对某 DNA 分子进行标记，此 DNA 连续复制四次，那么第四次复制后的 DNA 中，含有标记链的 DNA 占__________。",
+          "options": ["A. 1/16", "B. 1/8", "C. 1/4", "D. 1/2"],
+          "answer": 1,
+          "explanation": "【解析】：连续复制 4 次产生 16 个 DNA 分子。根据半保留复制，亲代两条标记链分配到 2 个子代分子中，占 2/16 = 1/8。"
         },
         {
           "q": "具有 100 个碱基对的一个 DNA 分子区段，内含 40 个胸腺嘧啶，如果复制 2 次，则需要游离的胞嘧啶脱氧核苷酸数为__________。",
-          "options": [
-            "A. 60 个",
-            "B. 80 个",
-            "C. 120 个",
-            "D. 180 个"
-          ],
+          "options": ["A. 60 个", "B. 80 个", "C. 120 个", "D. 180 个"],
           "answer": 3,
-          "explanation": "【解析】：总碱基数 = 200，T = 40，则 A = 40，C = G = (200 - 80) / 2 = 60 个。复制 2 次净增 3 个 DNA 分子，消耗游离胞嘧啶 = 3 × 60 = 180 个。"
-        }
-      ]
-    }
-  ],
-  "subjective_sections": [
-    {
-      "title": "第一节：消化系统结构与消化液推断",
-      "questions": [
+          "explanation": "【解析】：总碱基=200，T=40，则 A=40，C=G=(200-80)/2=60 个。复制 2 次净增 3 个 DNA 分子，消耗游离胞嘧啶 = 3 × 60 = 180 个。"
+        },
         {
-          "id": "subj_1",
-          "question": "图 2 是人体的消化系统结构示意图，请回答下列各题：\n(1) 用标号 A 到 J 回答下列各题：\n  (I) 脂肪开始被消化是位于哪一个部位？\n  (II) 蛋白质开始被消化是位于哪一个部位？\n  (III) 淀粉开始被消化是位于哪一个部位？\n(2) 在一次分析中，有四种消化液 I, II, III 和 IV。已知：\n  - 消化液 III 和 IV 都不含促使多肽水解的酶；\n  - 只有消化液 I 和消化液 III 能消化淀粉；\n  - 消化液 II 的 pH 值很低；\n  - 在消化液 I 和消化液 III 分别加入等量的消化液 IV 后，消化液 I 与 IV 的混合液能消化脂肪，消化液 III 与 IV 的混合液不能。\n  请写出这四种消化液的名称。\n(3) 写出部位 J (小肠) 有利于吸收营养的其中三个特征。",
-          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 消化起始部位标号：</strong><br>• (I) 脂肪开始被消化部位：<span class=\"hl-mark-yellow\">J (小肠)</span><br>• (II) 蛋白质开始被消化部位：<span class=\"hl-mark-yellow\">H (胃)</span><br>• (III) 淀粉开始被消化部位：<span class=\"hl-mark-yellow\">A (口腔)</span><br><br><strong>(2) 四种消化液名称推断：</strong><br>• <strong>消化液 I</strong>：<span class=\"hl-mark-green\">胰液（或肠液）</span>（含淀粉酶、脂肪酶和蛋白酶）<br>• <strong>消化液 II</strong>：<span class=\"hl-mark-pink\">胃液</span>（pH值极低，含胃酸与胃蛋白酶）<br>• <strong>消化液 III</strong>：<span class=\"hl-mark-green\">唾液</span>（含唾液淀粉酶，但不含脂肪酶）<br>• <strong>消化液 IV</strong>：<span class=\"hl-mark-yellow\">胆汁</span>（不含消化酶，能乳化脂肪协助消化）<br><br><strong>(3) 部位 J (小肠) 有利于吸收营养的特征（任写三点即可）：</strong><br>1. 小肠长约 5~6 米，食物停留时间长，<span class=\"hl-mark-green\">吸收时间充分</span>。<br>2. 内表面有环形皱襞和小肠绒毛，<span class=\"hl-mark-yellow\">极大增加了吸收表面积</span>。<br>3. 绒毛壁和毛细血管壁均很薄，<span class=\"hl-mark-pink\">仅由一层上皮细胞构成</span>。<br>4. 绒毛内富含<span class=\"hl-mark-green\">毛细血管和毛细淋巴管（乳糜管）</span>，利于营养快速转运。"
+          "q": "一段多核苷酸链中的碱基组成为 30% A、30% C、20% G、20% T。它是一__________。",
+          "options": ["A. 双链 DNA", "B. 单链 DNA", "C. 双链 RNA", "D. 单链 RNA"],
+          "answer": 1,
+          "explanation": "【解析】：含 T 表明为 DNA。因单链中 A(30%) ≠ T(20%)，不符合双链互补规律，因此是一条单链 DNA。"
         }
-      ]
-    },
-    {
-      "title": "第二节：循环系统血压与含氧量变化分析",
-      "questions": [
+      ],
+      "subjectives": [
         {
-          "id": "subj_2",
-          "question": "在哺乳动物的某段循环途径中，从心脏流出的血液顺次流经三种血管 A、B、C，始流回心脏。图 3 曲线图显示当血液流经血管 A、B、C 时，血液含氧量与血压的变化。\n(1) 当血液流经血管 B 时，血液含氧量有什么变化？这变化能在哪一个器官内发生？\n(2) 写出血管 C 的名称。血液自血管 C 流入心脏的哪一个心腔？\n(3) 列表比较血管 A 和血管 C 在结构上的两个不同点。",
-          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 含氧量变化与发生器官：</strong><br>• <strong>含氧量变化</strong>：血液流经血管 B 时，<span class=\"hl-mark-yellow\">含氧量显著增加（静脉血转变成动脉血）</span>。<br>• <strong>发生器官</strong>：在 <span class=\"hl-mark-green\">肺（肺泡毛细血管网）</span> 内发生。<br><br><strong>(2) 血管名称与回流心腔：</strong><br>• <strong>血管 C 名称</strong>：<span class=\"hl-mark-yellow\">肺静脉</span>。<br>• <strong>流入心腔</strong>：流入心脏的 <span class=\"hl-mark-pink\">左心房</span>。<br><br><strong>(3) 血管 A（肺动脉）与血管 C（肺静脉）的结构差异：</strong><br>1. <strong>管壁厚薄与弹性</strong>：血管 A <span class=\"hl-mark-green\">管壁较厚、弹性大</span>；血管 C <span class=\"hl-mark-yellow\">管壁较薄、弹性小</span>。<br>2. <strong>管腔大小</strong>：血管 A <span class=\"hl-mark-pink\">管腔较小</span>；血管 C <span class=\"hl-mark-green\">管腔相对较大</span>。"
-        }
-      ]
-    },
-    {
-      "title": "第三节：基因自由组合定律与遗传育种",
-      "questions": [
-        {
-          "id": "subj_3",
-          "question": "麦抗锈病 (T) 对易染病 (t) 为显性，易倒伏 (D) 对抗倒伏 (d) 为显性。两对等位基因独立遗传。现用抗病易倒伏纯种和易染病抗倒伏纯种杂交，培育既抗病又抗倒伏的高产品种。\n(1) 子一代自交产生子二代，写出子一代的基因型和表现型。\n(2) 试写出子二代的所有表现型及其比例。\n(3) 写出子二代中抗病又抗倒伏个体中的基因型和所占概率。",
-          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 子一代 (F1) 基因型与表现型：</strong><br>• <strong>F1 基因型</strong>：<span class=\"hl-mark-yellow\">TtDd</span><br>• <strong>F1 表现型</strong>：<span class=\"hl-mark-green\">抗病易倒伏</span><br><br><strong>(2) 子二代 (F2) 表现型比例：</strong><br>• 抗病易倒伏 (T_D_) : <span class=\"hl-mark-yellow\">9/16</span><br>• 抗病抗倒伏 (T_dd) : <span class=\"hl-mark-green\">3/16</span><br>• 易染病易倒伏 (ttD_) : <span class=\"hl-mark-pink\">3/16</span><br>• 易染病抗倒伏 (ttdd) : <span class=\"hl-mark-yellow\">1/16</span><br><br><strong>(3) 抗病抗倒伏个体基因型与概率：</strong><br>• <strong>基因型</strong>：<span class=\"hl-mark-yellow\">TTdd 和 Ttdd</span>。<br>• <strong>概率</strong>：占 F2 全部的 <span class=\"hl-mark-green\">3/16</span>（其中纯合子 TTdd 占 1/16，杂合子 Ttdd 占 2/16）。"
-        }
-      ]
-    },
-    {
-      "title": "第四节：遗传信息传递与逆转录模拟实验",
-      "questions": [
-        {
-          "id": "subj_4",
+          "id": "subj_virus_dogma",
           "question": "为研究某病毒致病过程，实验室做了如图模拟实验：\n(1) 从病毒分离得到单链大分子 A，碱基序列为 -GAACAUGUU-。加入试管甲反应后得到产物 X，其碱基序列是 -CTTGTACAA-。试管甲模拟什么过程？\n(2) 将提纯产物 X 加入试管乙，得到能与核糖体结合的单链大分子 Y。产物 Y 是什么？试管乙模拟什么过程？\n(3) 将产物 Y 加入试管丙，反应得到组成该病毒外壳的化合物 Z。产物 Z 是什么？\n(4) 写出该病毒遗传信息的传递过程。",
-          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 试管甲模拟过程：</strong><br>• 物质 A 含 U 为单链 RNA，产物 X 含 T 为单链 DNA。<br>• 试管甲模拟以 RNA 为模板合成 DNA 的 <span class=\"hl-mark-yellow\">逆转录过程 (Reverse Transcription)</span>。<br><br><strong>(2) 产物 Y 与试管乙模拟过程：</strong><br>• <strong>产物 Y</strong>：能与核糖体结合的单链大分子为 <span class=\"hl-mark-green\">mRNA（信使 RNA）</span>。<br>• <strong>试管乙模拟过程</strong>：以 DNA 为模板合成 RNA 的 <span class=\"hl-mark-pink\">转录过程 (Transcription)</span>。<br><br><strong>(3) 产物 Z 名称：</strong><br>• 病毒外壳化合物是 <span class=\"hl-mark-yellow\">蛋白质 (衣壳蛋白)</span>，试管丙模拟翻译过程。<br><br><strong>(4) 遗传信息传递途径（中心法则）：</strong><br>• 传递过程：<span class=\"hl-mark-green\">RNA → DNA → RNA → 蛋白质</span>。"
+          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 试管甲模拟过程：</strong><br>• 物质 A 含 U 为单链 RNA，产物 X 含 T 为单链 DNA；<br>• 试管甲模拟以 RNA 为模板合成 DNA 的 <span class=\"hl-mark-yellow\">逆转录过程 (Reverse Transcription)</span>。<br><br><strong>(2) 产物 Y 与试管乙过程：</strong><br>• 产物 Y：与核糖体结合的单链大分子为 <span class=\"hl-mark-green\">mRNA（信使 RNA）</span>；<br>• 试管乙模拟过程：以 DNA 为模板合成 RNA 的 <span class=\"hl-mark-pink\">转录过程 (Transcription)</span>。<br><br><strong>(3) 产物 Z 名称：</strong><br>• 病毒外壳化合物为 <span class=\"hl-mark-yellow\">蛋白质（衣壳蛋白）</span>，试管丙模拟翻译过程。<br><br><strong>(4) 遗传信息传递途径（中心法则）：</strong><br>• 传递链：<span class=\"hl-mark-green\">RNA → DNA → RNA → 蛋白质</span>。"
         }
       ]
-    }
-  ]
-}
-
+    },
+    {
+      "id": "chap15",
+      "title": "第15章：基因与遗传的定律",
+      "mcqs": [
+        {
+          "q": "基因型为 AaBbCcDD 的二倍体生物，可产生__________种不同基因型的配子种类。",
+          "options": ["A. 2", "B. 4", "C. 8", "D. 16"],
+          "answer": 2,
+          "explanation": "【解析】：配子种类数 = 2(Aa) × 2(Bb) × 2(Cc) × 1(DD) = 8 种。"
+        },
+        {
+          "q": "将基因型为 AaBbCc 和 AABbcc 的向日葵杂交，按照自由组合定律规律，后代中基因型为 AABBCc 的个体比例为__________。",
+          "options": ["A. 1/2", "B. 1/4", "C. 1/8", "D. 1/16"],
+          "answer": 3,
+          "explanation": "【解析】：Aa×AA 生成 AA 为 1/2；Bb×Bb 生成 BB 为 1/4；Cc×cc 生成 Cc 为 1/2。总概率 = 1/2 × 1/4 × 1/2 = 1/16。"
+        },
