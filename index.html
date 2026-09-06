@@ -483,19 +483,69 @@
     document.getElementById(viewId).classList.add('active');
   }
 
+   // 智能多路径读取与自愈加载器
   async function loadData() {
-    try {
-      const res = await fetch('/papers/biology_question_bank.json');
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.sections) {
-          fullDatabase = data;
+    // 依次尝试：1. 子目录路径  2. 相对子目录路径  3. 根目录备用路径
+    const candidatePaths = [
+      '/papers/biology_question_bank.json',
+      'papers/biology_question_bank.json',
+      './biology_question_bank.json'
+    ];
+
+    let loaded = false;
+    let lastError = '';
+
+    for (const path of candidatePaths) {
+      try {
+        const res = await fetch(path);
+        if (res.ok) {
+          const data = await res.json();
+          
+          // 结构自适应：无论 JSON 是 sections 还是 mcq_sections，均自动统一
+          if (data && (data.sections || data.mcq_sections)) {
+            if (data.sections) {
+              fullDatabase = data;
+            } else {
+              fullDatabase = {
+                sections: data.mcq_sections.map((m, i) => ({
+                  id: 'chap' + (i + 1),
+                  title: m.title,
+                  mcqs: m.mcqs || [],
+                  subjectives: []
+                }))
+              };
+            }
+            loaded = true;
+            console.log('✅ 成功从路径载入题库:', path);
+            break;
+          }
+        } else {
+          lastError = `HTTP ${res.status}: 无法找到 ${path}`;
         }
+      } catch (err) {
+        lastError = `JSON解析失败或网络异常: ${err.message}`;
       }
-    } catch (e) {
-      console.log('采用默认章节结构。');
+    }
+
+    if (!loaded) {
+      console.warn('⚠️ 题库载入失败，原因:', lastError);
+      // 若加载失败，在控制台和主界面给予清晰红字提示，告别无声白屏
+      const area = document.getElementById('activeStudyArea');
+      if (area) {
+        area.innerHTML = `
+          <div style="background:#fef2f2; border:1px solid #f87171; color:#991b1b; padding:18px; border-radius:12px; margin-top:20px;">
+            <strong>⚠️ 题库读取失败提示：</strong><br>
+            系统尝试了 <code>/papers/biology_question_bank.json</code> 等路径均未成功。<br>
+            <strong>错误信息：</strong> ${lastError}<br><br>
+            <small>请排查：<br>
+            1. GitHub 上的 <code>papers</code> 文件夹大小写（是否大写了 P）；<br>
+            2. JSON 文件内是否有多余逗号导致的语法错误。</small>
+          </div>
+        `;
+      }
     }
   }
+
 
   function renderChapterRail() {
     const rail = document.getElementById('chapterRail');
