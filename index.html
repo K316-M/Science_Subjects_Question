@@ -319,12 +319,12 @@
         <div class="subject-title">生物 (Biology)</div>
         <div class="subject-desc">光合呼吸、神经调节、生殖发育与遗传育种</div>
       </div>
-      <div class="subject-card" style="opacity: 0.6; cursor: not-allowed;">
+      <div class="subject-card" onclick="openSubject('chemistry')">
         <div class="subject-icon">🧪</div>
         <div class="subject-title">化学 (Chemistry)</div>
         <div class="subject-desc">整理中</div>
       </div>
-      <div class="subject-card" style="opacity: 0.6; cursor: not-allowed;">
+      <div class="subject-card" onclick="openSubject('physics')">
         <div class="subject-icon">⚡</div>
         <div class="subject-title">物理 (Physics)</div>
         <div class="subject-desc">整理中</div>
@@ -465,18 +465,67 @@
     document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>`;
   }
 
-  function openSubject(subject) {
-    if (subject === 'biology') {
-      playSound('pop');
-      showView('viewStudy');
-      document.getElementById('breadcrumbNav').innerHTML = `
-        <span class="breadcrumb-item" onclick="navigateHome()">学科选择</span> &gt;
-        <span class="breadcrumb-item active">生物科</span>
-      `;
+  // 全局当前科目变量（放在脚本顶部与其他 let 变量同一处）
+let currentSubject = 'biology';
+
+// 支持根据当前选中的学科，动态载入对应的题库
+async function loadSubjectData(subjectName) {
+  currentSubject = subjectName; // 'biology' | 'chemistry' | 'physics' 等
+  const targetPath = `/papers/${subjectName}_question_bank.json`;
+
+  try {
+    const res = await fetch(targetPath);
+    if (res.ok) {
+      const data = await res.json();
+
+      // 结构自适应：无论 JSON 是 sections 还是 mcq_sections，均自动统一
+      if (data && (data.sections || data.mcq_sections)) {
+        if (data.sections) {
+          fullDatabase = data;
+        } else {
+          fullDatabase = {
+            sections: data.mcq_sections.map((m, i) => ({
+              id: 'chap' + (i + 1),
+              title: m.title || `第${i+1}章`,
+              mcqs: m.mcqs || [],
+              subjectives: m.subjectives || []
+            }))
+          };
+        }
+      } else {
+        console.warn(`载入的 ${targetPath} 格式不符合预期，使用默认空题库。`);
+        fullDatabase = DEFAULT_DATABASE;
+      }
+
+      // 更新界面
       renderChapterRail();
       renderActiveContent();
+      console.log(`✅ 从 ${targetPath} 载入题库成功`);
+      return;
+    } else {
+      console.warn(`HTTP ${res.status}：未找到 ${targetPath}`);
     }
+  } catch (err) {
+    console.warn(`读取 ${targetPath} 失败：${err.message}`);
   }
+
+  // 失败时回退到默认（并更新界面）
+  fullDatabase = DEFAULT_DATABASE;
+  renderChapterRail();
+  renderActiveContent();
+}
+
+// 用更通用的 openSubject 替换原有仅处理 biology 的实现
+function openSubject(subject) {
+  playSound('pop');
+  showView('viewStudy');
+  document.getElementById('breadcrumbNav').innerHTML = `
+    <span class="breadcrumb-item" onclick="navigateHome()">学科选择</span> &gt;
+    <span class="breadcrumb-item active">${subject === 'biology' ? '生物科' : subject}</span>
+  `;
+  // 动态载入对应题库并渲染（loadSubjectData 会在加载后调用 render）
+  loadSubjectData(subject);
+}
 
   function showView(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
