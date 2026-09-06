@@ -665,3 +665,44 @@
           "answer": 3,
           "explanation": "【解析】：Aa×AA 生成 AA 为 1/2；Bb×Bb 生成 BB 为 1/4；Cc×cc 生成 Cc 为 1/2。总概率 = 1/2 × 1/4 × 1/2 = 1/16。"
         },
+{
+          "q": "已知一株玉米植株的基因型为 aabb，其周围虽生长有其他基因型的玉米植株，但其子代不可能出现的基因型是__________。",
+          "options": ["A. AABB", "B. aabb", "C. AaBb", "D. aaBb"],
+          "answer": 0,
+          "explanation": "【解析】：母本 aabb 只能产生 ab 配子，无论外来父本花粉提供何种显性基因，子代至少含隐性基因 ab，绝不可能出现双显性纯合子 AABB。"
+        }
+      ],
+      "subjectives": [
+        {
+          "id": "subj_mendel_breeding",
+          "question": "麦抗锈病 (T) 对易染病 (t) 为显性，易倒伏 (D) 对抗倒伏 (d) 为显性。两对等位基因独立遗传。现用抗病易倒伏纯种 (TTDD) 和易染病抗倒伏纯种 (ttdd) 杂交，培育既抗病又抗倒伏的高产品种。\n(1) 子一代自交产生子二代，写出子一代的基因型和表现型。\n(2) 试写出子二代的所有表现型及其比例。\n(3) 写出子二代中抗病又抗倒伏个体中的基因型和所占概率。",
+          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 子一代 (F1) 基因型与表现型：</strong><br>• F1 基因型：<span class=\"hl-mark-yellow\">TtDd</span><br>• F1 表现型：<span class=\"hl-mark-green\">抗病易倒伏</span><br><br><strong>(2) 子二代 (F2) 表现型比例：</strong><br>• 抗病易倒伏 ($T\\_D\\_$) : <span class=\"hl-mark-yellow\">9/16</span><br>• 抗病抗倒伏 ($T\\_dd$) : <span class=\"hl-mark-green\">3/16</span><br>• 易染病易倒伏 ($ttD\\_$) : <span class=\"hl-mark-pink\">3/16</span><br>• 易染病抗倒伏 ($ttdd$) : <span class=\"hl-mark-yellow\">1/16</span><br><br><strong>(3) 抗病抗倒伏个体基因型与概率：</strong><br>• 基因型：<span class=\"hl-mark-yellow\">TTdd 和 Ttdd</span>；<br>• 概率：占 F2 全部的 <span class=\"hl-mark-green\">3/16</span>（其中纯合子 TTdd 占 1/16，杂合子 Ttdd 占 2/16）。"
+        }
+      ]
+    },
+    {
+      "id": "chap16",
+      "title": "第16章：应用遗传学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap17",
+      "title": "第17章：生物多样性",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap18",
+      "title": "第18章：细菌与病毒",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap19",
+      "title": "第19章：演化",
+      "mcqs": [],
+      "subjectives": []
+    }
+  ]
+}
