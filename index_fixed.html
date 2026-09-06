@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="zh-MY">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>独中理科自主学习系统 · 生物科</title>
+
+  <style>
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --primary-light: #ecfdf5;
+      --primary-border: #a7f3d0;
+      --bg-nature: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #f7fee7 100%);
+      --card-bg: rgba(255, 255, 255, 0.94);
+      --card-border: rgba(226, 232, 240, 0.95);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --success: #10b981;
+      --danger: #ef4444;
+      --hl-yellow: #fef08a;
+      --hl-green: #bbf7d0;
+      --hl-pink: #fbcfe8;
+      --shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 12px 26px -6px rgba(5, 150, 105, 0.16);
+      --shadow-form: 0 10px 25px -5px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-nature);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sound-toggle {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .sound-toggle:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .breadcrumbs {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .breadcrumb-item {
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .breadcrumb-item:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+      color: var(--text-main);
+      font-weight: 700;
+      cursor: default;
+      text-decoration: none;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+      animation: softFadeIn 0.25s ease;
+    }
+
+    @keyframes softFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .grid-subjects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .subject-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px 18px;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .subject-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+      background: #fff;
+    }
+
+    .subject-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    .subject-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+
+    .subject-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .bookmark-rail {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 6px 4px 18px;
+      margin-bottom: 12px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .bookmark-rail::-webkit-scrollbar {
+      display: none;
+    }
+
+    .bookmark-card {
+      flex: 0 0 115px;
+      height: 130px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .bookmark-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .bookmark-card.active {
+      background: #fff;
+      border-color: var(--primary);
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+      border-width: 2px;
+    }
+
+    .bookmark-card.active::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      width: 14px;
+      height: 4px;
+      background: var(--primary);
+      border-radius: 4px;
+    }
+
+    .bookmark-card.empty {
+      opacity: 0.5;
+    }
+
+    .bm-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+
+    .bm-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      text-align: center;
+      line-height: 1.35;
+      margin: 4px 0;
+    }
+
+    .bm-count {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .section-header {
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.5;
+    }
+
+    .section-count {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 700;
+      background: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    .practice-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .practice-tab {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .practice-tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .flashcard {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mcq-question {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      white-space: pre-line;
+      color: #1e293b;
+    }
+
+    .figure-container {
+      margin: 12px 0 18px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .figure-container.has-image {
+      cursor: zoom-in;
+    }
+
+    .figure-container img {
+      max-width: 100%;
+      max-height: 360px;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      transition: transform 0.2s;
+    }
+
+    .figure-container img:hover {
+      transform: scale(1.02);
+    }
+
+    .figure-caption {
+      font-size: 12px;
+      color: var(--accent);
+      margin-top: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .mcq-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      color: #334155;
+      text-align: left;
+      padding: 13px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1.5;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(.disabled) {
+      border-color: var(--primary);
+      background: #f0fdf4;
+      transform: translateX(3px);
+    }
+
+    .option-btn.correct {
+      background: #ecfdf5;
+      border-color: var(--success);
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    .option-btn.wrong {
+      background: #fef2f2;
+      border-color: var(--danger);
+      color: #991b1b;
+    }
+
+    .option-btn.disabled {
+      cursor: default;
+    }
+
+    .explanation {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: #f0fdf4;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #166534;
+      border-left: 4px solid var(--primary);
+      display: none;
+      white-space: pre-line;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .btn-nav,
+    .hl-btn-action {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 7px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn-nav:hover:not(:disabled),
+    .hl-btn-action:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .hl-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hl-color-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .hl-color-btn.selected {
+      border-color: #0f172a;
+      transform: scale(1.18);
+    }
+
+    .subjective-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .subjective-question {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+
+    .subjective-answer {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1.5px dashed #cbd5e1;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #334155;
+    }
+
+    .hl-mark-yellow {
+      background-color: var(--hl-yellow);
+      color: #854d0e;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .hl-mark-green {
+      background-color: var(--hl-green);
+      color: #166534;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .hl-mark-pink {
+      background-color: var(--hl-pink);
+      color: #9d174d;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    .status-toast {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 600;
+      margin-left: auto;
+    }
+
+    .loading-card,
+    .error-card,
+    .empty-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px 22px;
+      box-shadow: var(--shadow-sm);
+      line-height: 1.7;
+    }
+
+    .error-card {
+      border-color: #fecaca;
+      background: #fffafa;
+    }
+
+    .error-title {
+      color: #b91c1c;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .error-detail {
+      color: #475569;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .img-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .img-modal.active {
+      display: flex;
+      animation: softFadeIn 0.2s ease;
+    }
+
+    .img-modal img {
+      max-width: 95%;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 16px 10px;
+      }
+
+      header {
+        align-items: flex-start;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .header-actions {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      .flashcard,
+      .subjective-box {
+        padding: 17px;
+      }
+
+      .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">🌱 独中理科自主学习系统</div>
+
+      <div class="header-actions">
+        <button class="sound-toggle" id="soundBtn" type="button" onclick="toggleSound()">
+          🔊 音效：开
+        </button>
+
+        <div class="breadcrumbs" id="breadcrumbNav">
+          <span class="breadcrumb-item active">学科选择</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==================== 学科选择 ==================== -->
+    <div id="viewSubjects" class="view active">
+      <h2 style="font-size:22px;font-weight:800;color:#1e293b;">
+        选择学习学科
+      </h2>
+
+      <p style="color:var(--text-muted);margin-top:4px;font-size:14px;">
+        请选择董总华文独中高中统考科目：
+      </p>
+
+      <div class="grid-subjects">
+        <div class="subject-card" onclick="openSubject('biology')">
+          <div class="subject-icon">🌿</div>
+          <div class="subject-title">生物 (Biology)</div>
+          <div class="subject-desc">
+            光合代谢、神经反射、生殖发育与分子遗传
+          </div>
+        </div>
+
+        <div class="subject-card" style="opacity:.6;cursor:not-allowed;">
+          <div class="subject-icon">🧪</div>
+          <div class="subject-title">化学 (Chemistry)</div>
+          <div class="subject-desc">整理中</div>
+        </div>
+
+        <div class="subject-card" style="opacity:.6;cursor:not-allowed;">
+          <div class="subject-icon">⚡</div>
+          <div class="subject-title">物理 (Physics)</div>
+          <div class="subject-desc">整理中</div>
+        </div>
+
+        <div class="subject-card" style="opacity:.6;cursor:not-allowed;">
+          <div class="subject-icon">📐</div>
+          <div class="subject-title">高级数学 (Adv. Maths)</div>
+          <div class="subject-desc">整理中</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 生物练习 ==================== -->
+    <div id="viewStudy" class="view">
+      <div class="practice-tabs">
+        <button
+          class="practice-tab active"
+          id="tabMcq"
+          type="button"
+          onclick="switchSectionType('mcq')">
+          🎴 选择题练习
+        </button>
+
+        <button
+          class="practice-tab"
+          id="tabSubj"
+          type="button"
+          onclick="switchSectionType('subj')">
+          📝 综合做答题（背书闪卡）
+        </button>
+      </div>
+
+      <div class="bookmark-rail" id="bookmarkRail"></div>
+
+      <div id="sectionContentArea">
+        <div class="loading-card">
+          正在加载生物题库……
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 图片放大 -->
+  <div class="img-modal" id="imgModal" onclick="closeImageModal(event)">
+    <img id="modalImg" src="" alt="放大考题图">
+  </div>
+
+  <script>
+    /*
+     * ==========================================================
+     *  生物题库系统
+     *
+     *  重要修复：
+     *  1. JSON 路径改为 ./papers/biology_question_bank.json
+     *  2. 正确读取 JSON 的 sections[].mcqs
+     *  3. 正确把 sections[].subjectives 合并成 subjective_sections
+     *  4. 只有一个 viewSubjects 和一个 viewStudy
+     *  5. 不再依赖不存在的 switchSubSection()
+     *  6. 图片路径以 papers/biology_question_bank.json 为基准解析
+     *  7. JSON 加载完成后才渲染正式题库
+     * ==========================================================
+     */
+
+    const DATA_URL = './papers/biology_question_bank.json';
+    const HL_STORAGE_KEY = 'UEC_BIO_HL_STORE_V8';
+
+    let fullDatabase = {
+      mcq_sections: [],
+      subjective_sections: []
+    };
+
+    let dataReady = false;
+    let dataError = null;
+
+    let activeSectionType = 'mcq';
+    let activeSectionIdx = 0;
+    let currentMcqIdx = 0;
+    let currentColor = 'yellow';
+
+    // ==========================================================
+    // 音效
+    // ==========================================================
+
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+      if (audioCtx) return;
+
+      const AudioContext =
+        window.AudioContext || window.webkitAudioContext;
+
+      if (!AudioContext) return;
+
+      audioCtx = new AudioContext();
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+
+      const btn = document.getElementById('soundBtn');
+      if (btn) {
+        btn.innerText = soundEnabled
+          ? '🔊 音效：开'
+          : '🔇 音效：关';
+      }
+
+      if (soundEnabled) {
+        playSound('pop');
+      }
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+
+      try {
+        initAudio();
+        if (!audioCtx) return;
+
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const t = audioCtx.currentTime;
+
+        if (type === 'pop') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.frequency.setValueAtTime(450, t);
+          osc.frequency.exponentialRampToValueAtTime(800, t + 0.07);
+
+          gain.gain.setValueAtTime(0.12, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.07);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.07);
+
+        } else if (type === 'correct') {
+          [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, t + i * 0.06);
+
+            gain.gain.setValueAtTime(0, t + i * 0.06);
+            gain.gain.linearRampToValueAtTime(
+              0.18,
+              t + i * 0.06 + 0.02
+            );
+            gain.gain.exponentialRampToValueAtTime(
+              0.001,
+              t + i * 0.06 + 0.3
+            );
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(t + i * 0.06);
+            osc.stop(t + i * 0.06 + 0.3);
+          });
+
+        } else if (type === 'wrong') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, t);
+          osc.frequency.linearRampToValueAtTime(190, t + 0.16);
+
+          gain.gain.setValueAtTime(0.1, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.16);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.16);
+
+        } else if (type === 'flip') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.frequency.setValueAtTime(340, t);
+          osc.frequency.exponentialRampToValueAtTime(620, t + 0.05);
+
+          gain.gain.setValueAtTime(0.08, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.05);
+        }
+      } catch (e) {
+        // 音效失败不应影响题库功能
+      }
+    }
+
+    // ==========================================================
+    // 页面导航
+    // ==========================================================
+
+    function showView(viewId) {
+      document.querySelectorAll('.view').forEach(view => {
+        view.classList.remove('active');
+      });
+
+      const target = document.getElementById(viewId);
+
+      if (target) {
+        target.classList.add('active');
+      }
+    }
+
+    function navigateHome() {
+      playSound('flip');
+
+      showView('viewSubjects');
+
+      document.getElementById('breadcrumbNav').innerHTML =
+        '<span class="breadcrumb-item active">学科选择</span>';
+    }
+
+    async function openSubject(subject) {
+      if (subject !== 'biology') return;
+
+      playSound('pop');
+
+      showView('viewStudy');
+
+      document.getElementById('breadcrumbNav').innerHTML = `
+        <span class="breadcrumb-item" onclick="navigateHome()">学科选择</span>
+        &gt;
+        <span class="breadcrumb-item active">生物科</span>
+      `;
+
+      if (!dataReady) {
+        document.getElementById('sectionContentArea').innerHTML = `
+          <div class="loading-card">
+            正在加载生物题库……
+          </div>
+        `;
+
+        await loadData();
+      }
+
+      if (dataError) {
+        renderDataError();
+        return;
+      }
+
+      renderBookmarks();
+      renderActiveSection();
+    }
+
+    // ==========================================================
+    // 读取 JSON
+    // ==========================================================
+
+    async function loadData() {
+      if (dataReady) return;
+
+      try {
+        console.log('[Biology] 正在加载题库：', DATA_URL);
+
+        const response = await fetch(DATA_URL, {
+          cache: 'no-store'
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `HTTP ${response.status}：无法读取 ${DATA_URL}`
+          );
+        }
+
+        const data = await response.json();
+
+        if (!data || !Array.isArray(data.sections)) {
+          throw new Error(
+            'JSON 格式错误：找不到 sections 数组。'
+          );
+        }
+
+        /*
+         * 你的实际 JSON 结构：
+         *
+         * sections[]
+         *   ├─ mcqs[]
+         *   └─ subjectives[]
+         *
+         * 而页面内部使用：
+         *
+         * mcq_sections[]
+         * subjective_sections[]
+         */
+
+        const mcqSections = data.sections
+          .map((section, index) => ({
+            id: section.id || `section_${index + 1}`,
+            title: section.title || `第 ${index + 1} 节`,
+            mcqs: Array.isArray(section.mcqs)
+              ? section.mcqs
+              : []
+          }));
+
+        const subjectiveSections = [];
+
+        data.sections.forEach((section, sectionIndex) => {
+          if (!Array.isArray(section.subjectives)) return;
+
+          if (section.subjectives.length === 0) return;
+
+          subjectiveSections.push({
+            id: `${section.id || `section_${sectionIndex + 1}`}_subjectives`,
+            title: section.title || `第 ${sectionIndex + 1} 章`,
+            questions: section.subjectives
+          });
+        });
+
+        fullDatabase = {
+          mcq_sections: mcqSections,
+          subjective_sections: subjectiveSections
+        };
+
+        dataReady = true;
+        dataError = null;
+
+        console.log(
+          '[Biology] 题库加载成功：',
+          mcqSections.length,
+          '章节；',
+          subjectiveSections.reduce(
+            (sum, sec) => sum + sec.questions.length,
+            0
+          ),
+          '道综合题。'
+        );
+
+      } catch (error) {
+        dataError = error;
+        dataReady = false;
+
+        console.error('[Biology] 题库加载失败：', error);
+      }
+    }
+
+    function renderDataError() {
+      const area = document.getElementById('sectionContentArea');
+
+      area.innerHTML = `
+        <div class="error-card">
+          <div class="error-title">
+            ⚠️ 生物题库加载失败
+          </div>
+
+          <div class="error-detail">
+${escapeHtml(dataError ? dataError.message : '未知错误')}
+
+请确认 GitHub 项目结构为：
+
+Science_Subjects_Question/
+├── index.html
+└── papers/
+    └── biology_question_bank.json
+
+并确认文件名称完全一致（包括大小写）。
+          </div>
+
+          <div style="margin-top:16px;">
+            <button class="btn-nav" onclick="retryLoadData()">
+              🔄 重新加载
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function retryLoadData() {
+      dataReady = false;
+      dataError = null;
+
+      document.getElementById('sectionContentArea').innerHTML = `
+        <div class="loading-card">
+          正在重新加载生物题库……
+        </div>
+      `;
+
+      await loadData();
+
+      if (dataError) {
+        renderDataError();
+        return;
+      }
+
+      renderBookmarks();
+      renderActiveSection();
+    }
+
+    // ==========================================================
+    // 选择题 / 综合题模式
+    // ==========================================================
+
+    function switchSectionType(type) {
+      if (!dataReady || dataError) return;
+
+      playSound('flip');
+
+      activeSectionType = type;
+      activeSectionIdx = 0;
+      currentMcqIdx = 0;
+
+      document.getElementById('tabMcq')
+        .classList.toggle('active', type === 'mcq');
+
+      document.getElementById('tabSubj')
+        .classList.toggle('active', type === 'subj');
+
+      renderBookmarks();
+      renderActiveSection();
+    }
+
+    // ==========================================================
+    // 章节书签
+    // ==========================================================
+
+    function renderBookmarks() {
+      const rail = document.getElementById('bookmarkRail');
+
+      if (!rail) return;
+
+      rail.innerHTML = '';
+
+      if (activeSectionType === 'mcq') {
+        const sections = fullDatabase.mcq_sections || [];
+
+        sections.forEach((section, index) => {
+          const count = Array.isArray(section.mcqs)
+            ? section.mcqs.length
+            : 0;
+
+          const card = document.createElement('div');
+
+          card.className =
+            'bookmark-card' +
+            (activeSectionIdx === index ? ' active' : '') +
+            (count === 0 ? ' empty' : '');
+
+          card.onclick = () => {
+            if (count === 0) return;
+
+            playSound('flip');
+
+            activeSectionIdx = index;
+            currentMcqIdx = 0;
+
+            renderBookmarks();
+            renderActiveSection();
+          };
+
+          const title = removeChapterPrefix(section.title);
+
+          card.innerHTML = `
+            <span class="bm-tag">
+              🔖 第 ${index + 1} 章
+            </span>
+
+            <div class="bm-name">
+              ${escapeHtml(title)}
+            </div>
+
+            <span class="bm-count">
+              ${count} 题
+            </span>
+          `;
+
+          rail.appendChild(card);
+        });
+
+      } else {
+        const sections =
+          fullDatabase.subjective_sections || [];
+
+        sections.forEach((section, index) => {
+          const count = Array.isArray(section.questions)
+            ? section.questions.length
+            : 0;
+
+          const card = document.createElement('div');
+
+          card.className =
+            'bookmark-card' +
+            (activeSectionIdx === index ? ' active' : '');
+
+          card.onclick = () => {
+            playSound('flip');
+
+            activeSectionIdx = index;
+
+            renderBookmarks();
+            renderActiveSection();
+          };
+
+          card.innerHTML = `
+            <span
+              class="bm-tag"
+              style="background:#fef08a;color:#854d0e;">
+              📝 综合题
+            </span>
+
+            <div class="bm-name">
+              ${escapeHtml(removeChapterPrefix(section.title))}
+            </div>
+
+            <span class="bm-count">
+              ${count} 题
+            </span>
+          `;
+
+          rail.appendChild(card);
+        });
+
+        if (sections.length === 0) {
+          rail.innerHTML = `
+            <div class="empty-card" style="width:100%;">
+              目前题库中还没有综合做答题。
+            </div>
+          `;
+        }
+      }
+    }
+
+    function removeChapterPrefix(title) {
+      return String(title || '')
+        .replace(/^第\s*\d+\s*章[：:\s]*/, '')
+        .replace(/^第\s*\d+\s*节[：:\s]*/, '');
+    }
+
+    // ==========================================================
+    // 当前内容
+    // ==========================================================
+
+    function renderActiveSection() {
+      const area =
+        document.getElementById('sectionContentArea');
+
+      if (!area) return;
+
+      area.innerHTML = '';
+
+      if (activeSectionType === 'mcq') {
+        renderMcqSection(area);
+      } else {
+        renderSubjectiveSection(area);
+      }
+    }
+
+    function renderMcqSection(area) {
+      const sections = fullDatabase.mcq_sections || [];
+      const section = sections[activeSectionIdx];
+
+      if (!section) {
+        area.innerHTML = `
+          <div class="empty-card">
+            找不到当前章节。
+          </div>
+        `;
+        return;
+      }
+
+      const mcqs = Array.isArray(section.mcqs)
+        ? section.mcqs
+        : [];
+
+      if (mcqs.length === 0) {
+        area.innerHTML = `
+          <div class="section-header">
+            <div class="section-title">
+              📌 ${escapeHtml(section.title)}
+            </div>
+          </div>
+
+          <div class="empty-card">
+            本章目前还没有选择题。
+          </div>
+        `;
+        return;
+      }
+
+      if (currentMcqIdx >= mcqs.length) {
+        currentMcqIdx = 0;
+      }
+
+      const item = mcqs[currentMcqIdx];
+
+      let figureHtml = '';
+
+      if (item.image) {
+        const imageUrl = resolveAssetUrl(item.image);
+
+        figureHtml = `
+          <div
+            class="figure-container has-image"
+            onclick='openImageModal(${escapeJsonForAttribute(imageUrl)})' >
+
+            <img
+              src="${escapeAttribute(imageUrl)}"
+              alt="考题高清图"
+              onerror="this.parentElement.style.display='none';">
+
+            <div class="figure-caption">
+              🔍 点击查看原图高清放大版
+            </div>
+          </div>
+        `;
+
+      } else if (item.figure) {
+        figureHtml = `
+          <div class="figure-container">
+            ${item.figure}
+
+            ${
+              item.caption
+                ? `<div class="figure-caption">
+                    ${escapeHtml(item.caption)}
+                   </div>`
+                : ''
+            }
+          </div>
+        `;
+      }
+
+      area.innerHTML = `
+        <div class="section-header">
+          <div class="section-title">
+            📌 ${escapeHtml(section.title)}
+          </div>
+
+          <div class="section-count">
+            第 ${currentMcqIdx + 1} / ${mcqs.length} 题
+          </div>
+        </div>
+
+        <div class="flashcard">
+
+          <div class="mcq-question">
+            ${escapeHtml(item.q || '')}
+          </div>
+
+          ${figureHtml}
+
+          <div class="mcq-options" id="activeOptBox"></div>
+
+          <div class="explanation" id="activeExpBox">
+            ${item.explanation || ''}
+          </div>
+
+          <div class="card-footer">
+            <button
+              class="btn-nav"
+              id="prevBtn"
+              onclick="navCurrentMcq(-1)"
+              ${currentMcqIdx === 0 ? 'disabled' : ''}>
+              ⬅️ 上一题
+            </button>
+
+            <button
+              class="btn-nav"
+              id="nextBtn"
+              onclick="navCurrentMcq(1)"
+              ${currentMcqIdx === mcqs.length - 1 ? 'disabled' : ''}>
+              下一题 ➡️
+            </button>
+          </div>
+
+        </div>
+      `;
+
+      const optBox =
+        document.getElementById('activeOptBox');
+
+      const expBox =
+        document.getElementById('activeExpBox');
+
+      const options = Array.isArray(item.options)
+        ? item.options
+        : [];
+
+      options.forEach((option, optionIndex) => {
+        const button = document.createElement('div');
+
+        button.className = 'option-btn';
+        button.innerText = option;
+
+        button.onclick = () => {
+          const isCorrect =
+            optionIndex === Number(item.answer);
+
+          playSound(isCorrect ? 'correct' : 'wrong');
+
+          optBox
+            .querySelectorAll('.option-btn')
+            .forEach((btn, index) => {
+              btn.classList.add('disabled');
+
+              if (index === Number(item.answer)) {
+                btn.classList.add('correct');
+              }
+
+              if (
+                index === optionIndex &&
+                optionIndex !== Number(item.answer)
+              ) {
+                btn.classList.add('wrong');
+              }
+            });
+
+          expBox.style.display = 'block';
+        };
+
+        optBox.appendChild(button);
+      });
+    }
+
+    function navCurrentMcq(delta) {
+      const section =
+        fullDatabase.mcq_sections[activeSectionIdx];
+
+      if (!section || !Array.isArray(section.mcqs)) return;
+
+      const newIndex = currentMcqIdx + delta;
+
+      if (
+        newIndex >= 0 &&
+        newIndex < section.mcqs.length
+      ) {
+        playSound('flip');
+
+        currentMcqIdx = newIndex;
+
+        renderActiveSection();
+
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    }
+
+    // ==========================================================
+    // 综合做答题
+    // ==========================================================
+
+    function renderSubjectiveSection(area) {
+      const sections =
+        fullDatabase.subjective_sections || [];
+
+      const section = sections[activeSectionIdx];
+
+      if (!section) {
+        area.innerHTML = `
+          <div class="empty-card">
+            目前题库中还没有综合做答题。
+          </div>
+        `;
+        return;
+      }
+
+      const questions = Array.isArray(section.questions)
+        ? section.questions
+        : [];
+
+      let questionsHtml = '';
+
+      questions.forEach((question, index) => {
+        const id =
+          question.id ||
+          `${section.id || 'subjective'}_${index}`;
+
+        questionsHtml += `
+          <div class="subjective-box">
+
+            <div class="subjective-question">
+              ${escapeHtml(question.question || '')}
+            </div>
+
+            <div
+              class="subjective-answer"
+              id="${escapeAttribute(id)}">
+              ${question.answer || ''}
+            </div>
+
+          </div>
+        `;
+      });
+
+      area.innerHTML = `
+        <div class="section-header">
+          <div class="section-title">
+            📌 ${escapeHtml(section.title)}
+          </div>
+
+          <div class="section-count">
+            ${questions.length} 题
+          </div>
+        </div>
+
+        <div class="hl-toolbar">
+
+          <span style="font-size:13px;font-weight:600;">
+            荧光笔：
+          </span>
+
+          <div
+            class="hl-color-btn selected"
+            style="background:var(--hl-yellow);"
+            onclick="setColor('yellow', this)">
+          </div>
+
+          <div
+            class="hl-color-btn"
+            style="background:var(--hl-green);"
+            onclick="setColor('green', this)">
+          </div>
+
+          <div
+            class="hl-color-btn"
+            style="background:var(--hl-pink);"
+            onclick="setColor('pink', this)">
+          </div>
+
+          <button
+            class="hl-btn-action"
+            onclick="applyHighlight()">
+            ✏️ 划线高亮
+          </button>
+
+          <button
+            class="hl-btn-action"
+            onclick="clearHighlights()">
+            🗑️ 清除所有
+          </button>
+
+          <span
+            class="status-toast"
+            id="saveToast">
+            自动保存已开启
+          </span>
+        </div>
+
+        <div id="subjContainer">
+          ${questionsHtml}
+        </div>
+      `;
+
+      loadAllHighlights();
+    }
+
+    // ==========================================================
+    // 荧光笔
+    // ==========================================================
+
+    function setColor(color, element) {
+      playSound('pop');
+
+      currentColor = color;
+
+      document
+        .querySelectorAll('.hl-color-btn')
+        .forEach(button => {
+          button.classList.remove('selected');
+        });
+
+      element.classList.add('selected');
+    }
+
+    function applyHighlight() {
+      const selection = window.getSelection();
+
+      if (
+        !selection ||
+        !selection.rangeCount ||
+        selection.isCollapsed
+      ) {
+        return;
+      }
+
+      const range = selection.getRangeAt(0);
+      const container =
+        document.getElementById('subjContainer');
+
+      if (!container) return;
+
+      if (
+        !container.contains(range.commonAncestorContainer)
+      ) {
+        return;
+      }
+
+      const span = document.createElement('span');
+
+      span.className = `hl-mark-${currentColor}`;
+
+      try {
+        range.surroundContents(span);
+
+        playSound('pop');
+
+        saveHighlights();
+
+        const toast =
+          document.getElementById('saveToast');
+
+        if (toast) {
+          toast.innerText = '已保存划线';
+        }
+
+      } catch (error) {
+        alert('请选取同一段落中的文字划线。');
+      }
+
+      selection.removeAllRanges();
+    }
+
+    function saveHighlights() {
+      const container =
+        document.getElementById('subjContainer');
+
+      if (!container) return;
+
+      localStorage.setItem(
+        HL_STORAGE_KEY,
+        container.innerHTML
+      );
+    }
+
+    function loadAllHighlights() {
+      const saved =
+        localStorage.getItem(HL_STORAGE_KEY);
+
+      const container =
+        document.getElementById('subjContainer');
+
+      if (saved && container) {
+        container.innerHTML = saved;
+      }
+    }
+
+    function clearHighlights() {
+      playSound('wrong');
+
+      const container =
+        document.getElementById('subjContainer');
+
+      if (!container) return;
+
+      const marks =
+        container.querySelectorAll(
+          '[class^="hl-mark-"]'
+        );
+
+      marks.forEach(mark => {
+        const parent = mark.parentNode;
+
+        while (mark.firstChild) {
+          parent.insertBefore(
+            mark.firstChild,
+            mark
+          );
+        }
+
+        parent.removeChild(mark);
+      });
+
+      saveHighlights();
+
+      const toast =
+        document.getElementById('saveToast');
+
+      if (toast) {
+        toast.innerText = '已清除所有划线';
+      }
+    }
+
+    // ==========================================================
+    // 图片灯箱
+    // ==========================================================
+
+    function openImageModal(src) {
+      playSound('pop');
+
+      const modal =
+        document.getElementById('imgModal');
+
+      const image =
+        document.getElementById('modalImg');
+
+      image.src = src;
+      modal.classList.add('active');
+    }
+
+    function closeImageModal(event) {
+      if (event && event.target) {
+        const modal =
+          document.getElementById('imgModal');
+
+        if (event.target !== modal) return;
+      }
+
+      document
+        .getElementById('imgModal')
+        .classList.remove('active');
+    }
+
+    // ==========================================================
+    // 路径 / 安全辅助函数
+    // ==========================================================
+
+    function resolveAssetUrl(path) {
+      try {
+        return new URL(path, DATA_URL).href;
+      } catch (error) {
+        return path;
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value);
+    }
+
+    function escapeJsonForAttribute(value) {
+      return JSON.stringify(value)
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/&/g, '\\u0026');
+    }
+
+    // ==========================================================
+    // 初始化
+    // ==========================================================
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      /*
+       * 这里预加载 JSON。
+       *
+       * 即使预加载失败，用户仍然可以进入生物页面，
+       * 页面会显示清楚的错误信息，而不是整页空白。
+       */
+      await loadData();
+
+      if (dataError) {
+        console.error(
+          '[Biology] 初始化题库失败：',
+          dataError
+        );
+      }
+    });
+  </script>
+</body>
+</html>
