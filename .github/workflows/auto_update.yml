@@ -1,0 +1,40 @@
+name: Auto Process Exam Papers & Update App
+
+on:
+  # 方式 A：当您向 papers/ 文件夹上传新试卷图片时自动触发
+  push:
+    paths:
+      - 'papers/**'
+  # 方式 B：支持在手机 GitHub 页面手动点击一键运行
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: |
+          pip install google-generativeai
+
+      - name: 运行 AI 题库自动提取与质检引擎
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python scripts/cloud_inspector.py
+
+      - name: 自动提交更新并推送到私有仓库
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add biology_question_bank.json inspection_report.md
+          git commit -m "🤖 [Cloud AI] 自动追加新考题并更新题库" || echo "无新题改动"
+          git push
+
