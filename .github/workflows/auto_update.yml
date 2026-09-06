@@ -1,21 +1,26 @@
-name: Auto Process Exam Papers & Update App
+name: BioQuestion Auto Pipeline & Health Check
 
 on:
-  # 方式 A：当您向 papers/ 文件夹上传新试卷图片时自动触发
+  # 场景 1：当您向 papers/ 文件夹上传新照片时立刻触发
   push:
     paths:
-      - 'papers/**'
-  # 方式 B：支持在手机 GitHub 页面手动点击一键运行
+      - 'papers/**.jpg'
+      - 'papers/**.jpeg'
+      - 'papers/**.png'
+  # 场景 2：定时执行（每周一凌晨 2 点自动挖掘难题与巡检 Bug）
+  schedule:
+    - cron: '0 18 * * 0' # 对应马来西亚时间周一凌晨 2:00
+  # 场景 3：支持手机端在 GitHub 页面点击手动一键触发
   workflow_dispatch:
 
 jobs:
-  build:
+  run-pipeline:
     runs-on: ubuntu-latest
     steps:
       - name: 检出仓库代码
         uses: actions/checkout@v4
 
-      - name: 设置 Python 环境
+      - name: 设置 Python 运行环境
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
@@ -24,17 +29,16 @@ jobs:
         run: |
           pip install google-generativeai
 
-      - name: 运行 AI 题库自动提取与质检引擎
+      - name: 执行审题、自动入库与网站缺陷巡检
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          python scripts/cloud_inspector.py
+          python scripts/auto_inspector.py
 
-      - name: 自动提交更新并推送到私有仓库
+      - name: 自动提交更新至私有仓库
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add biology_question_bank.json inspection_report.md
-          git commit -m "🤖 [Cloud AI] 自动追加新考题并更新题库" || echo "无新题改动"
+          git config --global user.name "Inspector-Bot"
+          git config --global user.email "bot@independent-school.edu"
+          git add papers/biology_question_bank.json
+          git commit -m "🤖 [Auto-Pipeline] 题库自动审题入库与缺陷修复" || echo "无更新变动"
           git push
-
