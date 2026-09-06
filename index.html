@@ -485,7 +485,7 @@
 
   async function loadData() {
     try {
-      const res = await fetch('papers/biology_question_bank.json');
+      const res = await fetch('/papers/biology_question_bank.json');
       if (res.ok) {
         const data = await res.json();
         if (data && data.sections) {
