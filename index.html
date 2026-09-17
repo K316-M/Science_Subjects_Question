@@ -2,8 +2,25 @@
 <html lang="zh-MY">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>独中理科自主学习系统 · 生物科</title>
+  <meta name="description" content="董总华文独中高中统考理科题库与刷题平台，生物、化学、物理三科动态切换，支持做题记录、错题本与背诵闪卡。">
+  <meta property="og:title" content="独中理科自主学习系统">
+  <meta property="og:description" content="董总华文独中高中统考理科题库与刷题平台，生物、化学、物理三科动态切换。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/icons/icon-512.png">
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#059669">
+  <link rel="icon" href="/icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="理科自学">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #059669;
@@ -25,7 +42,11 @@
       --shadow-form: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
+    [role="button"]:focus-visible, button:focus-visible, .breadcrumb-item:focus-visible {
+      outline: 2.5px solid var(--accent);
+      outline-offset: 2px;
+    }
     
     body {
       background: var(--bg-nature);
@@ -70,6 +91,17 @@
     .view { display: none; }
     .view.active { display: block; animation: softFadeIn 0.25s ease; }
     @keyframes softFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .resume-card {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff; padding: 14px 20px; border-radius: 16px; margin-bottom: 18px;
+      cursor: pointer; box-shadow: var(--shadow-md); transition: transform 0.2s;
+    }
+    .resume-card:hover { transform: translateY(-2px); }
+    .resume-card-text { font-size: 13.5px; line-height: 1.5; }
+    .resume-card-text strong { font-size: 15px; }
+    .resume-card-arrow { font-size: 20px; flex: 0 0 auto; }
 
     .grid-subjects { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-top: 18px; }
     .subject-card {
@@ -400,25 +432,26 @@
 
   <!-- 视图 1: 学科主页 -->
   <div id="viewSubjects" class="view active">
+    <div id="resumeCard"></div>
     <h2 style="font-size: 22px; font-weight: 800; color: #1e293b;">选择学习学科</h2>
     <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">请选择董总华文独中高中统考科目：</p>
     <div class="grid-subjects">
-      <div class="subject-card" onclick="openSubject('biology')">
+      <div class="subject-card" onclick="openSubject('biology')" role="button" tabindex="0" aria-label="生物科">
         <div class="subject-icon">🌿</div>
         <div class="subject-title">生物 (Biology)</div>
         <div class="subject-desc">光合呼吸、神经调节、生殖发育与遗传育种</div>
       </div>
-      <div class="subject-card" onclick="openSubject('chemistry')">
+      <div class="subject-card" onclick="openSubject('chemistry')" role="button" tabindex="0" aria-label="化学科">
         <div class="subject-icon">🧪</div>
         <div class="subject-title">化学 (Chemistry)</div>
         <div class="subject-desc">整理中</div>
       </div>
-      <div class="subject-card" onclick="openSubject('physics')">
+      <div class="subject-card" onclick="openSubject('physics')" role="button" tabindex="0" aria-label="物理科">
         <div class="subject-icon">⚡</div>
         <div class="subject-title">物理 (Physics)</div>
         <div class="subject-desc">整理中</div>
       </div>
-      <div class="subject-card" style="opacity: 0.6; cursor: not-allowed;">
+      <div class="subject-card" style="opacity: 0.6; cursor: not-allowed;" aria-disabled="true">
         <div class="subject-icon">📐</div>
         <div class="subject-title">高级数学 (Adv. Maths)</div>
         <div class="subject-desc">整理中</div>
@@ -766,6 +799,7 @@
     showView('viewSubjects');
     clearSubjectBackground();
     stopAmbientMusic();
+    renderResumeCard();
     document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>`;
   }
 
@@ -773,7 +807,7 @@
 let currentSubject = 'biology';
 
 // 支持根据当前选中的学科，动态载入对应的题库
-async function loadSubjectData(subjectName) {
+async function loadSubjectData(subjectName, initialChapterIdx) {
   currentSubject = subjectName; // 'biology' | 'chemistry' | 'physics' 等
   const targetPath = `/papers/${subjectName}_question_bank.json`;
 
@@ -802,7 +836,7 @@ async function loadSubjectData(subjectName) {
       }
 
       // 更新界面
-      activeChapterIdx = 0;
+      activeChapterIdx = (typeof initialChapterIdx === 'number' && fullDatabase.sections[initialChapterIdx]) ? initialChapterIdx : 0;
       currentMcqIdx = 0;
       renderChapterRail();
       renderActiveContent();
@@ -828,7 +862,7 @@ async function loadSubjectData(subjectName) {
 // 用更通用的 openSubject 替换原有仅处理 biology 的实现
 const SUBJECT_LABELS = { biology: '生物科', chemistry: '化学科', physics: '物理科' };
 
-function openSubject(subject) {
+function openSubject(subject, initialChapterIdx) {
   playSound('pop');
   showView('viewStudy');
   applySubjectBackground(subject);
@@ -838,7 +872,7 @@ function openSubject(subject) {
     <span class="breadcrumb-item active">${SUBJECT_LABELS[subject] || subject}</span>
   `;
   // 动态载入对应题库并渲染（loadSubjectData 会在加载后调用 render）
-  loadSubjectData(subject);
+  loadSubjectData(subject, initialChapterIdx);
 }
 
   function showView(viewId) {
@@ -857,6 +891,9 @@ function openSubject(subject) {
       const card = document.createElement('div');
       card.className = `chapter-card ${activeChapterIdx === idx ? 'active' : ''}`;
       card.onclick = () => selectChapter(idx);
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', sec.title);
 
       const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
       const tagText = match ? match[0] : `第 ${idx + 1} 章`;
@@ -885,6 +922,42 @@ function openSubject(subject) {
     currentMcqIdx = 0;
     renderChapterRail();
     renderActiveContent();
+    saveLastVisit(currentSubject, idx);
+  }
+
+  // ---- "继续学习"快速回到上次做题的章节 ----
+  const LAST_VISIT_KEY = 'UEC_LAST_VISIT_v1';
+
+  function saveLastVisit(subject, chapterIdx) {
+    const sec = (fullDatabase.sections || [])[chapterIdx];
+    if (!sec) return;
+    try {
+      localStorage.setItem(LAST_VISIT_KEY, JSON.stringify({
+        subject, chapterIdx, chapterTitle: sec.title, ts: Date.now()
+      }));
+    } catch (e) {}
+  }
+
+  function renderResumeCard() {
+    const holder = document.getElementById('resumeCard');
+    if (!holder) return;
+    let last = null;
+    try { last = JSON.parse(localStorage.getItem(LAST_VISIT_KEY)); } catch (e) {}
+    if (!last || !last.subject) { holder.innerHTML = ''; return; }
+    const label = SUBJECT_LABELS[last.subject] || last.subject;
+    holder.innerHTML = `
+      <div class="resume-card" onclick="resumeLastVisit()" role="button" tabindex="0" aria-label="继续上次学习">
+        <div class="resume-card-text">继续上次学习进度<br><strong>${label} · ${last.chapterTitle}</strong></div>
+        <div class="resume-card-arrow">➡️</div>
+      </div>
+    `;
+  }
+
+  function resumeLastVisit() {
+    let last = null;
+    try { last = JSON.parse(localStorage.getItem(LAST_VISIT_KEY)); } catch (e) {}
+    if (!last || !last.subject) return;
+    openSubject(last.subject, last.chapterIdx);
   }
 
   function switchSubSection(mode) {
@@ -986,6 +1059,8 @@ function openSubject(subject) {
         const btn = document.createElement('div');
         btn.className = 'option-btn';
         btn.innerText = opt;
+        btn.setAttribute('role', 'button');
+        btn.setAttribute('tabindex', '0');
         btn.onclick = () => {
           if (isSolved) return;
 
@@ -1029,7 +1104,7 @@ function openSubject(subject) {
             <div class="form-card-body">
               <div class="form-question-text">${q.question}</div>
               <div class="answer-flip-panel">
-                <div class="flip-toggle-header" onclick="toggleAnswerFlip(this)">
+                <div class="flip-toggle-header" onclick="toggleAnswerFlip(this)" role="button" tabindex="0">
                   <span class="flip-toggle-title">📖 参考标准答案与要点</span>
                   <span class="flip-status-pill">点击展开 / 遮挡默背</span>
                 </div>
@@ -1202,7 +1277,27 @@ function openSubject(subject) {
     actions.insertBefore(btn, document.getElementById('breadcrumbNav'));
   }
 
-  document.addEventListener('DOMContentLoaded', initAdminEntry);
+  document.addEventListener('DOMContentLoaded', () => {
+    initAdminEntry();
+    renderResumeCard();
+  });
+
+  // 键盘可达性：让所有 role="button" 的自定义卡片也能用 Enter / 空格触发
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const el = document.activeElement;
+    if (el && el.getAttribute && el.getAttribute('role') === 'button') {
+      e.preventDefault();
+      el.click();
+    }
+  });
+
+  // 注册 Service Worker：支持"添加到主屏幕"离线安装，弱网/离线时仍可打开上次访问过的内容
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch((e) => console.warn('SW 注册失败：', e.message));
+    });
+  }
 
 </script>
 </body>
