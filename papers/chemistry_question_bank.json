@@ -1,1 +1,213 @@
-
+{
+  "meta": {
+    "version": "1.0.0",
+    "subject": "chemistry",
+    "title": "董总高中统考规范化学题库（34章标准版）"
+  },
+  "sections": [
+    {
+      "id": "chap1",
+      "title": "第一章：水和氢",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap2",
+      "title": "第二章：原子与分子",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap3",
+      "title": "第三章：化学方程式与化学计算",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap4",
+      "title": "第四章：原子结构",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap5",
+      "title": "第五章：元素周期表",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap6",
+      "title": "第六章：化学键与分子间作用力",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap7",
+      "title": "第七章：氧化还原反应",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap8",
+      "title": "第八章：钠和钾",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap9",
+      "title": "第九章：镁和钙",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap10",
+      "title": "第十章：铝",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap11",
+      "title": "第十一章：碳和硅",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap12",
+      "title": "第十二章：氮和磷",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap13",
+      "title": "第十三章：氧和硫",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap14",
+      "title": "第十四章：卤素",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap15",
+      "title": "第十五章：过渡元素",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap16",
+      "title": "第十六章：气体",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap17",
+      "title": "第十七章：溶液及其性质",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap18",
+      "title": "第十八章：化学反应和能量",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap19",
+      "title": "第十九章：化学反应速率",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap20",
+      "title": "第二十章：化学平衡的移动",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap21",
+      "title": "第二十一章：水溶液中的离子平衡",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap22",
+      "title": "第二十二章：酸碱盐",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap23",
+      "title": "第二十三章：电化学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap24",
+      "title": "第二十四章：核化学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap25",
+      "title": "第二十五章：有机化学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap26",
+      "title": "第二十六章：烷烃",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap27",
+      "title": "第二十七章：烯烃",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap28",
+      "title": "第二十八章：炔烃",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap29",
+      "title": "第二十九章：芳香烃",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap30",
+      "title": "第三十章：卤代烃",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap31",
+      "title": "第三十一章：醇和酚",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap32",
+      "title": "第三十二章：醛和酮",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap33",
+      "title": "第三十三章：羧酸及其衍生物",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap34",
+      "title": "第三十四章：高分子化合物",
+      "mcqs": [],
+      "subjectives": []
+    }
+  ]
+}

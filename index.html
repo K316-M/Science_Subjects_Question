@@ -137,6 +137,28 @@
     .chap-badge { font-size: 11px; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 2px 7px; border-radius: 8px; }
     .chap-name { font-size: 13px; font-weight: 700; color: #1e293b; text-align: center; line-height: 1.35; margin: 4px 0; }
     .chap-count { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .chap-count.has-progress { color: var(--primary); font-weight: 700; }
+    .chap-progress-bar { width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+    .chap-progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.3s; }
+
+    #wrongCountBadge { background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 2px; }
+    #wrongCountBadge:empty { display: none; }
+
+    .wrong-item-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .wrong-item-chapter { font-size: 11px; font-weight: 700; color: var(--danger); background: #fef2f2; padding: 3px 9px; border-radius: 8px; display: inline-block; margin-bottom: 8px; }
+    .wrong-item-q { font-size: 14px; color: #334155; line-height: 1.6; white-space: pre-line; }
+    .wrong-item-jump { flex: 0 0 auto; background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .wrong-item-jump:hover { background: var(--primary-dark); }
 
     /* 二级分类胶囊标签 */
     .sub-bookmark-bar {
@@ -343,6 +365,7 @@
     <div class="sub-bookmark-bar">
       <button class="sub-tab-btn active" id="subBtnMcq" onclick="switchSubSection('mcq')">🎴 选择题练习</button>
       <button class="sub-tab-btn" id="subBtnSubj" onclick="switchSubSection('subj')">📝 综合做答题（背书闪卡）</button>
+      <button class="sub-tab-btn" id="subBtnWrong" onclick="switchSubSection('wrong')">📕 错题本 <span id="wrongCountBadge"></span></button>
     </div>
     <div id="activeStudyArea"></div>
   </div>
@@ -452,12 +475,69 @@
     ]
   };
 
-  let fullDatabase = DEFAULT_DATABASE;
+  let fullDatabase = { sections: [] };
   let activeChapterIdx = 0;
   let activeSubMode = 'mcq';
   let currentMcqIdx = 0;
   let currentColor = 'yellow';
   const HL_STORAGE_KEY = 'UEC_BIO_HL_STORE_OFFICIAL_19';
+  const PROGRESS_STORAGE_KEY = 'UEC_PROGRESS_v1';
+
+  function emptyDatabaseFor(subject) {
+    return subject === 'biology' ? DEFAULT_DATABASE : { sections: [] };
+  }
+
+  // ---- 做题记录 / 错题本（localStorage 持久化） ----
+  function loadProgressStore() {
+    try {
+      return JSON.parse(localStorage.getItem(PROGRESS_STORAGE_KEY)) || {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function saveProgressStore(store) {
+    localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(store));
+  }
+  function recordMcqResult(subject, chapterId, mcqIdx, isCorrect) {
+    const store = loadProgressStore();
+    if (!store[subject]) store[subject] = {};
+    if (!store[subject][chapterId]) store[subject][chapterId] = {};
+    // 一旦答对即视为已掌握，即使之前答错过；未答对之前只标记为错题。
+    if (isCorrect) {
+      store[subject][chapterId][mcqIdx] = 'mastered';
+    } else if (store[subject][chapterId][mcqIdx] !== 'mastered') {
+      store[subject][chapterId][mcqIdx] = 'wrong';
+    }
+    saveProgressStore(store);
+  }
+  function getChapterProgress(subject, chapterId, totalMcqs) {
+    const store = loadProgressStore();
+    const chapData = (store[subject] && store[subject][chapterId]) || {};
+    let mastered = 0;
+    Object.values(chapData).forEach(v => { if (v === 'mastered') mastered++; });
+    return { mastered, total: totalMcqs };
+  }
+  function getWrongList(subject) {
+    const store = loadProgressStore();
+    const subjData = store[subject] || {};
+    const sections = fullDatabase.sections || [];
+    const results = [];
+    sections.forEach((sec, secIdx) => {
+      const chapData = subjData[sec.id] || {};
+      (sec.mcqs || []).forEach((item, mcqIdx) => {
+        if (chapData[mcqIdx] === 'wrong') {
+          results.push({ chapterIdx: secIdx, chapterTitle: sec.title, mcqIdx, question: item.q });
+        }
+      });
+    });
+    return results;
+  }
+  function updateWrongCountBadge() {
+    const badge = document.getElementById('wrongCountBadge');
+    if (!badge) return;
+    const count = getWrongList(currentSubject).length;
+    badge.innerText = count > 0 ? count : '';
+  }
 
   function navigateHome() {
     playSound('flip');
@@ -494,12 +574,15 @@ async function loadSubjectData(subjectName) {
         }
       } else {
         console.warn(`载入的 ${targetPath} 格式不符合预期，使用默认空题库。`);
-        fullDatabase = DEFAULT_DATABASE;
+        fullDatabase = emptyDatabaseFor(subjectName);
       }
 
       // 更新界面
+      activeChapterIdx = 0;
+      currentMcqIdx = 0;
       renderChapterRail();
       renderActiveContent();
+      updateWrongCountBadge();
       console.log(`✅ 从 ${targetPath} 载入题库成功`);
       return;
     } else {
@@ -510,18 +593,23 @@ async function loadSubjectData(subjectName) {
   }
 
   // 失败时回退到默认（并更新界面）
-  fullDatabase = DEFAULT_DATABASE;
+  fullDatabase = emptyDatabaseFor(subjectName);
+  activeChapterIdx = 0;
+  currentMcqIdx = 0;
   renderChapterRail();
   renderActiveContent();
+  updateWrongCountBadge();
 }
 
 // 用更通用的 openSubject 替换原有仅处理 biology 的实现
+const SUBJECT_LABELS = { biology: '生物科', chemistry: '化学科', physics: '物理科' };
+
 function openSubject(subject) {
   playSound('pop');
   showView('viewStudy');
   document.getElementById('breadcrumbNav').innerHTML = `
     <span class="breadcrumb-item" onclick="navigateHome()">学科选择</span> &gt;
-    <span class="breadcrumb-item active">${subject === 'biology' ? '生物科' : subject}</span>
+    <span class="breadcrumb-item active">${SUBJECT_LABELS[subject] || subject}</span>
   `;
   // 动态载入对应题库并渲染（loadSubjectData 会在加载后调用 render）
   loadSubjectData(subject);
@@ -532,91 +620,35 @@ function openSubject(subject) {
     document.getElementById(viewId).classList.add('active');
   }
 
-   // 智能多路径读取与自愈加载器
-  async function loadData() {
-    // 依次尝试：1. 子目录路径  2. 相对子目录路径  3. 根目录备用路径
-    const candidatePaths = [
-      '/papers/biology_question_bank.json',
-      'papers/biology_question_bank.json',
-      './biology_question_bank.json'
-    ];
-
-    let loaded = false;
-    let lastError = '';
-
-    for (const path of candidatePaths) {
-      try {
-        const res = await fetch(path);
-        if (res.ok) {
-          const data = await res.json();
-          
-          // 结构自适应：无论 JSON 是 sections 还是 mcq_sections，均自动统一
-          if (data && (data.sections || data.mcq_sections)) {
-            if (data.sections) {
-              fullDatabase = data;
-            } else {
-              fullDatabase = {
-                sections: data.mcq_sections.map((m, i) => ({
-                  id: 'chap' + (i + 1),
-                  title: m.title,
-                  mcqs: m.mcqs || [],
-                  subjectives: []
-                }))
-              };
-            }
-            loaded = true;
-            console.log('✅ 成功从路径载入题库:', path);
-            break;
-          }
-        } else {
-          lastError = `HTTP ${res.status}: 无法找到 ${path}`;
-        }
-      } catch (err) {
-        lastError = `JSON解析失败或网络异常: ${err.message}`;
-      }
-    }
-
-    if (!loaded) {
-      console.warn('⚠️ 题库载入失败，原因:', lastError);
-      // 若加载失败，在控制台和主界面给予清晰红字提示，告别无声白屏
-      const area = document.getElementById('activeStudyArea');
-      if (area) {
-        area.innerHTML = `
-          <div style="background:#fef2f2; border:1px solid #f87171; color:#991b1b; padding:18px; border-radius:12px; margin-top:20px;">
-            <strong>⚠️ 题库读取失败提示：</strong><br>
-            系统尝试了 <code>/papers/biology_question_bank.json</code> 等路径均未成功。<br>
-            <strong>错误信息：</strong> ${lastError}<br><br>
-            <small>请排查：<br>
-            1. GitHub 上的 <code>papers</code> 文件夹大小写（是否大写了 P）；<br>
-            2. JSON 文件内是否有多余逗号导致的语法错误。</small>
-          </div>
-        `;
-      }
-    }
-  }
-
-
   function renderChapterRail() {
     const rail = document.getElementById('chapterRail');
     rail.innerHTML = '';
     const sections = fullDatabase.sections || [];
-    
+
     sections.forEach((sec, idx) => {
       const card = document.createElement('div');
       card.className = `chapter-card ${activeChapterIdx === idx ? 'active' : ''}`;
       card.onclick = () => selectChapter(idx);
-      
+
       const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
       const tagText = match ? match[0] : `第 ${idx + 1} 章`;
       const nameText = sec.title.replace(/第.*[章节][：:]?/, '');
+      const total = sec.mcqs ? sec.mcqs.length : 0;
+      const { mastered } = getChapterProgress(currentSubject, sec.id, total);
+      const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
 
       card.innerHTML = `
         <span class="chap-badge">${tagText}</span>
         <div class="chap-name">${nameText}</div>
-        <span class="chap-count">${sec.mcqs ? sec.mcqs.length : 0} 道题</span>
+        <span class="chap-count ${mastered > 0 ? 'has-progress' : ''}">${total > 0 ? (mastered > 0 ? `${mastered}/${total} 已掌握` : `${total} 道题`) : '整理中'}</span>
+        ${total > 0 ? `<div class="chap-progress-bar"><div class="chap-progress-fill" style="width:${pct}%"></div></div>` : ''}
       `;
       rail.appendChild(card);
     });
+
+    if (sections.length === 0) {
+      rail.innerHTML = `<div style="padding: 30px 10px; color: var(--text-muted); font-size: 14px;">🚧 该学科题库正在整理中，敬请期待！</div>`;
+    }
   }
 
   function selectChapter(idx) {
@@ -632,12 +664,49 @@ function openSubject(subject) {
     activeSubMode = mode;
     document.getElementById('subBtnMcq').classList.toggle('active', mode === 'mcq');
     document.getElementById('subBtnSubj').classList.toggle('active', mode === 'subj');
+    document.getElementById('subBtnWrong').classList.toggle('active', mode === 'wrong');
+    renderActiveContent();
+  }
+
+  function jumpToWrongQuestion(chapterIdx, mcqIdx) {
+    playSound('pop');
+    activeChapterIdx = chapterIdx;
+    currentMcqIdx = mcqIdx;
+    activeSubMode = 'mcq';
+    document.getElementById('subBtnMcq').classList.add('active');
+    document.getElementById('subBtnSubj').classList.remove('active');
+    document.getElementById('subBtnWrong').classList.remove('active');
+    renderChapterRail();
     renderActiveContent();
   }
 
   function renderActiveContent() {
     const area = document.getElementById('activeStudyArea');
     area.innerHTML = '';
+
+    if ((fullDatabase.sections || []).length === 0) {
+      area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🚧 该学科题库正在整理中，敬请期待！</div>`;
+      return;
+    }
+
+    if (activeSubMode === 'wrong') {
+      const wrongList = getWrongList(currentSubject);
+      if (wrongList.length === 0) {
+        area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🎉 目前没有错题记录，继续保持！</div>`;
+        return;
+      }
+      area.innerHTML = `<div class="form-style-container">${wrongList.map(w => `
+        <div class="wrong-item-card">
+          <div>
+            <span class="wrong-item-chapter">${w.chapterTitle}</span>
+            <div class="wrong-item-q">${w.question}</div>
+          </div>
+          <button class="wrong-item-jump" onclick="jumpToWrongQuestion(${w.chapterIdx}, ${w.mcqIdx})">前往复习 ➡️</button>
+        </div>
+      `).join('')}</div>`;
+      return;
+    }
+
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
 
     if (!sec) {
@@ -698,9 +767,14 @@ function openSubject(subject) {
             btn.classList.add('correct');
             expBox.style.display = 'block';
             optBox.querySelectorAll('.option-btn').forEach(b => b.classList.add('locked'));
+            recordMcqResult(currentSubject, sec.id, currentMcqIdx, true);
+            renderChapterRail();
+            updateWrongCountBadge();
           } else {
             playSound('wrong');
             btn.classList.add('wrong');
+            recordMcqResult(currentSubject, sec.id, currentMcqIdx, false);
+            updateWrongCountBadge();
           }
         };
         optBox.appendChild(btn);
@@ -819,9 +893,6 @@ function openSubject(subject) {
     document.getElementById('imgModal').classList.remove('active');
   }
 
-  window.onload = async () => {
-    await loadData();
-  };
 </script>
 </body>
 </html>

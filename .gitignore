@@ -1,0 +1,6 @@
+# CI 运行时产生的临时标记文件，不需要入库
+has_issues.txt
+has_new_ingest.txt
+
+__pycache__/
+*.pyc

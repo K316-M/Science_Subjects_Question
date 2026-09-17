@@ -1,0 +1,54 @@
+name: AI 自动录题流水线 (Ingest Drafts)
+
+# 管理员把手机拍的试卷照片丢进 drafts/<biology|chemistry|physics>/ 目录并推送，
+# 本工作流会自动调用 Gemini 多模态模型转写题目，汇总为待审核 JSON，
+# 并开出一个 Pull Request，管理员在手机上审核后点击合并即可正式发布。
+#
+# 使用前请先在仓库 Settings -> Secrets and variables -> Actions 中添加：
+#   GEMINI_API_KEY  你的 Gemini API Key
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'drafts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 运行 AI 自动录题脚本
+        id: ingest
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python scripts/ingest_drafts.py
+          if [ -f has_new_ingest.txt ] && [ "$(cat has_new_ingest.txt)" = "true" ]; then
+            echo "has_new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_new=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 创建待审核 Pull Request
+        if: steps.ingest.outputs.has_new == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ingest/auto-${{ github.run_number }}
+          commit-message: "🧪 AI 自动录题：待审核批次 #${{ github.run_number }}"
+          title: "🧪 AI 自动录题待审核 · 批次 #${{ github.run_number }}"
+          body-path: INGEST_REPORT.md
+          labels: "待审核, AI录题"

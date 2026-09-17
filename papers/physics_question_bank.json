@@ -1,1 +1,153 @@
-
+{
+  "meta": {
+    "version": "1.0.0",
+    "subject": "physics",
+    "title": "董总高中统考规范物理题库（24章标准版）"
+  },
+  "sections": [
+    {
+      "id": "chap1",
+      "title": "第一章：物理量和数据处理",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap2",
+      "title": "第二章：直线运动",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap3",
+      "title": "第三章：牛顿运动定律",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap4",
+      "title": "第四章：静力学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap5",
+      "title": "第五章：平面运动",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap6",
+      "title": "第六章：功与能",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap7",
+      "title": "第七章：动量守恒定律",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap8",
+      "title": "第八章：振动",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap9",
+      "title": "第九章：流体力学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap10",
+      "title": "第十章：物质的性质",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap11",
+      "title": "第十一章：温度与热量",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap12",
+      "title": "第十二章：热的传递",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap13",
+      "title": "第十三章：气体定律",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap14",
+      "title": "第十四章：气体分子运动论与热力学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap15",
+      "title": "第十五章：机械波",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap16",
+      "title": "第十六章：光的反射与折射",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap17",
+      "title": "第十七章：棱镜与透镜",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap18",
+      "title": "第十八章：光的波动性",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap19",
+      "title": "第十九章：电场",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap20",
+      "title": "第二十章：恒定电流",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap21",
+      "title": "第二十一章：电流与磁场",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap22",
+      "title": "第二十二章：电磁感应与交流电",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap23",
+      "title": "第二十三章：量子物理学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap24",
+      "title": "第二十四章：原子与原子核物理学",
+      "mcqs": [],
+      "subjectives": []
+    }
+  ]
+}
