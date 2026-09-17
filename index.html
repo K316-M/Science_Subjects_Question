@@ -160,6 +160,24 @@
     .wrong-item-jump { flex: 0 0 auto; background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .wrong-item-jump:hover { background: var(--primary-dark); }
 
+    .admin-item-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+    .admin-item-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; align-items: center; }
+    .admin-pill { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 10px; }
+    .admin-pill-subject { background: var(--primary-light); color: var(--primary-dark); }
+    .admin-pill-chapter { background: #eff6ff; color: #1d4ed8; }
+    .admin-pill-flag { background: #fef2f2; color: #b91c1c; }
+    .admin-item-q { font-size: 15px; font-weight: 600; color: #1e293b; line-height: 1.7; white-space: pre-line; margin-bottom: 12px; }
+    .admin-opt-row { padding: 9px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 14px; margin-bottom: 6px; }
+    .admin-opt-row.is-answer { background: #ecfdf5; border-color: var(--success); color: #065f46; font-weight: 700; }
+    .admin-item-source { font-size: 11.5px; color: var(--text-muted); margin-top: 10px; }
+
     /* 二级分类胶囊标签 */
     .sub-bookmark-bar {
       display: flex;
@@ -316,15 +334,64 @@
     .img-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; align-items: center; justify-content: center; padding: 16px; }
     .img-modal.active { display: flex; animation: softFadeIn 0.2s ease; }
     .img-modal img { max-width: 95%; max-height: 90vh; border-radius: 8px; }
+
+    /* 首页理科元素漂浮插画 */
+    .floating-shapes { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    .floating-shapes svg { position: absolute; opacity: 0.16; }
+    .fs-1 { top: 8%;   left: 4%;   width: 70px; animation: floatDrift 16s ease-in-out infinite; }
+    .fs-2 { top: 64%;  left: 7%;   width: 52px; animation: floatDrift 13s ease-in-out infinite -3s; }
+    .fs-3 { top: 14%;  right: 6%;  width: 58px; animation: floatDrift 15s ease-in-out infinite -6s; }
+    .fs-4 { top: 68%;  right: 9%;  width: 74px; animation: floatDrift 18s ease-in-out infinite -2s; }
+    .fs-5 { top: 42%;  left: 47%;  width: 44px; animation: floatDrift 12s ease-in-out infinite -8s; opacity: 0.10; }
+    @keyframes floatDrift {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-22px) rotate(8deg); }
+    }
+
+    /* 学科专属渐浅背景插画（进入做题界面后淡入显示） */
+    .subject-bg-wash {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0; transition: opacity 0.6s ease;
+      background-repeat: no-repeat;
+      background-position: right -80px bottom -80px;
+      background-size: 460px;
+    }
+    .subject-bg-wash.active { opacity: 1; }
+
+    .container, header { position: relative; z-index: 1; }
+    .view { z-index: 1; }
+
+    /* 成就达成提示条 */
+    .achieve-toast {
+      position: fixed; top: 20px; left: 50%; z-index: 1200;
+      transform: translateX(-50%) translateY(-16px) scale(0.92);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff; padding: 13px 22px; border-radius: 14px;
+      font-size: 13.5px; font-weight: 700; text-align: center; line-height: 1.5;
+      box-shadow: 0 14px 30px -8px rgba(5, 150, 105, 0.45);
+      opacity: 0; pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .achieve-toast.show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
   </style>
 </head>
 <body>
+
+<div class="floating-shapes" id="floatingShapes">
+  <svg class="fs-1" viewBox="0 0 64 64" fill="none"><path d="M32 4C18 4 8 20 8 34c0 16 12 26 24 26 -10-6-16-16-16-26C16 20 22 10 32 4Z" fill="#059669"/><path d="M32 60C46 60 56 44 56 30 56 14 44 4 32 4c10 6 16 16 16 26 0 14-6 24-16 30Z" fill="#059669" opacity="0.55"/></svg>
+  <svg class="fs-2" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="4" fill="#0284c7"/><ellipse cx="32" cy="32" rx="28" ry="11" fill="none" stroke="#0284c7" stroke-width="2.5"/><ellipse cx="32" cy="32" rx="28" ry="11" fill="none" stroke="#0284c7" stroke-width="2.5" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="28" ry="11" fill="none" stroke="#0284c7" stroke-width="2.5" transform="rotate(120 32 32)"/></svg>
+  <svg class="fs-3" viewBox="0 0 64 64" fill="none"><path d="M26 6h12v22l14 26c2 4-1 8-5 8H17c-4 0-7-4-5-8l14-26V6Z" fill="none" stroke="#7c3aed" stroke-width="3"/><circle cx="24" cy="48" r="2.5" fill="#7c3aed"/><circle cx="36" cy="44" r="2" fill="#7c3aed"/><circle cx="30" cy="52" r="1.6" fill="#7c3aed"/></svg>
+  <svg class="fs-4" viewBox="0 0 64 64" fill="none"><path d="M8 34 L28 34 L22 58 L56 26 L36 26 L42 6 Z" fill="#0284c7"/></svg>
+  <svg class="fs-5" viewBox="0 0 64 64" fill="none"><path d="M20 8C36 8 36 24 20 24S4 40 20 40s16 16 0 16" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"/></svg>
+</div>
+<div class="subject-bg-wash" id="subjectBgWash"></div>
 
 <div class="container">
   <header>
     <div class="brand">🌱 独中理科自主学习系统</div>
     <div class="header-actions">
       <button class="sound-toggle" id="soundBtn" onclick="toggleSound()">🔊 音效：开</button>
+      <button class="sound-toggle" id="musicBtn" onclick="toggleMusic()">🎼 音乐：关</button>
       <div class="breadcrumbs" id="breadcrumbNav">
         <span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>
       </div>
@@ -368,6 +435,15 @@
       <button class="sub-tab-btn" id="subBtnWrong" onclick="switchSubSection('wrong')">📕 错题本 <span id="wrongCountBadge"></span></button>
     </div>
     <div id="activeStudyArea"></div>
+  </div>
+
+  <!-- 视图 3: 管理员待审核预览（仅 ?admin=1 时可见入口） -->
+  <div id="viewAdmin" class="view">
+    <h2 style="font-size: 22px; font-weight: 800; color: #1e293b;">🛡️ AI 自动录题 · 待审核预览</h2>
+    <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">
+      这里仅供预览核对，实际发布仍需回到 GitHub 上合并对应的待审核 Pull Request。
+    </p>
+    <div id="adminPendingArea" style="margin-top: 18px;"></div>
   </div>
 </div>
 
@@ -446,8 +522,132 @@
         gain.connect(audioCtx.destination);
         osc.start(t);
         osc.stop(t + 0.05);
+      } else if (type === 'achieve') {
+        // 章节 100% 掌握的庆祝音效：上扬琶音
+        [523.25, 587.33, 659.25, 783.99, 1046.5, 1318.51].forEach((f, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, t + i * 0.09);
+          gain.gain.setValueAtTime(0, t + i * 0.09);
+          gain.gain.linearRampToValueAtTime(0.16, t + i * 0.09 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.09 + 0.5);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t + i * 0.09);
+          osc.stop(t + i * 0.09 + 0.5);
+        });
+      } else if (type === 'toggle') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(500, t);
+        gain.gain.setValueAtTime(0.09, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.1);
       }
     } catch (e) {}
+  }
+
+  // ---- 学科主题（背景插画着色 + 环境背景音乐音阶）----
+  const SUBJECT_THEME = {
+    biology:   { musicRoot: 220.00, scale: [0, 2, 4, 7, 9, 12],
+      bgSvg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="#059669" d="M100 10C40 10 10 60 10 100c0 60 50 90 90 90-40-20-60-50-60-90 0-40 20-70 60-90Z"/><path fill="#059669" opacity="0.55" d="M100 190c60 0 90-50 90-90 0-60-50-90-90-90 40 20 60 50 60 90 0 40-20 70-60 90Z"/></svg>' },
+    chemistry: { musicRoot: 246.94, scale: [0, 2, 3, 5, 7, 10, 12],
+      bgSvg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="#7c3aed" stroke-width="8" d="M80 20 80 80 30 170Q25 180 35 180L145 180Q155 180 150 170L100 80 100 20Z"/><circle cx="60" cy="150" r="9" fill="#7c3aed"/><circle cx="112" cy="138" r="6" fill="#7c3aed"/><circle cx="90" cy="160" r="5" fill="#7c3aed"/></svg>' },
+    physics:   { musicRoot: 196.00, scale: [0, 2, 4, 6, 7, 9, 11, 12],
+      bgSvg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="11" fill="#0284c7"/><ellipse cx="100" cy="100" rx="92" ry="35" fill="none" stroke="#0284c7" stroke-width="7"/><ellipse cx="100" cy="100" rx="92" ry="35" fill="none" stroke="#0284c7" stroke-width="7" transform="rotate(60 100 100)"/><ellipse cx="100" cy="100" rx="92" ry="35" fill="none" stroke="#0284c7" stroke-width="7" transform="rotate(120 100 100)"/></svg>' }
+  };
+
+  function applySubjectBackground(subject) {
+    const wash = document.getElementById('subjectBgWash');
+    const theme = SUBJECT_THEME[subject];
+    if (!wash || !theme) return;
+    wash.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(theme.bgSvg)}")`;
+    wash.classList.add('active');
+  }
+  function clearSubjectBackground() {
+    const wash = document.getElementById('subjectBgWash');
+    if (wash) wash.classList.remove('active');
+  }
+
+  // ---- 生成式环境背景音乐（纯 Web Audio 合成，无需外部音频文件）----
+  let musicEnabled = false;
+  let musicNodes = [];
+  let musicTimer = null;
+
+  function stopAmbientMusic() {
+    if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+    const now = audioCtx ? audioCtx.currentTime : 0;
+    musicNodes.forEach(n => {
+      try {
+        if (n.gain) { n.gain.cancelScheduledValues(now); n.gain.linearRampToValueAtTime(0, now + 0.4); }
+        if (n.stop) setTimeout(() => { try { n.stop(); } catch (e) {} }, 500);
+      } catch (e) {}
+    });
+    musicNodes = [];
+  }
+
+  function startAmbientMusic(subject) {
+    stopAmbientMusic();
+    if (!musicEnabled) return;
+    initAudio();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const theme = SUBJECT_THEME[subject] || SUBJECT_THEME.biology;
+    const now = audioCtx.currentTime;
+
+    const masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0, now);
+    masterGain.gain.linearRampToValueAtTime(0.055, now + 2.5);
+    masterGain.connect(audioCtx.destination);
+    musicNodes.push(masterGain);
+
+    // 柔和和弦底座（根音 + 五度 + 高八度）
+    [theme.scale[0], theme.scale[2] ?? theme.scale[0], 12].forEach(semi => {
+      const osc = audioCtx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = theme.musicRoot * Math.pow(2, semi / 12);
+      const g = audioCtx.createGain();
+      g.gain.value = 0.4;
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(now);
+      musicNodes.push(osc, g);
+    });
+
+    // 每隔数秒的轻柔琶音点缀
+    let step = 0;
+    musicTimer = setInterval(() => {
+      if (!musicEnabled || !audioCtx) return;
+      const t = audioCtx.currentTime;
+      const semi = theme.scale[step % theme.scale.length];
+      step++;
+      const osc = audioCtx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.value = theme.musicRoot * 2 * Math.pow(2, semi / 12);
+      const g = audioCtx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.07, t + 0.06);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 1.7);
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(t);
+      osc.stop(t + 1.8);
+    }, 1900);
+  }
+
+  function toggleMusic() {
+    musicEnabled = !musicEnabled;
+    document.getElementById('musicBtn').innerText = musicEnabled ? '🎵 音乐：开' : '🎼 音乐：关';
+    if (musicEnabled) {
+      startAmbientMusic(currentSubject);
+    } else {
+      stopAmbientMusic();
+    }
   }
 
   // 19 章默认数据架构
@@ -539,9 +739,23 @@
     badge.innerText = count > 0 ? count : '';
   }
 
+  function showAchieveToast(chapterTitle) {
+    const toast = document.createElement('div');
+    toast.className = 'achieve-toast';
+    toast.innerHTML = `🎉 <strong>${chapterTitle}</strong><br>本章节选择题已全部掌握！`;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }, 2600);
+  }
+
   function navigateHome() {
     playSound('flip');
     showView('viewSubjects');
+    clearSubjectBackground();
+    stopAmbientMusic();
     document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>`;
   }
 
@@ -607,6 +821,8 @@ const SUBJECT_LABELS = { biology: '生物科', chemistry: '化学科', physics: 
 function openSubject(subject) {
   playSound('pop');
   showView('viewStudy');
+  applySubjectBackground(subject);
+  if (musicEnabled) startAmbientMusic(subject);
   document.getElementById('breadcrumbNav').innerHTML = `
     <span class="breadcrumb-item" onclick="navigateHome()">学科选择</span> &gt;
     <span class="breadcrumb-item active">${SUBJECT_LABELS[subject] || subject}</span>
@@ -618,6 +834,8 @@ function openSubject(subject) {
   function showView(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
+    const shapes = document.getElementById('floatingShapes');
+    if (shapes) shapes.style.display = (viewId === 'viewSubjects') ? 'block' : 'none';
   }
 
   function renderChapterRail() {
@@ -767,9 +985,15 @@ function openSubject(subject) {
             btn.classList.add('correct');
             expBox.style.display = 'block';
             optBox.querySelectorAll('.option-btn').forEach(b => b.classList.add('locked'));
+            const beforeStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
             recordMcqResult(currentSubject, sec.id, currentMcqIdx, true);
+            const afterStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
             renderChapterRail();
             updateWrongCountBadge();
+            if (afterStats.total > 0 && afterStats.mastered === afterStats.total && beforeStats.mastered < afterStats.total) {
+              playSound('achieve');
+              showAchieveToast(sec.title);
+            }
           } else {
             playSound('wrong');
             btn.classList.add('wrong');
@@ -892,6 +1116,83 @@ function openSubject(subject) {
   function closeImageModal() {
     document.getElementById('imgModal').classList.remove('active');
   }
+
+  // ---- 管理员待审核预览（?admin=1 时可见，仅供预览，正式发布仍需在 GitHub 合并 PR）----
+  function isAdminMode() {
+    try {
+      return new URLSearchParams(window.location.search).get('admin') === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function renderAdminItem(item) {
+    const flagPills = (item.flags || []).map(f => `<span class="admin-pill admin-pill-flag">⚠️ ${f}</span>`).join('');
+    let bodyHtml;
+    if (item.type === 'subjective') {
+      bodyHtml = `
+        <div class="admin-item-q">${item.question || ''}</div>
+        ${item.image ? `<div class="figure-container"><img src="${item.image}" alt="待审核配图"></div>` : ''}
+        <div class="explanation" style="display:block;">${item.answer || ''}</div>
+      `;
+    } else {
+      const opts = (item.options || []).map((opt, i) => `<div class="admin-opt-row ${i === item.answer ? 'is-answer' : ''}">${opt}</div>`).join('');
+      bodyHtml = `
+        <div class="admin-item-q">${item.q || ''}</div>
+        ${item.image ? `<div class="figure-container"><img src="${item.image}" alt="待审核配图"></div>` : ''}
+        <div>${opts}</div>
+        ${item.explanation ? `<div class="explanation" style="display:block; margin-top:12px;">${item.explanation}</div>` : ''}
+      `;
+    }
+    return `
+      <div class="admin-item-card">
+        <div class="admin-item-meta">
+          <span class="admin-pill admin-pill-subject">${SUBJECT_LABELS[item.subject] || item.subject || '未知科目'}</span>
+          <span class="admin-pill admin-pill-chapter">${item.chapter_title || '未分类'}</span>
+          ${flagPills}
+        </div>
+        ${bodyHtml}
+        <div class="admin-item-source">来源草稿：${item.source_draft || '-'} ｜ 录入时间：${item.ingested_at || '-'}</div>
+      </div>
+    `;
+  }
+
+  async function openAdminPreview() {
+    playSound('pop');
+    showView('viewAdmin');
+    clearSubjectBackground();
+    stopAmbientMusic();
+    document.getElementById('breadcrumbNav').innerHTML = `
+      <span class="breadcrumb-item" onclick="navigateHome()">学科选择</span> &gt;
+      <span class="breadcrumb-item active">🛡️ 待审核预览</span>
+    `;
+    const area = document.getElementById('adminPendingArea');
+    area.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">正在加载待审核题目…</div>`;
+    try {
+      const res = await fetch('/papers/pending_approval.json');
+      if (!res.ok) throw new Error('no pending file');
+      const data = await res.json();
+      const items = data.items || [];
+      area.innerHTML = items.length
+        ? items.map(renderAdminItem).join('')
+        : `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🎉 目前没有待审核的 AI 录题批次。</div>`;
+    } catch (e) {
+      area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🎉 目前没有待审核的 AI 录题批次。</div>`;
+    }
+  }
+
+  function initAdminEntry() {
+    if (!isAdminMode()) return;
+    const actions = document.querySelector('.header-actions');
+    if (!actions) return;
+    const btn = document.createElement('button');
+    btn.className = 'sound-toggle';
+    btn.innerText = '🛡️ 待审核预览';
+    btn.onclick = openAdminPreview;
+    actions.insertBefore(btn, document.getElementById('breadcrumbNav'));
+  }
+
+  document.addEventListener('DOMContentLoaded', initAdminEntry);
 
 </script>
 </body>

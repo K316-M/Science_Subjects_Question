@@ -171,6 +171,7 @@ def process_subject(subject, report_items):
 
             record = {
                 "id": item_id,
+                "subject": subject,
                 "type": entry.get("type", "mcq"),
                 "chapter_id": chapter_id,
                 "chapter_title": chapter_title_by_id.get(chapter_id, "未分类（请人工归类）"),
