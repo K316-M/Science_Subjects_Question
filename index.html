@@ -8,19 +8,16 @@
   <meta property="og:title" content="独中理科自主学习系统">
   <meta property="og:description" content="董总华文独中高中统考理科题库与刷题平台，生物、化学、物理三科动态切换。">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="/icons/icon-512.png">
 
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#059669">
-  <link rel="icon" href="/icons/icon-192.png" type="image/png">
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="理科自学">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@600;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #059669;
@@ -40,6 +37,7 @@
       --shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.05);
       --shadow-md: 0 12px 26px -6px rgba(5, 150, 105, 0.16);
       --shadow-form: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      --font-display: "Noto Serif SC", "Noto Sans SC", serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -66,7 +64,8 @@
       padding-bottom: 14px;
       border-bottom: 1px solid rgba(148, 163, 184, 0.3);
     }
-    .brand { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .brand { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; letter-spacing: 0.2px; }
+    .page-heading { font-family: var(--font-display); font-size: 23px; font-weight: 800; color: #1e293b; letter-spacing: 0.3px; }
     .header-actions { display: flex; align-items: center; gap: 10px; }
     
     .sound-toggle {
@@ -100,7 +99,7 @@
     }
     .resume-card:hover { transform: translateY(-2px); }
     .resume-card-text { font-size: 13.5px; line-height: 1.5; }
-    .resume-card-text strong { font-size: 15px; }
+    .resume-card-text strong { font-family: var(--font-display); font-size: 15px; }
     .resume-card-arrow { font-size: 20px; flex: 0 0 auto; }
 
     .grid-subjects { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-top: 18px; }
@@ -117,7 +116,7 @@
     }
     .subject-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: var(--shadow-md); background: #fff; }
     .subject-icon { font-size: 42px; margin-bottom: 8px; }
-    .subject-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+    .subject-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
     .subject-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
     /* PPT 章节大纲竖型书签轨道 */
@@ -167,7 +166,7 @@
       border-radius: 4px;
     }
     .chap-badge { font-size: 11px; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 2px 7px; border-radius: 8px; }
-    .chap-name { font-size: 13px; font-weight: 700; color: #1e293b; text-align: center; line-height: 1.35; margin: 4px 0; }
+    .chap-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: #1e293b; text-align: center; line-height: 1.35; margin: 4px 0; }
     .chap-count { font-size: 11px; color: var(--text-muted); font-weight: 500; }
     .chap-count.has-progress { color: var(--primary); font-weight: 700; }
     .chap-progress-bar { width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 4px; }
@@ -367,28 +366,38 @@
     .img-modal.active { display: flex; animation: softFadeIn 0.2s ease; }
     .img-modal img { max-width: 95%; max-height: 90vh; border-radius: 8px; }
 
-    /* 首页理科元素漂浮插画 */
+    /* 背景柔光色块（首页默认装饰）：大面积高斯模糊圆形色块，缓慢漂浮，
+       零外部图片依赖、不受版权/署名限制，是目前免费背景设计的主流手法之一 */
     .floating-shapes { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-    .floating-shapes svg { position: absolute; opacity: 0.16; }
-    .fs-1 { top: 8%;   left: 4%;   width: 70px; animation: floatDrift 16s ease-in-out infinite; }
-    .fs-2 { top: 64%;  left: 7%;   width: 52px; animation: floatDrift 13s ease-in-out infinite -3s; }
-    .fs-3 { top: 14%;  right: 6%;  width: 58px; animation: floatDrift 15s ease-in-out infinite -6s; }
-    .fs-4 { top: 68%;  right: 9%;  width: 74px; animation: floatDrift 18s ease-in-out infinite -2s; }
-    .fs-5 { top: 42%;  left: 47%;  width: 44px; animation: floatDrift 12s ease-in-out infinite -8s; opacity: 0.10; }
-    @keyframes floatDrift {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-22px) rotate(8deg); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(50px); animation: blobDrift ease-in-out infinite; }
+    .blob-1 { width: 360px; height: 360px; top: -110px; left: -120px; opacity: 0.30; background: radial-gradient(circle at 32% 30%, #6ee7b7, #059669); animation-duration: 22s; }
+    .blob-2 { width: 300px; height: 300px; bottom: -80px; right: -90px; opacity: 0.28; background: radial-gradient(circle at 32% 30%, #7dd3fc, #0284c7); animation-duration: 26s; animation-delay: -6s; }
+    .blob-3 { width: 230px; height: 230px; top: 38%; right: 6%; opacity: 0.20; background: radial-gradient(circle at 32% 30%, #d8b4fe, #7c3aed); animation-duration: 19s; animation-delay: -10s; }
+    .blob-4 { width: 190px; height: 190px; bottom: 26%; left: 4%; opacity: 0.18; background: radial-gradient(circle at 32% 30%, #fef08a, #f59e0b); animation-duration: 24s; animation-delay: -4s; }
+    @keyframes blobDrift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(26px, -20px) scale(1.07); }
+      66% { transform: translate(-20px, 22px) scale(0.95); }
     }
 
-    /* 学科专属渐浅背景插画（进入做题界面后淡入显示） */
-    .subject-bg-wash {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      opacity: 0; transition: opacity 0.6s ease;
-      background-repeat: no-repeat;
-      background-position: right -80px bottom -80px;
-      background-size: 460px;
-    }
+    /* 学科专属背景层（进入做题界面后淡入）：默认显示该科目配色的柔光色块，
+       若检测到 assets/visual/<subject>/background.* 则改为显示该自定义图片 */
+    .subject-bg-wash { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0; transition: opacity 0.7s ease; }
     .subject-bg-wash.active { opacity: 1; }
+    .subject-bg-wash .blob { filter: blur(60px); }
+    .wash-blob-a { width: 420px; height: 420px; top: -120px; right: -140px; opacity: 0.24; animation-duration: 24s; }
+    .wash-blob-b { width: 320px; height: 320px; bottom: -100px; left: -100px; opacity: 0.18; animation-duration: 28s; animation-delay: -8s; }
+
+    .custom-photo-layer {
+      position: absolute; inset: 0;
+      background-repeat: no-repeat; background-position: center; background-size: cover;
+      opacity: 0; transition: opacity 0.7s ease;
+    }
+    .custom-photo-layer.active { opacity: 0.5; }
+    .custom-photo-layer::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(240,253,244,0.55), rgba(240,253,244,0.85));
+    }
 
     .container, header { position: relative; z-index: 1; }
     .view { z-index: 1; }
@@ -410,13 +419,16 @@
 <body>
 
 <div class="floating-shapes" id="floatingShapes">
-  <svg class="fs-1" viewBox="0 0 64 64" fill="none"><path d="M32 4C18 4 8 20 8 34c0 16 12 26 24 26 -10-6-16-16-16-26C16 20 22 10 32 4Z" fill="#059669"/><path d="M32 60C46 60 56 44 56 30 56 14 44 4 32 4c10 6 16 16 16 26 0 14-6 24-16 30Z" fill="#059669" opacity="0.55"/></svg>
-  <svg class="fs-2" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="4" fill="#0284c7"/><ellipse cx="32" cy="32" rx="28" ry="11" fill="none" stroke="#0284c7" stroke-width="2.5"/><ellipse cx="32" cy="32" rx="28" ry="11" fill="none" stroke="#0284c7" stroke-width="2.5" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="28" ry="11" fill="none" stroke="#0284c7" stroke-width="2.5" transform="rotate(120 32 32)"/></svg>
-  <svg class="fs-3" viewBox="0 0 64 64" fill="none"><path d="M26 6h12v22l14 26c2 4-1 8-5 8H17c-4 0-7-4-5-8l14-26V6Z" fill="none" stroke="#7c3aed" stroke-width="3"/><circle cx="24" cy="48" r="2.5" fill="#7c3aed"/><circle cx="36" cy="44" r="2" fill="#7c3aed"/><circle cx="30" cy="52" r="1.6" fill="#7c3aed"/></svg>
-  <svg class="fs-4" viewBox="0 0 64 64" fill="none"><path d="M8 34 L28 34 L22 58 L56 26 L36 26 L42 6 Z" fill="#0284c7"/></svg>
-  <svg class="fs-5" viewBox="0 0 64 64" fill="none"><path d="M20 8C36 8 36 24 20 24S4 40 20 40s16 16 0 16" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round"/></svg>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
 </div>
-<div class="subject-bg-wash" id="subjectBgWash"></div>
+<div class="subject-bg-wash" id="subjectBgWash">
+  <div class="blob wash-blob-a" id="washBlobA"></div>
+  <div class="blob wash-blob-b" id="washBlobB"></div>
+  <div class="custom-photo-layer" id="customPhotoLayer"></div>
+</div>
 
 <div class="container">
   <header>
@@ -433,7 +445,7 @@
   <!-- 视图 1: 学科主页 -->
   <div id="viewSubjects" class="view active">
     <div id="resumeCard"></div>
-    <h2 style="font-size: 22px; font-weight: 800; color: #1e293b;">选择学习学科</h2>
+    <h2 class="page-heading">选择学习学科</h2>
     <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">请选择董总华文独中高中统考科目：</p>
     <div class="grid-subjects">
       <div class="subject-card" onclick="openSubject('biology')" role="button" tabindex="0" aria-label="生物科">
@@ -472,7 +484,7 @@
 
   <!-- 视图 3: 管理员待审核预览（仅 ?admin=1 时可见入口） -->
   <div id="viewAdmin" class="view">
-    <h2 style="font-size: 22px; font-weight: 800; color: #1e293b;">🛡️ AI 自动录题 · 待审核预览</h2>
+    <h2 class="page-heading">🛡️ AI 自动录题 · 待审核预览</h2>
     <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">
       这里仅供预览核对，实际发布仍需回到 GitHub 上合并对应的待审核 Pull Request。
     </p>
@@ -587,36 +599,70 @@
 
   // ---- 学科主题（背景插画着色 + 环境背景音乐音阶）----
   const SUBJECT_THEME = {
-    biology:   { musicRoot: 196.00, filterHz: 1800, arpGap: 2400,
-      bgSvg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="#059669" d="M100 10C40 10 10 60 10 100c0 60 50 90 90 90-40-20-60-50-60-90 0-40 20-70 60-90Z"/><path fill="#059669" opacity="0.55" d="M100 190c60 0 90-50 90-90 0-60-50-90-90-90 40 20 60 50 60 90 0 40-20 70-60 90Z"/></svg>' },
-    chemistry: { musicRoot: 174.61, filterHz: 1400, arpGap: 2000,
-      bgSvg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="none" stroke="#7c3aed" stroke-width="8" d="M80 20 80 80 30 170Q25 180 35 180L145 180Q155 180 150 170L100 80 100 20Z"/><circle cx="60" cy="150" r="9" fill="#7c3aed"/><circle cx="112" cy="138" r="6" fill="#7c3aed"/><circle cx="90" cy="160" r="5" fill="#7c3aed"/></svg>' },
-    physics:   { musicRoot: 130.81, filterHz: 1100, arpGap: 2800,
-      bgSvg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="11" fill="#0284c7"/><ellipse cx="100" cy="100" rx="92" ry="35" fill="none" stroke="#0284c7" stroke-width="7"/><ellipse cx="100" cy="100" rx="92" ry="35" fill="none" stroke="#0284c7" stroke-width="7" transform="rotate(60 100 100)"/><ellipse cx="100" cy="100" rx="92" ry="35" fill="none" stroke="#0284c7" stroke-width="7" transform="rotate(120 100 100)"/></svg>' }
+    biology:   { musicRoot: 196.00, filterHz: 1800, arpGap: 2400, blobA: '#6ee7b7', blobB: '#059669' },
+    chemistry: { musicRoot: 174.61, filterHz: 1400, arpGap: 2000, blobA: '#c4b5fd', blobB: '#7c3aed' },
+    physics:   { musicRoot: 130.81, filterHz: 1100, arpGap: 2800, blobA: '#7dd3fc', blobB: '#0284c7' }
   };
 
   // 纯五度堆叠音程：任意组合都不会产生刺耳的不协和碰撞，适合长时间背景铺底
   const AMBIENT_INTERVALS = [0, 7, 12, 19, 24];
 
-  function applySubjectBackground(subject) {
+  // ---- 自定义素材探测：assets/visual/<subject>/background.*、assets/audio/<subject>/ambient.* ----
+  // 若用户把自己准备的图片/音乐放进对应文件夹，网站会自动改用它们；找不到则回退到内置的生成式设计。
+  async function resolveCustomAsset(basePath, extensions) {
+    for (const ext of extensions) {
+      const url = `${basePath}.${ext}`;
+      try {
+        const res = await fetch(url, { method: 'HEAD' });
+        if (res.ok) return url;
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  let bgSessionId = 0;
+
+  async function applySubjectBackground(subject) {
+    const sessionId = ++bgSessionId;
     const wash = document.getElementById('subjectBgWash');
     const theme = SUBJECT_THEME[subject];
+    const photoLayer = document.getElementById('customPhotoLayer');
     if (!wash || !theme) return;
-    wash.style.backgroundImage = `url("data:image/svg+xml,${encodeURIComponent(theme.bgSvg)}")`;
+
+    document.getElementById('washBlobA').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
+    document.getElementById('washBlobB').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
     wash.classList.add('active');
+    photoLayer.classList.remove('active');
+    photoLayer.style.backgroundImage = '';
+
+    const customUrl = await resolveCustomAsset(`/assets/visual/${subject}/background`, ['jpg', 'jpeg', 'png', 'webp']);
+    if (sessionId !== bgSessionId) return; // 期间已切换到其他科目，放弃这次结果
+    if (customUrl) {
+      photoLayer.style.backgroundImage = `url("${customUrl}")`;
+      photoLayer.classList.add('active');
+    }
   }
   function clearSubjectBackground() {
+    bgSessionId++; // 使尚未完成的自定义素材探测失效
     const wash = document.getElementById('subjectBgWash');
     if (wash) wash.classList.remove('active');
   }
 
-  // ---- 生成式环境背景音乐（纯 Web Audio 合成，无需外部音频文件）----
+  // ---- 环境背景音乐：优先使用 assets/audio/<subject>/ambient.*，找不到则用 Web Audio 生成式合成 ----
   let musicEnabled = false;
   let musicNodes = [];
   let musicTimer = null;
+  let customAudioEl = null;
+  let musicSessionId = 0;
 
   function stopAmbientMusic() {
+    musicSessionId++; // 使尚未完成的自定义音频探测失效
     if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+    if (customAudioEl) {
+      customAudioEl.pause();
+      customAudioEl.src = '';
+      customAudioEl = null;
+    }
     const now = audioCtx ? audioCtx.currentTime : 0;
     musicNodes.forEach(n => {
       try {
@@ -627,9 +673,24 @@
     musicNodes = [];
   }
 
-  function startAmbientMusic(subject) {
+  async function startAmbientMusic(subject) {
+    const sessionId = ++musicSessionId;
     stopAmbientMusic();
+    musicSessionId = sessionId; // stopAmbientMusic 会自增，这里恢复成本次会话的编号
     if (!musicEnabled) return;
+
+    const customUrl = await resolveCustomAsset(`/assets/audio/${subject}/ambient`, ['mp3', 'ogg', 'm4a']);
+    if (sessionId !== musicSessionId) return; // 期间已切换，放弃
+
+    if (customUrl) {
+      customAudioEl = new Audio(customUrl);
+      customAudioEl.loop = true;
+      customAudioEl.volume = 0.35;
+      customAudioEl.play().catch((e) => console.warn('自定义背景音乐播放失败：', e.message));
+      return;
+    }
+
+    // 回退：生成式合成（详见下方音阶设计说明）
     initAudio();
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
@@ -841,6 +902,7 @@ async function loadSubjectData(subjectName, initialChapterIdx) {
       renderChapterRail();
       renderActiveContent();
       updateWrongCountBadge();
+      if (fullDatabase.sections.length > 0) saveLastVisit(subjectName, activeChapterIdx);
       console.log(`✅ 从 ${targetPath} 载入题库成功`);
       return;
     } else {
