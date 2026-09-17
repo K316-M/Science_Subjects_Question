@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-MY">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0d0d0d">
+  <title>开发者登录 · 独中理科</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E5%AD%A6&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/dev/dev.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-glow a"></div>
+    <div class="login-glow b"></div>
+
+    <div class="login-top">
+      <a class="btn btn-ghost btn-sm" href="/" id="backLink">返回学生网站</a>
+    </div>
+
+    <main class="login-main">
+      <div class="shine-border" id="shine">
+        <div class="login-card spotlight">
+          <div class="brand-mark" aria-hidden="true">学<span class="tag">DEV</span></div>
+          <h1 class="login-title">开发者工作台</h1>
+          <p class="login-sub">仅限网站管理员登录。学生请回到学生网站使用。</p>
+
+          <form class="login-form" id="loginForm" novalidate>
+            <div class="field">
+              <label class="field-label" for="username">账号</label>
+              <div class="input-icon" id="userWrap">
+                <input class="input" id="username" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" required>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="password">密码</label>
+              <div class="input-icon" id="passWrap">
+                <input class="input has-trailing" id="password" name="password" type="password" autocomplete="current-password" required>
+              </div>
+              <span class="field-hint" id="capsHint" hidden>大写锁定（Caps Lock）已开启</span>
+            </div>
+
+            <div id="formMessage" aria-live="polite"></div>
+
+            <button class="btn btn-primary login-submit" id="submitBtn" type="submit">登录</button>
+          </form>
+
+          <p class="login-foot">登录状态保存 12 小时 · 输错密码会被刻意放慢</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/dev/ui.js"></script>
+  <script src="/dev/login.js"></script>
+</body>
+</html>

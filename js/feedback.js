@@ -1,17 +1,15 @@
 /* ==========================================================================
    网页问题申诉模块
    ---------------------------------------------------------------------------
-   这是一个纯静态网站（没有后端服务器），所以申诉的「往返」是这样闭环的：
-     1. 用户提交问题 → 存进他自己浏览器的 localStorage，并拿到一个问题编号
-     2. 用户把问题内容（含编号）发给管理员：一键复制 / 邮件 / 自动 POST（可选配置）
-     3. 管理员修好后，把「编号 + 处理说明 + 出问题的位置」写进仓库的
-        data/resolved_issues.json 并推送
-     4. 用户下次打开网站 → 自动比对本地的待处理问题 → 命中就弹出通知小精灵
-   如果想要真正的自动收件，把下面的 FEEDBACK_ENDPOINT 填成表单服务（如 Formspree）
-   的接口地址即可，其余流程不必改动。
+   申诉的往返流程：
+     1. 用户提交问题 → 存进他自己浏览器的 localStorage，拿到问题编号，
+        同时通过 Formspree 自动寄到管理员邮箱（邮件里附带一行「开发者处理码」）
+     2. 管理员登录开发者工作台（/dev/），贴上处理码、写处理说明、一键发布，
+        结果会写进仓库的 data/resolved_issues.json
+     3. 用户下次打开网站 → 比对本地的待处理问题 → 命中就弹出通知小精灵
    ========================================================================== */
 
-const FEEDBACK_ENDPOINT = ''; // 例：'https://formspree.io/f/xxxxxxx'
+const FEEDBACK_ENDPOINT = 'https://formspree.io/f/mdekopgq';
 const FEEDBACK_STORAGE_KEY = 'UEC_FEEDBACK_v1';
 const RESOLUTIONS_URL = '/data/resolved_issues.json';
 
@@ -21,7 +19,6 @@ const VIEW_LABELS = {
   viewNotes: '笔记页',
   viewArchive: '题目档页',
   viewFeedback: '网页问题申诉页',
-  viewAdmin: '管理员待审核预览',
 };
 
 let lastContentContext = { view: 'viewSubjects', subject: null, chapterIdx: 0, subMode: 'mcq' };
@@ -69,6 +66,53 @@ function describeContext(ctx) {
   return base;
 }
 
+/* ---------- 开发者处理码：编号 + 位置 + 描述打包成一行，工作台贴上即可解析 ---------- */
+function makeDevCode(report) {
+  const json = JSON.stringify({ i: report.id, l: report.location, m: report.text.slice(0, 200), t: report.createdAt });
+  const bytes = new TextEncoder().encode(json);
+  let bin = '';
+  bytes.forEach(b => { bin += String.fromCharCode(b); });
+  return 'UECFB:' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function looksLikeEmail(str) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str || '');
+}
+
+async function sendReportToAdmin(report) {
+  if (!FEEDBACK_ENDPOINT) return false;
+  const payload = {
+    _subject: `独中理科网站问题申诉 ${report.id}`,
+    问题编号: report.id,
+    出问题的位置: describeContext(report.location),
+    问题描述: report.text,
+    联络方式: report.contact || '（未填写）',
+    开发者处理码: makeDevCode(report),
+  };
+  // Formspree 会把 email 字段设为回复地址，格式不合法会整笔拒收，所以只在像邮箱时才带
+  if (looksLikeEmail(report.contact)) payload.email = report.contact;
+
+  try {
+    const res = await fetch(FEEDBACK_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return res.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+function markReportSent(id, sent) {
+  const store = loadFeedbackStore();
+  const report = store.reports.find(r => r.id === id);
+  if (report) {
+    report.sent = sent;
+    saveFeedbackStore(store);
+  }
+}
+
 /* ---------- 申诉页 ---------- */
 function renderFeedbackView() {
   const locSel = document.getElementById('fbLocation');
@@ -86,7 +130,6 @@ function renderFeedbackView() {
     locSel.innerHTML = opts.map(o => `<option value="${o.v}">${escapeFb(o.t)}</option>`).join('');
   }
   renderMyReports();
-  renderDevChannel();
 }
 
 function resolveSelectedLocation() {
@@ -101,6 +144,7 @@ function resolveSelectedLocation() {
 
 async function submitFeedback() {
   const textEl = document.getElementById('fbText');
+  const btn = document.getElementById('fbSubmitBtn');
   const text = textEl.value.trim();
   if (text.length < 5) {
     alert('请再写清楚一点（至少 5 个字），这样才好定位问题 🙏');
@@ -111,41 +155,28 @@ async function submitFeedback() {
   const report = {
     id: makeReportId(),
     text,
-    contact: (document.getElementById('fbContact') || {}).value?.trim() || '',
+    contact: ((document.getElementById('fbContact') || {}).value || '').trim(),
     location: resolveSelectedLocation(),
     createdAt: Date.now(),
     status: 'pending',
     reply: null,
     acknowledged: false,
+    sent: false,
   };
 
   const store = loadFeedbackStore();
   store.reports.unshift(report);
   saveFeedbackStore(store);
 
-  if (FEEDBACK_ENDPOINT) {
-    try {
-      await fetch(FEEDBACK_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: report.id,
-          message: report.text,
-          contact: report.contact,
-          location: describeContext(report.location),
-          locationRaw: report.location,
-        }),
-      });
-    } catch (e) {
-      console.warn('自动发送失败，用户仍可手动复制／邮件发送：', e.message);
-    }
-  }
+  if (btn) { btn.disabled = true; btn.textContent = '发送中…'; }
+  const sent = await sendReportToAdmin(report);
+  markReportSent(report.id, sent);
+  if (btn) { btn.disabled = false; btn.textContent = '📮 提交申诉'; }
 
   textEl.value = '';
-  if (typeof playSound === 'function') playSound('correct');
-  showSubmitResult(report);
+  if (typeof playSound === 'function') playSound(sent ? 'correct' : 'pop');
+  showSubmitResult({ ...report, sent });
   renderMyReports();
-  renderDevChannel();
 }
 
 function buildReportPlainText(report) {
@@ -158,7 +189,9 @@ function buildReportPlainText(report) {
     '',
     '问题描述：',
     report.text,
-  ].filter(Boolean).join('\n');
+    '',
+    `开发者处理码：${makeDevCode(report)}`,
+  ].filter(line => line !== '').join('\n');
 }
 
 function showSubmitResult(report) {
@@ -166,19 +199,37 @@ function showSubmitResult(report) {
   if (!box) return;
   const plain = buildReportPlainText(report);
   const mailto = `mailto:?subject=${encodeURIComponent('独中理科网站问题申诉 ' + report.id)}&body=${encodeURIComponent(plain)}`;
-  box.innerHTML = `
-    <div class="fb-report-item" style="border-color: var(--primary);">
-      <div class="fb-report-head">
-        <span class="fb-status resolved">✅ 已记录</span>
-        <span class="fb-report-id">${escapeFb(report.id)}</span>
-      </div>
-      <div class="fb-report-text">问题已记录在你的浏览器里。${FEEDBACK_ENDPOINT ? '并已自动发送给管理员。' : '请用下面任一方式把它发给管理员，管理员修好后你会在网站上收到通知。'}</div>
-      <div style="display:flex; gap:8px; margin-top:11px; flex-wrap:wrap;">
-        <button class="btn-ghost-retro" onclick="copyReportText('${escapeFb(report.id)}')">📋 复制问题内容</button>
-        <a class="btn-ghost-retro" style="text-decoration:none; display:inline-block;" href="${mailto}">✉️ 用邮件发送</a>
-      </div>
-    </div>`;
+
+  box.innerHTML = report.sent
+    ? `<div class="fb-report-item" style="border-color: var(--primary);">
+        <div class="fb-report-head">
+          <span class="fb-status resolved">✅ 已送达管理员</span>
+          <span class="fb-report-id">${escapeFb(report.id)}</span>
+        </div>
+        <div class="fb-report-text">谢谢反馈！管理员修好之后，你下次打开网站会看到通知小精灵。</div>
+      </div>`
+    : `<div class="fb-report-item" style="border-color: var(--danger);">
+        <div class="fb-report-head">
+          <span class="fb-status pending">⚠️ 自动发送失败</span>
+          <span class="fb-report-id">${escapeFb(report.id)}</span>
+        </div>
+        <div class="fb-report-text">问题已记录在你的浏览器里，但暂时没能送出（可能是网络问题）。请用下面任一方式发给管理员：</div>
+        <div style="display:flex; gap:8px; margin-top:11px; flex-wrap:wrap;">
+          <button class="btn-ghost-retro" onclick="copyReportText('${escapeFb(report.id)}')">📋 复制问题内容</button>
+          <a class="btn-ghost-retro" style="text-decoration:none; display:inline-block;" href="${mailto}">✉️ 用邮件发送</a>
+          <button class="btn-ghost-retro" onclick="resendReport('${escapeFb(report.id)}')">🔁 重新发送</button>
+        </div>
+      </div>`;
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function resendReport(id) {
+  const report = loadFeedbackStore().reports.find(r => r.id === id);
+  if (!report) return;
+  const sent = await sendReportToAdmin(report);
+  markReportSent(id, sent);
+  showSubmitResult({ ...report, sent });
+  renderMyReports();
 }
 
 function copyReportText(id) {
@@ -205,10 +256,12 @@ function renderMyReports() {
         <span class="fb-report-id">${escapeFb(r.id)}</span>
         <span class="fb-report-id">${new Date(r.createdAt).toLocaleDateString('zh-CN')}</span>
         <span class="fb-report-id">📍 ${escapeFb(describeContext(r.location))}</span>
+        ${r.sent === false && r.status !== 'resolved' ? '<span class="fb-report-id" style="color:var(--danger);">未送达</span>' : ''}
       </div>
       <div class="fb-report-text">${escapeFb(r.text)}</div>
       ${r.reply ? `<div class="fb-report-reply"><strong>管理员回复：</strong>${escapeFb(r.reply.summary)}</div>` : ''}
       <div style="margin-top:9px; display:flex; gap:7px; flex-wrap:wrap;">
+        ${r.sent === false && r.status !== 'resolved' ? `<button class="note-mini-btn" style="flex:0 0 auto;" onclick="resendReport('${escapeFb(r.id)}')">🔁 重新发送</button>` : ''}
         <button class="note-mini-btn" style="flex:0 0 auto;" onclick="copyReportText('${escapeFb(r.id)}')">📋 复制</button>
         <button class="note-mini-btn danger" style="flex:0 0 auto;" onclick="deleteReport('${escapeFb(r.id)}')">🗑️ 删除</button>
       </div>
@@ -221,7 +274,6 @@ function deleteReport(id) {
   store.reports = store.reports.filter(r => r.id !== id);
   saveFeedbackStore(store);
   renderMyReports();
-  renderDevChannel();
   refreshSprite();
 }
 
@@ -229,63 +281,6 @@ function escapeFb(str) {
   return String(str == null ? '' : str)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
-/* ---------- 开发者专属通道（?dev=1） ---------- */
-function isDevMode() {
-  try {
-    return new URLSearchParams(window.location.search).get('dev') === '1';
-  } catch (e) {
-    return false;
-  }
-}
-
-function renderDevChannel() {
-  const box = document.getElementById('fbDevChannel');
-  if (!box) return;
-  if (!isDevMode()) { box.innerHTML = ''; return; }
-
-  const reports = loadFeedbackStore().reports;
-  box.innerHTML = `
-    <h3 class="page-heading" style="font-size:18px; margin-top:30px;">🛠️ 开发者通道</h3>
-    <p class="fb-hint" style="margin-bottom:12px;">
-      这一区只有网址带 <code>?dev=1</code> 时才看得到。下面可以把任何一条问题标记为已解决，
-      系统会生成要贴进仓库 <code>data/resolved_issues.json</code> 的内容；推送之后，
-      提交该问题的用户下次打开网站就会看到通知小精灵。
-    </p>
-    ${reports.length === 0 ? '<div class="archive-empty" style="padding:20px;">本机没有申诉记录。</div>' : reports.map(r => `
-      <div class="fb-report-item">
-        <div class="fb-report-head">
-          <span class="fb-status ${r.status}">${r.status === 'resolved' ? '已解决' : '处理中'}</span>
-          <span class="fb-report-id">${escapeFb(r.id)}</span>
-        </div>
-        <div class="fb-report-text">${escapeFb(r.text)}</div>
-        <div class="fb-field" style="margin-top:10px;">
-          <input class="fb-input" id="devSummary_${escapeFb(r.id)}" placeholder="处理说明（会显示给用户，例：错题本按钮已修好）">
-        </div>
-        <button class="btn-ghost-retro" onclick="devGenerateResolution('${escapeFb(r.id)}')">生成 JSON 片段</button>
-      </div>`).join('')}
-    <div class="fb-field" style="margin-top:12px;">
-      <label class="fb-label">要贴进 data/resolved_issues.json 的内容</label>
-      <textarea class="fb-textarea" id="devJsonOut" readonly placeholder="点上面的「生成 JSON 片段」后显示在这里"></textarea>
-    </div>`;
-}
-
-function devGenerateResolution(id) {
-  const report = loadFeedbackStore().reports.find(r => r.id === id);
-  if (!report) return;
-  const summary = (document.getElementById('devSummary_' + id) || {}).value?.trim() || '问题已修复';
-  const entry = {
-    reportId: report.id,
-    summary,
-    resolvedAt: new Date().toISOString().slice(0, 10),
-    target: report.location,
-  };
-  const out = document.getElementById('devJsonOut');
-  if (out) {
-    out.value = JSON.stringify(entry, null, 2);
-    out.select();
-  }
 }
 
 /* ---------- 比对管理员的处理结果 ---------- */
@@ -299,7 +294,6 @@ async function syncResolutions() {
     return; // 离线或文件还没建立，安静跳过
   }
   const list = (data && data.resolutions) || [];
-  if (!list.length) return;
 
   const store = loadFeedbackStore();
   let changed = false;
@@ -336,7 +330,7 @@ function refreshSprite() {
     return;
   }
   const badge = document.getElementById('spriteBadge');
-  if (badge) badge.textContent = '!';
+  if (badge) { badge.textContent = '!'; badge.style.display = ''; }
   document.getElementById('spritePanel').classList.remove('open');
   document.getElementById('spriteConnector').classList.add('hidden');
   wrap.classList.add('active');
@@ -355,8 +349,7 @@ function toggleSpritePanel() {
     document.getElementById('spritePanelTitle').innerHTML =
       `已解决 <em>【${escapeFb(summary)}】</em>，要查看吗？›`;
     const badge = document.getElementById('spriteBadge');
-    if (badge) badge.textContent = '';
-    badge.style.display = 'none';
+    if (badge) badge.style.display = 'none';
   }
 }
 
@@ -418,8 +411,7 @@ function toggleSpriteNewIssue(btn) {
   const on = btn.classList.toggle('on');
   if (!on) return;
   if (typeof playSound === 'function') playSound('pop');
-  const dialog = document.getElementById('spriteNewIssue');
-  dialog.classList.add('active');
+  document.getElementById('spriteNewIssue').classList.add('active');
   setTimeout(() => {
     const ta = document.getElementById('spriteIssueText');
     if (ta) ta.focus();
@@ -432,7 +424,7 @@ function closeSpriteNewIssue() {
   if (toggle) toggle.classList.remove('on');
 }
 
-function submitSpriteNewIssue() {
+async function submitSpriteNewIssue() {
   const ta = document.getElementById('spriteIssueText');
   const text = ta.value.trim();
   if (text.length < 5) {
@@ -449,6 +441,7 @@ function submitSpriteNewIssue() {
     status: 'pending',
     reply: null,
     acknowledged: false,
+    sent: false,
   };
   const store = loadFeedbackStore();
   store.reports.unshift(report);
@@ -456,14 +449,14 @@ function submitSpriteNewIssue() {
 
   ta.value = '';
   closeSpriteNewIssue();
-  if (typeof playSound === 'function') playSound('correct');
-  alert(`已记录新问题（编号 ${report.id}）。\n可以到「网页问题申诉」页面把它复制发给管理员。`);
+  const sent = await sendReportToAdmin(report);
+  markReportSent(report.id, sent);
+  if (typeof playSound === 'function') playSound(sent ? 'correct' : 'pop');
+  alert(sent
+    ? `已把新问题送给管理员（编号 ${report.id}），谢谢！`
+    : `新问题已记录（编号 ${report.id}），但暂时没能送出。\n请到「网页问题申诉」页面点「重新发送」。`);
   renderMyReports();
-  renderDevChannel();
 }
 
 /* 启动：比对处理结果并决定要不要弹小精灵 */
-document.addEventListener('DOMContentLoaded', () => {
-  renderDevChannel();
-  syncResolutions();
-});
+document.addEventListener('DOMContentLoaded', syncResolutions);

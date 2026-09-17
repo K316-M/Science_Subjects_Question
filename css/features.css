@@ -58,26 +58,27 @@
 .nav-item:hover { color: #fff; }
 .nav-item.active { color: #fff; }
 
+/* 中央徽章：纯装饰的书法「学」字，不可点击 */
 .nav-logo {
-  width: 62px; height: 62px;
+  width: 64px; height: 64px;
   flex: 0 0 auto;
   border-radius: 50%;
   background: var(--retro-cream);
   border: 3px solid var(--retro-dark);
   box-shadow: 0 0 0 3px var(--retro-cream), 0 0 0 5px var(--retro-teal-dark);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display);
-  font-size: 17px; font-weight: 800; color: var(--retro-dark);
-  letter-spacing: 0.5px;
+  font-family: "Ma Shan Zheng", "KaiTi", "STKaiti", "Kaiti SC", "楷体", serif;
+  font-size: 42px; font-weight: 400; line-height: 1;
+  color: var(--retro-dark);
+  padding-bottom: 2px;
   margin: 0 6px;
-  cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+  user-select: none;
 }
-.nav-logo:hover { transform: rotate(-6deg) scale(1.05); }
 
 @media (max-width: 640px) {
   .nav-item { font-size: 12px; letter-spacing: 0.8px; padding: 6px 8px; }
-  .nav-logo { width: 46px; height: 46px; font-size: 13px; margin: 0 2px; }
+  .nav-logo { width: 48px; height: 48px; font-size: 32px; margin: 0 2px; }
 }
 
 /* ---------- 工具条（面包屑 + 音效开关） ---------- */

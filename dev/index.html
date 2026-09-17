@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-MY">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0d0d0d">
+  <title>开发者工作台 · 独中理科</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E5%AD%A6&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/dev/dev.css">
+</head>
+<body>
+  <div class="boot" id="boot"><span class="spinner"></span><span id="bootText">正在验证登录状态…</span></div>
+
+  <div class="app" id="app" hidden>
+    <header class="topbar">
+      <div class="side-brand">
+        <div class="brand-mark" aria-hidden="true">学<span class="tag">DEV</span></div>
+        <div class="side-brand-text"><strong>开发者工作台</strong></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="menuBtn" type="button" aria-label="打开导航" aria-expanded="false"></button>
+    </header>
+
+    <aside class="sidebar" id="sidebar" aria-label="工作台导航">
+      <div class="side-brand">
+        <div class="brand-mark" aria-hidden="true">学<span class="tag">DEV</span></div>
+        <div class="side-brand-text">
+          <strong>开发者工作台</strong>
+          <span>独中理科自主学习系统</span>
+        </div>
+      </div>
+      <div class="side-label">工作</div>
+      <nav class="nav" id="nav"></nav>
+      <div class="side-foot">
+        <a class="nav-link" href="/" target="_blank" rel="noopener" id="openSiteLink">打开学生网站</a>
+        <button class="nav-link" type="button" id="logoutBtn">登出</button>
+        <div class="user-chip">
+          <div class="avatar" id="avatar">D</div>
+          <div><strong id="userName">—</strong><span id="sessionInfo">—</span></div>
+        </div>
+      </div>
+    </aside>
+    <div class="scrim" id="scrim" hidden></div>
+
+    <main class="main" id="main"></main>
+  </div>
+
+  <script src="/dev/ui.js"></script>
+  <script src="/dev/dev.js"></script>
+</body>
+</html>

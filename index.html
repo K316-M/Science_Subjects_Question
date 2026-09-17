@@ -18,6 +18,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@600;800&display=swap" rel="stylesheet">
+  <!-- 书法楷体只用在导航徽章的「学」字上，用 text= 让 Google Fonts 只下发这一个字，几 KB 而已 -->
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E5%AD%A6&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #059669;
@@ -115,7 +117,16 @@
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .subject-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: var(--shadow-md); background: #fff; }
-    .subject-icon { font-size: 42px; margin-bottom: 8px; }
+    .subject-ascii-wrap { height: 138px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; overflow: hidden; }
+    .subject-ascii {
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
+      font-size: 10px; line-height: 1.18; letter-spacing: 0;
+      text-align: left; white-space: pre; margin: 0;
+      color: var(--retro-teal-dark, #4d8189);
+      transition: color 0.25s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .subject-card:hover .subject-ascii { color: var(--retro-coral, #e1614c); transform: scale(1.04); }
+    @media (max-width: 640px) { .subject-ascii { font-size: 11px; } }
     .subject-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
     .subject-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
@@ -190,24 +201,6 @@
     .wrong-item-q { font-size: 14px; color: #334155; line-height: 1.6; white-space: pre-line; }
     .wrong-item-jump { flex: 0 0 auto; background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .wrong-item-jump:hover { background: var(--primary-dark); }
-
-    .admin-item-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 20px 22px;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 16px;
-    }
-    .admin-item-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; align-items: center; }
-    .admin-pill { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 10px; }
-    .admin-pill-subject { background: var(--primary-light); color: var(--primary-dark); }
-    .admin-pill-chapter { background: #eff6ff; color: #1d4ed8; }
-    .admin-pill-flag { background: #fef2f2; color: #b91c1c; }
-    .admin-item-q { font-size: 15px; font-weight: 600; color: #1e293b; line-height: 1.7; white-space: pre-line; margin-bottom: 12px; }
-    .admin-opt-row { padding: 9px 14px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 14px; margin-bottom: 6px; }
-    .admin-opt-row.is-answer { background: #ecfdf5; border-color: var(--success); color: #065f46; font-weight: 700; }
-    .admin-item-source { font-size: 11.5px; color: var(--text-muted); margin-top: 10px; }
 
     /* 二级分类胶囊标签 */
     .sub-bookmark-bar {
@@ -436,7 +429,7 @@
   <div class="nav-inner">
     <button class="nav-item" id="navHomeBtn" onclick="navHome()">主页</button>
     <button class="nav-item" id="navNotesBtn" onclick="openNotesView()">笔记</button>
-    <div class="nav-logo" onclick="navHome()" role="button" tabindex="0" aria-label="回到主页">理科</div>
+    <div class="nav-logo" aria-hidden="true">学</div>
     <button class="nav-item" id="navArchiveBtn" onclick="openArchiveView()">题目档</button>
     <button class="nav-item" id="navFeedbackBtn" onclick="openFeedbackView()">网页问题申诉</button>
   </div>
@@ -464,22 +457,59 @@
     <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">请选择董总华文独中高中统考科目：</p>
     <div class="grid-subjects">
       <div class="subject-card" onclick="openSubject('biology')" role="button" tabindex="0" aria-label="生物科">
-        <div class="subject-icon">🌿</div>
+        <div class="subject-ascii-wrap" aria-hidden="true"><pre class="subject-ascii">
+    o=o
+  o=====o
+ o-A---T-o
+  o=====o
+    o=o
+     X
+    o=o
+  o=====o
+ o-G---C-o
+  o=====o
+    o=o</pre></div>
         <div class="subject-title">生物 (Biology)</div>
         <div class="subject-desc">光合呼吸、神经调节、生殖发育与遗传育种</div>
       </div>
       <div class="subject-card" onclick="openSubject('chemistry')" role="button" tabindex="0" aria-label="化学科">
-        <div class="subject-icon">🧪</div>
+        <div class="subject-ascii-wrap" aria-hidden="true"><pre class="subject-ascii">
+      .-'''-.
+    .'  o    '.
+   /  .-'''-.  \
+  |  /       \  |
+  | |   (@)   | |
+  |  \       /  |
+   \  '-...-' o/
+    '.       .'
+      '-...-'</pre></div>
         <div class="subject-title">化学 (Chemistry)</div>
         <div class="subject-desc">整理中</div>
       </div>
       <div class="subject-card" onclick="openSubject('physics')" role="button" tabindex="0" aria-label="物理科">
-        <div class="subject-icon">⚡</div>
+        <div class="subject-ascii-wrap" aria-hidden="true"><pre class="subject-ascii">
+/////////////  ((( * )))
+      |\           |
+      | \         /|\
+      |  \       /_|_\
+      :   \      \ | /
+      :    \      \|/
+      :    (O)    /|\
+      :   .'     / | \
+   .  :  .      /__|__\
+    '-o-'      /   |   \</pre></div>
         <div class="subject-title">物理 (Physics)</div>
         <div class="subject-desc">整理中</div>
       </div>
       <div class="subject-card" style="opacity: 0.6; cursor: not-allowed;" aria-disabled="true">
-        <div class="subject-icon">📐</div>
+        <div class="subject-ascii-wrap" aria-hidden="true"><pre class="subject-ascii">
++-------+-----+     /|
+|       |     |    / |
+|   5   |  3  | c /  | a
+|       +-+-+-+  /   |
+|       |1|1|2| /____|
++-------+-+-+-+    b
+ 1 : 1.618   a^2+b^2=c^2</pre></div>
         <div class="subject-title">高级数学 (Adv. Maths)</div>
         <div class="subject-desc">整理中</div>
       </div>
@@ -495,15 +525,6 @@
       <button class="sub-tab-btn" id="subBtnWrong" onclick="switchSubSection('wrong')">📕 错题本 <span id="wrongCountBadge"></span></button>
     </div>
     <div id="activeStudyArea"></div>
-  </div>
-
-  <!-- 视图 3: 管理员待审核预览（仅 ?admin=1 时可见入口） -->
-  <div id="viewAdmin" class="view">
-    <h2 class="page-heading">🛡️ AI 自动录题 · 待审核预览</h2>
-    <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">
-      这里仅供预览核对，实际发布仍需回到 GitHub 上合并对应的待审核 Pull Request。
-    </p>
-    <div id="adminPendingArea" style="margin-top: 18px;"></div>
   </div>
 
   <!-- 视图 4: 笔记 -->
@@ -567,13 +588,12 @@
         <label class="fb-label" for="fbContact">联络方式（选填）</label>
         <input class="fb-input" id="fbContact" placeholder="邮箱或 WhatsApp，方便管理员追问细节">
       </div>
-      <button class="btn-primary-retro" onclick="submitFeedback()">📮 提交申诉</button>
+      <button class="btn-primary-retro" id="fbSubmitBtn" onclick="submitFeedback()">📮 提交申诉</button>
       <div id="fbSubmitResult" style="margin-top:14px;"></div>
     </div>
 
     <h3 class="page-heading" style="font-size:18px; margin-top:30px;">我提交过的问题</h3>
     <div id="fbMyReports" style="margin-top:12px;"></div>
-    <div id="fbDevChannel"></div>
   </div>
 </div>
 
@@ -1473,85 +1493,7 @@ function openSubject(subject, initialChapterIdx) {
     document.getElementById('imgModal').classList.remove('active');
   }
 
-  // ---- 管理员待审核预览（?admin=1 时可见，仅供预览，正式发布仍需在 GitHub 合并 PR）----
-  function isAdminMode() {
-    try {
-      return new URLSearchParams(window.location.search).get('admin') === '1';
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function renderAdminItem(item) {
-    const flagPills = (item.flags || []).map(f => `<span class="admin-pill admin-pill-flag">⚠️ ${f}</span>`).join('');
-    let bodyHtml;
-    if (item.type === 'subjective') {
-      bodyHtml = `
-        <div class="admin-item-q">${item.question || ''}</div>
-        ${item.image ? `<div class="figure-container"><img src="${item.image}" alt="待审核配图"></div>` : ''}
-        <div class="explanation" style="display:block;">${item.answer || ''}</div>
-      `;
-    } else {
-      const opts = (item.options || []).map((opt, i) => `<div class="admin-opt-row ${i === item.answer ? 'is-answer' : ''}">${opt}</div>`).join('');
-      bodyHtml = `
-        <div class="admin-item-q">${item.q || ''}</div>
-        ${item.image ? `<div class="figure-container"><img src="${item.image}" alt="待审核配图"></div>` : ''}
-        <div>${opts}</div>
-        ${item.explanation ? `<div class="explanation" style="display:block; margin-top:12px;">${item.explanation}</div>` : ''}
-      `;
-    }
-    return `
-      <div class="admin-item-card">
-        <div class="admin-item-meta">
-          <span class="admin-pill admin-pill-subject">${SUBJECT_LABELS[item.subject] || item.subject || '未知科目'}</span>
-          <span class="admin-pill admin-pill-chapter">${item.chapter_title || '未分类'}</span>
-          ${flagPills}
-        </div>
-        ${bodyHtml}
-        <div class="admin-item-source">来源草稿：${item.source_draft || '-'} ｜ 录入时间：${item.ingested_at || '-'}</div>
-      </div>
-    `;
-  }
-
-  async function openAdminPreview() {
-    playSound('pop');
-    showView('viewAdmin');
-    clearSubjectBackground();
-    stopAmbientMusic();
-    document.getElementById('breadcrumbNav').innerHTML = `
-      <span class="breadcrumb-item" onclick="navigateHome()">学科选择</span> &gt;
-      <span class="breadcrumb-item active">🛡️ 待审核预览</span>
-    `;
-    const area = document.getElementById('adminPendingArea');
-    area.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">正在加载待审核题目…</div>`;
-    try {
-      const res = await fetch('/papers/pending_approval.json');
-      if (!res.ok) throw new Error('no pending file');
-      const data = await res.json();
-      const items = data.items || [];
-      area.innerHTML = items.length
-        ? items.map(renderAdminItem).join('')
-        : `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🎉 目前没有待审核的 AI 录题批次。</div>`;
-    } catch (e) {
-      area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🎉 目前没有待审核的 AI 录题批次。</div>`;
-    }
-  }
-
-  function initAdminEntry() {
-    if (!isAdminMode()) return;
-    const actions = document.querySelector('.util-actions');
-    if (!actions) return;
-    const btn = document.createElement('button');
-    btn.className = 'sound-toggle';
-    btn.innerText = '🛡️ 待审核预览';
-    btn.onclick = openAdminPreview;
-    actions.appendChild(btn);
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    initAdminEntry();
-    renderResumeCard();
-  });
+  document.addEventListener('DOMContentLoaded', renderResumeCard);
 
   // 键盘可达性：让所有 role="button" 的自定义卡片也能用 Enter / 空格触发
   document.addEventListener('keydown', (e) => {

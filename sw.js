@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uec-science-cache-v3';
+const CACHE_NAME = 'uec-science-cache-v4';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -33,6 +33,8 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  // 接口响应带登录状态，开发者工作台也不该离线缓存
+  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/dev/') || url.pathname === '/dev') return;
 
   event.respondWith(
     fetch(req)
