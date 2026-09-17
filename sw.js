@@ -1,8 +1,12 @@
-const CACHE_NAME = 'uec-science-cache-v2';
+const CACHE_NAME = 'uec-science-cache-v3';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/css/features.css',
+  '/js/notes.js',
+  '/js/archive.js',
+  '/js/feedback.js',
 ];
 
 self.addEventListener('install', (event) => {

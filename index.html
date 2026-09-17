@@ -51,10 +51,10 @@
       background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
-      padding: 24px 16px;
+      padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 40px);
     }
 
-    .container { max-width: 860px; margin: 0 auto; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 16px; }
 
     header {
       display: flex;
@@ -415,6 +415,8 @@
     }
     .achieve-toast.show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
   </style>
+  <!-- 新功能样式放在最后，确保能覆盖上面的基础样式 -->
+  <link rel="stylesheet" href="/css/features.css">
 </head>
 <body>
 
@@ -430,20 +432,33 @@
   <div class="custom-photo-layer" id="customPhotoLayer"></div>
 </div>
 
+<nav class="top-nav">
+  <div class="nav-inner">
+    <button class="nav-item" id="navHomeBtn" onclick="navHome()">主页</button>
+    <button class="nav-item" id="navNotesBtn" onclick="openNotesView()">笔记</button>
+    <div class="nav-logo" onclick="navHome()" role="button" tabindex="0" aria-label="回到主页">理科</div>
+    <button class="nav-item" id="navArchiveBtn" onclick="openArchiveView()">题目档</button>
+    <button class="nav-item" id="navFeedbackBtn" onclick="openFeedbackView()">网页问题申诉</button>
+  </div>
+</nav>
+
 <div class="container">
-  <header>
-    <div class="brand">🌱 独中理科自主学习系统</div>
-    <div class="header-actions">
+  <div class="util-bar">
+    <div class="breadcrumbs" id="breadcrumbNav">
+      <span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>
+    </div>
+    <div class="util-actions">
       <button class="sound-toggle" id="soundBtn" onclick="toggleSound()">🔊 音效：开</button>
       <button class="sound-toggle" id="musicBtn" onclick="toggleMusic()">🎼 音乐：关</button>
-      <div class="breadcrumbs" id="breadcrumbNav">
-        <span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>
-      </div>
     </div>
-  </header>
+  </div>
 
   <!-- 视图 1: 学科主页 -->
   <div id="viewSubjects" class="view active">
+    <div class="retro-hero">
+      <h1 class="retro-hero-title">独中理科</h1>
+      <div class="retro-ribbon">自主学习 · 统考题库</div>
+    </div>
     <div id="resumeCard"></div>
     <h2 class="page-heading">选择学习学科</h2>
     <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">请选择董总华文独中高中统考科目：</p>
@@ -490,10 +505,173 @@
     </p>
     <div id="adminPendingArea" style="margin-top: 18px;"></div>
   </div>
+
+  <!-- 视图 4: 笔记 -->
+  <div id="viewNotes" class="view">
+    <h2 class="page-heading">📓 我的笔记</h2>
+    <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px; line-height: 1.6;">
+      在任意题目卡右下角点「✏️ 做笔记」，就能把那道题导入成自己的笔记，
+      并用鼠标或手指直接在上面手写、画图；之后随时可以回来用橡皮擦修改。
+    </p>
+    <div id="notesListArea"></div>
+  </div>
+
+  <!-- 视图 5: 题目档（可下载） -->
+  <div id="viewArchive" class="view">
+    <h2 class="page-heading">📥 题目档（可下载）</h2>
+    <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px; line-height: 1.6;">
+      勾选需要的题目，点下载就会生成一份 PDF 存到你的电脑。
+      题目一律按照网站本身的顺序排版，与你勾选的先后无关。
+    </p>
+
+    <div class="archive-toolbar">
+      <div class="archive-subject-tabs">
+        <button class="archive-tab active" data-arc-subject="biology" onclick="switchArchiveSubject('biology')">生物</button>
+        <button class="archive-tab" data-arc-subject="chemistry" onclick="switchArchiveSubject('chemistry')">化学</button>
+        <button class="archive-tab" data-arc-subject="physics" onclick="switchArchiveSubject('physics')">物理</button>
+      </div>
+      <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#334155; cursor:pointer;">
+        <input type="checkbox" checked onchange="setArchiveIncludeAnswers(this.checked)" style="width:15px; height:15px; accent-color: var(--primary);">
+        含答案与解析
+      </label>
+      <span class="archive-count" id="archiveCount">已选 0 题</span>
+    </div>
+
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+      <button class="btn-primary-retro" id="archiveDownloadBtn" onclick="downloadArchivePdf()" disabled>⬇️ 下载 PDF</button>
+      <button class="btn-ghost-retro" onclick="printArchive()">🖨️ 打印版</button>
+      <button class="btn-ghost-retro" onclick="clearArchiveSelection()">清空勾选</button>
+    </div>
+
+    <div id="archiveListArea"></div>
+  </div>
+
+  <!-- 视图 6: 网页问题申诉 -->
+  <div id="viewFeedback" class="view">
+    <h2 class="page-heading">🛠️ 网页问题申诉 ©</h2>
+    <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px; line-height: 1.6;">
+      网站哪里坏了、哪里怪怪的，都可以在这里告诉管理员。
+      管理员修好之后，你下次打开网站会看到一个通知小精灵，点它就能直接跳回出问题的地方复查。
+    </p>
+
+    <div class="feedback-form-card">
+      <div class="fb-field">
+        <label class="fb-label" for="fbLocation">问题出现在哪里？</label>
+        <select class="fb-select" id="fbLocation"></select>
+      </div>
+      <div class="fb-field">
+        <label class="fb-label" for="fbText">问题描述</label>
+        <textarea class="fb-textarea" id="fbText" placeholder="例：点第 3 章的错题本，画面一片空白，什么都没有出现。"></textarea>
+      </div>
+      <div class="fb-field">
+        <label class="fb-label" for="fbContact">联络方式（选填）</label>
+        <input class="fb-input" id="fbContact" placeholder="邮箱或 WhatsApp，方便管理员追问细节">
+      </div>
+      <button class="btn-primary-retro" onclick="submitFeedback()">📮 提交申诉</button>
+      <div id="fbSubmitResult" style="margin-top:14px;"></div>
+    </div>
+
+    <h3 class="page-heading" style="font-size:18px; margin-top:30px;">我提交过的问题</h3>
+    <div id="fbMyReports" style="margin-top:12px;"></div>
+    <div id="fbDevChannel"></div>
+  </div>
 </div>
 
 <div class="img-modal" id="imgModal" onclick="closeImageModal()">
   <img id="modalImg" src="" alt="放大考题图">
+</div>
+
+<!-- 笔记编辑器 -->
+<div class="note-modal" id="noteModal">
+  <div class="note-dialog">
+    <div class="note-dialog-head">
+      <span class="note-dialog-title">📓 题目笔记</span>
+      <button class="note-close-btn" onclick="closeNoteEditor()" aria-label="关闭">×</button>
+    </div>
+
+    <div class="note-toolbar">
+      <button class="note-tool-btn active" data-note-tool="pen" onclick="setNoteTool('pen', this)">🖊️ 画笔</button>
+      <button class="note-tool-btn" data-note-tool="eraser" onclick="setNoteTool('eraser', this)">🧽 橡皮擦</button>
+      <div class="note-pen-colors">
+        <div class="note-color-dot selected" style="background:#1e293b;" onclick="setNoteColor('#1e293b', this)" title="黑"></div>
+        <div class="note-color-dot" style="background:#e11d48;" onclick="setNoteColor('#e11d48', this)" title="红"></div>
+        <div class="note-color-dot" style="background:#2563eb;" onclick="setNoteColor('#2563eb', this)" title="蓝"></div>
+        <div class="note-color-dot" style="background:#059669;" onclick="setNoteColor('#059669', this)" title="绿"></div>
+        <div class="note-color-dot" style="background:#f59e0b;" onclick="setNoteColor('#f59e0b', this)" title="橙"></div>
+      </div>
+      <span class="note-toolbar-label">粗细</span>
+      <input class="note-size-range" type="range" min="1" max="14" value="3" onchange="setNoteSize(this.value)" oninput="setNoteSize(this.value)">
+      <button class="note-tool-btn" onclick="undoNoteStroke()">↩️ 撤销</button>
+      <button class="note-tool-btn" onclick="clearNoteCanvas()">🗑️ 清空</button>
+    </div>
+
+    <div class="note-stage-scroll">
+      <div class="note-stage" id="noteStage">
+        <div class="note-question-snapshot" id="noteSnapshot"></div>
+        <canvas class="note-canvas" id="noteCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="note-text-area">
+      <textarea id="noteTextInput" placeholder="也可以在这里打字做文字笔记（选填）" oninput="markNoteDirty()"></textarea>
+    </div>
+
+    <div class="note-dialog-foot">
+      <span class="note-save-hint" id="noteSaveHint">尚未保存</span>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-ghost-retro" onclick="closeNoteEditor()">取消</button>
+        <button class="btn-primary-retro" onclick="saveCurrentNote()">💾 保存笔记</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PDF 生成进度 -->
+<div class="pdf-progress" id="pdfProgress">
+  <div class="pdf-progress-box">
+    <div class="pdf-spinner"></div>
+    <div class="pdf-progress-text" id="pdfProgressText">正在生成 PDF…</div>
+    <div class="pdf-progress-sub" id="pdfProgressSub"></div>
+  </div>
+</div>
+<div id="pdfStage"></div>
+
+<!-- 通知小精灵 -->
+<div class="sprite-wrap" id="spriteWrap">
+  <div class="sprite-panel" id="spritePanel">
+    <div class="sprite-panel-title" id="spritePanelTitle"></div>
+    <div class="sprite-panel-actions">
+      <button class="sprite-btn" onclick="spriteGoLook()">🔍 带我去看看</button>
+      <button class="sprite-btn ok" onclick="spriteConfirmFixed()">👍 没问题了！</button>
+    </div>
+    <div class="sprite-toggle-row">
+      <span class="sprite-toggle-label">还有别的问题？</span>
+      <button class="sprite-toggle" id="spriteToggle" onclick="toggleSpriteNewIssue(this)" aria-label="提交新问题"></button>
+    </div>
+  </div>
+  <div class="sprite-connector hidden" id="spriteConnector"></div>
+  <div class="sprite-char" id="spriteChar" onclick="toggleSpritePanel()" role="button" tabindex="0" aria-label="查看处理结果通知">
+    🧚
+    <span class="sprite-badge" id="spriteBadge">!</span>
+    <div class="sprite-bubble" id="spriteBubble"></div>
+  </div>
+</div>
+
+<!-- 小精灵里的「提交新问题」对话框 -->
+<div class="sprite-new-issue" id="spriteNewIssue">
+  <div class="sprite-new-issue-box">
+    <div class="note-dialog-head">
+      <span class="note-dialog-title">✍️ 还有什么问题？</span>
+      <button class="note-close-btn" onclick="closeSpriteNewIssue()" aria-label="关闭">×</button>
+    </div>
+    <div style="padding:16px;">
+      <textarea class="fb-textarea" id="spriteIssueText" placeholder="把还没解决、或者新发现的问题写在这里…"></textarea>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+        <button class="btn-ghost-retro" onclick="closeSpriteNewIssue()">取消</button>
+        <button class="btn-primary-retro" onclick="submitSpriteNewIssue()">提交</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -861,6 +1039,7 @@
     clearSubjectBackground();
     stopAmbientMusic();
     renderResumeCard();
+    setActiveNav('navHomeBtn');
     document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>`;
   }
 
@@ -927,6 +1106,7 @@ const SUBJECT_LABELS = { biology: '生物科', chemistry: '化学科', physics: 
 function openSubject(subject, initialChapterIdx) {
   playSound('pop');
   showView('viewStudy');
+  setActiveNav('navHomeBtn');
   applySubjectBackground(subject);
   if (musicEnabled) startAmbientMusic(subject);
   document.getElementById('breadcrumbNav').innerHTML = `
@@ -941,7 +1121,12 @@ function openSubject(subject, initialChapterIdx) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
     const shapes = document.getElementById('floatingShapes');
-    if (shapes) shapes.style.display = (viewId === 'viewSubjects') ? 'block' : 'none';
+    if (shapes) shapes.style.display = (viewId === 'viewStudy') ? 'none' : 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 记住"出问题的位置"，申诉页会用它作为默认选项
+    if (typeof rememberContentContext === 'function') {
+      setTimeout(rememberContentContext, 0);
+    }
   }
 
   function renderChapterRail() {
@@ -1110,8 +1295,11 @@ function openSubject(subject, initialChapterIdx) {
             <span style="font-size:12px; color:var(--text-muted); font-weight:600;">第 ${currentMcqIdx + 1} / ${sec.mcqs.length} 题</span>
             <button class="btn-nav" onclick="navMcq(1)">下一题 ➡️</button>
           </div>
+          <button class="card-note-btn" onclick="openMcqNote()"
+            data-note-key="${currentSubject}__${sec.id}__mcq__${currentMcqIdx}">✏️ 做笔记</button>
         </div>
       `;
+      if (typeof refreshNoteButtons === 'function') refreshNoteButtons();
 
       const optBox = document.getElementById('optContainer');
       const expBox = document.getElementById('expContainer');
@@ -1174,6 +1362,8 @@ function openSubject(subject, initialChapterIdx) {
                   ${q.answer}
                 </div>
               </div>
+              <button class="card-note-btn" onclick="openSubjNote(${qIndex})"
+                data-note-key="${currentSubject}__${sec.id}__subj__${qIndex}">✏️ 做笔记</button>
             </div>
           </div>
         `;
@@ -1192,7 +1382,26 @@ function openSubject(subject, initialChapterIdx) {
         <div class="form-style-container" id="subjFormContainer">${cardsHtml}</div>
       `;
       loadAllHighlights();
+      ensureSubjNoteButtons(sec);
     }
+  }
+
+  // 荧光高亮是整段还原 HTML 的，还原后可能把笔记按钮冲掉，这里补回来
+  function ensureSubjNoteButtons(sec) {
+    const container = document.getElementById('subjFormContainer');
+    if (!container) return;
+    container.querySelectorAll('.form-question-card').forEach((card, i) => {
+      if (card.querySelector('.card-note-btn')) return;
+      const body = card.querySelector('.form-card-body');
+      if (!body) return;
+      const btn = document.createElement('button');
+      btn.className = 'card-note-btn';
+      btn.setAttribute('data-note-key', `${currentSubject}__${sec.id}__subj__${i}`);
+      btn.textContent = '✏️ 做笔记';
+      btn.onclick = () => openSubjNote(i);
+      body.appendChild(btn);
+    });
+    if (typeof refreshNoteButtons === 'function') refreshNoteButtons();
   }
 
   function navMcq(delta) {
@@ -1330,13 +1539,13 @@ function openSubject(subject, initialChapterIdx) {
 
   function initAdminEntry() {
     if (!isAdminMode()) return;
-    const actions = document.querySelector('.header-actions');
+    const actions = document.querySelector('.util-actions');
     if (!actions) return;
     const btn = document.createElement('button');
     btn.className = 'sound-toggle';
     btn.innerText = '🛡️ 待审核预览';
     btn.onclick = openAdminPreview;
-    actions.insertBefore(btn, document.getElementById('breadcrumbNav'));
+    actions.appendChild(btn);
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -1361,6 +1570,55 @@ function openSubject(subject, initialChapterIdx) {
     });
   }
 
+  // ---- 顶部导航：主页 / 笔记 / 题目档 / 网页问题申诉 ----
+  function setActiveNav(btnId) {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.id === btnId));
+  }
+
+  function setBreadcrumb(label) {
+    document.getElementById('breadcrumbNav').innerHTML = `
+      <span class="breadcrumb-item" onclick="navigateHome()">主页</span> &gt;
+      <span class="breadcrumb-item active">${label}</span>`;
+  }
+
+  function navHome() {
+    navigateHome();
+    setActiveNav('navHomeBtn');
+  }
+
+  function openNotesView() {
+    playSound('pop');
+    showView('viewNotes');
+    clearSubjectBackground();
+    stopAmbientMusic();
+    setActiveNav('navNotesBtn');
+    setBreadcrumb('📓 我的笔记');
+    renderNotesView();
+  }
+
+  function openArchiveView() {
+    playSound('pop');
+    showView('viewArchive');
+    clearSubjectBackground();
+    stopAmbientMusic();
+    setActiveNav('navArchiveBtn');
+    setBreadcrumb('📥 题目档（可下载）');
+    renderArchiveView();
+  }
+
+  function openFeedbackView() {
+    playSound('pop');
+    showView('viewFeedback');
+    clearSubjectBackground();
+    stopAmbientMusic();
+    setActiveNav('navFeedbackBtn');
+    setBreadcrumb('🛠️ 网页问题申诉');
+    renderFeedbackView();
+  }
+
 </script>
+<script src="/js/notes.js"></script>
+<script src="/js/archive.js"></script>
+<script src="/js/feedback.js"></script>
 </body>
 </html>
