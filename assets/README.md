@@ -122,7 +122,8 @@ SceneAssets.use('formula-chapter3');   // 立刻切到 assets/visual/formula-cha
 - 图片／插画：[unDraw](https://undraw.co)、[Storyset](https://storyset.com)、[Unsplash](https://unsplash.com)、[Pexels](https://www.pexels.com)
 - 音乐：[Pixabay Music](https://pixabay.com/music/)、[YouTube Audio Library](https://www.youtube.com/audiolibrary)、[Free Music Archive](https://freemusicarchive.org)
 
-> 仓库目前是公开的，请只放**自己拍的**或**授权允许公开转发**的素材。
+> 仓库目前是私有的，但**素材档案会被部署到公开网站上**（任何人都能直接开启图片与音乐的网址），
+> 所以还是请只放自己拍的、或授权允许公开转发的素材。
 
 ---
 

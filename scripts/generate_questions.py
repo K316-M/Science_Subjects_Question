@@ -22,9 +22,10 @@ import json
 import os
 import re
 import sys
-import urllib.error
-import urllib.request
 import uuid
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import gemini_api
 
 SUBJECTS = ["biology", "chemistry", "physics"]
 SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理"}
@@ -34,9 +35,7 @@ PENDING_PATH = os.path.join(PAPERS_DIR, "pending_approval.json")
 REPORT_PATH = "GENERATION_REPORT.md"
 STATUS_FLAG_PATH = "has_new_generated.txt"
 
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
 API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
 
 # 每次运行出几题、照顾几个章节；可用环境变量覆盖，方便手动跑小批量试水
 PER_CHAPTER = int(os.environ.get("QUESTIONS_PER_CHAPTER", "4"))
@@ -151,19 +150,7 @@ def build_prompt(subject, section, syllabus):
 
 
 def call_gemini(prompt):
-    payload = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.7},
-    }
-    req = urllib.request.Request(
-        f"{GEMINI_ENDPOINT}?key={API_KEY}",
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        result = json.loads(resp.read().decode("utf-8"))
-    return result["candidates"][0]["content"]["parts"][0]["text"]
+    return gemini_api.generate(API_KEY, [{"text": prompt}], temperature=0.7)
 
 
 def extract_json_array(text):
@@ -224,8 +211,11 @@ def process_subject(subject, report_rows):
 
         try:
             parsed = extract_json_array(call_gemini(build_prompt(subject, section, syllabus)))
-        except (urllib.error.URLError, json.JSONDecodeError, KeyError, IndexError) as e:
-            report_rows.append((subject, title, "⚠️ 生成失败", str(e)[:80]))
+        except gemini_api.GeminiError as e:
+            report_rows.append((subject, title, "⚠️ 生成失败", str(e)[:160]))
+            continue
+        except json.JSONDecodeError as e:
+            report_rows.append((subject, title, "⚠️ 生成失败", f"模型回的不是合法 JSON：{e}"))
             continue
 
         if not isinstance(parsed, list):
@@ -298,7 +288,11 @@ def main():
 
     if not all_new:
         generate_report(rows, 0)
-        print("本次没有产出可用的新题。")
+        print("本次没有产出可用的新题。原因如下：")
+        for subject, chapter, status, detail in rows:
+            print(f"  [{status}] {SUBJECT_LABEL.get(subject, subject)} · {chapter} —— {detail}")
+        if not rows:
+            print("  （连一个章节都没轮到：这一科可能还没有章节框架）")
         return
 
     pending = {"items": []}

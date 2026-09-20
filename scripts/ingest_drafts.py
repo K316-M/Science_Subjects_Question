@@ -23,8 +23,9 @@ import re
 import shutil
 import sys
 import uuid
-import urllib.error
-import urllib.request
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import gemini_api
 
 SUBJECTS = ["biology", "chemistry", "physics"]
 DRAFTS_DIR = "drafts"
@@ -34,9 +35,7 @@ PENDING_PATH = os.path.join(PAPERS_DIR, "pending_approval.json")
 REPORT_PATH = "INGEST_REPORT.md"
 STATUS_FLAG_PATH = "has_new_ingest.txt"
 
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
 API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
 
 
 def load_chapters(subject):
@@ -85,24 +84,10 @@ def call_gemini(image_path, prompt):
     with open(image_path, "rb") as f:
         img_bytes = f.read()
     mime = mimetypes.guess_type(image_path)[0] or "image/jpeg"
-    payload = {
-        "contents": [{
-            "parts": [
-                {"text": prompt},
-                {"inline_data": {"mime_type": mime, "data": base64.b64encode(img_bytes).decode("ascii")}},
-            ]
-        }],
-        "generationConfig": {"temperature": 0.2},
-    }
-    req = urllib.request.Request(
-        f"{GEMINI_ENDPOINT}?key={API_KEY}",
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        result = json.loads(resp.read().decode("utf-8"))
-    return result["candidates"][0]["content"]["parts"][0]["text"]
+    return gemini_api.generate(API_KEY, [
+        {"text": prompt},
+        {"inline_data": {"mime_type": mime, "data": base64.b64encode(img_bytes).decode("ascii")}},
+    ], temperature=0.2)
 
 
 def extract_json_array(text):
@@ -142,7 +127,7 @@ def process_subject(subject, report_items):
         try:
             raw_text = call_gemini(img_path, prompt)
             parsed = extract_json_array(raw_text)
-        except (urllib.error.URLError, json.JSONDecodeError, KeyError, IndexError) as e:
+        except (gemini_api.GeminiError, json.JSONDecodeError) as e:
             report_items.append({
                 "subject": subject, "source": fname, "status": "⚠️ 转写失败",
                 "detail": str(e), "flags": ["请检查图片清晰度或手动录入"],
