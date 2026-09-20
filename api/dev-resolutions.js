@@ -9,6 +9,9 @@ const VIEWS = ['viewSubjects', 'viewStudy', 'viewNotes', 'viewArchive', 'viewFee
 const SUBJECTS = ['biology', 'chemistry', 'physics'];
 const SUB_MODES = ['mcq', 'subj', 'wrong'];
 
+// 使用者填错东西（可以直接告诉他哪里错了）
+class InputError extends Error {}
+
 class GitHubError extends Error {
   constructor(status, detail) {
     super(`GitHub API ${status}`);
@@ -64,9 +67,9 @@ async function writeRemote(pub, json, sha, message) {
 
 function sanitizeEntry(raw) {
   const reportId = String((raw && raw.reportId) || '');
-  if (!/^fb_[a-z0-9]{4,40}$/.test(reportId)) throw new Error('问题编号格式不对（应形如 fb_xxxx）');
+  if (!/^fb_[a-z0-9]{4,40}$/.test(reportId)) throw new InputError('问题编号格式不对（应形如 fb_xxxx）');
   const summary = String((raw && raw.summary) || '').replace(/\s+/g, ' ').trim().slice(0, 60);
-  if (!summary) throw new Error('请填写处理说明');
+  if (!summary) throw new InputError('请填写处理说明');
 
   const t = (raw && raw.target) || {};
   const target = { view: VIEWS.includes(t.view) ? t.view : 'viewSubjects' };
@@ -120,7 +123,7 @@ module.exports = async (req, res) => {
       entry = sanitizeEntry(body.entry);
     } else if (body.action === 'withdraw') {
       reportId = String(body.reportId || '');
-      if (!/^fb_[a-z0-9]{4,40}$/.test(reportId)) throw new Error('问题编号格式不对');
+      if (!/^fb_[a-z0-9]{4,40}$/.test(reportId)) throw new InputError('问题编号格式不对');
     } else {
       return sendJson(res, 400, { ok: false, error: 'bad_action', message: '未知操作' });
     }
@@ -154,6 +157,11 @@ module.exports = async (req, res) => {
     if (err instanceof GitHubError) {
       return sendJson(res, 502, { ok: false, error: 'github_error', message: explainGitHubError(err) });
     }
-    return sendJson(res, 400, { ok: false, error: 'bad_request', message: err.message });
+    if (err instanceof InputError) {
+      return sendJson(res, 400, { ok: false, error: 'bad_request', message: err.message });
+    }
+    // 其余意外错误只回一句笼统的话，避免把内部细节抛到前端
+    console.error('dev-resolutions failed:', err);
+    return sendJson(res, 500, { ok: false, error: 'server_error', message: '服务器处理失败，请稍后再试。' });
   }
 };

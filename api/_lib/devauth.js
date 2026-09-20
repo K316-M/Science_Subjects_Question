@@ -3,24 +3,46 @@ const crypto = require('crypto');
 
 const COOKIE_NAME = 'uec_dev_session';
 const SESSION_TTL_SECONDS = 12 * 60 * 60;
+const MIN_SECRET_LENGTH = 16;
+
+// 环境变量从 Vercel 后台粘贴进来时，常常会带上看不见的换行、首尾空格或 BOM，
+// 导致「明明填对了却登录不了」。这里统一清洗，避免这种极难自查的坑。
+function cleanEnv(name) {
+  return String(process.env[name] || '')
+    .replace(/^﻿/, '')
+    .replace(/[\r\n]+/g, '')
+    .trim();
+}
 
 function authConfig() {
-  const username = process.env.DEV_USERNAME || '';
-  const password = process.env.DEV_PASSWORD || '';
-  const secret = process.env.DEV_SESSION_SECRET || '';
+  const username = cleanEnv('DEV_USERNAME');
+  const password = cleanEnv('DEV_PASSWORD');
+  const secret = cleanEnv('DEV_SESSION_SECRET');
   return {
     username,
     password,
     secret,
-    ready: Boolean(username && password && secret.length >= 16),
+    ready: Boolean(username && password && secret.length >= MIN_SECRET_LENGTH),
+  };
+}
+
+// 只回报「有没有、够不够长」，永远不回传变量的内容本身。
+// 供登录页在「尚未配置」时给出精确的自查清单。
+function setupStatus() {
+  const cfg = authConfig();
+  return {
+    DEV_USERNAME: cfg.username ? 'ok' : 'missing',
+    DEV_PASSWORD: cfg.password ? 'ok' : 'missing',
+    DEV_SESSION_SECRET: !cfg.secret ? 'missing' : (cfg.secret.length >= MIN_SECRET_LENGTH ? 'ok' : 'short'),
+    minSecretLength: MIN_SECRET_LENGTH,
   };
 }
 
 function publishingConfig() {
   return {
-    token: process.env.GITHUB_TOKEN || '',
-    repo: process.env.GITHUB_REPO || 'K316-M/Science_Subjects_Question',
-    branch: process.env.GITHUB_BRANCH || 'main',
+    token: cleanEnv('GITHUB_TOKEN'),
+    repo: cleanEnv('GITHUB_REPO') || 'K316-M/Science_Subjects_Question',
+    branch: cleanEnv('GITHUB_BRANCH') || 'main',
   };
 }
 
@@ -29,6 +51,7 @@ function sendJson(res, status, body, extraHeaders = {}) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('X-Robots-Tag', 'noindex');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
   Object.entries(extraHeaders).forEach(([k, v]) => res.setHeader(k, v));
   res.end(JSON.stringify(body));
 }
@@ -129,8 +152,12 @@ function clearedSessionCookie(req) {
   return `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secure}`;
 }
 
-// 会改动数据的请求必须来自本站页面（配合 SameSite=Strict 做双重 CSRF 防护）
+// 会改动数据的请求必须来自本站页面（配合 SameSite=Strict 做多重 CSRF 防护）。
+// 浏览器无法伪造 Origin 与 Sec-Fetch-Site，因此两者只要有一个说「跨站」就拒绝。
 function sameOrigin(req) {
+  const fetchSite = req.headers['sec-fetch-site'];
+  if (fetchSite && fetchSite !== 'same-origin' && fetchSite !== 'none') return false;
+
   const origin = req.headers.origin;
   if (!origin) return true;
   try {
@@ -141,8 +168,64 @@ function sameOrigin(req) {
   }
 }
 
+/* ---------- 登录失败节流 ----------
+   Serverless 实例随时会被回收、也可能同时存在多个，所以这只是「尽力而为」的
+   减速带，不是严密的全局计数器；真正的防线仍然是够长够随机的密码。 */
+const FAILED = new Map();
+const LOCK_AFTER = 5;               // 同一来源连续失败 5 次
+const LOCK_MS = 10 * 60 * 1000;     // 就锁 10 分钟
+const WINDOW_MS = 15 * 60 * 1000;   // 失败计数 15 分钟内有效
+const GLOBAL_BURST = 20;            // 全站 15 分钟内失败超过 20 次
+const GLOBAL_EXTRA_DELAY_MS = 3000; // 所有登录一律再慢 3 秒
+let globalFails = [];
+
+function clientKey(req) {
+  const edgeIp = req.headers['x-vercel-forwarded-for'];
+  const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  const raw = edgeIp || fwd || (req.socket && req.socket.remoteAddress) || 'unknown';
+  return String(raw).slice(0, 64);
+}
+
+function prune(now) {
+  for (const [k, v] of FAILED) {
+    if (v.expires <= now) FAILED.delete(k);
+  }
+  if (FAILED.size > 5000) FAILED.clear();
+  globalFails = globalFails.filter(t => t > now - WINDOW_MS);
+}
+
+function loginGate(req) {
+  const now = Date.now();
+  prune(now);
+  const rec = FAILED.get(clientKey(req));
+  if (rec && rec.lockedUntil > now) {
+    return { blocked: true, retryAfter: Math.ceil((rec.lockedUntil - now) / 1000) };
+  }
+  return { blocked: false, extraDelay: globalFails.length >= GLOBAL_BURST ? GLOBAL_EXTRA_DELAY_MS : 0 };
+}
+
+function noteLoginFailure(req) {
+  const now = Date.now();
+  const key = clientKey(req);
+  const rec = FAILED.get(key) || { count: 0, lockedUntil: 0, expires: 0 };
+  rec.count += 1;
+  if (rec.count >= LOCK_AFTER) {
+    rec.lockedUntil = now + LOCK_MS;
+    rec.count = 0;
+  }
+  rec.expires = Math.max(now + WINDOW_MS, rec.lockedUntil);
+  FAILED.set(key, rec);
+  globalFails.push(now);
+  prune(now);
+}
+
+function clearLoginFailures(req) {
+  FAILED.delete(clientKey(req));
+}
+
 module.exports = {
   authConfig,
+  setupStatus,
   publishingConfig,
   sendJson,
   readJsonBody,
@@ -152,4 +235,7 @@ module.exports = {
   sessionCookie,
   clearedSessionCookie,
   sameOrigin,
+  loginGate,
+  noteLoginFailure,
+  clearLoginFailures,
 };

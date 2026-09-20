@@ -35,15 +35,35 @@
     clear(message).appendChild(el('div', { class: 'form-error' }, icon('alert'), el('span', { text })));
   }
 
-  function showSetupNote(text) {
+  const STATUS_TEXT = {
+    ok: { mark: '✅', tip: '已读取到' },
+    missing: { mark: '❌', tip: '没有读取到' },
+    short: { mark: '⚠️', tip: '太短了' },
+  };
+
+  // setup 由 /api/dev-session 与 /api/dev-login 回传：只说明每个变量「有没有」，
+  // 不会回传内容。把它直接画成自查清单，省得盲猜是哪一项没配好。
+  function showSetupNote(setup) {
     const note = el('div', { class: 'form-note' });
-    note.appendChild(el('div', { text: text || '开发者登录尚未启用。请到 Vercel 项目的 Settings → Environment Variables 添加：' }));
-    const list = el('div', { style: 'margin-top:6px; display:flex; flex-direction:column; gap:3px;' },
-      el('span', {}, el('code', { text: 'DEV_USERNAME' }), '　登录账号'),
-      el('span', {}, el('code', { text: 'DEV_PASSWORD' }), '　登录密码（建议 12 位以上）'),
-      el('span', {}, el('code', { text: 'DEV_SESSION_SECRET' }), '　任意 16 位以上随机字符串'),
-      el('span', { style: 'margin-top:4px;', text: '加好之后到 Deployments 重新部署一次即可生效。' }));
-    note.appendChild(list);
+    note.appendChild(el('div', { text: '开发者登录尚未启用。服务器现在读到的状态：' }));
+
+    const rows = el('div', { style: 'margin-top:8px; display:flex; flex-direction:column; gap:4px;' });
+    const vars = [
+      ['DEV_USERNAME', '登录账号'],
+      ['DEV_PASSWORD', '登录密码（建议 12 位以上）'],
+      ['DEV_SESSION_SECRET', `随机字符串，至少 ${(setup && setup.minSecretLength) || 16} 位`],
+    ];
+    vars.forEach(([name, desc]) => {
+      const state = (setup && setup[name]) || 'missing';
+      const s = STATUS_TEXT[state] || STATUS_TEXT.missing;
+      rows.appendChild(el('span', {}, `${s.mark} `, el('code', { text: name }), `　${s.tip} · ${desc}`));
+    });
+    note.appendChild(rows);
+
+    note.appendChild(el('div', { style: 'margin-top:10px; line-height:1.7;' },
+      el('strong', { text: '最常见的两个原因：' }),
+      el('div', { text: '① 变量加错地方了。这三项要加在 Vercel 项目的 Settings → Environment Variables（勾选 Production），而不是 GitHub 仓库的 Secrets——GitHub Secrets 只给 Actions 用，网站读不到。' }),
+      el('div', { text: '② 加了但没重新部署。到 Vercel 的 Deployments → 最新那次 → ⋯ → Redeploy，环境变量才会生效。' })));
     clear(message).appendChild(note);
   }
 
@@ -83,7 +103,7 @@
       return;
     }
     if (status === 503 && data.error === 'not_configured') {
-      showSetupNote();
+      showSetupNote(data.setup);
       return;
     }
     showError(data.message || (status === 0 ? '无法连接服务器' : `登录失败（${status}）`));
@@ -97,7 +117,7 @@
     if (ok && data.authenticated) {
       window.location.replace('/dev/');
     } else if (ok && data.configured === false) {
-      showSetupNote();
+      showSetupNote(data.setup);
     } else if (!ok && status === 0) {
       showError('无法连接登录服务，请检查网络。');
     }

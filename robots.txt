@@ -1,0 +1,5 @@
+# 学生网站欢迎收录；开发者工作台与接口不收录。
+User-agent: *
+Allow: /
+Disallow: /dev/
+Disallow: /api/
