@@ -39,7 +39,7 @@ const ROUTES = {
   overview: { label: '总览', icon: 'grid', title: '总览', desc: '题库规模、巡检结果与待办事项一览。', render: renderOverview },
   issues: { label: '申诉处理', icon: 'inbox', title: '申诉处理', desc: '学生的申诉会寄到你的 Formspree 邮箱。把邮件里的「开发者处理码」贴进来，写好处理说明后发布，学生下次开站就会看到通知小精灵。', render: renderIssues },
   inspector: { label: '题库巡检', icon: 'shield', title: '题库巡检', desc: '自动检查三科题库里的格式问题：选项数量、答案序号、缺少配图与解析、重复题目、图片死链。', render: renderInspector },
-  pending: { label: 'AI 录题待审', icon: 'sparkles', title: 'AI 录题待审', desc: '由 drafts/ 照片自动转写、等待你审核的题目。确认无误后到 GitHub 合并对应的 Pull Request。', render: renderPending },
+  pending: { label: 'AI 录题待审', icon: 'sparkles', title: 'AI 录题待审', desc: '等待你审核的题目，来自拍题录入与 AI 依考纲出题。核对无误按「采纳」即可直接进正式题库并自动部署。', render: renderPending },
   local: { label: '本机调试', icon: 'terminal', title: '本机调试', desc: '查看、导出或清除这台设备上学生站留下的本地数据，并能生成测试通知来预览小精灵。', render: renderLocal },
 };
 
@@ -803,24 +803,86 @@ function renderPending(body, actions) {
 
   if (!state.pending.length) {
     body.appendChild(el('div', { class: 'card' }, el('div', { class: 'empty' }, icon('sparkles'),
-      el('div', { text: '目前没有待审核的 AI 录题批次。' }),
-      el('div', { class: 'field-hint', style: 'margin-top:6px', text: '把试卷照片放进 drafts/biology、drafts/chemistry 或 drafts/physics 并推送，GitHub Actions 会自动转写并开出待审核 PR。' }))));
+      el('div', { text: '目前没有待审核的题目。' }),
+      el('div', { class: 'field-hint', style: 'margin-top:6px', text: '把试卷照片放进 drafts/biology、drafts/chemistry 或 drafts/physics 并推送；或到 Actions 手动跑「AI 依考纲出题」。' }))));
     return;
   }
+
+  body.appendChild(el('div', { class: 'card' },
+    el('div', { class: 'field-hint' },
+      el('strong', { text: `待审 ${state.pending.length} 题。` }),
+      ' 采纳会把题目直接写进正式题库并自动部署，学生马上看得到；退回只是从待审区移除。',
+      el('div', { style: 'margin-top:6px' }, '⚠️ AI 生成的题目请先自己核对科学正确性与答案，章节归错了可以在下拉选单改。'))));
 
   const card = el('div', { class: 'card list-card' });
   state.pending.forEach(item => {
     const flags = (item.flags || []).map(f => el('span', { class: 'status status-serious' }, icon('warning'), el('span', { text: f })));
+    const sections = state.banks[item.subject] || [];
+
+    // 章节下拉：AI 归类不一定准，采纳当下顺手改掉比事後回头改容易
+    const picker = el('select', { class: 'input', style: 'max-width:280px' });
+    if (!sections.length) {
+      picker.appendChild(el('option', { text: '（这一科还没有章节框架）', attrs: { value: '' } }));
+      picker.disabled = true;
+    } else {
+      sections.forEach(sec => {
+        const opt = el('option', { text: sec.title || sec.id, attrs: { value: sec.id } });
+        if (sec.id === item.chapter_id) opt.selected = true;
+        picker.appendChild(opt);
+      });
+      if (!sections.some(sec => sec.id === item.chapter_id)) {
+        const hint = el('option', { text: '⚠️ 未分类 —— 请指定章节', attrs: { value: '' } });
+        hint.selected = true;
+        picker.insertBefore(hint, picker.firstChild);
+      }
+    }
+
+    const adopt = el('button', { class: 'btn btn-primary btn-sm', type: 'button' }, icon('check'), el('span', { text: '采纳' }));
+    const reject = el('button', { class: 'btn btn-ghost btn-sm', type: 'button' }, el('span', { text: '退回' }));
+
+    adopt.addEventListener('click', async () => {
+      const chapterId = picker.value;
+      if (!chapterId) return toast('请先指定章节', 'bad');
+      await sendApproval(adopt, { action: 'adopt', items: [{ id: item.id, chapterId }] });
+    });
+    reject.addEventListener('click', async () => {
+      if (!confirm('退回之後这一题会从待审区移除，且不会进题库。确定吗？')) return;
+      await sendApproval(reject, { action: 'reject', ids: [item.id] });
+    });
+
     card.appendChild(el('div', { class: 'issue' },
       el('div', { class: 'issue-top' },
         el('span', { class: 'pill', text: SUBJECT_LABEL[item.subject] || item.subject || '未知科目' }),
-        el('span', { class: 'pill', text: item.chapter_title || '未分类' }),
-        el('span', { class: 'pill', text: item.type === 'subjective' ? '做答题' : '选择题' })),
+        el('span', { class: 'pill', text: item.type === 'subjective' ? '做答题' : '选择题' }),
+        item.origin === 'ai_generated' ? el('span', { class: 'pill', text: '🤖 AI 出题' }) : el('span', { class: 'pill', text: '📷 拍题录入' })),
       flags.length ? el('div', { class: 'stack', style: 'gap:4px' }, flags) : null,
       questionPreview(item, item.type === 'subjective' ? 'subj' : 'mcq'),
-      el('div', { class: 'field-hint mono', text: `${item.source_draft || '—'} · ${item.ingested_at || '—'}` })));
+      el('div', { class: 'row', style: 'gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px' },
+        el('span', { class: 'field-hint', text: '归入章节：' }), picker, adopt, reject),
+      el('div', { class: 'field-hint mono', text: `${item.source_draft || item.id} · ${item.ingested_at || item.generated_at || '—'}` })));
   });
   body.appendChild(card);
+}
+
+async function sendApproval(btn, payload) {
+  const label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '处理中…';
+  const { ok, data } = await api('/api/dev-approve', { method: 'POST', body: payload });
+  btn.disabled = false;
+  btn.textContent = label;
+
+  if (!ok) return toast(data.message || '处理失败', 'bad');
+
+  (data.skipped || []).forEach(s => toast(`${s.id}：${s.why}`, 'bad'));
+  if (data.handled) {
+    toast(payload.action === 'adopt'
+      ? `已采纳 ${data.handled} 题，正在自动部署，稍後学生就看得到`
+      : `已退回 ${data.handled} 题`, 'good');
+    // 重新载入题库与待审区，画面上的数字才会跟著变
+    await loadData();
+    navigate();
+  }
 }
 
 /* ==========================================================================
