@@ -26,8 +26,10 @@ jobs:
           python-version: '3.10'
 
       - name: 运行题库体检与报告生成
+        id: inspect
         run: |
           python scripts/auto_inspector.py
+          echo "has_issues=$(cat has_issues.txt)" >> "$GITHUB_OUTPUT"
 
       - name: 自动提交更新检讨报告文件
         run: |
@@ -38,7 +40,7 @@ jobs:
           git push
 
       - name: 若发现缺陷，自动在 GitHub 创建 Issue 提醒您
-        if: hashFiles('has_issues.txt') != ''
+        if: steps.inspect.outputs.has_issues == 'true'
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: "🚨 题库巡检检讨报告（有待补充图片或确认答案）"
