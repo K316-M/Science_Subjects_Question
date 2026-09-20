@@ -98,7 +98,7 @@
   </g>
 
   <!-- ④ 左上：热带叶片（有渐层、叶脉与投影，靠形状与明暗做出厚度） -->
-  <svg x="-2" y="-4" width="40" height="40" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin meet">
+  <svg x="-2" y="-5" width="44" height="60" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin meet">
     <g>
       <g class="sway" style="transform-origin:40px 40px">
         <path fill="url(#leafA)" d="M40 40 C150 44 236 104 268 206 C196 238 106 206 62 140 C48 118 42 80 40 40 Z"/>
@@ -120,7 +120,7 @@
   </svg>
 
   <!-- ⑤ 右上：叶片与浮游 -->
-  <svg x="66" y="-6" width="38" height="38" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMin meet">
+  <svg x="62" y="-6" width="42" height="58" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMin meet">
     <g>
       <g class="sway3" style="transform-origin:360px 40px">
         <path fill="url(#leafC)" d="M360 40 C250 52 168 122 146 224 C222 250 306 210 344 140 C356 118 360 80 360 40 Z"/>
@@ -141,7 +141,7 @@
   </svg>
 
   <!-- ⑥ 左下：细胞剖面，半透明、像浮在水里 -->
-  <svg x="-3" y="58" width="42" height="42" viewBox="0 0 400 400" preserveAspectRatio="xMinYMax meet">
+  <svg x="-3" y="40" width="46" height="60" viewBox="0 0 400 400" preserveAspectRatio="xMinYMax meet">
     <!-- 细胞本体保持静止（它是画面上最大的移动物件，动起来每帧要重绘一大片），
          只让内部的胞器缓慢漂移 —— 视觉上照样是「活的细胞」，成本却小一个量级 -->
     <circle cx="176" cy="230" r="150" fill="url(#cellFill)" stroke="#34d399" stroke-opacity=".5" stroke-width="3"/>
@@ -161,7 +161,7 @@
   </svg>
 
   <!-- ⑦ 右下：漂浮的叶与硅藻 -->
-  <svg x="64" y="60" width="40" height="40" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMax meet">
+  <svg x="60" y="42" width="44" height="58" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMax meet">
     <g>
       <g class="sway2" style="transform-origin:370px 370px">
         <path fill="url(#leafB)" d="M370 370 C262 358 176 296 146 194 C222 168 310 206 350 274 C364 298 368 334 370 370 Z"/>
