@@ -411,7 +411,7 @@
   <!-- 新功能样式放在最后，确保能覆盖上面的基础样式 -->
   <link rel="stylesheet" href="/css/features.css">
 </head>
-<body>
+<body data-scene="off">
 
 <div class="floating-shapes" id="floatingShapes">
   <div class="blob blob-1"></div>
@@ -694,6 +694,7 @@
   </div>
 </div>
 
+<script src="/js/scene-assets.js"></script>
 <script>
   let audioCtx = null;
   let soundEnabled = true;
@@ -805,18 +806,9 @@
   // 纯五度堆叠音程：任意组合都不会产生刺耳的不协和碰撞，适合长时间背景铺底
   const AMBIENT_INTERVALS = [0, 7, 12, 19, 24];
 
-  // ---- 自定义素材探测：assets/visual/<subject>/background.*、assets/audio/<subject>/ambient.* ----
-  // 若用户把自己准备的图片/音乐放进对应文件夹，网站会自动改用它们；找不到则回退到内置的生成式设计。
-  async function resolveCustomAsset(basePath, extensions) {
-    for (const ext of extensions) {
-      const url = `${basePath}.${ext}`;
-      try {
-        const res = await fetch(url, { method: 'HEAD' });
-        if (res.ok) return url;
-      } catch (e) {}
-    }
-    return null;
-  }
+  // ---- 自定义素材探测 ----
+  // 路径规则统一由 js/scene-assets.js 定义：assets/visual/<科目>/background.*、
+  // assets/audio/<科目>/ambient.*，找不到时退回 default/，再找不到就用内置的生成式设计。
 
   let bgSessionId = 0;
 
@@ -833,7 +825,7 @@
     photoLayer.classList.remove('active');
     photoLayer.style.backgroundImage = '';
 
-    const customUrl = await resolveCustomAsset(`/assets/visual/${subject}/background`, ['jpg', 'jpeg', 'png', 'webp']);
+    const customUrl = await SceneAssets.findBackground(subject);
     if (sessionId !== bgSessionId) return; // 期间已切换到其他科目，放弃这次结果
     if (customUrl) {
       photoLayer.style.backgroundImage = `url("${customUrl}")`;
@@ -877,7 +869,7 @@
     musicSessionId = sessionId; // stopAmbientMusic 会自增，这里恢复成本次会话的编号
     if (!musicEnabled) return;
 
-    const customUrl = await resolveCustomAsset(`/assets/audio/${subject}/ambient`, ['mp3', 'ogg', 'm4a']);
+    const customUrl = await SceneAssets.findMusic(subject);
     if (sessionId !== musicSessionId) return; // 期间已切换，放弃
 
     if (customUrl) {

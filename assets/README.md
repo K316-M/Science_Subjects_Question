@@ -1,28 +1,138 @@
-# 自定义视觉 / 听觉素材
+# 自定义背景与音乐：自己动手指南
 
-网站默认使用代码生成的背景色块与合成环境音乐（零外部文件、零版权风险）。
-如果你想换成自己准备的图片或音乐，把文件放进对应目录，**文件名必须完全匹配下面的命名**，
-网站会在打开对应科目时自动侦测并优先使用你放的文件；侦测不到时自动回退到内置设计，不会出错或留白。
+只要记住一条规则：
 
-## 视觉：`assets/visual/<科目>/background.*`
+> **文件夹的名字 = 场景的名字。**
+> 把图片放进 `assets/visual/<场景名>/background.jpg`，
+> 把音乐放进 `assets/audio/<场景名>/ambient.mp3`，网站就会自动用上，**不需要改任何代码**。
 
-- 目录：`assets/visual/biology/`、`assets/visual/chemistry/`、`assets/visual/physics/`
-- 文件名固定为 `background`，支持以下任一格式（按此顺序侦测）：`.jpg` / `.jpeg` / `.png` / `.webp`
-- 建议：横向构图、1600×900 以上、文件大小控制在 1–2MB 内（手机加载更快）
-- 效果：图片会以低透明度（约 50%）铺满整个做题页背景，上面叠加一层浅绿色渐变遮罩以保证文字可读性，所以选偏亮、对比不要太强烈的图更好看
+侦测不到文件时会自动退回 `default/`，再没有就用内置的生成式设计，页面不会出错也不会留白。
 
-例：把一张生物相关的图放到 `assets/visual/biology/background.jpg` 即可生效，无需改任何代码。
+---
 
-## 听觉：`assets/audio/<科目>/ambient.*`
+## 一、现在已经存在的场景
 
-- 目录：`assets/audio/biology/`、`assets/audio/chemistry/`、`assets/audio/physics/`
-- 文件名固定为 `ambient`，支持：`.mp3` / `.ogg` / `.m4a`
-- 会自动循环播放，音量已调低（约 35%），无需自行淡入淡出处理
-- 请使用免费商用或已获授权的纯音乐（如 Pixabay Music、YouTube Audio Library、Free Music Archive 上明确标注可商用的曲目），文件大小建议 1–3MB（太大手机加载会慢）
+| 场景名 | 用在哪里 | 放图片的位置 | 放音乐的位置 |
+|---|---|---|---|
+| `biology` | 生物做题页 | `assets/visual/biology/background.jpg` | `assets/audio/biology/ambient.mp3` |
+| `chemistry` | 化学做题页 | `assets/visual/chemistry/background.jpg` | `assets/audio/chemistry/ambient.mp3` |
+| `physics` | 物理做题页 | `assets/visual/physics/background.jpg` | `assets/audio/physics/ambient.mp3` |
+| `default` | **所有找不到自己素材的场景** | `assets/visual/default/background.jpg` | `assets/audio/default/ambient.mp3` |
 
-## 找素材的地方（免费、可商用、无需署名）
+想让全站有个统一的底图／底乐，只放 `default/` 那一份就够了。
 
-- 图片／插画：[unDraw](https://undraw.co)、[Storyset](https://storyset.com)、[Freepik](https://www.freepik.com)（部分需署名，注意查看授权条款）
+**换素材的步骤**：把文件丢进对应文件夹 → 推送到 `main` → 等 Vercel 几秒钟 → 刷新网页。
+
+---
+
+## 二、以后新增页面，怎么接上自己的背景和音乐
+
+假设你要做一个新页面叫「公式表」，想给它专属的背景和音乐。
+
+### 第 1 步：建文件夹，放素材
+
+```
+assets/visual/formula/background.jpg
+assets/audio/formula/ambient.mp3
+```
+
+`formula` 这个名字随你取，**它就是场景名**。
+
+### 第 2 步：新页面里加两样东西
+
+`<body>` 上写 `data-scene="formula"`，页面底部引入 `/js/scene-assets.js`。就这样，没有第三样。
+
+### 第 3 步：推送，完成。
+
+### 可以直接复制的新页面模板
+
+```html
+<!DOCTYPE html>
+<html lang="zh-MY">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>公式表 · 独中理科</title>
+  <link rel="stylesheet" href="/css/features.css">
+</head>
+<body data-scene="formula">
+
+  <main class="container">
+    <h1>公式表</h1>
+    <p>页面内容写在这里。</p>
+  </main>
+
+  <script src="/js/scene-assets.js"></script>
+</body>
+</html>
+```
+
+> **连 `data-scene` 都懒得写？** 不写也行——装载器会拿网页文件名当场景名。
+> `formula.html` → 自动找 `assets/visual/formula/`。
+> 也就是说：**新页面叫什么，就建一个同名文件夹，完事。**
+
+---
+
+## 三、想微调效果：在 `<body>` 上加属性即可
+
+| 属性 | 作用 | 默认值 | 例子 |
+|---|---|---|---|
+| `data-scene` | 指定场景名；写 `off` 表示这页不要自动装配 | 网页文件名 | `data-scene="formula"` |
+| `data-scene-opacity` | 背景图浓度，0～1，越小越淡 | `0.5` | `data-scene-opacity="0.3"` |
+| `data-scene-veil` | 盖在图上的遮罩（保证文字看得清），任何 CSS 背景值 | 浅绿渐变 | `data-scene-veil="rgba(0,0,0,.45)"`（深色页面用） |
+| `data-scene-volume` | 音乐音量，0～1 | `0.35` | `data-scene-volume="0.2"` |
+| `data-scene-music` | `button` 显示开关钮／`auto` 自动播放不显示钮／`off` 完全不要音乐 | `button` | `data-scene-music="off"` |
+
+音乐开关钮默认浮在右下角。想把它放进你自己的导航栏里，就在那个位置放一个空元素：
+
+```html
+<span data-scene-music-slot></span>
+```
+
+按钮会自动长在那里面，样式也会跟着变成普通按钮（不再浮动）。
+
+音乐的开关状态会**记在浏览器里、跨页面通用**：学生在主页关掉音乐，进新页面也还是关着的。
+
+### 一个页面里要换好几种背景？
+
+例如按章节切换。在你自己的代码里调用：
+
+```js
+SceneAssets.use('formula-chapter3');   // 立刻切到 assets/visual/formula-chapter3/
+```
+
+对应的文件夹存在就换，不存在就自动退回 `default/`。
+
+---
+
+## 四、素材规格建议
+
+**图片**
+- 文件名固定叫 `background`，支持 `.jpg` `.jpeg` `.png` `.webp` `.avif`（按这个顺序找，找到就用）
+- 横向构图、1600×900 以上、**控制在 1–2MB 以内**（手机流量友好）
+- 会被盖上一层遮罩再垫在文字底下，所以**选偏亮、对比不要太强、中间不要有重点内容**的图最好看
+
+**音乐**
+- 文件名固定叫 `ambient`，支持 `.mp3` `.ogg` `.m4a` `.wav`
+- 会自动循环播放、音量已调低，你不用自己做淡入淡出
+- 建议 1–3MB；**选没有明显旋律起伏的纯音乐**（lo-fi、环境音、钢琴铺底），做题时才不会分心
+- ⚠️ 浏览器规定「用户没点过页面就不许出声」，所以音乐一定是在第一次点击之后才响，这是正常现象，不是坏了
+
+**免费、可商用的素材来源**
+- 图片／插画：[unDraw](https://undraw.co)、[Storyset](https://storyset.com)、[Unsplash](https://unsplash.com)、[Pexels](https://www.pexels.com)
 - 音乐：[Pixabay Music](https://pixabay.com/music/)、[YouTube Audio Library](https://www.youtube.com/audiolibrary)、[Free Music Archive](https://freemusicarchive.org)
 
-放好文件、推送到 `main` 后，Vercel 会在几秒内自动更新，直接刷新网页即可看到效果。
+> 仓库目前是公开的，请只放**自己拍的**或**授权允许公开转发**的素材。
+
+---
+
+## 五、放了却没生效？照这个顺序查
+
+1. **文件名对不对**——必须是 `background.xxx` 和 `ambient.xxx`，不能叫 `Background.jpg`、`background (1).jpg`、`bg.jpg`
+2. **大小写**——服务器区分大小写，`Biology/` ≠ `biology/`
+3. **文件夹名和 `data-scene` 是否一致**——差一个字母就找不到
+4. **推送了吗**——文件要 commit 并 push 到 `main`，Vercel 才看得到
+5. **浏览器缓存**——按 `Ctrl+Shift+R`（Mac 是 `Cmd+Shift+R`）强制刷新
+6. 还是不行 → 按 `F12` 打开开发者工具 → Network 分页 → 刷新页面 → 搜 `background`，看请求回的是 200（找到了）还是 404（路径错了），404 里显示的那个网址就是网站**期待**的位置，照着它改文件路径即可
+
+音乐没响，但图有出来 → 多半是还没点过页面（见上面第四节的浏览器规定），点一下任意位置再试。

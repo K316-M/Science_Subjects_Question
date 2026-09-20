@@ -1,9 +1,10 @@
-const CACHE_NAME = 'uec-science-cache-v4';
+const CACHE_NAME = 'uec-science-cache-v5';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
   '/css/features.css',
+  '/js/scene-assets.js',
   '/js/notes.js',
   '/js/archive.js',
   '/js/feedback.js',
@@ -39,8 +40,11 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(req)
       .then((res) => {
-        const resClone = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+        // 素材探测本来就会打出 404（代表「这个文件没放」），别把失败结果存进缓存
+        if (res.ok) {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+        }
         return res;
       })
       .catch(() => caches.match(req).then((cached) => cached || caches.match('/index.html')))
