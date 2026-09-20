@@ -410,6 +410,7 @@
   </style>
   <!-- 新功能样式放在最后，确保能覆盖上面的基础样式 -->
   <link rel="stylesheet" href="/css/features.css">
+  <link rel="stylesheet" href="/css/orbit.css">
 </head>
 <body data-scene="off">
 
@@ -454,65 +455,12 @@
     </div>
     <div id="resumeCard"></div>
     <h2 class="page-heading">选择学习学科</h2>
-    <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">请选择董总华文独中高中统考科目：</p>
-    <div class="grid-subjects">
-      <div class="subject-card" onclick="openSubject('biology')" role="button" tabindex="0" aria-label="生物科">
-        <div class="subject-ascii-wrap" aria-hidden="true"><pre class="subject-ascii">
-    o=o
-  o=====o
- o-A---T-o
-  o=====o
-    o=o
-     X
-    o=o
-  o=====o
- o-G---C-o
-  o=====o
-    o=o</pre></div>
-        <div class="subject-title">生物 (Biology)</div>
-        <div class="subject-desc">光合呼吸、神经调节、生殖发育与遗传育种</div>
-      </div>
-      <div class="subject-card" onclick="openSubject('chemistry')" role="button" tabindex="0" aria-label="化学科">
-        <div class="subject-ascii-wrap" aria-hidden="true"><pre class="subject-ascii">
-      .-'''-.
-    .'  o    '.
-   /  .-'''-.  \
-  |  /       \  |
-  | |   (@)   | |
-  |  \       /  |
-   \  '-...-' o/
-    '.       .'
-      '-...-'</pre></div>
-        <div class="subject-title">化学 (Chemistry)</div>
-        <div class="subject-desc">整理中</div>
-      </div>
-      <div class="subject-card" onclick="openSubject('physics')" role="button" tabindex="0" aria-label="物理科">
-        <div class="subject-ascii-wrap" aria-hidden="true"><pre class="subject-ascii">
-/////////////  ((( * )))
-      |\           |
-      | \         /|\
-      |  \       /_|_\
-      :   \      \ | /
-      :    \      \|/
-      :    (O)    /|\
-      :   .'     / | \
-   .  :  .      /__|__\
-    '-o-'      /   |   \</pre></div>
-        <div class="subject-title">物理 (Physics)</div>
-        <div class="subject-desc">整理中</div>
-      </div>
-      <div class="subject-card" style="opacity: 0.6; cursor: not-allowed;" aria-disabled="true">
-        <div class="subject-ascii-wrap" aria-hidden="true"><pre class="subject-ascii">
-+-------+-----+     /|
-|       |     |    / |
-|   5   |  3  | c /  | a
-|       +-+-+-+  /   |
-|       |1|1|2| /____|
-+-------+-+-+-+    b
- 1 : 1.618   a^2+b^2=c^2</pre></div>
-        <div class="subject-title">高级数学 (Adv. Maths)</div>
-        <div class="subject-desc">整理中</div>
-      </div>
+    <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">点一下轨道上的圆球，它会转到正上方并显示你的进度；按「进入」开始，点其他地方取消。</p>
+    <div class="orbit-stage" id="orbitStage" role="group" aria-label="学科选择轨道">
+      <div class="orbit-track outer" aria-hidden="true"></div>
+      <div class="orbit-track inner" aria-hidden="true"></div>
+      <div class="orbit-core" aria-hidden="true"><span>学</span></div>
+      <!-- 小球与确认面板由 js/orbit-subjects.js 生成 -->
     </div>
   </div>
 
@@ -1551,6 +1499,7 @@ function openSubject(subject, initialChapterIdx) {
   }
 
 </script>
+<script src="/js/orbit-subjects.js"></script>
 <script src="/js/notes.js"></script>
 <script src="/js/archive.js"></script>
 <script src="/js/feedback.js"></script>

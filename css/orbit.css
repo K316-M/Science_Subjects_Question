@@ -1,0 +1,231 @@
+/* 轨道式学科选择器
+ * 结构：舞台(.orbit-stage) → 轨道线 + 中央核心 + N 颗小球(.orbit-node) + 确认面板
+ * 小球的位置只由一个变量 --ring（轨道当前角度）决定，JS 每帧更新它，CSS 负责摆位。
+ * 每颗小球都会反向自转，所以图标和文字永远是正的。
+ */
+
+.orbit-stage {
+  --orbit-radius: clamp(108px, 31vw, 200px);   /* 轨道半径 */
+  --node-size: clamp(54px, 14.5vw, 72px);      /* 小球直径 */
+  --deco-size: calc(var(--node-size) * 1.8);   /* 小球外圈动态插图的范围 */
+  --ring: 0;                                   /* 轨道角度，由 JS 每帧写入 */
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 14px auto 0;
+  height: calc(var(--orbit-radius) * 2 + var(--deco-size) + 54px);
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* ---------- 轨道线与中央核心 ---------- */
+.orbit-track {
+  position: absolute; left: 50%; top: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.orbit-track.outer {
+  width: calc(var(--orbit-radius) * 2); height: calc(var(--orbit-radius) * 2);
+  border: 1px dashed rgba(5, 150, 105, 0.22);
+}
+.orbit-track.inner {
+  width: calc(var(--orbit-radius) * 0.96); height: calc(var(--orbit-radius) * 0.96);
+  border: 1px solid rgba(2, 132, 199, 0.12);
+}
+
+.orbit-core {
+  position: absolute; left: 50%; top: 50%;
+  width: clamp(62px, 16vw, 82px); height: clamp(62px, 16vw, 82px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 34% 28%, #ffffff 4%, var(--core-soft, #a7f3d0) 58%, var(--core-deep, #059669) 100%);
+  box-shadow: 0 0 0 10px rgba(5, 150, 105, 0.05), 0 14px 32px -12px var(--core-deep, #059669);
+  transition: background .55s ease, box-shadow .55s ease, opacity .35s ease, transform .55s cubic-bezier(.22, 1, .36, 1);
+  animation: coreBreath 7s ease-in-out infinite;
+  pointer-events: none;
+}
+.orbit-core span {
+  font-family: "Ma Shan Zheng", "KaiTi", "STKaiti", serif;
+  font-size: clamp(26px, 7vw, 34px);
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, .28);
+  line-height: 1;
+}
+@keyframes coreBreath {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%      { transform: translate(-50%, -50%) scale(1.045); }
+}
+.orbit-stage.has-selection .orbit-core { opacity: 0; transform: translate(-50%, -50%) scale(.72); }
+
+/* ---------- 小球 ---------- */
+.orbit-node {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--node-size); height: var(--node-size);
+  margin: calc(var(--node-size) / -2) 0 0 calc(var(--node-size) / -2);
+  padding: 0; border: 0; background: none; cursor: pointer;
+  /* 先转到自己的角度 → 往外推一个半径 → 再反向自转，让内容保持正立 */
+  transform:
+    rotate(calc((var(--base) + var(--ring)) * 1deg))
+    translateY(calc(var(--orbit-radius) * -1))
+    rotate(calc((var(--base) + var(--ring)) * -1deg));
+  transition: opacity .45s ease;
+  /* 注意：transform 不加 transition —— 它由 JS 每帧驱动，加了会打架 */
+}
+.orbit-stage.has-selection .orbit-node:not(.is-selected) { opacity: .3; }
+.orbit-node[aria-disabled="true"] { cursor: default; }
+
+.node-disc {
+  position: relative;
+  display: grid; place-items: center;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: var(--card-bg, rgba(255, 255, 255, .94));
+  border: 1px solid var(--card-border, rgba(226, 232, 240, .95));
+  box-shadow: 0 8px 20px -10px rgba(15, 23, 42, .45);
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), box-shadow .4s ease, border-color .4s ease;
+}
+.orbit-node:hover .node-disc,
+.orbit-node:focus-visible .node-disc { transform: scale(1.09); border-color: var(--accent-color); }
+.orbit-node.is-selected .node-disc {
+  transform: scale(1.22);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 7px var(--accent-soft), 0 14px 30px -12px var(--accent-color);
+}
+
+/* 选中时向外扩散的涟漪 */
+.orbit-node.is-selected .node-disc::after {
+  content: ''; position: absolute; inset: -5px;
+  border-radius: 50%; border: 2px solid var(--accent-color);
+  animation: nodeRipple 1.8s ease-out infinite;
+}
+@keyframes nodeRipple {
+  0%   { transform: scale(1);    opacity: .5; }
+  100% { transform: scale(1.62); opacity: 0; }
+}
+
+.node-glyph { width: 46%; height: 46%; color: var(--accent-color); display: block; }
+.node-glyph svg { width: 100%; height: 100%; display: block; }
+
+/* 进度圆弧（每颗球随时显示已掌握比例） */
+.node-arc { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); transform: rotate(-90deg); }
+.node-arc circle { fill: none; stroke-width: 3.5; stroke-linecap: round; }
+.node-arc .arc-bg { stroke: rgba(15, 23, 42, .07); }
+.node-arc .arc-fg {
+  stroke: var(--accent-color);
+  stroke-dasharray: 282.74;           /* 2πr，r=45 */
+  stroke-dashoffset: 282.74;          /* 由 JS 按百分比设定 */
+  transition: stroke-dashoffset .9s cubic-bezier(.22, 1, .36, 1);
+}
+
+.node-label {
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap; text-align: center;
+  font-size: 12.5px; font-weight: 700; color: var(--text-muted, #64748b);
+  z-index: 2;
+  text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 1px 2px rgba(255, 255, 255, .95);
+  transition: color .35s ease;
+}
+.orbit-node.is-selected .node-label { color: var(--accent-color); }
+.node-label em { display: block; font-style: normal; font-size: 10px; font-weight: 500; opacity: .62; }
+
+/* ---------- 每颗球周围的动态插图 ---------- */
+.node-deco {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--deco-size); height: var(--deco-size);
+  margin: calc(var(--deco-size) / -2) 0 0 calc(var(--deco-size) / -2);
+  pointer-events: none; opacity: .62;
+  transition: opacity .4s ease;
+  color: var(--accent-color);
+}
+.orbit-node.is-selected .node-deco { opacity: 1; }
+.node-deco svg { width: 100%; height: 100%; overflow: visible; }
+.node-deco .spin-a, .node-deco .spin-b, .node-deco .spin-c,
+.node-deco .arm, .node-deco .tri, .node-deco .strand { transform-origin: 50% 50%; }
+
+@keyframes orbitSpin { to { transform: rotate(360deg); } }
+@keyframes orbitDash { to { stroke-dashoffset: -60; } }
+@keyframes orbitSwing {
+  0%, 100% { transform: rotate(19deg); }
+  50%      { transform: rotate(-19deg); }
+}
+@keyframes orbitPulse {
+  0%, 100% { opacity: .35; transform: scale(.94); }
+  50%      { opacity: .9;  transform: scale(1.06); }
+}
+
+/* 生物：双螺旋两条链不断流动 */
+.deco-dna .strand { stroke-dasharray: 7 7; animation: orbitDash 3.6s linear infinite; }
+.deco-dna .strand.b { animation-duration: 4.4s; animation-direction: reverse; }
+.deco-dna .rung { animation: orbitPulse 2.8s ease-in-out infinite; }
+.deco-dna .rung:nth-of-type(2n) { animation-delay: -1.4s; }
+
+/* 化学：电子绕核公转 */
+.deco-atom .spin-a { animation: orbitSpin 9s linear infinite; }
+.deco-atom .spin-b { animation: orbitSpin 12s linear infinite reverse; }
+.deco-atom .spin-c { animation: orbitSpin 15s linear infinite; }
+
+/* 物理：单摆来回摆动 */
+.deco-pendulum .arm { transform-origin: 50% 16%; animation: orbitSwing 3.2s ease-in-out infinite; }
+.deco-pendulum .wave { stroke-dasharray: 5 6; animation: orbitDash 4s linear infinite; }
+
+/* 数学：三角形与黄金螺旋缓慢旋转 */
+.deco-geometry .tri { animation: orbitSpin 18s linear infinite; }
+.deco-geometry .spiral { stroke-dasharray: 6 8; animation: orbitDash 5s linear infinite; }
+
+/* 被选中后插图转快一点，作为「点中了」的反馈 */
+.is-selected .deco-atom .spin-a { animation-duration: 3.4s; }
+.is-selected .deco-atom .spin-b { animation-duration: 4.6s; }
+.is-selected .deco-atom .spin-c { animation-duration: 5.6s; }
+.is-selected .deco-dna .strand { animation-duration: 1.5s; }
+.is-selected .deco-dna .strand.b { animation-duration: 1.9s; }
+.is-selected .deco-pendulum .arm { animation-duration: 1.5s; }
+.is-selected .deco-geometry .tri { animation-duration: 7s; }
+
+/* ---------- 中央确认面板 ---------- */
+.orbit-panel {
+  position: absolute; left: 50%; top: 50%;
+  width: min(236px, 63vw);
+  padding: 15px 16px 13px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .97);
+  border: 1px solid var(--card-border, rgba(226, 232, 240, .95));
+  box-shadow: 0 20px 44px -18px rgba(15, 23, 42, .45);
+  text-align: center;
+  z-index: 5;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translate(-50%, -44%) scale(.88);
+  transition: opacity .3s ease, transform .45s cubic-bezier(.22, 1, .36, 1), visibility .3s;
+}
+.orbit-panel.is-open {
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+.panel-title { font-family: var(--font-display, serif); font-size: 17px; font-weight: 700; color: var(--text-main, #0f172a); }
+.panel-sub { font-size: 11.5px; color: var(--text-muted, #64748b); margin-top: 2px; }
+.panel-bar { height: 7px; border-radius: 99px; background: rgba(15, 23, 42, .08); overflow: hidden; margin: 11px 0 6px; }
+.panel-bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--accent-color); transition: width .9s cubic-bezier(.22, 1, .36, 1); }
+.panel-stat { font-size: 11.5px; color: var(--text-muted, #64748b); }
+.panel-stat strong { color: var(--accent-color); font-size: 14px; }
+.panel-enter {
+  margin-top: 11px; width: 100%;
+  padding: 9px 14px; border: 0; border-radius: 11px; cursor: pointer;
+  font-size: 14px; font-weight: 700; color: #fff;
+  background: var(--accent-color);
+  box-shadow: 0 8px 18px -8px var(--accent-color);
+  transition: transform .15s ease, filter .2s ease;
+}
+.panel-enter:hover { transform: translateY(-1px); filter: brightness(1.06); }
+.panel-enter:active { transform: translateY(0); }
+.panel-enter[disabled] { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
+.panel-hint { margin-top: 8px; font-size: 10.5px; color: var(--text-muted, #64748b); opacity: .8; }
+
+/* ---------- 无障碍：尊重「减少动态效果」 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .orbit-core { animation: none; }
+  .node-deco *, .orbit-node.is-selected .node-disc::after { animation: none !important; }
+  .node-disc, .orbit-panel, .node-arc .arc-fg, .panel-bar i { transition-duration: .01ms !important; }
+}
