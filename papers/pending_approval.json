@@ -1,0 +1,97 @@
+{
+  "items": [
+    {
+      "id": "physics_gen_2ff42269",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：物理量和数据处理",
+      "q": "万有引力常量 $G$ 的导出单位通常表示为 $\\text{N}\\cdot\\text{m}^2/\\text{kg}^2$。若将 $G$ 的单位完全以 SI 基本单位（$\\text{kg}$、$\\text{m}$、$\\text{s}$）表示，应为下列何者？",
+      "options": [
+        "A. \\text{kg}^{-1}\\cdot\\text{m}^3\\cdot\\text{s}^{-2}",
+        "B. \\text{kg}^{-1}\\cdot\\text{m}^2\\cdot\\text{s}^{-2}",
+        "C. \\text{kg}\\cdot\\text{m}^3\\cdot\\text{s}^{-2}",
+        "D. \\text{N}\\cdot\\text{m}^2\\cdot\\text{kg}^{-2}"
+      ],
+      "answer": 0,
+      "explanation": "【考点】SI 基本单位与导出单位的转换、量纲推导。\n\n【解析】\n根据力的单位定义， $1\\text{ N} = 1\\text{ kg}\\cdot\\text{m}\\cdot\\text{s}^{-2}$。\n将力的基本单位代入 $G$ 的单位 $\\text{N}\\cdot\\text{m}^2\\cdot\\text{kg}^{-2}$ 中：\n$G$ 的单位 $= (\\text{kg}\\cdot\\text{m}\\cdot\\text{s}^{-2}) \\cdot \\text{m}^2 \\cdot \\text{kg}^{-2} = \\text{kg}^{-1}\\cdot\\text{m}^3\\cdot\\text{s}^{-2}$。\n故选项 A 正确。\n\n【迷思概念点拨】\n选项 D 虽为 $G$ 的常用单位，但选项中包含力的导出单位牛顿（$\\text{N}$），不符合题目要求的“完全以 SI 基本单位表示”。选项 B 和 C 为计算质量或长度指数时的常见指数运算错误。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:42:28.145910+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_70f98a12",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：物理量和数据处理",
+      "q": "一矩形金属片的长测得为 $10.25\\text{ cm}$，宽测得为 $4.2\\text{ cm}$。若依据有效数字（Significant Figures）的乘法运算规则，该金属片的面积应记录为：",
+      "options": [
+        "A. 43 cm²",
+        "B. 43.1 cm²",
+        "C. 43.05 cm²",
+        "D. 43.0 cm²"
+      ],
+      "answer": 0,
+      "explanation": "【考点】有效数字的运算规则。\n\n【解析】\n在乘除法运算中，计算结果的有效数字位数应与参与运算的数据中有效数字位数最少者保持一致。\n长 $10.25\\text{ cm}$ 包含 4 位有效数字；宽 $4.2\\text{ cm}$ 包含 2 位有效数字。\n计算结果：$10.25 \\times 4.2 = 43.05\\text{ cm}^2$。\n由于宽度的有效数字最少（只有 2 位），结果必须修约为 2 位有效数字，即 $43\\text{ cm}^2$。故选项 A 正确。\n\n【迷思概念点拨】\n选项 B 错将加减法规则（保留最少小数位数，即 1 位小数）用于乘法；选项 C 未进行有效数字修约；选项 D 误将结果修约为 3 位有效数字。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:42:28.146217+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_9e2a2b52",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：物理量和数据处理",
+      "q": "在利用单摆测定重力加速度 $g$ 的实验中，计算公式为 $g = \\frac{4\\pi^2 L}{T^2}$。若摆长 $L$ 测量的百分误差为 $1.5\\%$，周期 $T$ 测量的百分误差为 $2.0\\%$，则计算所得重力加速度 $g$ 的最大百分误差为：",
+      "options": [
+        "A. 3.5%",
+        "B. 5.5%",
+        "C. 2.5%",
+        "D. 9.5%"
+      ],
+      "answer": 1,
+      "explanation": "【考点】误差传递与百分误差计算。\n\n【解析】\n对于形如 $y = x^a z^b$ 的物理公式，其最大相对误差（或百分误差）为各物理量相对误差乘以其指数绝对值之和。\n对于公式 $g = \\frac{4\\pi^2 L}{T^2}$，重力加速度 $g$ 的最大百分误差为：\n$\\frac{\\Delta g}{g} = \\frac{\\Delta L}{L} + 2 \\times \\frac{\\Delta T}{T} = 1.5\\% + 2 \\times 2.0\\% = 5.5\\%$。\n故选项 B 正确。\n\n【迷思概念点拨】\n选项 A 忽略了周期 $T$ 带有平方项（指数为 2），直接将 $1.5\\% + 2.0\\% = 3.5\\%$ 相加；选项 D 错误地将周期误差的系数乘以 4（错把平方当成指数 4 计算）。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:42:28.146735+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_c6dd5c49",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：物理量和数据处理",
+      "q": "关于物理量的标量（Scalar）与矢量（Vector）属性，下列说法何者正确？",
+      "options": [
+        "A. 电场强度是矢量，其方向与置于该点的正试探电荷所受静电力的方向相同",
+        "B. 电势是矢量，其数值的正负号表示电势的方向",
+        "C. 功是矢量，因为计算功时涉及力与位移两个矢量",
+        "D. 磁通量是矢量，其方向垂直于磁场穿过的平面"
+      ],
+      "answer": 0,
+      "explanation": "【考点】标量与矢量的定义及概念辨析。\n\n【解析】\n选项 A：根据电场强度的定义式 $\\vec{E} = \\frac{\\vec{F}}{q}$，电场强度是矢量，正试探电荷（$q > 0$）所受静电力的方向即为该点电场强度的方向，说法正确。\n选项 B：电势是标量，其正负号仅代表电势的高低（高于或低于参考零电势点），不代表方向，说法错误。\n选项 C：功是标量，由力与位移的点积（标量积 $W = \\vec{F} \\cdot \\vec{s}$）定义，说法错误。\n选项 D：磁通量 $\\Phi = \\vec{B} \\cdot \\vec{A}$ 是标量，没有方向，说法错误。\n故选项 A 正确。\n\n【迷思概念点拨】\n学生常误以为带正负号的物理量（如电势、功、温度）就是矢量，实际上矢量的本质在于其在空间中具有方向性且遵循平行四边形定则进行合成。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:42:28.146963+00:00",
+      "syllabus_used": true
+    }
+  ],
+  "generated_at": "2026-09-20T16:44:11.788204+00:00"
+}
