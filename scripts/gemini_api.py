@@ -13,22 +13,29 @@ Gemini 呼叫的共用层
 
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.request
 
 API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 
-# 偏好顺序：够快够便宜、而且支援图片输入。清单里没有的就往下找。
+# 偏好顺序：够快够便宜、而且支援图片输入。
+# 新的排前面 —— 实测发现旧版会对「新用户」关闭，光看清单看不出来。
 PREFERRED = [
-    "gemini-2.5-flash",
-    "gemini-2.5-flash-lite",
+    "gemini-3.6-flash",
     "gemini-3.5-flash",
+    "gemini-3.7-flash",
+    "gemini-3.8-flash",
+    "gemini-2.5-flash",
     "gemini-3.5-flash-lite",
-    "gemini-2.5-pro",
+    "gemini-3.1-flash-lite",
+    "gemini-2.5-flash-lite",
 ]
 
 _resolved = None
+_available = None
+_tried = []
 
 
 class GeminiError(Exception):
@@ -57,6 +64,39 @@ def list_models(api_key):
     return out
 
 
+def _catalogue(api_key):
+    global _available
+    if _available is None:
+        try:
+            _available = list_models(api_key)
+        except (urllib.error.URLError, ValueError) as e:
+            raise GeminiError(f"无法取得模型清单：{_read_error(e)}")
+        if not _available:
+            raise GeminiError("这把 API Key 没有任何可用的模型，请确认金钥是否有效、专案是否已启用 Gemini API。")
+    return _available
+
+
+def _next_candidate(api_key):
+    """从清单里挑一个还没试过的，偏好顺序优先，其次任何 flash。"""
+    available = _catalogue(api_key)
+    for name in PREFERRED:
+        if name in available and name not in _tried:
+            return name
+    for name in available:
+        if "flash" in name and name not in _tried:
+            return name
+    return next((m for m in available if m not in _tried), None)
+
+
+def _suggested_model(message):
+    """Google 被拒绝时会直接写「请改用 models/xxx」，把它读出来。"""
+    names = re.findall(r"models/([A-Za-z0-9.\-]+)", message or "")
+    for name in reversed(names):
+        if name not in _tried:
+            return name
+    return None
+
+
 def resolve_model(api_key):
     """GEMINI_MODEL 有指定就用指定的；否则问 Google 现在有什么，按偏好挑。"""
     global _resolved
@@ -64,33 +104,44 @@ def resolve_model(api_key):
         return _resolved
 
     forced = os.environ.get("GEMINI_MODEL", "").strip()
-    if forced:
-        _resolved = forced
-        return _resolved
-
-    try:
-        available = list_models(api_key)
-    except (urllib.error.URLError, ValueError) as e:
-        raise GeminiError(f"无法取得模型清单：{_read_error(e)}")
-
-    if not available:
-        raise GeminiError("这把 API Key 没有任何可用的模型，请确认金钥是否有效、专案是否已启用 Gemini API。")
-
-    for name in PREFERRED:
-        if name in available:
-            _resolved = name
-            break
-    else:
-        # 偏好清单全没中，就挑一个名字里有 flash 的，再不然用第一个
-        _resolved = next((m for m in available if "flash" in m), available[0])
-
+    _resolved = forced or _next_candidate(api_key)
+    if not _resolved:
+        raise GeminiError("找不到任何可用的模型。")
     print(f"🤖 使用模型：{_resolved}", file=sys.stderr)
     return _resolved
 
 
+UNAVAILABLE = ("no longer available", "is not found", "not supported", "404")
+
+
 def generate(api_key, parts, temperature=0.4, timeout=120):
-    """parts 是 Gemini 的 contents[0].parts，文字或图片都塞这里。"""
-    model = resolve_model(api_key)
+    """parts 是 Gemini 的 contents[0].parts，文字或图片都塞这里。
+
+    「清单里列得出来」不等于「这把金钥能用」—— 旧版模型会对新用户关闭。
+    所以被拒绝时会自动换一个再试：Google 的错误讯息若写了建议替代就照它的，
+    否则往偏好清单的下一个走。
+    """
+    global _resolved
+    last = None
+    for _ in range(4):
+        model = resolve_model(api_key)
+        try:
+            return _post(api_key, model, parts, temperature, timeout)
+        except GeminiError as e:
+            last = e
+            msg = str(e)
+            _tried.append(model)
+            if not any(k in msg.lower() for k in UNAVAILABLE):
+                raise                      # 不是「模型不能用」的问题，换模型也没意义
+            nxt = _suggested_model(msg) or _next_candidate(api_key)
+            if not nxt:
+                raise
+            print(f"⚠️ {model} 不可用，改试 {nxt}", file=sys.stderr)
+            _resolved = nxt
+    raise last or GeminiError("换过几个模型都不可用。")
+
+
+def _post(api_key, model, parts, temperature, timeout):
     payload = {"contents": [{"parts": parts}], "generationConfig": {"temperature": temperature}}
     req = urllib.request.Request(
         f"{API_BASE}/models/{model}:generateContent?key={api_key}",
