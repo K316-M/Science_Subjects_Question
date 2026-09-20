@@ -15,6 +15,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -113,6 +114,14 @@ def resolve_model(api_key):
 
 UNAVAILABLE = ("no longer available", "is not found", "not supported", "404")
 
+# 临时性的：等一下再试就好，换模型也没意义（但同一个模型一直忙，最后才换）
+TRANSIENT = ("high demand", "overloaded", "try again later", "temporarily",
+             "internal error", "503", "500", "502", "504", "deadline exceeded", "timed out")
+# 额度用尽：重试与换模型都救不了，立刻停手以免白烧时间
+QUOTA = ("exceeded your current quota", "quota exceeded", "billing", "resource_exhausted")
+
+BACKOFF = (4, 10, 25)   # 秒
+
 
 def generate(api_key, parts, temperature=0.4, timeout=120):
     """parts 是 Gemini 的 contents[0].parts，文字或图片都塞这里。
@@ -123,21 +132,35 @@ def generate(api_key, parts, temperature=0.4, timeout=120):
     """
     global _resolved
     last = None
-    for _ in range(4):
+
+    for _ in range(3):                       # 最多换 3 个模型
         model = resolve_model(api_key)
-        try:
-            return _post(api_key, model, parts, temperature, timeout)
-        except GeminiError as e:
-            last = e
-            msg = str(e)
-            _tried.append(model)
-            if not any(k in msg.lower() for k in UNAVAILABLE):
-                raise                      # 不是「模型不能用」的问题，换模型也没意义
-            nxt = _suggested_model(msg) or _next_candidate(api_key)
-            if not nxt:
-                raise
-            print(f"⚠️ {model} 不可用，改试 {nxt}", file=sys.stderr)
-            _resolved = nxt
+
+        for attempt, wait in enumerate((0,) + BACKOFF):
+            if wait:
+                print(f"⏳ {model} 忙碌中，{wait} 秒后重试（第 {attempt} 次）", file=sys.stderr)
+                time.sleep(wait)
+            try:
+                return _post(api_key, model, parts, temperature, timeout)
+            except GeminiError as e:
+                last = e
+                low = str(e).lower()
+                if any(k in low for k in QUOTA):
+                    raise                    # 额度问题：重试与换模型都没用
+                if any(k in low for k in TRANSIENT):
+                    continue                 # 临时忙碌：等一下再打同一个模型
+                break                        # 其他错误：跳出去判断要不要换模型
+
+        low = str(last).lower()
+        if not any(k in low for k in UNAVAILABLE + TRANSIENT):
+            raise last                       # 不是模型层面的问题，换了也一样
+        _tried.append(model)
+        nxt = _suggested_model(str(last)) or _next_candidate(api_key)
+        if not nxt:
+            raise last
+        print(f"⚠️ {model} 不行（{str(last)[:60]}），改试 {nxt}", file=sys.stderr)
+        _resolved = nxt
+
     raise last or GeminiError("换过几个模型都不可用。")
 
 
