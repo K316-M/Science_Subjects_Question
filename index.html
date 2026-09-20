@@ -252,6 +252,16 @@
 
     /* 进场动效：每换一题，卡片与选项依序浮现，而不是硬生生换掉 */
     @keyframes cardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes slideFromRight { from { opacity: 0; transform: translateX(34px); } to { opacity: 1; transform: none; } }
+    @keyframes slideFromLeft  { from { opacity: 0; transform: translateX(-34px); } to { opacity: 1; transform: none; } }
+    .flashcard.from-right { animation: slideFromRight .34s cubic-bezier(.16,1,.3,1) both; }
+    .flashcard.from-left  { animation: slideFromLeft .34s cubic-bezier(.16,1,.3,1) both; }
+
+    /* 答对时徽章弹一下 —— 短、只做一次，纯粹是「对了」的即时回馈 */
+    @keyframes badgePop {
+      0% { transform: scale(1); } 40% { transform: scale(1.32); } 70% { transform: scale(.94); } 100% { transform: scale(1); }
+    }
+    .option-btn.correct .opt-badge { animation: badgePop .42s cubic-bezier(.34,1.56,.64,1) 1; }
     @keyframes optIn  { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     .flashcard { animation: cardIn .42s cubic-bezier(.16,1,.3,1) both; }
     .option-btn { animation: optIn .38s cubic-bezier(.16,1,.3,1) both; }
@@ -452,6 +462,15 @@
     }
     /* 小屏的背景是会动的，multiply 混合会跟着每帧重算，所以手机上不铺颗粒 */
     @media (max-width: 899px) { .grain-layer { display: none; } }
+
+    /* 聚光灯：鼠标移过章节卡时，卡面浮现一圈跟着指标走的柔光 */
+    .chapter-card::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      border-radius: inherit;  /* 用圆角收边，而不是 overflow:hidden —— 后者会切掉 active 的小箭头 */
+      opacity: 0; transition: opacity .25s ease;
+      background: radial-gradient(160px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.95), rgba(255,255,255,0) 62%);
+    }
+    @media (hover: hover) { .chapter-card:hover::before { opacity: 1; } }
 
     .container, header { position: relative; z-index: 1; }
     .view { z-index: 1; }
@@ -1097,6 +1116,16 @@
     }, 2600);
   }
 
+  // 聚光灯：委派在章节列上，只挂一个监听器，把指标位置写成 CSS 变数
+  document.addEventListener('pointermove', (e) => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    const card = e.target.closest && e.target.closest('.chapter-card');
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    card.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }, { passive: true });
+
   function navigateHome() {
     playSound('flip');
     showView('viewSubjects');
@@ -1365,6 +1394,9 @@ function openSubject(subject, initialChapterIdx) {
       `;
       if (typeof refreshNoteButtons === 'function') refreshNoteButtons();
 
+      const cardEl = area.querySelector('.flashcard');
+      if (cardEl) cardEl.classList.add(lastNavDir < 0 ? 'from-left' : 'from-right');
+
       const optBox = document.getElementById('optContainer');
       const expBox = document.getElementById('expContainer');
       let isSolved = false;
@@ -1480,11 +1512,15 @@ function openSubject(subject, initialChapterIdx) {
     if (typeof refreshNoteButtons === 'function') refreshNoteButtons();
   }
 
+  // 换题的方向：下一题从右边滑进来，上一题从左边，让「翻页」这件事有方向感
+  let lastNavDir = 1;
+
   function navMcq(delta) {
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
     const newIdx = currentMcqIdx + delta;
     if (newIdx >= 0 && newIdx < sec.mcqs.length) {
       playSound('flip');
+      lastNavDir = delta < 0 ? -1 : 1;
       currentMcqIdx = newIdx;
       renderActiveContent();
     }

@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="化学科背景">
+  <title>化学科背景 · 溶液与分子</title>
+  <defs>
+    <linearGradient id="sol" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#fbfaff"/><stop offset="45%" stop-color="#efeaff"/><stop offset="100%" stop-color="#ddd6fe"/>
+    </linearGradient>
+    <radialGradient id="gV" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#c4b5fd" stop-opacity=".58"/><stop offset="100%" stop-color="#c4b5fd" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gP" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fbcfe8" stop-opacity=".52"/><stop offset="100%" stop-color="#fbcfe8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gC" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a5f3fc" stop-opacity=".6"/><stop offset="100%" stop-color="#a5f3fc" stop-opacity="0"/></radialGradient>
+    <radialGradient id="streak2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".9"/><stop offset="60%" stop-color="#ffffff" stop-opacity=".3"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="liqA" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
+    <linearGradient id="liqB" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f9a8d4"/><stop offset="100%" stop-color="#db2777"/></linearGradient>
+    <linearGradient id="liqC" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#67e8f9"/><stop offset="100%" stop-color="#0891b2"/></linearGradient>
+    <linearGradient id="glassG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".85"/><stop offset="100%" stop-color="#ffffff" stop-opacity=".35"/>
+    </linearGradient>
+    <radialGradient id="bub2" cx="34%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/><stop offset="55%" stop-color="#ffffff" stop-opacity=".2"/><stop offset="100%" stop-color="#ffffff" stop-opacity=".55"/>
+    </radialGradient>
+  </defs>
+
+  <style>
+    .ink2 { fill: none; stroke: #5b5175; stroke-opacity: 0.6; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .thin2 { stroke-width: 3; }
+    .sway  { animation: sway 13s ease-in-out infinite; }
+    .sway2 { animation: sway 17s ease-in-out infinite; animation-delay: -6s; }
+    .sway3 { animation: sway 21s ease-in-out infinite; animation-delay: -11s; }
+    .swim  { animation: swim 40s linear infinite; }
+    .swim2 { animation: swim2 52s linear infinite; }
+    .rise  { animation: rise 19s linear infinite; }
+    @keyframes sway { 0%,100%{transform:rotate(-2.2deg)} 50%{transform:rotate(2.2deg)} }
+    @keyframes swim  { 0%{transform:translate(0,0)} 50%{transform:translate(22px,-14px)} 100%{transform:translate(0,0)} }
+    @keyframes swim2 { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+    @keyframes rise { 0%{transform:translate(0,0);opacity:0} 12%{opacity:.9} 100%{transform:translate(-5px,-110px);opacity:0} }
+    @media (prefers-reduced-motion: reduce) { .sway,.sway2,.sway3,.swim,.swim2,.rise { animation: none; } }
+    /* 大屏背景静止，换取整个介面的毛玻璃质感；手机面积小，动起来仍满帧 */
+    @media (min-width: 900px) { .sway,.sway2,.sway3,.swim,.swim2,.rise { animation: none; } }
+  </style>
+
+  <rect width="100" height="100" fill="url(#sol)"/>
+  <ellipse cx="18" cy="24" rx="28" ry="21" fill="url(#gV)"/>
+  <ellipse cx="84" cy="28" rx="24" ry="18" fill="url(#gP)"/>
+  <ellipse cx="76" cy="82" rx="30" ry="22" fill="url(#gV)"/>
+  <ellipse cx="20" cy="80" rx="24" ry="18" fill="url(#gC)"/>
+  <g opacity=".5">
+    <ellipse cx="28" cy="34" rx="22" ry="1.8" fill="url(#streak2)" transform="rotate(-4 28 34)"/>
+    <ellipse cx="74" cy="64" rx="24" ry="1.7" fill="url(#streak2)" transform="rotate(3 74 64)"/>
+    <ellipse cx="40" cy="12" rx="17" ry="1.3" fill="url(#streak2)"/>
+  </g>
+
+  <!-- 左上：锥形瓶与烧杯 -->
+  <svg x="0" y="-1" width="30" height="39" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin meet" opacity="0.72">
+    <g class="sway" style="transform-origin:150px 340px">
+      <path fill="url(#glassG)" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4" stroke-linejoin="round"
+            d="M116 40 L172 40 L172 150 L252 334 A20 20 0 0 1 234 366 L54 366 A20 20 0 0 1 36 334 L116 150 Z"/>
+      <path fill="url(#liqA)" opacity=".55" d="M80 238 L208 238 L252 334 A20 20 0 0 1 234 366 L54 366 A20 20 0 0 1 36 334 Z"/>
+      <path class="ink2 thin2" d="M80 238 L208 238"/>
+      <rect x="104" y="18" width="80" height="26" rx="9" fill="#ffffff" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4"/>
+      <circle class="rise" cx="112" cy="330" r="9" fill="url(#bub2)"/>
+      <circle class="rise" cx="160" cy="352" r="6" fill="url(#bub2)" style="animation-delay:-6s"/>
+      <circle class="rise" cx="196" cy="340" r="7" fill="url(#bub2)" style="animation-delay:-12s"/>
+    </g>
+    <g class="sway2" style="transform-origin:320px 340px">
+      <path fill="url(#glassG)" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4" stroke-linejoin="round" d="M262 196 L378 196 L364 366 L276 366 Z"/>
+      <path fill="url(#liqC)" opacity=".52" d="M270 288 L370 288 L364 366 L276 366 Z"/>
+      <path class="ink2 thin2" d="M270 288 L370 288"/>
+      <path class="ink2 thin2" d="M276 232 L300 232 M276 258 L300 258 M276 316 L300 316"/>
+    </g>
+  </svg>
+
+  <!-- 右上：苯环与分子 -->
+  <svg x="70" y="-1" width="30" height="39" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMin meet" opacity="0.72">
+    <g class="swim2" style="transform-origin:230px 150px">
+      <g stroke="#5b5175" stroke-opacity="0.6" stroke-width="4" fill="none" stroke-linejoin="round">
+        <polygon points="230,50 317,100 317,200 230,250 143,200 143,100"/>
+        <circle cx="230" cy="150" r="46"/>
+      </g>
+      <g fill="#a78bfa"><circle cx="230" cy="50" r="15"/><circle cx="317" cy="100" r="15"/><circle cx="317" cy="200" r="15"/>
+        <circle cx="230" cy="250" r="15"/><circle cx="143" cy="200" r="15"/><circle cx="143" cy="100" r="15"/></g>
+    </g>
+    <g class="swim">
+      <g stroke="#5b5175" stroke-opacity="0.6" stroke-width="3.4" fill="none"><path d="M120 310 L180 340 L240 310 M180 340 L180 386"/></g>
+      <circle cx="120" cy="310" r="17" fill="#f9a8d4"/><circle cx="240" cy="310" r="17" fill="#67e8f9"/>
+      <circle cx="180" cy="340" r="21" fill="#a78bfa"/><circle cx="180" cy="386" r="13" fill="#fde68a"/>
+    </g>
+  </svg>
+
+  <!-- 左下：试管架 -->
+  <svg x="0" y="61" width="30" height="39" viewBox="0 0 400 400" preserveAspectRatio="xMinYMax meet" opacity="0.72">
+    <g class="sway3" style="transform-origin:200px 380px">
+      <rect x="40" y="228" width="300" height="20" rx="10" fill="#c4b5fd" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4"/>
+      <path class="ink2" d="M66 248 L66 352 M314 248 L314 352 M50 352 L330 352"/>
+      <g>
+        <path fill="url(#glassG)" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4" d="M100 150 L148 150 L148 322 A24 24 0 0 1 100 322 Z"/>
+        <path fill="url(#liqA)" opacity=".58" d="M100 240 L148 240 L148 322 A24 24 0 0 1 100 322 Z"/>
+      </g>
+      <g>
+        <path fill="url(#glassG)" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4" d="M176 150 L224 150 L224 322 A24 24 0 0 1 176 322 Z"/>
+        <path fill="url(#liqB)" opacity=".58" d="M176 212 L224 212 L224 322 A24 24 0 0 1 176 322 Z"/>
+      </g>
+      <g>
+        <path fill="url(#glassG)" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4" d="M252 150 L300 150 L300 322 A24 24 0 0 1 252 322 Z"/>
+        <path fill="url(#liqC)" opacity=".58" d="M252 268 L300 268 L300 322 A24 24 0 0 1 252 322 Z"/>
+      </g>
+    </g>
+  </svg>
+
+  <!-- 右下：原子与元素方块 -->
+  <svg x="70" y="61" width="30" height="39" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMax meet" opacity="0.72">
+    <g class="swim2" style="transform-origin:200px 180px">
+      <g fill="none" stroke="#5b5175" stroke-opacity="0.6" stroke-width="3.4" opacity=".85">
+        <ellipse cx="200" cy="180" rx="160" ry="58"/>
+        <ellipse cx="200" cy="180" rx="160" ry="58" transform="rotate(60 200 180)"/>
+        <ellipse cx="200" cy="180" rx="160" ry="58" transform="rotate(120 200 180)"/>
+      </g>
+      <circle cx="360" cy="180" r="14" fill="#67e8f9"/><circle cx="120" cy="318" r="12" fill="#f9a8d4"/><circle cx="120" cy="42" r="12" fill="#fde68a"/>
+    </g>
+    <circle cx="200" cy="180" r="30" fill="#a78bfa" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4"/>
+    <g class="sway" style="transform-origin:270px 330px">
+      <rect x="196" y="272" width="148" height="116" rx="16" fill="#ffffff" opacity=".92" stroke="#5b5175" stroke-opacity="0.6" stroke-width="4"/>
+      <text x="270" y="346" text-anchor="middle" font-family="Georgia, serif" font-size="62" font-weight="700" fill="#5b5175">C</text>
+      <text x="216" y="302" font-family="Georgia, serif" font-size="26" fill="#5b5175">6</text>
+    </g>
+  </svg>
+</svg>
