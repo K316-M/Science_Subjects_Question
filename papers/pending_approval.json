@@ -1,0 +1,235 @@
+{
+  "items": [
+    {
+      "id": "chemistry_gen_a45ebdfb",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：水和氢",
+      "q": "下列关于水在不同化学反应中扮演角色的叙述，哪些是正确的？\nI. 电解水时，水既是氧化剂又是还原剂。\nII. 钠与水反应时，水作为还原剂。\nIII. 氟气（F₂）通入水中发生反应，水作为还原剂。\nIV. 氯气（Cl₂）溶于水发生反应，水作为氧化剂。",
+      "options": [
+        "A. 只有 I、III",
+        "B. 只有 I、IV",
+        "C. 只有 II、III",
+        "D. 只有 II、IV"
+      ],
+      "answer": 0,
+      "explanation": "考点为水的化学性质与氧化还原反应。在电解水反应（2H₂O = 2H₂ + O₂）中，H元素的氧化数从+1降至0（被还原），O元素的氧化数从-2升至0（被氧化），因此水既是氧化剂又是还原剂，I正确；钠与水反应（2Na + 2H₂O = 2NaOH + H₂）中，Na是还原剂，水中的H被还原，因此水是氧化剂，II错误；氟气与水反应（2F₂ + 2H₂O = 4HF + O₂）中，F元素从0降至-1，水中的O元素从-2升至0，因此氟气是氧化剂，水是还原剂，III正确；氯气溶于水发生歧化反应（Cl₂ + H₂O ⇌ HCl + HClO），水中的H和O氧化数均未改变，水既不是氧化剂也不是还原剂，IV错误。综上，只有I、III正确。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:44:29.240125+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_e10ef930",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：水和氢",
+      "q": "在实验室中利用金属锌（Zn）与酸反应制取氢气时，为了安全且有效地加快产生氢气的速率，下列哪项操作是不可行的？",
+      "options": [
+        "A. 向反应体系中滴入几滴硫酸铜（CuSO₄）溶液",
+        "B. 将稀硫酸改为同浓度的稀硝酸（HNO₃）",
+        "C. 适当加热反应混合物以提高反应温度",
+        "D. 将锌粒改用相同质量的锌粉"
+      ],
+      "answer": 1,
+      "explanation": "本题考查氢气的实验室制取与影响反应速率的因素。A选项滴入硫酸铜后，Zn会置换出少量的Cu并附着在Zn表面，在稀硫酸中形成Zn-Cu微型原电池，能显著加快产生氢气的速率，可行；B选项中稀硝酸具有强氧化性，与锌反应时会被还原为氮氧化物气体（如NO或NO₂）而不是氢气，因此不可行；C选项加热能增加活化分子百分数，加快反应速率，可行；D选项将固体改用粉末状可增大反应物接触面积，加快反应速率，可行。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:44:29.240356+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_f5aff12e",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：水和氢",
+      "q": "在加热条件下，用足量的干燥氢气还原 8.00 g 由氧化铜（CuO）和氧化铁（Fe₂O₃）组成的固体混合物。反应完全后，收集到 2.16 g 的水。求原混合物中氧化铜的质量百分比。（相对原子质量：H=1, O=16, Fe=56, Cu=64）",
+      "options": [
+        "A. 25.0%",
+        "B. 40.0%",
+        "C. 60.0%",
+        "D. 75.0%"
+      ],
+      "answer": 2,
+      "explanation": "本题考查氢气的还原性及多步反应的定量化学计算。设原混合物中CuO为x mol，Fe₂O₃为y mol。根据化学反应方程式：CuO + H₂ -> Cu + H₂O 以及 Fe₂O₃ + 3H₂ -> 2Fe + 3H₂O，可知：1 mol CuO 还原生成 1 mol H₂O；1 mol Fe₂O₃ 还原生成 3 mol H₂O。根据题意可列出方程组：(1) 80x + 160y = 8.00（混合物总质量）；(2) x + 3y = 2.16 / 18 = 0.12 mol（生成水的总物质的量）。由(1)化简得 x + 2y = 0.10，与(2)联立相减得 y = 0.02 mol，代入求得 x = 0.06 mol。因此，氧化铜的质量为 0.06 mol × 80 g/mol = 4.80 g。其质量百分比为 (4.80 g / 8.00 g) × 100% = 60.0%。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:44:29.240726+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_6a001e46",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：水和氢",
+      "q": "下列关于水和氢气的物理与化学性质的叙述中，哪项是错误的？",
+      "options": [
+        "A. 冰的密度比液态水小，是因为冰的晶体结构中，水分子之间通过氢键形成了较空旷的空间网状结构",
+        "B. 氢气极难溶于水，主要是因为氢气分子是非极性分子，而水分子是强极性分子，两者不相溶",
+        "C. 水的沸点（100 °C）远高于同族元素氢化物 H₂S（-60 °C），主要是因为 H-O 共价键的键能远大于 H-S 共价键",
+        "D. 氢气在空气中点燃前必须先检验其纯度，是因为当氢气混入空气并达到其爆炸极限范围时，点燃会发生猛烈爆炸"
+      ],
+      "answer": 2,
+      "explanation": "本题考查水和氢气的物理性质、化学性质及氢键的概念。A选项正确，冰中水分子间通过氢键形成高度有序的、空旷的开放式结构，导致体积膨胀，密度小于液态水；B选项正确，根据“相似相溶”原理，非极性的H₂在强极性的H₂O中溶解度极小；C选项错误，水的沸点高是因为水分子之间存在较强的分子间作用力——氢键。物理相变（沸腾）克服的是分子间作用力（氢键），而不是分子内的化学键（H-O共价键），这是学生常混淆的迷思概念；D选项正确，可燃性气体在点燃前必须验纯，以防在爆炸极限内发生危险。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:44:29.241000+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_56d4a2a3",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：原子与分子",
+      "q": "已知元素 X 和 Y 可形成两种不同的化合物 A 和 B。化合物 A 中，X 的质量百分含量为 40.0%；化合物 B 中，X 的质量百分含量为 25.0%。若化合物 A 的化学式为 XY3，根据倍比定律，化合物 B 的化学式应为下列哪一个？",
+      "options": [
+        "A. XY2",
+        "B. XY4",
+        "C. XY6",
+        "D. X2Y3"
+      ],
+      "answer": 2,
+      "explanation": "本题考查倍比定律（Law of Multiple Proportions）的应用。倍比定律指出：若两元素化合形成多种化合物，当其中一种元素的质量固定时，另一种元素在各化合物中的质量成简单整数比。在化合物 A 中，X 与 Y 的质量比为 40.0% : 60.0% = 1 : 1.5；在化合物 B 中，X 与 Y 的质量比为 25.0% : 75.0% = 1 : 3.0。若固定 X 的质量为 1 g，则 A 和 B 中 Y 的质量之比为 1.5 : 3.0 = 1 : 2。已知 A 的化学式为 XY3（即 1 个 X 原子结合 3 个 Y 原子），由于 Y 的质量比为 1 : 2，因此在 B 中，1 个 X 原子应结合 3 * 2 = 6 个 Y 原子，故化合物 B 的化学式为 XY6。常见迷思是直接用质量百分比 25% : 75% = 1 : 3 误得出 XY3，而忽略了 X 与 Y 的相对原子质量关系。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:45:06.981172+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_5befacd9",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：原子与分子",
+      "q": "某金属元素 M 在自然界中仅有两种稳定同位素 63M 和 65M，其平均相对原子质量为 63.6。现将 10.0 g 的单质 M 样品完全反应转化为无水氯化物 MCl2。在此过程中，所得产物中所含 65M 同位素的质量最接近下列哪一个？",
+      "options": [
+        "A. 1.50 g",
+        "B. 3.00 g",
+        "C. 3.07 g",
+        "D. 3.40 g"
+      ],
+      "answer": 2,
+      "explanation": "本题考查同位素丰度与相对原子质量的计算，并结合物质不灭定律。首先，设 63M 的丰度为 x，则 65M 的丰度为 1 - x。根据平均相对原子质量公式：63 * x + 65 * (1 - x) = 63.6，解得 x = 0.70，即 65M 的同位素丰度为 30.0%。在化学反应中，原子的核素种类和质量保持守恒（物质不灭），因此转化为 MCl2 后，65M 的质量与反应前单质中的质量相同。10.0 g 的单质 M 中，65M 的质量分数为 (30.0% * 65) / 63.6 = 30.66%。因此，65M 的质量为 10.0 g * 30.66% = 3.07 g。常见错误是直接用丰度乘以总质量（10.0 g * 30% = 3.00 g），忽略了不同同位素之间质量数的微小差异。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:45:06.981912+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_3e96e704",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：原子与分子",
+      "q": "在标准状况（STP）下，将 5.60 g 的铁粉与 100 mL 1.50 mol/L 的盐酸（HCl）反应。反应结束后，收集到标况下的氢气（H2）体积为 1.344 L。该反应中氢气的产率（Yield）为多少？",
+      "options": [
+        "A. 40.0%",
+        "B. 60.0%",
+        "C. 80.0%",
+        "D. 90.0%"
+      ],
+      "answer": 2,
+      "explanation": "本题考查化学方程式计算、限量反应物判断及产率计算。反应方程式为：Fe + 2HCl -> FeCl2 + H2。铁的物质的量 n(Fe) = 5.60 g / 56.0 g/mol = 0.100 mol。HCl 的物质的量 n(HCl) = 0.100 L * 1.50 mol/L = 0.150 mol。根据方程式比例，0.100 mol Fe 完全反应需要 0.200 mol HCl，而现有的 HCl 仅有 0.150 mol，因此 HCl 为限量反应物。根据限量反应物计算，理论上生成 H2 的物质的量为 n(H2) = n(HCl) / 2 = 0.0750 mol。理论上在 STP 下 H2 的体积为 0.0750 mol * 22.4 L/mol = 1.68 L。实际收集到 H2 体积为 1.344 L，因此产率 = (1.344 L / 1.68 L) * 100% = 80.0%。若学生未判断限量反应物，直接用铁计算理论产量（理论生成 0.100 mol H2，即 2.24 L），会错误得出 60.0% 的答案（选项 B）。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:45:06.982531+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_a3b842db",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第三章：化学方程式与化学计算",
+      "q": "将 10.8 g 铝粉与 48.0 g 氧化铁（$Fe_2O_3$）混合并在高温下发生铝热反应。反应完全后，经分离提纯，最终实际收集到 17.92 g 铁单质。求该反应中铁的产率（percentage yield）。（相对原子质量：O=16, Al=27, Fe=56）",
+      "options": [
+        "A. 53.3%",
+        "B. 75.0%",
+        "C. 80.0%",
+        "D. 93.3%"
+      ],
+      "answer": 2,
+      "explanation": "首先写出化学方程式：$2Al + Fe_2O_3 \\xrightarrow{\\text{高温}} Al_2O_3 + 2Fe$。\n计算反应物的物质的量：\n$n(Al) = \\frac{10.8 \\text{ g}}{27 \\text{ g/mol}} = 0.4 \\text{ mol}$\n$n(Fe_2O_3) = \\frac{48.0 \\text{ g}}{160 \\text{ g/mol}} = 0.3 \\text{ mol}$\n根据方程式的化学计量数比，2 mol $Al$ 消耗 1 mol $Fe_2O_3$。因此，0.4 mol $Al$ 完全反应仅需 0.2 mol $Fe_2O_3$。由于实际有 0.3 mol $Fe_2O_3$，故 $Fe_2O_3$ 过量，$Al$ 为限量反应物（limiting reactant）。\n理论上生成铁的物质的量应以限量反应物 $Al$ 计算：\n$n(Fe)_{\\text{理论}} = n(Al) = 0.4 \\text{ mol}$\n理论上生成铁的质量：$m(Fe)_{\\text{理论}} = 0.4 \\text{ mol} \\times 56 \\text{ g/mol} = 22.4 \\text{ g}$。\n铁的产率 = $\\frac{\\text{实际产量}}{\\text{理论产量}} \\times 100\\% = \\frac{17.92 \\text{ g}}{22.4 \\text{ g}} \\times 100\\% = 80.0\\%$。\n【常见迷思】若学生未能正确判断限量反应物，误用过量的 $Fe_2O_3$ 进行计算，会得出理论产量为 $0.3 \\times 2 \\times 56 = 33.6 \\text{ g}$，进而算出产率为 53.3%（错选 A）。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:45:54.383116+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_4a268af9",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第三章：化学方程式与化学计算",
+      "q": "设 $N_A$ 为阿伏加德罗常数的值。下列关于微粒数目的叙述中，正确的是：",
+      "options": [
+        "A. 在标准状况（STP）下，22.4 L 水中含有的水分子数为 $N_A$",
+        "B. 常温常压下，22.0 g 二氧化碳气体中含有的氧原子数为 $N_A$",
+        "C. 1.0 mol/L 的 $Na_2SO_4$ 溶液中，所含 $Na^+$ 的数目为 $2 N_A$",
+        "D. 在 $H_2 + Cl_2 \\rightarrow 2HCl$ 反应中，每生成 1 mol $HCl$ 转移的电子数为 $2 N_A$"
+      ],
+      "answer": 1,
+      "explanation": "A项错误：在标准状况（STP）下，水是液体，不能使用气体摩尔体积 22.4 L/mol 进行计算，22.4 L 水的质量约为 22400 g，分子数远大于 $N_A$。\nB项正确：$CO_2$ 的摩尔质量为 44 g/mol，22.0 g $CO_2$ 的物质的量为 $0.5 \\text{ mol}$。每个 $CO_2$ 分子含有 2 个氧原子，因此氧原子的总物质的量为 $0.5 \\text{ mol} \\times 2 = 1.0 \\text{ mol}$，所含氧原子数恰好为 $N_A$。质量与物质的量的转化不受温度和压力影响。\nC项错误：选项只给出了溶液的物质的量浓度，没有给出溶液的体积，因此无法计算溶质的物质的量及离子数目。\nD项错误：该反应中，氯元素的化合价由 0 价降至 -1 价，氢元素由 0 价升至 +1 价。每生成 2 mol $HCl$ 转移 2 mol 电子，因此每生成 1 mol $HCl$ 转移的电子数应为 $1 N_A$。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:45:54.383635+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "chemistry_gen_ffa8b2b2",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第三章：化学方程式与化学计算",
+      "q": "将等体积、等物质的量浓度的 氢氧化钡（$Ba(OH)_2$）溶液 与 硫酸氢铵（$NH_4HSO_4$）溶液 混合。下列关于该反应的离子方程式及所得溶液性质的叙述中，正确的是：",
+      "options": [
+        "A. 离子方程式为：$Ba^{2+} + OH^- + H^+ + SO_4^{2-} \\rightarrow BaSO_4\\downarrow + H_2O$，所得溶液呈中性",
+        "B. 离子方程式为：$Ba^{2+} + 2OH^- + NH_4^+ + H^+ + SO_4^{2-} \\rightarrow BaSO_4\\downarrow + NH_3\\cdot H_2O + H_2O$，所得溶液呈碱性",
+        "C. 离子方程式为：$Ba^{2+} + 2OH^- + 2H^+ + SO_4^{2-} \\rightarrow BaSO_4\\downarrow + 2H_2O$，所得溶液呈酸性",
+        "D. 离子方程式为：$NH_4^+ + OH^- \\rightarrow NH_3\\cdot H_2O$，所得溶液呈中性"
+      ],
+      "answer": 1,
+      "explanation": "设定两溶液反应的物质的量均为 1 mol。则：\n$Ba(OH)_2$ 电离出 1 mol $Ba^{2+}$ 和 2 mol $OH^-$;\n$NH_4HSO_4$ 电离出 1 mol $NH_4^+$、1 mol $H^+$ 和 1 mol $SO_4^{2-}$。\n1. 1 mol $Ba^{2+}$ 与 1 mol $SO_4^{2-}$ 恰好完全反应生成 1 mol $BaSO_4$ 沉淀；\n2. 2 mol $OH^-$ 会同时与 1 mol $H^+$（强酸质子先中和）和 1 mol $NH_4^+$（弱碱阳离子）反应，分别生成 1 mol $H_2O$ 和 1 mol $NH_3\\cdot H_2O$。\n因此，反应的净离子方程式为：$Ba^{2+} + 2OH^- + NH_4^+ + H^+ + SO_4^{2-} \\rightarrow BaSO_4\\downarrow + NH_3\\cdot H_2O + H_2O$。\n由于反应后留在溶液中的主要溶质为弱碱一水合氨（$NH_3\\cdot H_2O$），故所得溶液呈碱性，B正确。\n【常见迷思】学生若忽略 $NH_4^+$ 与 $OH^-$ 的反应，或者错误套用 $Ba(OH)_2$ 与 $H_2SO_4$ 的反应比例，就会错选 A 或 C。",
+      "origin": "ai_generated",
+      "needs_expert_check": true,
+      "flags": [
+        "AI 依考纲生成的原创题，合并前请核对科学正确性与答案"
+      ],
+      "generated_at": "2026-09-20T16:45:54.384696+00:00",
+      "syllabus_used": true
+    }
+  ],
+  "generated_at": "2026-09-20T16:45:54.384735+00:00"
+}
