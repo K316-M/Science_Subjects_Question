@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uec-science-cache-v6';
+const CACHE_NAME = 'uec-science-cache-v7';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -10,6 +10,8 @@ const APP_SHELL = [
   '/js/notes.js',
   '/js/archive.js',
   '/js/feedback.js',
+  '/js/sync.js',
+  '/js/sync-ui.js',
 ];
 
 self.addEventListener('install', (event) => {

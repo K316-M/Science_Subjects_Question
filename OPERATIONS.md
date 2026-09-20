@@ -124,6 +124,8 @@ GitHub → Actions → 「AI 依考纲出题 (Generate Questions)」→ Run work
 | `GITHUB_TOKEN` | 选填 | 申诉处理的一键发布要用。fine-grained token，只授权这个仓库的 Contents: Read and write |
 | `GITHUB_REPO` | 选填 | 预设 `K316-M/Science_Subjects_Question` |
 | `GITHUB_BRANCH` | 选填 | 预设 `main` |
+| `UPSTASH_REDIS_REST_URL` | 选填 | 跨装置同步要用，见下方 |
+| `UPSTASH_REDIS_REST_TOKEN` | 选填 | 同上 |
 
 > 三个 `DEV_` 只要缺一个、或密钥不足 16 字符，登录页就会显示「尚未启用」并**列出到底缺哪一项**。照着补就行。
 
@@ -152,6 +154,21 @@ GitHub Actions is not permitted to create or approve pull requests.
 
 **这种情况下产出不会遗失** —— 分支已经在 `generate/auto-<编号>`（或 `ingest/auto-<编号>`）上，
 到 GitHub 的 Pull requests 页面手动按 New pull request、选那个分支就能开出来。
+
+
+### 设定跨装置同步（选做，免费）
+
+没设的话，网站一切照常，只是「☁️ 同步」按钮会说尚未启用。要开启：
+
+1. 到 <https://upstash.com> 注册（免费方案不用绑卡），建立一个 **Redis** 资料库
+   - 免费额度：每月 50 万次命令、256 MB 储存、10 GB 流量。以你的规模够用非常久
+   - 地区挑离马来西亚近的（例如 `ap-southeast-1`）
+2. 在该资料库页面找到 **REST API** 区块，复制 `UPSTASH_REDIS_REST_URL` 与 `UPSTASH_REDIS_REST_TOKEN`
+3. 两个都加进 Vercel 的 Environment Variables（勾 Production）→ Redeploy
+
+**设计上刻意不做帐号**：使用者是中学生，收 email／密码在个资法下有义务，自己实作密码储存也多一层风险。改用「同步码」——20 码随机字串就是钥匙，不含任何个人资料。资料库里存的是同步码的杂凑值，就算资料外流也反推不出任何人的码。
+
+学生怎么用：在一台装置按「☁️ 同步 → 产生我的同步码」，把那串码抄到另一台装置输入即可。两边的进度会**合并**而不是覆盖——答对过的题目不会因为另一台没做过而被洗掉。半年没同步的资料会自动过期。
 
 ---
 
