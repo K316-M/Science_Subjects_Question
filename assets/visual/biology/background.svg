@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="生物科背景插图">
+  <title>生物科背景</title>
+  <!-- 外层用 100×100 的座标系并关掉等比缩放，等于「百分比画布」；
+       四个角各是一个独立的内层 <svg>，各自保持等比不变形。
+       这样不论电脑宽屏还是手机直屏，四角的插图都会乖乖待在角落、不被裁掉。 -->
+  <style>
+    .ink   { fill: none; stroke: #55697a; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+    .thin  { stroke-width: 5; }
+    .leaf  { fill: #a7f3d0; } .leaf2 { fill: #6ee7b7; }
+    .glass { fill: #bae6fd; } .warm  { fill: #fde68a; }
+    .rose  { fill: #fbcfe8; } .body  { fill: #e2e8f0; } .white { fill: #ffffff; }
+
+    /* 动画一律缓慢、幅度小：背景要有生命感，但不能把注意力从题目上抢走 */
+    .flow   { stroke-dasharray: 22 20; animation: flow 6s linear infinite; }
+    .flow-b { animation-duration: 7.5s; animation-direction: reverse; }
+    .sway   { animation: sway 7s ease-in-out infinite; }
+    .sway-b { animation-duration: 9s; animation-delay: -3s; }
+    .drift  { animation: drift 11s ease-in-out infinite; }
+    .drift-b{ animation-duration: 14s; animation-delay: -5s; }
+    .twinkle{ animation: twinkle 5s ease-in-out infinite; }
+    .spin   { animation: spin 46s linear infinite; transform-origin: 200px 200px; }
+    @keyframes flow { to { stroke-dashoffset: -168; } }
+    @keyframes sway { 0%,100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+    @keyframes drift { 0%,100% { transform: translate(0,0); } 50% { transform: translate(10px,-13px); } }
+    @keyframes twinkle { 0%,100% { opacity: .35; } 50% { opacity: .95; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .flow, .sway, .drift, .twinkle, .spin { animation: none; }
+    }
+  </style>
+
+  <!-- ══ 左上：DNA 双螺旋与叶片 ══ -->
+  <svg x="1" y="1.5" width="34" height="34" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin meet">
+    <path class="ink flow" d="M120 20 Q230 110 120 200 Q10 290 120 380"/>
+    <path class="ink flow flow-b" d="M220 20 Q110 110 220 200 Q330 290 220 380"/>
+    <g class="twinkle">
+      <line class="ink thin" x1="145" y1="62" x2="195" y2="62"/>
+      <line class="ink thin" x1="158" y1="124" x2="182" y2="124"/>
+      <line class="ink thin" x1="145" y1="276" x2="195" y2="276"/>
+      <line class="ink thin" x1="158" y1="338" x2="182" y2="338"/>
+    </g>
+    <circle class="leaf2" cx="120" cy="20" r="14"/><circle class="warm" cx="220" cy="20" r="14"/>
+    <circle class="warm" cx="120" cy="380" r="14"/><circle class="leaf2" cx="220" cy="380" r="14"/>
+    <g class="sway" style="transform-origin:300px 210px">
+      <path class="leaf" d="M300 210 C300 140 340 92 400 80 C400 150 360 198 300 210 Z"/>
+      <path class="ink thin" d="M300 210 C300 140 340 92 400 80 C400 150 360 198 300 210 Z"/>
+      <path class="ink thin" d="M300 210 C335 182 370 138 400 80"/>
+    </g>
+    <g class="sway sway-b" style="transform-origin:296px 222px">
+      <path class="leaf2" d="M296 222 C236 222 200 180 192 120 C252 122 288 162 296 222 Z"/>
+      <path class="ink thin" d="M296 222 C236 222 200 180 192 120 C252 122 288 162 296 222 Z"/>
+    </g>
+    <path class="ink" d="M298 216 C300 280 298 330 292 376"/>
+  </svg>
+
+  <!-- ══ 右上：显微镜 ══ -->
+  <svg x="65" y="1.5" width="34" height="34" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMin meet">
+    <ellipse class="body" cx="200" cy="360" rx="150" ry="22"/>
+    <path class="ink" d="M50 360 Q200 328 350 360"/>
+    <path class="ink body" d="M132 360 L162 252 L248 252 L278 360 Z"/>
+    <path class="ink" d="M162 252 Q136 150 200 84"/>
+    <rect class="ink white" x="86" y="206" width="228" height="20" rx="10"/>
+    <rect class="rose" x="158" y="188" width="84" height="18" rx="4"/>
+    <rect class="ink thin" x="158" y="188" width="84" height="18" rx="4" fill="none"/>
+    <path class="ink glass" d="M170 18 L246 18 L234 102 L182 102 Z"/>
+    <rect class="ink white" x="162" y="2" width="92" height="22" rx="11"/>
+    <line class="ink" x1="208" y1="102" x2="208" y2="140"/>
+    <circle class="ink white" cx="208" cy="162" r="26"/>
+    <circle class="warm twinkle" cx="208" cy="162" r="12"/>
+  </svg>
+
+  <!-- ══ 左下：细胞 ══ -->
+  <svg x="1" y="64" width="34" height="34" viewBox="0 0 400 400" preserveAspectRatio="xMinYMax meet">
+    <circle class="ink white" cx="200" cy="200" r="184"/>
+    <circle class="ink thin spin" cx="200" cy="200" r="156" stroke-dasharray="14 18"/>
+    <circle class="ink glass" cx="172" cy="156" r="64"/>
+    <circle class="ink thin" cx="172" cy="156" r="30" fill="#7dd3fc"/>
+    <g class="drift">
+      <ellipse class="ink leaf" cx="286" cy="228" rx="48" ry="25" transform="rotate(-24 286 228)"/>
+      <path class="ink thin" d="M256 242 Q272 214 286 234 Q300 254 316 220"/>
+    </g>
+    <g class="drift drift-b">
+      <ellipse class="ink warm" cx="140" cy="290" rx="38" ry="20" transform="rotate(18 140 290)"/>
+    </g>
+    <circle class="leaf2 twinkle" cx="92" cy="136" r="11"/>
+    <circle class="rose twinkle" cx="272" cy="106" r="10" style="animation-delay:-2s"/>
+    <circle class="glass twinkle" cx="112" cy="234" r="9" style="animation-delay:-3.4s"/>
+  </svg>
+
+  <!-- ══ 右下：培养皿与锥形瓶 ══ -->
+  <svg x="65" y="64" width="34" height="34" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMax meet">
+    <path class="ink white" d="M150 40 L206 40 L206 148 L286 332 A22 22 0 0 1 268 364 L88 364 A22 22 0 0 1 70 332 L150 148 Z"/>
+    <path class="leaf" d="M114 236 L242 236 L286 332 A22 22 0 0 1 268 364 L88 364 A22 22 0 0 1 70 332 Z"/>
+    <path class="ink thin" d="M114 236 L242 236"/>
+    <rect class="ink white" x="138" y="18" width="80" height="26" rx="9"/>
+    <circle class="white twinkle" cx="150" cy="298" r="11" opacity=".85"/>
+    <circle class="white twinkle" cx="202" cy="326" r="8" opacity=".85" style="animation-delay:-1.8s"/>
+    <ellipse class="ink white" cx="300" cy="300" rx="94" ry="46"/>
+    <ellipse class="ink thin" cx="300" cy="288" rx="94" ry="46" fill="none"/>
+    <g class="twinkle">
+      <circle class="leaf" cx="268" cy="284" r="13"/>
+      <circle class="leaf2" cx="318" cy="298" r="9"/>
+      <circle class="rose" cx="334" cy="270" r="7"/>
+      <circle class="warm" cx="288" cy="308" r="6"/>
+    </g>
+  </svg>
+</svg>

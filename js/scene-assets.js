@@ -15,7 +15,7 @@
 (function (global) {
   'use strict';
 
-  const VISUAL_EXT = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+  const VISUAL_EXT = ['svg', 'jpg', 'jpeg', 'png', 'webp', 'avif'];
   const AUDIO_EXT = ['mp3', 'ogg', 'm4a', 'wav'];
   const FALLBACK_SCENE = 'default';
   const MUSIC_PREF_KEY = 'UEC_SCENE_MUSIC_v1';
@@ -24,6 +24,7 @@
 .scene-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .7s ease;
   background-repeat:no-repeat;background-position:center;background-size:cover;}
 .scene-bg.is-on{opacity:var(--scene-opacity,.5);}
+.scene-bg>svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
 .scene-bg::after{content:'';position:absolute;inset:0;
   background:var(--scene-veil,linear-gradient(180deg,rgba(240,253,244,.55),rgba(240,253,244,.85)));}
 .scene-music-btn{position:fixed;right:16px;bottom:16px;z-index:9999;
@@ -71,6 +72,32 @@
   const findBackground = scene => findIn('visual', scene, ['background', 'ambient'], VISUAL_EXT);
   const findMusic = scene => findIn('audio', scene, ['ambient', 'background'], AUDIO_EXT);
 
+  /* 把一张背景贴到指定元素上。
+     SVG 走「内联进 DOM」而不是 background-image —— 当成背景图时，SVG 里的动画
+     在部分浏览器（尤其 Safari）不保证会播；内联之后一定会动，颜色也能被页面 CSS 控制。
+     来源是本站自己的档案，与页面同源，因此用 innerHTML 注入是安全的。 */
+  const svgCache = new Map();
+
+  async function paint(el, url) {
+    if (!el) return;
+    if (!url) {
+      el.style.backgroundImage = '';
+      el.replaceChildren();
+      return;
+    }
+    if (/\.svg(\?|$)/i.test(url)) {
+      if (!svgCache.has(url)) {
+        svgCache.set(url, fetch(url).then(r => (r.ok ? r.text() : '')).catch(() => ''));
+      }
+      const markup = await svgCache.get(url);
+      el.style.backgroundImage = '';
+      el.innerHTML = markup;
+      return;
+    }
+    el.replaceChildren();
+    el.style.backgroundImage = `url("${url}")`;
+  }
+
   /* ---------- 以下是「整页自动装配」，index.html 那种自己管背景的页面用不到 ---------- */
   const FADE_MS = 900;   // 淡出与淡入同时进行，切换场景时听起来是交叉过渡
   const state = { scene: null, session: 0, bgEl: null, audioEl: null, trackUrl: null, btn: null, musicOn: false, volume: 0.35 };
@@ -105,11 +132,12 @@
       document.body.insertBefore(state.bgEl, document.body.firstChild);
     }
     if (url) {
-      state.bgEl.style.backgroundImage = `url("${url}")`;
+      await paint(state.bgEl, url);
+      if (session !== state.session) return;
       state.bgEl.classList.add('is-on');
     } else {
       state.bgEl.classList.remove('is-on');
-      state.bgEl.style.backgroundImage = '';
+      paint(state.bgEl, null);
     }
   }
 
@@ -238,7 +266,7 @@
   }
 
   global.SceneAssets = {
-    use, setMusic, resolve, findBackground, findMusic,
+    use, setMusic, resolve, findBackground, findMusic, paint,
     isMusicOn: () => state.musicOn,
     currentScene: () => state.scene,
   };

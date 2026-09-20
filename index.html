@@ -386,10 +386,11 @@
       background-repeat: no-repeat; background-position: center; background-size: cover;
       opacity: 0; transition: opacity 0.7s ease;
     }
-    .custom-photo-layer.active { opacity: 0.5; }
+    .custom-photo-layer.active { opacity: 0.82; }
+    .custom-photo-layer > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
     .custom-photo-layer::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(240,253,244,0.55), rgba(240,253,244,0.85));
+      background: linear-gradient(180deg, rgba(240,253,244,0.28), rgba(240,253,244,0.62));
     }
 
     .container, header { position: relative; z-index: 1; }
@@ -771,12 +772,13 @@
     document.getElementById('washBlobB').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
     wash.classList.add('active');
     photoLayer.classList.remove('active');
-    photoLayer.style.backgroundImage = '';
+    SceneAssets.paint(photoLayer, null);
 
     const customUrl = await SceneAssets.findBackground(subject);
     if (sessionId !== bgSessionId) return; // 期间已切换到其他科目，放弃这次结果
     if (customUrl) {
-      photoLayer.style.backgroundImage = `url("${customUrl}")`;
+      await SceneAssets.paint(photoLayer, customUrl);
+      if (sessionId !== bgSessionId) return;
       photoLayer.classList.add('active');
     }
   }
