@@ -787,20 +787,47 @@
   }
 
   // ---- 环境背景音乐：优先使用 assets/audio/<subject>/ambient.*，找不到则用 Web Audio 生成式合成 ----
+  const MUSIC_VOLUME = 0.35;
+  const MUSIC_FADE_MS = 900;   // 淡出与淡入同时进行，所以切换听起来是交叉过渡而不是断掉
   let musicEnabled = false;
   let musicNodes = [];
   let musicTimer = null;
   let customAudioEl = null;
+  let currentTrackUrl = null;
   let musicSessionId = 0;
 
-  function stopAmbientMusic() {
-    musicSessionId++; // 使尚未完成的自定义音频探测失效
+  // 用 rAF 把音量平滑推到目标值；同一个元素上重复呼叫会接手上一次的淡变
+  function fadeAudio(el, target, ms, onDone) {
+    if (el._fadeRaf) cancelAnimationFrame(el._fadeRaf);
+    const from = el.volume;
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / ms, 1);
+      el.volume = Math.max(0, Math.min(1, from + (target - from) * t));
+      if (t < 1) {
+        el._fadeRaf = requestAnimationFrame(step);
+      } else {
+        el._fadeRaf = null;
+        if (onDone) onDone();
+      }
+    };
+    el._fadeRaf = requestAnimationFrame(step);
+  }
+
+  // 让目前这首开始淡出并交出控制权；不等它淡完，新的那首可以马上叠上来
+  function releaseCurrentMusic() {
     if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
-    if (customAudioEl) {
-      customAudioEl.pause();
-      customAudioEl.src = '';
-      customAudioEl = null;
+
+    const leaving = customAudioEl;
+    customAudioEl = null;
+    currentTrackUrl = null;
+    if (leaving) {
+      fadeAudio(leaving, 0, MUSIC_FADE_MS, () => {
+        leaving.pause();
+        leaving.src = '';
+      });
     }
+
     const now = audioCtx ? audioCtx.currentTime : 0;
     musicNodes.forEach(n => {
       try {
@@ -811,20 +838,32 @@
     musicNodes = [];
   }
 
+  function stopAmbientMusic() {
+    musicSessionId++; // 使尚未完成的自定义音频探测失效
+    releaseCurrentMusic();
+  }
+
   async function startAmbientMusic(subject) {
     const sessionId = ++musicSessionId;
-    stopAmbientMusic();
-    musicSessionId = sessionId; // stopAmbientMusic 会自增，这里恢复成本次会话的编号
-    if (!musicEnabled) return;
+    if (!musicEnabled) { releaseCurrentMusic(); return; }
 
+    // 先把新的曲目找出来再动旧的，才能做到「旧的淡出、新的同时淡入」
     const customUrl = await SceneAssets.findMusic(subject);
     if (sessionId !== musicSessionId) return; // 期间已切换，放弃
 
+    // 换科目但用的是同一首曲子时，让它继续播，不要从头重来
+    if (customUrl && customUrl === currentTrackUrl && customAudioEl) return;
+
+    releaseCurrentMusic();
+
     if (customUrl) {
-      customAudioEl = new Audio(customUrl);
-      customAudioEl.loop = true;
-      customAudioEl.volume = 0.35;
-      customAudioEl.play().catch((e) => console.warn('自定义背景音乐播放失败：', e.message));
+      const el = new Audio(customUrl);
+      el.loop = true;
+      el.volume = 0;
+      customAudioEl = el;
+      currentTrackUrl = customUrl;
+      el.play().catch((e) => console.warn('自定义背景音乐播放失败：', e.message));
+      fadeAudio(el, MUSIC_VOLUME, MUSIC_FADE_MS);
       return;
     }
 

@@ -72,7 +72,8 @@
   const findMusic = scene => findIn('audio', scene, ['ambient', 'background'], AUDIO_EXT);
 
   /* ---------- 以下是「整页自动装配」，index.html 那种自己管背景的页面用不到 ---------- */
-  const state = { scene: null, session: 0, bgEl: null, audioEl: null, btn: null, musicOn: false, volume: 0.35 };
+  const FADE_MS = 900;   // 淡出与淡入同时进行，切换场景时听起来是交叉过渡
+  const state = { scene: null, session: 0, bgEl: null, audioEl: null, trackUrl: null, btn: null, musicOn: false, volume: 0.35 };
 
   function injectCss() {
     if (document.getElementById('sceneAssetsCss')) return;
@@ -112,36 +113,66 @@
     }
   }
 
+  // 用 rAF 把音量平滑推到目标值；同一个元素上重复呼叫会接手上一次的淡变
+  function fadeAudio(el, target, ms, onDone) {
+    if (el._fadeRaf) cancelAnimationFrame(el._fadeRaf);
+    const from = el.volume;
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / ms, 1);
+      el.volume = Math.max(0, Math.min(1, from + (target - from) * t));
+      if (t < 1) {
+        el._fadeRaf = requestAnimationFrame(step);
+      } else {
+        el._fadeRaf = null;
+        if (onDone) onDone();
+      }
+    };
+    el._fadeRaf = requestAnimationFrame(step);
+  }
+
   // 浏览器禁止「没互动就出声」，被挡下就等用户第一次点击/按键再试一次
   function playWhenAllowed(audio) {
     audio.play().catch(() => {
       const retry = () => {
         document.removeEventListener('pointerdown', retry);
         document.removeEventListener('keydown', retry);
-        if (state.musicOn) audio.play().catch(() => {});
+        if (!state.musicOn) return;
+        audio.volume = 0;            // 补播时同样淡入，不要突然出声
+        audio.play().then(() => fadeAudio(audio, state.volume, FADE_MS)).catch(() => {});
       };
       document.addEventListener('pointerdown', retry, { once: true });
       document.addEventListener('keydown', retry, { once: true });
     });
   }
 
+  // 让目前这首开始淡出并交出控制权；不等它淡完，新的那首可以马上叠上来
   function stopMusic() {
-    if (!state.audioEl) return;
-    state.audioEl.pause();
-    state.audioEl.src = '';
+    const leaving = state.audioEl;
     state.audioEl = null;
+    state.trackUrl = null;
+    if (!leaving) return;
+    fadeAudio(leaving, 0, FADE_MS, () => {
+      leaving.pause();
+      leaving.src = '';
+    });
   }
 
   async function startMusic(scene, session) {
     const url = await findMusic(scene);
     if (session !== state.session || !state.musicOn) return;
-    if (!url) return;
+    if (!url) { stopMusic(); return; }
+    // 换场景但用的是同一首曲子时，让它继续播，不要从头重来
+    if (url === state.trackUrl && state.audioEl) return;
+
     stopMusic();
     const audio = new Audio(url);
     audio.loop = true;
-    audio.volume = state.volume;
+    audio.volume = 0;
     state.audioEl = audio;
+    state.trackUrl = url;
     playWhenAllowed(audio);
+    fadeAudio(audio, state.volume, FADE_MS);
   }
 
   function syncButton() {
@@ -180,8 +211,9 @@
     state.scene = scene || FALLBACK_SCENE;
     const session = ++state.session;
     applyBackground(state.scene, session);
-    stopMusic();
+    // 不先硬停：交给 startMusic 判断该交叉淡入、还是同一首继续播
     if (state.musicOn) startMusic(state.scene, session);
+    else stopMusic();
   }
 
   function init() {
