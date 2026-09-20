@@ -46,6 +46,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: 安装依赖（读取 PDF 考纲用）
+        run: pip install --quiet pypdf
+
       - name: 依考纲生成原创题并自动检查
         id: generate
         env:

@@ -44,6 +44,7 @@ CHAPTERS_PER_RUN = int(os.environ.get("CHAPTERS_PER_RUN", "3"))
 ONLY_SUBJECT = os.environ.get("ONLY_SUBJECT", "").strip()
 
 SIMILARITY_LIMIT = 0.82   # 题干与既有题目相似度超过这个值就丢弃，避免换句话重复出题
+SYLLABUS_CHAR_LIMIT = 12000   # 考纲塞进提示词的上限；三科目前都在这个数字以内，会整份带上
 
 
 def load_bank(subject):
@@ -57,13 +58,34 @@ def load_bank(subject):
         return {"sections": []}
 
 
+def extract_pdf_text(path):
+    try:
+        import pypdf
+    except ImportError:
+        print(f"⚠️ 读取 PDF 考纲需要 pypdf（pip install pypdf）：{path}", file=sys.stderr)
+        return ""
+    try:
+        reader = pypdf.PdfReader(path)
+        text = "\n".join((page.extract_text() or "") for page in reader.pages)
+        return re.sub(r"\n{3,}", "\n\n", text).strip()
+    except Exception as e:
+        print(f"⚠️ 解析 PDF 考纲失败：{path} — {e}", file=sys.stderr)
+        return ""
+
+
 def load_syllabus(subject):
-    """官方考纲：需要你自己把公开文件放进 syllabus/<subject>.md（董总网站拒绝程序抓取）。"""
-    for ext in (".md", ".txt"):
+    """官方考纲：需要你自己把公开文件放进 syllabus/（董总网站拒绝程序抓取）。
+    纯文字或 PDF 都收——很多人会把下载的 PDF 直接改名成 .md，所以这里看的是
+    档案内容的前几个字节，而不是副档名。"""
+    for ext in (".md", ".txt", ".pdf"):
         path = os.path.join(SYLLABUS_DIR, subject + ext)
-        if os.path.exists(path):
-            with open(path, encoding="utf-8") as f:
-                return f.read().strip()
+        if not os.path.exists(path):
+            continue
+        with open(path, "rb") as f:
+            if f.read(5).startswith(b"%PDF"):
+                return extract_pdf_text(path)
+        with open(path, encoding="utf-8", errors="replace") as f:
+            return f.read().strip()
     return ""
 
 
@@ -99,7 +121,7 @@ def build_prompt(subject, section, syllabus):
     label = SUBJECT_LABEL.get(subject, subject)
     avoid = existing_stems(section)[:12]
     avoid_block = "\n".join(f"- {s[:60]}" for s in avoid) or "（本章目前没有题目）"
-    syllabus_block = f"\n【官方考纲节录】\n{syllabus[:4000]}\n" if syllabus else ""
+    syllabus_block = f"\n【官方考纲节录】\n{syllabus[:SYLLABUS_CHAR_LIMIT]}\n" if syllabus else ""
 
     return f"""你是马来西亚华文独立中学（董总 UEC 高中统考）{label}科的资深命题老师。
 请为以下章节撰写 {PER_CHAPTER} 道**全新原创**的单选题。
