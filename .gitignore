@@ -4,3 +4,5 @@ has_new_ingest.txt
 
 __pycache__/
 *.pyc
+has_new_generated.txt
+GENERATION_REPORT.md

@@ -1,0 +1,74 @@
+name: AI 依考纲出题 (Generate Questions)
+
+# 每周自动挑出题目最少的章节，请 Gemini 依考纲撰写原创练习题，
+# 通过自动检查的才写入待审区，并开一个 Pull Request 等你逐题审核。
+#
+# 与「AI 自动录题」的分工：
+#   ingest_paper.yml      → 把你拍的真题照片转写成题目
+#   generate_questions.yml → 依考纲生成全新的原创练习题（必须人工核对科学正确性）
+#
+# 使用前请在 Settings → Secrets and variables → Actions 添加 GEMINI_API_KEY。
+
+on:
+  schedule:
+    # 每周一 01:00 UTC（马来西亚时间早上 9 点）
+    - cron: '0 1 * * 1'
+  workflow_dispatch:
+    inputs:
+      subject:
+        description: '只为某一科出题（留空＝三科都跑）'
+        required: false
+        default: ''
+        type: choice
+        options: ['', 'biology', 'chemistry', 'physics']
+      chapters_per_run:
+        description: '这次照顾几个章节'
+        required: false
+        default: '3'
+      questions_per_chapter:
+        description: '每个章节出几题'
+        required: false
+        default: '4'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 依考纲生成原创题并自动检查
+        id: generate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ONLY_SUBJECT: ${{ inputs.subject }}
+          CHAPTERS_PER_RUN: ${{ inputs.chapters_per_run || '3' }}
+          QUESTIONS_PER_CHAPTER: ${{ inputs.questions_per_chapter || '4' }}
+        run: |
+          python scripts/generate_questions.py
+          if [ -f has_new_generated.txt ] && [ "$(cat has_new_generated.txt)" = "true" ]; then
+            echo "has_new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_new=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 创建待审核 Pull Request
+        if: steps.generate.outputs.has_new == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: generate/auto-${{ github.run_number }}
+          add-paths: papers/pending_approval.json
+          commit-message: "🤖 AI 依考纲出题：待审批次 #${{ github.run_number }}"
+          title: "🤖 AI 依考纲出题待审 · 批次 #${{ github.run_number }}"
+          body-path: GENERATION_REPORT.md
+          labels: "待审核, AI出题"
