@@ -113,7 +113,7 @@ SceneAssets.use('formula-chapter3');   // 立刻切到 assets/visual/formula-cha
 - 会被盖上一层遮罩再垫在文字底下，所以**选偏亮、对比不要太强、中间不要有重点内容**的图最好看
 
 **音乐**
-- 文件名固定叫 `ambient`，支持 `.mp3` `.ogg` `.m4a` `.wav`
+- 文件名叫 `ambient`（叫 `background` 也认得，两边用同一个词比较好记），支持 `.mp3` `.ogg` `.m4a` `.wav`
 - 会自动循环播放、音量已调低，你不用自己做淡入淡出
 - 建议 1–3MB；**选没有明显旋律起伏的纯音乐**（lo-fi、环境音、钢琴铺底），做题时才不会分心
 - ⚠️ 浏览器规定「用户没点过页面就不许出声」，所以音乐一定是在第一次点击之后才响，这是正常现象，不是坏了
@@ -128,7 +128,7 @@ SceneAssets.use('formula-chapter3');   // 立刻切到 assets/visual/formula-cha
 
 ## 五、放了却没生效？照这个顺序查
 
-1. **文件名对不对**——必须是 `background.xxx` 和 `ambient.xxx`，不能叫 `Background.jpg`、`background (1).jpg`、`bg.jpg`
+1. **文件名对不对**——图片叫 `background.xxx`，音乐叫 `ambient.xxx` 或 `background.xxx`；不能叫 `Background.jpg`、`background (1).jpg`、`bg.jpg`
 2. **大小写**——服务器区分大小写，`Biology/` ≠ `biology/`
 3. **文件夹名和 `data-scene` 是否一致**——差一个字母就找不到
 4. **推送了吗**——文件要 commit 并 push 到 `main`，Vercel 才看得到

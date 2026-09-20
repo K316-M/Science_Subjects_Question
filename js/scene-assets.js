@@ -56,17 +56,20 @@
     return null;
   }
 
-  async function findIn(kind, scene, fileName, extensions) {
-    const tries = scene === FALLBACK_SCENE ? [scene] : [scene, FALLBACK_SCENE];
-    for (const s of tries) {
-      const hit = await resolve(`/assets/${kind}/${s}/${fileName}`, extensions);
-      if (hit) return hit;
+  async function findIn(kind, scene, fileNames, extensions) {
+    const scenes = scene === FALLBACK_SCENE ? [scene] : [scene, FALLBACK_SCENE];
+    for (const s of scenes) {
+      for (const name of fileNames) {
+        const hit = await resolve(`/assets/${kind}/${s}/${name}`, extensions);
+        if (hit) return hit;
+      }
     }
     return null;
   }
 
-  const findBackground = scene => findIn('visual', scene, 'background', VISUAL_EXT);
-  const findMusic = scene => findIn('audio', scene, 'ambient', AUDIO_EXT);
+  // 音乐的正式档名是 ambient，但 background 也认 —— 两个文件夹都用同一个词最不容易记错
+  const findBackground = scene => findIn('visual', scene, ['background', 'ambient'], VISUAL_EXT);
+  const findMusic = scene => findIn('audio', scene, ['ambient', 'background'], AUDIO_EXT);
 
   /* ---------- 以下是「整页自动装配」，index.html 那种自己管背景的页面用不到 ---------- */
   const state = { scene: null, session: 0, bgEl: null, audioEl: null, btn: null, musicOn: false, volume: 0.35 };
