@@ -386,11 +386,14 @@
       background-repeat: no-repeat; background-position: center; background-size: cover;
       opacity: 0; transition: opacity 0.7s ease;
     }
-    .custom-photo-layer.active { opacity: 0.82; }
+    .custom-photo-layer.active { opacity: 1; }
+    /* 自定义背景是一整张不透明的画，底下的模糊色块被完全盖住，
+       但 blur(60px) 的动画照样在烧算力，所以直接不画 */
+    .subject-bg-wash.has-photo .blob { display: none; }
     .custom-photo-layer > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
     .custom-photo-layer::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(240,253,244,0.28), rgba(240,253,244,0.62));
+      background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(236,254,255,0.10));
     }
 
     .container, header { position: relative; z-index: 1; }
@@ -771,6 +774,7 @@
     document.getElementById('washBlobA').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
     document.getElementById('washBlobB').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
     wash.classList.add('active');
+    wash.classList.remove('has-photo');
     photoLayer.classList.remove('active');
     SceneAssets.paint(photoLayer, null);
 
@@ -780,6 +784,7 @@
       await SceneAssets.paint(photoLayer, customUrl);
       if (sessionId !== bgSessionId) return;
       photoLayer.classList.add('active');
+      wash.classList.add('has-photo');
     }
   }
   function clearSubjectBackground() {

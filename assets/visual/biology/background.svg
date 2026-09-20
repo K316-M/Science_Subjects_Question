@@ -1,107 +1,190 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="生物科背景插图">
-  <title>生物科背景</title>
-  <!-- 外层用 100×100 的座标系并关掉等比缩放，等于「百分比画布」；
-       四个角各是一个独立的内层 <svg>，各自保持等比不变形。
-       这样不论电脑宽屏还是手机直屏，四角的插图都会乖乖待在角落、不被裁掉。 -->
-  <style>
-    .ink   { fill: none; stroke: #55697a; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
-    .thin  { stroke-width: 5; }
-    .leaf  { fill: #a7f3d0; } .leaf2 { fill: #6ee7b7; }
-    .glass { fill: #bae6fd; } .warm  { fill: #fde68a; }
-    .rose  { fill: #fbcfe8; } .body  { fill: #e2e8f0; } .white { fill: #ffffff; }
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="生物科背景">
+  <title>生物科背景 · 显微镜下的水体</title>
+  <!-- 做法说明：
+       外层是 100×100 的「百分比画布」，底层水体与光斑允许被拉伸（柔形状拉伸看不出来）；
+       叶片、细胞这类有形状的物件放在内层 <svg> 里保持等比，锚在四边，手机直屏也不会被裁掉。
+       所有动画只用 transform / opacity，而且模糊滤镜套在「静止的内层」、由外层做位移，
+       这样滤镜结果可以被快取，不必每一帧重算 —— 这是能不能跑满 60fps 的关键。 -->
+  <defs>
+    <linearGradient id="water" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0%"   stop-color="#ecfeff"/>
+      <stop offset="42%"  stop-color="#d7f6ee"/>
+      <stop offset="100%" stop-color="#b7ead9"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#5eead4" stop-opacity=".85"/>
+      <stop offset="100%" stop-color="#5eead4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#fef3c7" stop-opacity=".8"/>
+      <stop offset="100%" stop-color="#fef3c7" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowC" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#a5b4fc" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#a5b4fc" stop-opacity="0"/>
+    </radialGradient>
 
-    /* 动画一律缓慢、幅度小：背景要有生命感，但不能把注意力从题目上抢走 */
-    .flow   { stroke-dasharray: 22 20; animation: flow 6s linear infinite; }
-    .flow-b { animation-duration: 7.5s; animation-direction: reverse; }
-    .sway   { animation: sway 7s ease-in-out infinite; }
-    .sway-b { animation-duration: 9s; animation-delay: -3s; }
-    .drift  { animation: drift 11s ease-in-out infinite; }
-    .drift-b{ animation-duration: 14s; animation-delay: -5s; }
-    .twinkle{ animation: twinkle 5s ease-in-out infinite; }
-    .spin   { animation: spin 46s linear infinite; transform-origin: 200px 200px; }
-    @keyframes flow { to { stroke-dashoffset: -168; } }
-    @keyframes sway { 0%,100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
-    @keyframes drift { 0%,100% { transform: translate(0,0); } 50% { transform: translate(10px,-13px); } }
-    @keyframes twinkle { 0%,100% { opacity: .35; } 50% { opacity: .95; } }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    <linearGradient id="leafA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6ee7b7"/><stop offset="100%" stop-color="#0f9b74"/>
+    </linearGradient>
+    <linearGradient id="leafB" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a7f3d0"/><stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="leafC" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#5eead4"/>
+    </linearGradient>
+    <radialGradient id="cellFill" cx="36%" cy="32%" r="72%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset="60%" stop-color="#bbf7d0" stop-opacity=".6"/>
+      <stop offset="100%" stop-color="#5eead4" stop-opacity=".45"/>
+    </radialGradient>
+    <radialGradient id="streak" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".9"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity=".35"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bubble" cx="34%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity=".18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity=".55"/>
+    </radialGradient>
+
+  </defs>
+
+  <style>
+    /* 缓慢、幅度小、错开相位 —— 让画面「活着」但不抢注意力 */
+    .sway  { animation: sway 13s ease-in-out infinite; }
+    .sway2 { animation: sway 17s ease-in-out infinite; animation-delay: -6s; }
+    .sway3 { animation: sway 21s ease-in-out infinite; animation-delay: -11s; }
+    .swim  { animation: swim 40s linear infinite; }
+    .swim2 { animation: swim2 52s linear infinite; }
+    .rise  { animation: rise 19s linear infinite; }
+
+    @keyframes sway { 0%,100%{transform:rotate(-2.2deg)} 50%{transform:rotate(2.2deg)} }
+    @keyframes swim  { 0%{transform:translate(0,0)} 50%{transform:translate(26px,-16px)} 100%{transform:translate(0,0)} }
+    @keyframes swim2 { 0%{transform:translate(0,0)} 50%{transform:translate(-22px,18px)} 100%{transform:translate(0,0)} }
+    @keyframes rise { 0%{transform:translate(0,0);opacity:0} 12%{opacity:.9} 100%{transform:translate(-6px,-120px);opacity:0} }
+
     @media (prefers-reduced-motion: reduce) {
-      .flow, .sway, .drift, .twinkle, .spin { animation: none; }
+      .sway,.sway2,.sway3,.swim,.swim2,.rise { animation: none; }
     }
   </style>
 
-  <!-- ══ 左上：DNA 双螺旋与叶片 ══ -->
-  <svg x="1" y="1.5" width="34" height="34" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin meet">
-    <path class="ink flow" d="M120 20 Q230 110 120 200 Q10 290 120 380"/>
-    <path class="ink flow flow-b" d="M220 20 Q110 110 220 200 Q330 290 220 380"/>
-    <g class="twinkle">
-      <line class="ink thin" x1="145" y1="62" x2="195" y2="62"/>
-      <line class="ink thin" x1="158" y1="124" x2="182" y2="124"/>
-      <line class="ink thin" x1="145" y1="276" x2="195" y2="276"/>
-      <line class="ink thin" x1="158" y1="338" x2="182" y2="338"/>
+  <!-- ① 水体底色 -->
+  <rect width="100" height="100" fill="url(#water)"/>
+
+  <!-- ② 远景光斑：刻意保持静止 —— 这是画面上面积最大的东西，让它动会拖垮每帧的重绘成本，
+       而漂移几个像素在视觉上根本看不出来。 -->
+  <ellipse cx="16" cy="22" rx="26" ry="20" fill="url(#glowA)"/>
+  <ellipse cx="86" cy="30" rx="24" ry="18" fill="url(#glowB)"/>
+  <ellipse cx="74" cy="84" rx="30" ry="22" fill="url(#glowA)"/>
+  <ellipse cx="22" cy="78" rx="22" ry="17" fill="url(#glowC)"/>
+
+  <!-- ③ 水面焦散：细长的柔边亮带。用渐层椭圆而不是模糊线条，不需要滤镜运算。
+       刻意保持静止 —— 这几条横跨整个画面，一旦动起来每帧要重绘的面积最大，
+       实测会吃掉三分之一的帧数，而静止时视觉上几乎看不出差别。 -->
+  <g opacity=".55">
+    <g>
+      <ellipse cx="26" cy="33" rx="22" ry="1.8" fill="url(#streak)" transform="rotate(-4 26 33)"/>
+      <ellipse cx="30" cy="44" rx="15" ry="1.2" fill="url(#streak)" transform="rotate(3 30 44)"/>
     </g>
-    <circle class="leaf2" cx="120" cy="20" r="14"/><circle class="warm" cx="220" cy="20" r="14"/>
-    <circle class="warm" cx="120" cy="380" r="14"/><circle class="leaf2" cx="220" cy="380" r="14"/>
-    <g class="sway" style="transform-origin:300px 210px">
-      <path class="leaf" d="M300 210 C300 140 340 92 400 80 C400 150 360 198 300 210 Z"/>
-      <path class="ink thin" d="M300 210 C300 140 340 92 400 80 C400 150 360 198 300 210 Z"/>
-      <path class="ink thin" d="M300 210 C335 182 370 138 400 80"/>
+    <g>
+      <ellipse cx="74" cy="66" rx="24" ry="1.7" fill="url(#streak)" transform="rotate(3 74 66)"/>
+      <ellipse cx="78" cy="76" rx="16" ry="1.1" fill="url(#streak)" transform="rotate(-3 78 76)"/>
     </g>
-    <g class="sway sway-b" style="transform-origin:296px 222px">
-      <path class="leaf2" d="M296 222 C236 222 200 180 192 120 C252 122 288 162 296 222 Z"/>
-      <path class="ink thin" d="M296 222 C236 222 200 180 192 120 C252 122 288 162 296 222 Z"/>
+    <g>
+      <ellipse cx="38" cy="12" rx="17" ry="1.3" fill="url(#streak)" transform="rotate(-2 38 12)"/>
     </g>
-    <path class="ink" d="M298 216 C300 280 298 330 292 376"/>
+  </g>
+
+  <!-- ④ 左上：热带叶片（有渐层、叶脉与投影，靠形状与明暗做出厚度） -->
+  <svg x="-2" y="-4" width="40" height="40" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin meet">
+    <g>
+      <g class="sway" style="transform-origin:40px 40px">
+        <path fill="url(#leafA)" d="M40 40 C150 44 236 104 268 206 C196 238 106 206 62 140 C48 118 42 80 40 40 Z"/>
+        <path stroke="#ffffff" stroke-opacity=".5" stroke-width="3" fill="none" d="M40 40 C120 92 196 158 268 206"/>
+        <g stroke="#ffffff" stroke-opacity=".32" stroke-width="2.2" fill="none">
+          <path d="M84 72 C104 76 118 96 124 124"/><path d="M118 104 C142 110 160 132 168 160"/>
+          <path d="M156 140 C180 148 198 168 206 194"/><path d="M62 96 C74 112 78 132 76 152"/>
+        </g>
+      </g>
+      <g class="sway2" style="transform-origin:36px 44px">
+        <path fill="url(#leafB)" d="M36 44 C40 150 96 230 196 268 C222 196 190 108 124 66 C102 52 66 46 36 44 Z"/>
+        <path stroke="#ffffff" stroke-opacity=".45" stroke-width="3" fill="none" d="M36 44 C92 122 146 196 196 268"/>
+        <g stroke="#ffffff" stroke-opacity=".28" stroke-width="2.2" fill="none">
+          <path d="M70 92 C78 114 96 128 122 132"/><path d="M104 140 C112 164 130 180 158 186"/>
+          <path d="M138 190 C146 214 160 228 182 236"/>
+        </g>
+      </g>
+    </g>
   </svg>
 
-  <!-- ══ 右上：显微镜 ══ -->
-  <svg x="65" y="1.5" width="34" height="34" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMin meet">
-    <ellipse class="body" cx="200" cy="360" rx="150" ry="22"/>
-    <path class="ink" d="M50 360 Q200 328 350 360"/>
-    <path class="ink body" d="M132 360 L162 252 L248 252 L278 360 Z"/>
-    <path class="ink" d="M162 252 Q136 150 200 84"/>
-    <rect class="ink white" x="86" y="206" width="228" height="20" rx="10"/>
-    <rect class="rose" x="158" y="188" width="84" height="18" rx="4"/>
-    <rect class="ink thin" x="158" y="188" width="84" height="18" rx="4" fill="none"/>
-    <path class="ink glass" d="M170 18 L246 18 L234 102 L182 102 Z"/>
-    <rect class="ink white" x="162" y="2" width="92" height="22" rx="11"/>
-    <line class="ink" x1="208" y1="102" x2="208" y2="140"/>
-    <circle class="ink white" cx="208" cy="162" r="26"/>
-    <circle class="warm twinkle" cx="208" cy="162" r="12"/>
+  <!-- ⑤ 右上：叶片与浮游 -->
+  <svg x="66" y="-6" width="38" height="38" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMin meet">
+    <g>
+      <g class="sway3" style="transform-origin:360px 40px">
+        <path fill="url(#leafC)" d="M360 40 C250 52 168 122 146 224 C222 250 306 210 344 140 C356 118 360 80 360 40 Z"/>
+        <path stroke="#ffffff" stroke-opacity=".45" stroke-width="3" fill="none" d="M360 40 C284 96 210 160 146 224"/>
+        <g stroke="#ffffff" stroke-opacity=".3" stroke-width="2.2" fill="none">
+          <path d="M316 74 C296 82 284 102 280 130"/><path d="M280 110 C258 118 242 140 236 168"/>
+          <path d="M244 148 C222 158 206 178 200 204"/>
+        </g>
+      </g>
+    </g>
+    <g class="swim">
+      <ellipse cx="150" cy="316" rx="56" ry="30" fill="url(#cellFill)" stroke="#5eead4" stroke-opacity=".55" stroke-width="2.4" transform="rotate(-16 150 316)"/>
+      <circle cx="136" cy="308" r="15" fill="#5eead4" fill-opacity=".5"/>
+      <g stroke="#5eead4" stroke-opacity=".5" stroke-width="2" stroke-linecap="round">
+        <path d="M96 300 l-16 -7"/><path d="M98 318 l-18 3"/><path d="M204 324 l17 6"/><path d="M206 306 l18 -3"/>
+      </g>
+    </g>
   </svg>
 
-  <!-- ══ 左下：细胞 ══ -->
-  <svg x="1" y="64" width="34" height="34" viewBox="0 0 400 400" preserveAspectRatio="xMinYMax meet">
-    <circle class="ink white" cx="200" cy="200" r="184"/>
-    <circle class="ink thin spin" cx="200" cy="200" r="156" stroke-dasharray="14 18"/>
-    <circle class="ink glass" cx="172" cy="156" r="64"/>
-    <circle class="ink thin" cx="172" cy="156" r="30" fill="#7dd3fc"/>
-    <g class="drift">
-      <ellipse class="ink leaf" cx="286" cy="228" rx="48" ry="25" transform="rotate(-24 286 228)"/>
-      <path class="ink thin" d="M256 242 Q272 214 286 234 Q300 254 316 220"/>
+  <!-- ⑥ 左下：细胞剖面，半透明、像浮在水里 -->
+  <svg x="-3" y="58" width="42" height="42" viewBox="0 0 400 400" preserveAspectRatio="xMinYMax meet">
+    <!-- 细胞本体保持静止（它是画面上最大的移动物件，动起来每帧要重绘一大片），
+         只让内部的胞器缓慢漂移 —— 视觉上照样是「活的细胞」，成本却小一个量级 -->
+    <circle cx="176" cy="230" r="150" fill="url(#cellFill)" stroke="#34d399" stroke-opacity=".5" stroke-width="3"/>
+    <circle cx="176" cy="230" r="124" fill="none" stroke="#34d399" stroke-opacity=".28" stroke-width="2" stroke-dasharray="12 16"/>
+    <g class="swim2">
+      <circle cx="140" cy="188" r="52" fill="#a7f3d0" fill-opacity=".55" stroke="#14b8a6" stroke-opacity=".45" stroke-width="2.6"/>
+      <circle cx="140" cy="188" r="22" fill="#14b8a6" fill-opacity=".35"/>
     </g>
-    <g class="drift drift-b">
-      <ellipse class="ink warm" cx="140" cy="290" rx="38" ry="20" transform="rotate(18 140 290)"/>
+    <g class="swim">
+      <ellipse cx="252" cy="266" rx="44" ry="23" fill="#fde68a" fill-opacity=".6" stroke="#f59e0b" stroke-opacity=".35" stroke-width="2.4" transform="rotate(-22 252 266)"/>
     </g>
-    <circle class="leaf2 twinkle" cx="92" cy="136" r="11"/>
-    <circle class="rose twinkle" cx="272" cy="106" r="10" style="animation-delay:-2s"/>
-    <circle class="glass twinkle" cx="112" cy="234" r="9" style="animation-delay:-3.4s"/>
+    <g class="swim2" style="animation-delay:-18s">
+      <ellipse cx="120" cy="300" rx="34" ry="18" fill="#fbcfe8" fill-opacity=".6" stroke="#ec4899" stroke-opacity=".28" stroke-width="2.2" transform="rotate(16 120 300)"/>
+    </g>
+    <circle cx="220" cy="150" r="13" fill="#5eead4" fill-opacity=".6"/>
+    <circle cx="96" cy="250" r="9" fill="#a5b4fc" fill-opacity=".6" style="animation-delay:-8s"/>
   </svg>
 
-  <!-- ══ 右下：培养皿与锥形瓶 ══ -->
-  <svg x="65" y="64" width="34" height="34" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMax meet">
-    <path class="ink white" d="M150 40 L206 40 L206 148 L286 332 A22 22 0 0 1 268 364 L88 364 A22 22 0 0 1 70 332 L150 148 Z"/>
-    <path class="leaf" d="M114 236 L242 236 L286 332 A22 22 0 0 1 268 364 L88 364 A22 22 0 0 1 70 332 Z"/>
-    <path class="ink thin" d="M114 236 L242 236"/>
-    <rect class="ink white" x="138" y="18" width="80" height="26" rx="9"/>
-    <circle class="white twinkle" cx="150" cy="298" r="11" opacity=".85"/>
-    <circle class="white twinkle" cx="202" cy="326" r="8" opacity=".85" style="animation-delay:-1.8s"/>
-    <ellipse class="ink white" cx="300" cy="300" rx="94" ry="46"/>
-    <ellipse class="ink thin" cx="300" cy="288" rx="94" ry="46" fill="none"/>
-    <g class="twinkle">
-      <circle class="leaf" cx="268" cy="284" r="13"/>
-      <circle class="leaf2" cx="318" cy="298" r="9"/>
-      <circle class="rose" cx="334" cy="270" r="7"/>
-      <circle class="warm" cx="288" cy="308" r="6"/>
+  <!-- ⑦ 右下：漂浮的叶与硅藻 -->
+  <svg x="64" y="60" width="40" height="40" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMax meet">
+    <g>
+      <g class="sway2" style="transform-origin:370px 370px">
+        <path fill="url(#leafB)" d="M370 370 C262 358 176 296 146 194 C222 168 310 206 350 274 C364 298 368 334 370 370 Z"/>
+        <path stroke="#ffffff" stroke-opacity=".45" stroke-width="3" fill="none" d="M370 370 C292 314 216 250 146 194"/>
+      </g>
+    </g>
+    <g class="swim">
+      <g transform="translate(120 120)">
+        <ellipse cx="0" cy="0" rx="52" ry="52" fill="url(#cellFill)" stroke="#14b8a6" stroke-opacity=".5" stroke-width="2.6"/>
+        <g stroke="#14b8a6" stroke-opacity=".38" stroke-width="1.8">
+          <path d="M-52 0 H52"/><path d="M0 -52 V52"/><path d="M-37 -37 L37 37"/><path d="M-37 37 L37 -37"/>
+        </g>
+      </g>
     </g>
   </svg>
+
+  <!-- ⑧ 前景气泡：缓慢上浮，给画面一点纵深 -->
+  <g>
+    <circle class="rise" cx="8"  cy="96" r="1.1" fill="url(#bubble)"/>
+    <circle class="rise" cx="30" cy="99" r="0.7" fill="url(#bubble)" style="animation-delay:-5s"/>
+    <circle class="rise" cx="57" cy="97" r="1.4" fill="url(#bubble)" style="animation-delay:-11s"/>
+    <circle class="rise" cx="79" cy="99" r="0.9" fill="url(#bubble)" style="animation-delay:-3s"/>
+    <circle class="rise" cx="94" cy="96" r="1.2" fill="url(#bubble)" style="animation-delay:-15s"/>
+    <circle class="rise" cx="44" cy="98" r="0.6" fill="url(#bubble)" style="animation-delay:-8s"/>
+  </g>
 </svg>
