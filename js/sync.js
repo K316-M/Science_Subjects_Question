@@ -18,6 +18,7 @@
     'UEC_NOTES_v1',
     'UEC_FEEDBACK_v1',
     'UEC_LAST_VISIT_v1',
+    'UEC_REVIEW_v1',
     'UEC_BIO_HL_STORE_OFFICIAL_19',
   ];
 
@@ -93,6 +94,17 @@
     return { reports: Array.from(byId.values()) };
   }
 
+  function mergeReview(a, b) {
+    // {题目键: {ease, interval, reps, lapses, last, due}}；同一题取最後作答的那份，
+    // 因为排程反映的是「最近一次答得如何」，较旧的那份已经过时
+    const out = Object.assign({}, a || {});
+    Object.entries(b || {}).forEach(([k, rec]) => {
+      const mine = out[k];
+      if (!mine || (rec && (rec.last || 0) > (mine.last || 0))) out[k] = rec;
+    });
+    return out;
+  }
+
   function mergeEntry(key, local, remote) {
     // local / remote 形如 {ts, value}；都没有就回传 null
     if (!local && !remote) return null;
@@ -102,6 +114,7 @@
     if (key === 'UEC_PROGRESS_v1') return { ts, value: mergeProgress(local.value, remote.value) };
     if (key === 'UEC_NOTES_v1') return { ts, value: mergeNotes(local.value, remote.value) };
     if (key === 'UEC_FEEDBACK_v1') return { ts, value: mergeFeedback(local.value, remote.value) };
+    if (key === 'UEC_REVIEW_v1') return { ts, value: mergeReview(local.value, remote.value) };
     if (key === 'UEC_LAST_VISIT_v1') {
       const lv = local.value || {}, rv = remote.value || {};
       return { ts, value: (rv.ts || 0) > (lv.ts || 0) ? rv : lv };

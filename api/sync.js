@@ -11,6 +11,7 @@ const SYNC_KEYS = [
   'UEC_NOTES_v1',
   'UEC_FEEDBACK_v1',
   'UEC_LAST_VISIT_v1',
+  'UEC_REVIEW_v1',
   'UEC_BIO_HL_STORE_OFFICIAL_19',
 ];
 

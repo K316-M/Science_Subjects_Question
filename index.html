@@ -553,6 +553,7 @@
       <button class="sub-tab-btn active" id="subBtnMcq" onclick="switchSubSection('mcq')">🎴 选择题练习</button>
       <button class="sub-tab-btn" id="subBtnSubj" onclick="switchSubSection('subj')">📝 综合做答题（背书闪卡）</button>
       <button class="sub-tab-btn" id="subBtnWrong" onclick="switchSubSection('wrong')">📕 错题本 <span id="wrongCountBadge"></span></button>
+      <button class="sub-tab-btn" id="subBtnReview" onclick="switchSubSection('review')">📅 今日复习 <span id="reviewCountBadge"></span></button>
     </div>
     <div id="activeStudyArea"></div>
   </div>
@@ -1075,7 +1076,12 @@
       store[subject][chapterId][mcqIdx] = 'wrong';
     }
     saveProgressStore(store);
+    // 间隔重复的排程另外存，不动上面这份资料的形状（跨装置同步的合并逻辑依赖它）
+    if (window.UECReview) {
+      lastReviewInterval = window.UECReview.record(subject, chapterId, mcqIdx, isCorrect);
+    }
   }
+  let lastReviewInterval = 0;
   function getChapterProgress(subject, chapterId, totalMcqs) {
     const store = loadProgressStore();
     const chapData = (store[subject] && store[subject][chapterId]) || {};
@@ -1103,6 +1109,11 @@
     if (!badge) return;
     const count = getWrongList(currentSubject).length;
     badge.innerText = count > 0 ? count : '';
+    const rBadge = document.getElementById('reviewCountBadge');
+    if (rBadge && window.UECReview) {
+      const due = window.UECReview.dueCount(currentSubject, fullDatabase.sections || []);
+      rBadge.innerText = due > 0 ? due : '';
+    }
   }
 
   function showAchieveToast(chapterTitle) {
@@ -1307,6 +1318,7 @@ function openSubject(subject, initialChapterIdx) {
     document.getElementById('subBtnMcq').classList.toggle('active', mode === 'mcq');
     document.getElementById('subBtnSubj').classList.toggle('active', mode === 'subj');
     document.getElementById('subBtnWrong').classList.toggle('active', mode === 'wrong');
+    document.getElementById('subBtnReview').classList.toggle('active', mode === 'review');
     renderActiveContent();
   }
 
@@ -1318,6 +1330,7 @@ function openSubject(subject, initialChapterIdx) {
     document.getElementById('subBtnMcq').classList.add('active');
     document.getElementById('subBtnSubj').classList.remove('active');
     document.getElementById('subBtnWrong').classList.remove('active');
+    document.getElementById('subBtnReview').classList.remove('active');
     renderChapterRail();
     renderActiveContent();
   }
@@ -1328,6 +1341,34 @@ function openSubject(subject, initialChapterIdx) {
 
     if ((fullDatabase.sections || []).length === 0) {
       area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🚧 该学科题库正在整理中，敬请期待！</div>`;
+      return;
+    }
+
+    if (activeSubMode === 'review') {
+      const sections = fullDatabase.sections || [];
+      const due = window.UECReview ? window.UECReview.dueList(currentSubject, sections) : [];
+      if (due.length === 0) {
+        const next = window.UECReview ? window.UECReview.nextDueAt(currentSubject, sections) : null;
+        const when = next
+          ? `下一批复习在 ${new Date(next).toLocaleDateString('zh-CN')}`
+          : '先去做几题，系统才知道该在什么时候提醒你复习。';
+        area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">
+          ☕ 今天没有到期的复习。<div style="margin-top:8px; font-size:13px;">${when}</div></div>`;
+        return;
+      }
+      area.innerHTML = `<div class="form-style-container">
+        <div style="margin-bottom:14px; font-size:13px; color:var(--text-muted); line-height:1.7;">
+          这 <strong>${due.length}</strong> 题是依你的作答记录排出来、今天该再看一次的。
+          答对了间隔会拉长，答错就打回明天。
+        </div>
+        ${due.map(d => `
+        <div class="wrong-item-card">
+          <div>
+            <span class="wrong-item-chapter">${d.chapterTitle}${d.overdueDays > 0 ? ` · 逾期 ${d.overdueDays} 天` : ''}</span>
+            <div class="wrong-item-q">${d.question}</div>
+          </div>
+          <button class="wrong-item-jump" onclick="jumpToWrongQuestion(${d.chapterIdx}, ${d.mcqIdx})">开始复习 ➡️</button>
+        </div>`).join('')}</div>`;
       return;
     }
 
@@ -1656,6 +1697,7 @@ function openSubject(subject, initialChapterIdx) {
 <script src="/js/notes.js"></script>
 <script src="/js/archive.js"></script>
 <script src="/js/feedback.js"></script>
+<script src="/js/review.js"></script>
 <script src="/js/sync.js"></script>
 <script src="/js/sync-ui.js"></script>
 </body>
