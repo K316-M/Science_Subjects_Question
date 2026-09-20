@@ -245,7 +245,43 @@
       /* 内缘那道 1px 高光是玻璃质感的关键，没有它就只是半透明方块 */
       box-shadow: inset 0 1px 0 rgba(255,255,255,.7), var(--shadow-md);
     }
-    .mcq-question { font-size: 16px; font-weight: 600; line-height: 1.7; margin-bottom: 16px; white-space: pre-line; color: #1e293b; }
+    .mcq-question {
+      font-size: 19px; font-weight: 600; line-height: 1.75; margin-bottom: 22px;
+      white-space: pre-line; color: #0f172a; letter-spacing: 0.2px;
+    }
+
+    /* 进场动效：每换一题，卡片与选项依序浮现，而不是硬生生换掉 */
+    @keyframes cardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes optIn  { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .flashcard { animation: cardIn .42s cubic-bezier(.16,1,.3,1) both; }
+    .option-btn { animation: optIn .38s cubic-bezier(.16,1,.3,1) both; }
+    .option-btn:nth-child(1) { animation-delay: .04s; }
+    .option-btn:nth-child(2) { animation-delay: .09s; }
+    .option-btn:nth-child(3) { animation-delay: .14s; }
+    .option-btn:nth-child(4) { animation-delay: .19s; }
+
+    /* 选项前的 A/B/C/D 圆形徽章 */
+    .option-btn { display: flex; align-items: flex-start; gap: 13px; }
+    .opt-badge {
+      flex: 0 0 auto;
+      width: 27px; height: 27px; margin-top: -1px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 13px; font-weight: 800; letter-spacing: 0;
+      color: #47617a;
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(148,163,184,.45);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+      transition: all .18s ease;
+    }
+    .opt-text { flex: 1 1 auto; }
+    .option-btn:hover:not(.locked) .opt-badge { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .option-btn.correct .opt-badge { background: var(--success); border-color: var(--success); color: #fff; }
+    .option-btn.wrong .opt-badge { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .flashcard, .option-btn { animation: none; }
+    }
 
     .figure-container {
       margin: 12px 0 18px 0;
@@ -408,6 +444,15 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(236,254,255,0.10));
     }
 
+    /* 细颗粒质感：一张 200×200 的噪点贴图平铺，静态、只栅格化一次 */
+    .grain-layer {
+      position: fixed; inset: 0; z-index: 2; pointer-events: none;
+      opacity: .05; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    /* 小屏的背景是会动的，multiply 混合会跟着每帧重算，所以手机上不铺颗粒 */
+    @media (max-width: 899px) { .grain-layer { display: none; } }
+
     .container, header { position: relative; z-index: 1; }
     .view { z-index: 1; }
 
@@ -436,6 +481,7 @@
   <div class="blob blob-3"></div>
   <div class="blob blob-4"></div>
 </div>
+<div class="grain-layer" aria-hidden="true"></div>
 <div class="subject-bg-wash" id="subjectBgWash">
   <div class="blob wash-blob-a" id="washBlobA"></div>
   <div class="blob wash-blob-b" id="washBlobB"></div>
@@ -1326,7 +1372,19 @@ function openSubject(subject, initialChapterIdx) {
       item.options.forEach((opt, oIdx) => {
         const btn = document.createElement('div');
         btn.className = 'option-btn';
-        btn.innerText = opt;
+        // 把 "A. 淀粉和糖原" 拆成徽章与内文，排版才站得住
+        const parts = String(opt).match(/^\s*([A-Da-d])[.、．]\s*([\s\S]*)$/);
+        if (parts) {
+          const badge = document.createElement('span');
+          badge.className = 'opt-badge';
+          badge.textContent = parts[1].toUpperCase();
+          const text = document.createElement('span');
+          text.className = 'opt-text';
+          text.textContent = parts[2];
+          btn.append(badge, text);
+        } else {
+          btn.innerText = opt;
+        }
         btn.setAttribute('role', 'button');
         btn.setAttribute('tabindex', '0');
         btn.onclick = () => {

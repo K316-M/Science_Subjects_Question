@@ -68,6 +68,12 @@
     @media (prefers-reduced-motion: reduce) {
       .sway,.sway2,.sway3,.swim,.swim2,.rise { animation: none; }
     }
+    /* 大屏幕上背景保持静止。原因是毛玻璃每一帧都要重算它背后那块画面，
+       背景一动，整个介面的玻璃与颗粒就得跟着重算；实测 1920×1000 会从 60 掉到 18 fps。
+       手机的面积只有大屏的六分之一，动起来仍然满帧，所以只在小屏让它动。 */
+    @media (min-width: 900px) {
+      .sway,.sway2,.sway3,.swim,.swim2,.rise { animation: none; }
+    }
   </style>
 
   <!-- ① 水体底色 -->
