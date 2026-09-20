@@ -136,6 +136,23 @@ GitHub → Actions → 「AI 依考纲出题 (Generate Questions)」→ Run work
 | `GEMINI_API_KEY` | ✅ | 拍题录入与依考纲出题都要用。没设的话脚本会直接跳过，不会报错 |
 | `GEMINI_MODEL` | 选填 | **通常不用填**。脚本会自己问 Google 有哪些模型可用再挑一个；若被回「这个模型对新用户已关闭」，会自动读取 Google 建议的替代型号再试。只有想锁定特定模型时才填 |
 
+
+### ⚠️ 还有一个一次性开关（不开的话两条流水线都会卡在最后一步）
+
+```
+GitHub → 仓库 → Settings → Actions → General → Workflow permissions
+  ↳ 勾选「Allow GitHub Actions to create and approve pull requests」→ Save
+```
+
+没勾的话，题目会正常生成、分支也会推上去，但最后开 PR 那步会失败并显示：
+
+```
+GitHub Actions is not permitted to create or approve pull requests.
+```
+
+**这种情况下产出不会遗失** —— 分支已经在 `generate/auto-<编号>`（或 `ingest/auto-<编号>`）上，
+到 GitHub 的 Pull requests 页面手动按 New pull request、选那个分支就能开出来。
+
 ---
 
 ## 五、设定：开发者工作台
