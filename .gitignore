@@ -6,3 +6,6 @@ __pycache__/
 *.pyc
 has_new_generated.txt
 GENERATION_REPORT.md
+
+# impeccable 的执行期快取（二进位档下载到这里，不该进仓库）
+.impeccable/
