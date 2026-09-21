@@ -1,107 +1,50 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="物理科背景">
-  <title>物理科背景 · 光与波</title>
+  <title>物理科背景</title>
+  <!-- 与生物、化学同一套系统。物理的符号是从左下角发散的波前，
+       抽象、连续，而不是棱镜或磁铁那种具体物件。 -->
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0.25" y2="1">
-      <stop offset="0%" stop-color="#f7fbff"/><stop offset="45%" stop-color="#e4f0fe"/><stop offset="100%" stop-color="#c2ddf8"/>
+    <linearGradient id="base" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#fcfdfe"/><stop offset="55%" stop-color="#f5f9fd"/><stop offset="100%" stop-color="#eaf2fb"/>
     </linearGradient>
-    <radialGradient id="pB" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#7dd3fc" stop-opacity=".55"/><stop offset="100%" stop-color="#7dd3fc" stop-opacity="0"/></radialGradient>
-    <radialGradient id="pY" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fde68a" stop-opacity=".52"/><stop offset="100%" stop-color="#fde68a" stop-opacity="0"/></radialGradient>
-    <radialGradient id="pI" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#c7d2fe" stop-opacity=".52"/><stop offset="100%" stop-color="#c7d2fe" stop-opacity="0"/></radialGradient>
-    <radialGradient id="streak3" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity=".9"/><stop offset="60%" stop-color="#ffffff" stop-opacity=".3"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    <radialGradient id="m1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#7dd3fc" stop-opacity=".28"/><stop offset="100%" stop-color="#7dd3fc" stop-opacity="0"/></radialGradient>
+    <radialGradient id="m2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fde68a" stop-opacity=".24"/><stop offset="100%" stop-color="#fde68a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="m3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#c7d2fe" stop-opacity=".30"/><stop offset="100%" stop-color="#c7d2fe" stop-opacity="0"/></radialGradient>
+    <radialGradient id="m4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#bae6fd" stop-opacity=".26"/><stop offset="100%" stop-color="#bae6fd" stop-opacity="0"/></radialGradient>
+    <radialGradient id="clear" cx="50%" cy="46%" r="42%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".74"/><stop offset="70%" stop-color="#ffffff" stop-opacity=".30"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="spectrum" x1="0" y1="0" x2="1" y2="0.35">
-      <stop offset="0%"   stop-color="#ef4444" stop-opacity=".9"/>
-      <stop offset="22%"  stop-color="#f59e0b" stop-opacity=".85"/>
-      <stop offset="42%"  stop-color="#facc15" stop-opacity=".58"/>
-      <stop offset="60%"  stop-color="#22c55e" stop-opacity=".58"/>
-      <stop offset="78%"  stop-color="#3b82f6" stop-opacity=".58"/>
-      <stop offset="100%" stop-color="#8b5cf6" stop-opacity=".55"/>
-    </linearGradient>
-    <linearGradient id="prismG" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/><stop offset="100%" stop-color="#bae6fd" stop-opacity=".55"/>
-    </linearGradient>
-    <linearGradient id="magN" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#f87171"/><stop offset="50%" stop-color="#f87171"/>
-      <stop offset="50%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#60a5fa"/>
-    </linearGradient>
   </defs>
 
   <style>
-    .ink3 { fill: none; stroke: #47607a; stroke-opacity: 0.6; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
-    .thin3 { stroke-width: 3; }
-    .sway  { animation: swing 6.5s ease-in-out infinite; }
-    .sway2 { animation: sway 17s ease-in-out infinite; animation-delay: -6s; }
-    .sway3 { animation: sway 21s ease-in-out infinite; animation-delay: -11s; }
-    .swim  { animation: ripple 7s ease-out infinite; }
-    .swim2 { animation: ripple 7s ease-out infinite; animation-delay: -2.4s; }
-    .rise  { animation: ripple 7s ease-out infinite; animation-delay: -4.8s; }
-    @keyframes swing { 0%,100%{transform:rotate(17deg)} 50%{transform:rotate(-17deg)} }
-    @keyframes sway { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
-    @keyframes ripple { 0%{transform:scale(.25);opacity:.85} 100%{transform:scale(1.25);opacity:0} }
-    @media (prefers-reduced-motion: reduce) { .sway,.sway2,.sway3,.swim,.swim2,.rise { animation: none; } }
-    /* 大屏背景静止，换取整个介面的毛玻璃质感；手机面积小，动起来仍满帧 */
-    @media (min-width: 900px) { .sway,.sway2,.sway3,.swim,.swim2,.rise { animation: none; } }
+    .motif { fill: none; stroke: #1e3a8a; stroke-opacity: .10; stroke-width: .5; }
+    .faint { stroke-opacity: .06; }
+    .dot { fill: #1e3a8a; fill-opacity: .12; }
+    .drift { animation: drift 28s ease-in-out infinite; }
+    @keyframes drift { 0%,100% { transform: translate(0,0); } 50% { transform: translate(.9px,1.1px); } }
+    @media (prefers-reduced-motion: reduce) { .drift { animation: none; } }
+    @media (min-width: 900px) { .drift { animation: none; } }
   </style>
 
-  <rect width="100" height="100" fill="url(#sky)"/>
-  <ellipse cx="18" cy="26" rx="28" ry="21" fill="url(#pB)"/>
-  <ellipse cx="84" cy="26" rx="24" ry="18" fill="url(#pY)"/>
-  <ellipse cx="78" cy="84" rx="30" ry="22" fill="url(#pI)"/>
-  <ellipse cx="18" cy="80" rx="24" ry="18" fill="url(#pB)"/>
-  <g opacity=".5">
-    <ellipse cx="30" cy="36" rx="22" ry="1.8" fill="url(#streak3)" transform="rotate(-4 30 36)"/>
-    <ellipse cx="72" cy="62" rx="24" ry="1.7" fill="url(#streak3)" transform="rotate(3 72 62)"/>
+  <rect width="100" height="100" fill="url(#base)"/>
+  <ellipse cx="12" cy="12" rx="42" ry="34" fill="url(#m1)"/>
+  <ellipse cx="94" cy="16" rx="38" ry="30" fill="url(#m2)"/>
+  <ellipse cx="88" cy="88" rx="44" ry="38" fill="url(#m3)"/>
+  <ellipse cx="2"  cy="78" rx="40" ry="36" fill="url(#m4)"/>
+  <ellipse cx="58" cy="100" rx="34" ry="22" fill="url(#m1)"/>
+
+  <!-- 波前：从左下角外侧的点发散，只有跨过画面的那几圈看得见 -->
+  <g class="drift">
+    <g class="motif">
+      <circle cx="-4" cy="106" r="34"/><circle cx="-4" cy="106" r="46"/>
+      <circle cx="-4" cy="106" r="58" class="faint"/><circle cx="-4" cy="106" r="72" class="faint"/>
+      <circle cx="-4" cy="106" r="88" class="faint"/>
+    </g>
+    <g class="motif faint">
+      <circle cx="104" cy="-6" r="30"/><circle cx="104" cy="-6" r="42"/><circle cx="104" cy="-6" r="56"/>
+    </g>
+    <circle class="dot" cx="-4" cy="106" r="1.2"/>
+    <circle class="dot" cx="104" cy="-6" r="1"/>
   </g>
 
-  <!-- 左上：三棱镜色散 -->
-  <svg x="0" y="-1" width="30" height="39" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin meet" opacity="0.72">
-    <path class="ink3 thin3" d="M6 148 L128 196" stroke="#ffffff" stroke-width="9" opacity=".95"/>
-    <path class="ink3 thin3" d="M6 148 L128 196"/>
-    <path d="M132 196 L392 132 L392 168 L132 212 Z" fill="url(#spectrum)" opacity="1"/>
-    <path d="M132 200 L392 210 L392 246 L132 216 Z" fill="url(#spectrum)" opacity=".85"/>
-    <path d="M132 206 L376 292 L366 324 L132 224 Z" fill="url(#spectrum)" opacity=".6"/>
-    <path fill="url(#prismG)" stroke="#47607a" stroke-opacity="0.6" stroke-width="4" stroke-linejoin="round" d="M200 60 L296 260 L104 260 Z"/>
-    <path d="M200 60 L296 260 L104 260 Z" fill="#ffffff" opacity=".25"/>
-  </svg>
-
-  <!-- 右上：单摆 -->
-  <svg x="70" y="-1" width="30" height="39" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMin meet" opacity="0.72">
-    <path class="ink3" d="M120 42 L320 42"/>
-    <circle cx="220" cy="42" r="10" fill="#47607a"/>
-    <g class="sway" style="transform-origin:220px 42px">
-      <line class="ink3 thin3" x1="220" y1="42" x2="220" y2="300"/>
-      <circle cx="220" cy="322" r="34" fill="#7dd3fc" stroke="#47607a" stroke-opacity="0.6" stroke-width="4"/>
-      <circle cx="210" cy="312" r="10" fill="#ffffff" opacity=".58"/>
-    </g>
-    <path class="ink3 thin3" stroke-dasharray="8 12" opacity=".5" d="M120 300 A140 140 0 0 0 320 300"/>
-  </svg>
-
-  <!-- 左下：水波干涉 -->
-  <svg x="0" y="61" width="30" height="39" viewBox="0 0 400 400" preserveAspectRatio="xMinYMax meet" opacity="0.72">
-    <g fill="none" stroke="#3b82f6" stroke-width="3.4" opacity=".55">
-      <g style="transform-origin:140px 230px"><circle class="swim" cx="140" cy="230" r="150"/></g>
-      <g style="transform-origin:140px 230px"><circle class="swim2" cx="140" cy="230" r="150"/></g>
-      <g style="transform-origin:140px 230px"><circle class="rise" cx="140" cy="230" r="150"/></g>
-      <g style="transform-origin:290px 300px"><circle class="swim2" cx="290" cy="300" r="120"/></g>
-      <g style="transform-origin:290px 300px"><circle class="rise" cx="290" cy="300" r="120"/></g>
-    </g>
-    <circle cx="140" cy="230" r="13" fill="#3b82f6"/>
-    <circle cx="290" cy="300" r="11" fill="#0ea5e9"/>
-  </svg>
-
-  <!-- 右下：磁铁与磁力线 -->
-  <svg x="70" y="61" width="30" height="39" viewBox="0 0 400 400" preserveAspectRatio="xMaxYMax meet" opacity="0.72">
-    <g class="sway2" style="transform-origin:200px 230px">
-      <g fill="none" stroke="#47607a" stroke-opacity="0.6" stroke-width="3.2" opacity=".55">
-        <path d="M120 230 C120 100 280 100 280 230"/>
-        <path d="M120 230 C120 360 280 360 280 230"/>
-        <path d="M90 230 C80 50 320 50 310 230"/>
-        <path d="M90 230 C80 410 320 410 310 230"/>
-      </g>
-      <rect x="108" y="200" width="184" height="60" rx="12" fill="url(#magN)" stroke="#47607a" stroke-opacity="0.6" stroke-width="4"/>
-      <text x="150" y="245" text-anchor="middle" font-family="Georgia, serif" font-size="34" font-weight="700" fill="#ffffff">N</text>
-      <text x="250" y="245" text-anchor="middle" font-family="Georgia, serif" font-size="34" font-weight="700" fill="#ffffff">S</text>
-    </g>
-  </svg>
+  <rect width="100" height="100" fill="url(#clear)"/>
 </svg>

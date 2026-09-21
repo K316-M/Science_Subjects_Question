@@ -245,6 +245,9 @@ GitHub → Actions → 「BioQuestion Auto Pipeline & Health Check」→ Run wor
 
 ## 七、外观微调（assets/README.md 没写的部分）
 
+> 每一轮设计升级做了什麼、为什麼、量到什麼，记在 [DESIGN.md](DESIGN.md)。
+> 想再升级一轮，跟我说一声就行。
+
 ### 音乐响度统一
 
 四首背景音乐已经统一到 −20 LUFS。**以后换新歌，先跑这行再放进去**，否则换曲时会忽大忽小：

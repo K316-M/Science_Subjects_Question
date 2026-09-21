@@ -206,6 +206,7 @@
     /* 二级分类胶囊标签 */
     .sub-bookmark-bar {
       display: flex;
+      flex-wrap: nowrap;
       gap: 10px;
       margin-bottom: 22px;
       background: rgba(255, 255, 255, 0.55);
@@ -218,6 +219,7 @@
       width: fit-content;
     }
     .sub-tab-btn {
+      white-space: nowrap;
       background: transparent;
       border: none;
       color: var(--text-muted);
@@ -472,6 +474,29 @@
     }
     @media (hover: hover) { .chapter-card:hover::before { opacity: 1; } }
 
+    /* 窄屏：四个分页放不下就挤成三行，很难看也难点。把非必要的字缩起来 */
+    @media (max-width: 680px) {
+      .tab-long { display: none; }
+      .sub-bookmark-bar { padding: 5px; gap: 4px; }
+      .sub-tab-btn { padding: 7px 10px; font-size: 12.5px; }
+    }
+
+    .empty-state {
+      max-width: 420px; margin: 26px auto; padding: 36px 28px 32px;
+      text-align: center; border-radius: 22px;
+      background: rgba(255,255,255,.62);
+      backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%);
+      border: 1px solid rgba(255,255,255,.75);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7), var(--shadow-sm);
+    }
+    .empty-glyph {
+      width: 58px; height: 58px; margin: 0 auto 14px;
+      display: grid; place-items: center; font-size: 26px; border-radius: 50%;
+      background: rgba(5,150,105,.09); border: 1px solid rgba(5,150,105,.16);
+    }
+    .empty-title { font-family: var(--font-display, serif); font-size: 17px; font-weight: 700; color: #0f172a; }
+    .empty-hint { margin-top: 9px; font-size: 13px; line-height: 1.8; color: var(--text-muted); }
+
     .container, header { position: relative; z-index: 1; }
     .view { z-index: 1; }
 
@@ -551,8 +576,8 @@
   <div id="viewStudy" class="view">
     <div class="chapter-bookmark-rail" id="chapterRail"></div>
     <div class="sub-bookmark-bar">
-      <button class="sub-tab-btn active" id="subBtnMcq" onclick="switchSubSection('mcq')">🎴 选择题练习</button>
-      <button class="sub-tab-btn" id="subBtnSubj" onclick="switchSubSection('subj')">📝 综合做答题（背书闪卡）</button>
+      <button class="sub-tab-btn active" id="subBtnMcq" onclick="switchSubSection('mcq')">🎴 选择题<span class="tab-long">练习</span></button>
+      <button class="sub-tab-btn" id="subBtnSubj" onclick="switchSubSection('subj')">📝 做答题<span class="tab-long">（背书闪卡）</span></button>
       <button class="sub-tab-btn" id="subBtnWrong" onclick="switchSubSection('wrong')">📕 错题本 <span id="wrongCountBadge"></span></button>
       <button class="sub-tab-btn" id="subBtnReview" onclick="switchSubSection('review')">📅 今日复习 <span id="reviewCountBadge"></span></button>
     </div>
@@ -1336,12 +1361,22 @@ function openSubject(subject, initialChapterIdx) {
     renderActiveContent();
   }
 
+  // 空状态：让「还没有内容」看起来是设计过的，而不是页面坏了
+  function emptyState(glyph, title, hint) {
+    return `<div class="empty-state">
+      <div class="empty-glyph" aria-hidden="true">${glyph}</div>
+      <div class="empty-title">${title}</div>
+      ${hint ? `<div class="empty-hint">${hint}</div>` : ''}
+    </div>`;
+  }
+
   function renderActiveContent() {
     const area = document.getElementById('activeStudyArea');
     area.innerHTML = '';
 
     if ((fullDatabase.sections || []).length === 0) {
-      area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🚧 该学科题库正在整理中，敬请期待！</div>`;
+      area.innerHTML = emptyState('📚', '这一科的题库还在整理中',
+        '题目会陆续补上。先去生物科练几题，或用上方的「网页问题申诉」告诉我们你最需要哪一章。');
       return;
     }
 
@@ -1353,8 +1388,7 @@ function openSubject(subject, initialChapterIdx) {
         const when = next
           ? `下一批复习在 ${new Date(next).toLocaleDateString('zh-CN')}`
           : '先去做几题，系统才知道该在什么时候提醒你复习。';
-        area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">
-          ☕ 今天没有到期的复习。<div style="margin-top:8px; font-size:13px;">${when}</div></div>`;
+        area.innerHTML = emptyState('☕', '今天没有到期的复习', when);
         return;
       }
       area.innerHTML = `<div class="form-style-container">
@@ -1376,7 +1410,7 @@ function openSubject(subject, initialChapterIdx) {
     if (activeSubMode === 'wrong') {
       const wrongList = getWrongList(currentSubject);
       if (wrongList.length === 0) {
-        area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">🎉 目前没有错题记录，继续保持！</div>`;
+        area.innerHTML = emptyState('🎯', '错题本是空的', '答错的题目会自动收进来，答对之後就会自己消失。保持下去。');
         return;
       }
       area.innerHTML = `<div class="form-style-container">${wrongList.map(w => `
@@ -1394,13 +1428,14 @@ function openSubject(subject, initialChapterIdx) {
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
 
     if (!sec) {
-      area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">暂无此章节数据。</div>`;
+      area.innerHTML = emptyState('📄', '找不到这个章节', '可能是题库刚更新过，回到学科页重新进来一次就好。');
       return;
     }
 
     if (activeSubMode === 'mcq') {
       if (!sec.mcqs || sec.mcqs.length === 0) {
-        area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">本章节暂无选择题数据。</div>`;
+        area.innerHTML = emptyState('✏️', '这一章还没有选择题',
+          '换一个章节看看，或到「综合做答题」试试。题目正在陆续补上。');
         return;
       }
       const item = sec.mcqs[currentMcqIdx];
@@ -1493,7 +1528,7 @@ function openSubject(subject, initialChapterIdx) {
     } else {
       const subjs = sec.subjectives || [];
       if (subjs.length === 0) {
-        area.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">本章节暂无做答题数据。</div>`;
+        area.innerHTML = emptyState('📝', '这一章还没有做答题', '可以先到「选择题练习」，那边的题目比较多。');
         return;
       }
       let cardsHtml = '';
