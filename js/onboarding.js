@@ -14,7 +14,8 @@
 .ob-mask{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding:20px;
   background:rgba(15,23,42,.46);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s;}
-.ob-mask.is-open{opacity:1;visibility:visible;}
+/* 打开时 visibility 要立即生效：过渡的第 0 帧仍算 hidden，紧接著的 focus() 会静默失败 */
+.ob-mask.is-open{opacity:1;visibility:visible;transition:opacity .3s ease,visibility 0s;}
 .ob-box{width:min(470px,100%);padding:28px 26px 22px;border-radius:24px;
   background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.85);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 28px 70px -28px rgba(15,23,42,.55);
@@ -98,6 +99,7 @@
     box.replaceChildren();
 
     const art = el('div', 'ob-art', ART[s.art] || '');
+    art.setAttribute('aria-hidden', 'true');
     art.style.color = 'var(--primary, #059669)';
     box.append(art, el('div', 'ob-title', s.title), el('div', 'ob-body', s.body));
 
@@ -122,15 +124,30 @@
     next.focus();
   }
 
+  let returnTo = null;
   function open(fromStart) {
     if (fromStart) index = 0;
-    render();
+    returnTo = document.activeElement;
+    // 先显示再 render：render() 结尾会 focus「下一步」，
+    // 对 visibility:hidden 里的元素 focus 会静默失败，焦点就留在背後的页面。
     mask.classList.add('is-open');
+    render();
   }
 
   function close() {
     markSeen();
     mask.classList.remove('is-open');
+    if (returnTo && typeof returnTo.focus === 'function') returnTo.focus();
+    returnTo = null;
+  }
+
+  function trapTab(e) {
+    const f = box.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (!box.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
   function build() {
@@ -149,6 +166,7 @@
     document.addEventListener('keydown', e => {
       if (!mask.classList.contains('is-open')) return;
       if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') trapTab(e);
       else if (e.key === 'ArrowRight' && index < SLIDES.length - 1) { index += 1; render(); }
       else if (e.key === 'ArrowLeft' && index > 0) { index -= 1; render(); }
     });

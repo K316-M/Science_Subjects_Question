@@ -54,6 +54,11 @@ function sanitizePayload(raw) {
 }
 
 module.exports = async (req, res) => {
+  // 前端只想知道「有没有启用」。回 200 而不是 503，浏览器就不会在 console 报红字；
+  // 也不碰 Redis、不算节流，免得吃免费额度。
+  if (req.method === 'GET' && new URL(req.url, 'http://x').searchParams.get('probe') === '1') {
+    return sendJson(res, 200, { ok: true, configured: Boolean(config().ready) });
+  }
   if (!config().ready) {
     return sendJson(res, 503, {
       ok: false, error: 'not_configured',

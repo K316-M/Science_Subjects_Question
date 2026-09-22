@@ -6,7 +6,7 @@
 .sync-mask{position:fixed;inset:0;z-index:1400;display:grid;place-items:center;padding:20px;
   background:rgba(15,23,42,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s;}
-.sync-mask.is-open{opacity:1;visibility:visible;}
+.sync-mask.is-open{opacity:1;visibility:visible;transition:opacity .25s ease,visibility 0s;}
 .sync-box{width:min(440px,100%);max-height:86vh;overflow:auto;padding:24px;border-radius:22px;
   background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.8);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 24px 60px -24px rgba(15,23,42,.5);
@@ -52,10 +52,29 @@
     mask.addEventListener('click', e => { if (e.target === mask) close(); });
     box = el('div', 'sync-box');
     box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
     box.setAttribute('aria-label', '跨装置同步');
     mask.appendChild(box);
     document.body.appendChild(mask);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    document.addEventListener('keydown', e => {
+      if (!mask.classList.contains('is-open')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'Tab') trapTab(e);
+    });
+  }
+
+  // 焦点困在对话框里：否则键盘与读屏用户会掉进遮罩背後的页面
+  function trapTab(e) {
+    const f = box.querySelectorAll('button:not([disabled]), input, [href], [tabindex]:not([tabindex="-1"])');
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (!box.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+  function focusFirst() {
+    const f = box.querySelector('input, button:not([disabled])');
+    if (f) f.focus();
   }
 
   function render() {
@@ -145,8 +164,34 @@
     else say(r.message || '同步失败，请稍后再试。', false);
   }
 
-  function open() { render(); mask.classList.add('is-open'); }
-  function close() { mask.classList.remove('is-open'); }
+  let returnTo = null;
+  function open() {
+    returnTo = document.activeElement;
+    render();
+    mask.classList.add('is-open');
+    focusFirst();
+    probe();
+  }
+  function close() {
+    mask.classList.remove('is-open');
+    if (returnTo && typeof returnTo.focus === 'function') returnTo.focus();
+    returnTo = null;
+  }
+
+  // 打开弹窗时才问伺服器有没有启用，而且只问一次。
+  // 以前是每次载入页面都拿假同步码去打，没用过同步的学生也每次吃一条红色错误。
+  let probed = false;
+  function probe() {
+    if (probed) return;
+    probed = true;
+    fetch('/api/sync?probe=1')
+      .then(r => r.ok ? r.json() : { configured: r.status === 404 ? null : false })
+      .then(d => { configured = d.configured === undefined ? null : d.configured; })
+      .catch(() => { configured = null; })
+      .finally(() => {
+        if (configured === false && mask.classList.contains('is-open')) { render(); focusFirst(); }
+      });
+  }
 
   // 合并之后画面上的数字要跟着更新，否则要重整才看得到另一台装置的进度
   window.refreshAfterSync = function () {
@@ -160,9 +205,6 @@
     build();
     const btn = document.getElementById('syncBtn');
     if (btn) btn.addEventListener('click', open);
-    // 先问一次伺服器有没有启用，没启用就把按钮标示出来，别让人按了才失望
-    fetch('/api/sync?code=' + 'A'.repeat(20)).then(r => { configured = r.status !== 503; })
-      .catch(() => { configured = null; });
     window.UECSync.onChange(() => { if (mask && mask.classList.contains('is-open')) render(); });
   });
 })();

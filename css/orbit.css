@@ -50,8 +50,10 @@
 .orbit-core span {
   font-family: "Ma Shan Zheng", "KaiTi", "STKaiti", serif;
   font-size: clamp(26px, 7vw, 34px);
-  color: #fff;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, .28);
+  /* 白字压在球心的白色高光上只有 1.02:1，等於看不见。改成深色字配白色柔光，
+     字身落在渐层的浅色区，不会碰到外缘的深绿。 */
+  color: #064e3b;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, .95), 0 0 8px rgba(255, 255, 255, .8);
   line-height: 1;
 }
 @keyframes coreBreath {
@@ -74,7 +76,9 @@
   transition: opacity .45s ease;
   /* 注意：transform 不加 transition —— 它由 JS 每帧驱动，加了会打架 */
 }
-.orbit-stage.has-selection .orbit-node:not(.is-selected) { opacity: .3; }
+/* 其他球退後，但只淡化球体与装饰：标签整颗淡到 .3 会掉到 1.5:1，而它们仍然可以点 */
+.orbit-stage.has-selection .orbit-node:not(.is-selected) .node-disc,
+.orbit-stage.has-selection .orbit-node:not(.is-selected) .node-deco { opacity: .3; }
 .orbit-node[aria-disabled="true"] { cursor: default; }
 
 .node-disc {
@@ -85,7 +89,7 @@
   background: var(--card-bg, rgba(255, 255, 255, .94));
   border: 1px solid var(--card-border, rgba(226, 232, 240, .95));
   box-shadow: 0 8px 20px -10px rgba(15, 23, 42, .45);
-  transition: transform .5s cubic-bezier(.22, 1, .36, 1), box-shadow .4s ease, border-color .4s ease;
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), box-shadow .4s ease, border-color .4s ease, opacity .45s ease;
 }
 .orbit-node:hover .node-disc,
 .orbit-node:focus-visible .node-disc { transform: scale(1.09); border-color: var(--accent-color); }
@@ -127,10 +131,15 @@
   font-size: 12.5px; font-weight: 700; color: var(--text-muted, #64748b);
   z-index: 2;
   text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 1px 2px rgba(255, 255, 255, .95);
-  transition: color .35s ease;
+  transition: color .35s ease, top .35s ease;
 }
-.orbit-node.is-selected .node-label { color: var(--accent-color); }
-.node-label em { display: block; font-style: normal; font-size: 10px; font-weight: 500; opacity: .62; }
+/* 选中的球放大 1.22 倍并加一圈光晕，标签会压在光晕上（实测 2.5:1）。给它一块白底，底下是什么颜色都站得住 */
+.orbit-node.is-selected .node-label {
+  color: var(--accent-color); top: calc(100% + 18px);
+  padding: 3px 10px; border-radius: 999px;
+  background: rgba(255, 255, 255, .92); box-shadow: 0 2px 8px -4px rgba(15, 23, 42, .25);
+}
+.node-label em { display: block; font-style: normal; font-size: 10px; font-weight: 500; }
 
 /* ---------- 每颗球周围的动态插图 ---------- */
 .node-deco {
@@ -221,7 +230,8 @@
 .panel-enter:hover { transform: translateY(-1px); filter: brightness(1.06); }
 .panel-enter:active { transform: translateY(0); }
 .panel-enter[disabled] { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
-.panel-hint { margin-top: 8px; font-size: 10.5px; color: var(--text-muted, #64748b); opacity: .8; }
+.panel-enter.is-quiet { background: transparent; color: #334155; box-shadow: inset 0 0 0 1px rgba(51,65,85,.35); }
+.panel-hint { margin-top: 8px; font-size: 10.5px; color: var(--text-muted, #64748b); }
 
 /* ---------- 无障碍：尊重「减少动态效果」 ---------- */
 @media (prefers-reduced-motion: reduce) {

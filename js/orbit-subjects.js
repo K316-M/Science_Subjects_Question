@@ -87,6 +87,7 @@
     btn.style.setProperty('--accent-soft', hexToRgba(subject.accent, 0.16));
     btn.setAttribute('aria-label', `${subject.name} ${subject.en}`);
     if (!subject.enabled) btn.setAttribute('aria-disabled', 'true');
+    btn.setAttribute('aria-expanded', 'false');
     btn.innerHTML =
       `<span class="node-deco deco-${subject.deco}" aria-hidden="true">${DECOS[subject.deco] || ''}</span>` +
       `<span class="node-disc">` +
@@ -160,9 +161,18 @@
         const data = await res.json();
         const sections = data.sections || data.mcq_sections || [];
         s.total = sections.reduce((n, sec) => n + ((sec.mcqs && sec.mcqs.length) || 0), 0);
+        s.any = s.total + sections.reduce((n, sec) => n + ((sec.subjectives && sec.subjectives.length) || 0), 0);
       } catch (e) { /* 题库还没上线就当 0 题 */ }
     }));
     refresh();
+    // 首页「继续上次学习」要知道哪些科目其实没有题
+    if (typeof window.renderResumeCard === 'function') window.renderResumeCard();
+  }
+
+  // true／false；题数还没载入完成时回 undefined
+  function hasQuestions(key) {
+    const s = SUBJECTS.find(x => x.key === key);
+    return s && s.any !== undefined ? s.any > 0 : undefined;
   }
 
   function statsFor(i) {
@@ -192,7 +202,10 @@
       ? `已掌握 <strong>${pct}%</strong> · ${done} / ${total} 题`
       : `<strong>—</strong> 题库整理中`;
     panelEnter.disabled = !s.enabled;
-    panelEnter.textContent = s.enabled ? `进入${s.name}` : '尚未开放';
+    // 零题科目：面板上最显眼的主按钮不该通向一个空的地方
+    const empty = s.enabled && s.any === 0;
+    panelEnter.classList.toggle('is-quiet', empty);
+    panelEnter.textContent = !s.enabled ? '尚未开放' : empty ? '看章节大纲' : `进入${s.name}`;
   }
 
   /* ---------- 选中 / 取消 ---------- */
@@ -208,7 +221,10 @@
     if (selected === i) return;
     selected = i;
     stage.classList.add('has-selection');
-    nodes.forEach((n, idx) => n.classList.toggle('is-selected', idx === i));
+    nodes.forEach((n, idx) => {
+      n.classList.toggle('is-selected', idx === i);
+      n.setAttribute('aria-expanded', String(idx === i));
+    });
     fillPanel(i);
     panel.classList.add('is-open');
 
@@ -224,7 +240,7 @@
     selected = null;
     tween = null;
     stage.classList.remove('has-selection');
-    nodes.forEach(n => n.classList.remove('is-selected'));
+    nodes.forEach(n => { n.classList.remove('is-selected'); n.setAttribute('aria-expanded', 'false'); });
     panel.classList.remove('is-open');
   }
 
@@ -290,5 +306,5 @@
   }
 
   loadTotals();
-  window.OrbitSubjects = { refresh, select, deselect };
+  window.OrbitSubjects = { refresh, select, deselect, hasQuestions };
 })();

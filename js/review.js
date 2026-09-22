@@ -107,9 +107,9 @@
 
   function describeInterval(days) {
     if (days <= 1) return '明天再看一次';
-    if (days < 7) return `${days} 天後再看`;
-    if (days < 30) return `约 ${Math.round(days / 7)} 周後再看`;
-    return `约 ${Math.round(days / 30)} 个月後再看`;
+    if (days < 7) return `${days} 天后再看`;
+    if (days < 30) return `约 ${Math.round(days / 7)} 周后再看`;
+    return `约 ${Math.round(days / 30)} 个月后再看`;
   }
 
   global.UECReview = { REVIEW_KEY, record, dueList, dueCount, nextDueAt, describeInterval, itemKey };

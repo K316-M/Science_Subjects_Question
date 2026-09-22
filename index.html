@@ -10,6 +10,7 @@
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23047857'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='white' font-family='serif'%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
   <meta name="theme-color" content="#059669">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -22,14 +23,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E5%AD%A6&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #059669;
-      --primary-dark: #047857;
+      --primary: #047857;
+      --primary-dark: #065f46;
       --primary-light: #ecfdf5;
       --bg-nature: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #f7fee7 100%);
       --card-bg: rgba(255, 255, 255, 0.72);
       --card-border: rgba(255, 255, 255, 0.75);
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --accent: #0284c7;
       --success: #10b981;
       --danger: #ef4444;
@@ -43,10 +44,24 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
-    [role="button"]:focus-visible, button:focus-visible, .breadcrumb-item:focus-visible {
+    [role="button"]:focus-visible, [role="tab"]:focus-visible, button:focus-visible, .breadcrumb-item:focus-visible {
       outline: 2.5px solid var(--accent);
       outline-offset: 2px;
     }
+    /* 跳转链接把焦点送到 <main>，它本身不需要焦点环 */
+    main:focus { outline: none; }
+    .sr-only {
+      position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+    /* 平时藏起来，按 Tab 的第一下才出现 */
+    .skip-link {
+      position: fixed; left: 12px; top: -60px; z-index: 2000;
+      padding: 10px 16px; border-radius: 10px;
+      background: #0f172a; color: #fff; font-size: 14px; font-weight: 700; text-decoration: none;
+      transition: top .15s ease;
+    }
+    .skip-link:focus { top: 12px; }
     
     body {
       background: var(--bg-nature);
@@ -86,6 +101,11 @@
 
     .breadcrumbs { font-size: 13px; color: var(--text-muted); }
     .breadcrumb-item { cursor: pointer; transition: color 0.2s; }
+    /* 可点的面包屑改成真正的按钮：以前是 <span onclick>，键盘到不了 */
+    button.breadcrumb-item {
+      background: none; border: 0; font: inherit; color: inherit;
+      padding: 6px 2px; margin: -6px 0;
+    }
     .breadcrumb-item:hover { color: var(--primary); text-decoration: underline; }
     .breadcrumb-item.active { color: var(--text-main); font-weight: 700; cursor: default; text-decoration: none; }
 
@@ -184,7 +204,7 @@
     .chap-progress-bar { width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 4px; }
     .chap-progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.3s; }
 
-    #wrongCountBadge { background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 2px; }
+    #wrongCountBadge { background: #dc2626; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 2px; }
     #wrongCountBadge:empty { display: none; }
 
     .wrong-item-card {
@@ -207,6 +227,12 @@
     .sub-bookmark-bar {
       display: flex;
       flex-wrap: nowrap;
+      /* 徽章的位数是会变的（12 题 / 108 题），所以宽度不能靠估算。
+         这两行保证无论内容多宽，页面本身都不会产生横向滚动条。 */
+      max-width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       gap: 10px;
       margin-bottom: 22px;
       background: rgba(255, 255, 255, 0.55);
@@ -219,6 +245,7 @@
       width: fit-content;
     }
     .sub-tab-btn {
+      min-height: 40px;
       white-space: nowrap;
       background: transparent;
       border: none;
@@ -235,6 +262,7 @@
       color: var(--primary);
       box-shadow: var(--shadow-sm);
     }
+    .sub-bookmark-bar::-webkit-scrollbar { display: none; }
 
     /* 闪卡样式 */
     .flashcard {
@@ -288,11 +316,13 @@
     }
     .opt-text { flex: 1 1 auto; }
     .option-btn:hover:not(.locked) .opt-badge { background: var(--primary); border-color: var(--primary); color: #fff; }
-    .option-btn.correct .opt-badge { background: var(--success); border-color: var(--success); color: #fff; }
-    .option-btn.wrong .opt-badge { background: var(--danger); border-color: var(--danger); color: #fff; }
+    .option-btn.correct .opt-badge { background: #047857; border-color: #047857; color: #fff; }
+    .option-btn.wrong .opt-badge { background: #dc2626; border-color: #dc2626; color: #fff; }
 
     @media (prefers-reduced-motion: reduce) {
-      .flashcard, .option-btn { animation: none; }
+      /* 选择器要写得跟动画那条一样具体（0,2,0），否则媒体查询不增加特异度，这条会被盖掉 */
+      .flashcard, .flashcard.from-right, .flashcard.from-left, .option-btn, .view.active { animation: none; }
+      .option-btn:hover:not(.locked), .chapter-card:hover, .sound-toggle:hover, .resume-card:hover { transform: none; }
     }
 
     .figure-container {
@@ -332,6 +362,30 @@
     .option-btn.correct { background: #ecfdf5 !important; border-color: var(--success) !important; color: #065f46 !important; font-weight: 700; cursor: default; }
     .option-btn.wrong { background: #fef2f2; border-color: var(--danger); color: #991b1b; }
     .option-btn.locked { cursor: default; }
+    /* 「这是正确答案」必须有文字，不能只靠绿色 */
+    .opt-tag {
+      flex: 0 0 auto; align-self: center;
+      margin-left: auto;
+      font-size: 11px; font-weight: 700; letter-spacing: .02em;
+      color: #065f46;
+      border: 1px solid rgba(6,95,70,.45);
+      border-radius: 999px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
+    /* 作答结算：答对答错都必须说一句话，并且告诉学生下次什么时候再问 */
+    .mcq-verdict {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.7;
+      font-weight: 600;
+    }
+    .mcq-verdict.is-right { display: block; background: #ecfdf5; color: #065f46; border-left: 4px solid #047857; }
+    .mcq-verdict.is-wrong { display: block; background: #fffbeb; color: #92400e; border-left: 4px solid #b45309; }
 
     .explanation {
       margin-top: 18px;
@@ -345,7 +399,7 @@
       display: none;
     }
     .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
-    .btn-nav { background: #fff; border: 1px solid #cbd5e1; color: #334155; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .btn-nav { min-height: 40px; background: #fff; border: 1px solid #cbd5e1; color: #334155; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
     .btn-nav:hover { border-color: var(--primary); color: var(--primary); }
 
     /* Google 表单式大卡片排版 */
@@ -480,6 +534,20 @@
       .sub-bookmark-bar { padding: 5px; gap: 4px; }
       .sub-tab-btn { padding: 7px 10px; font-size: 12.5px; }
     }
+    /* 默认只显示完整标签；要写在下面的媒体查询之前，否则同特异度会把它盖掉 */
+    .nav-short { display: none; }
+    /* 360px 的安卓机（红米／Galaxy A／Oppo A）在马来西亚很常见。
+       回访学生会同时带著错题与复习两个徽章，680 那一档在这里就不够收了。 */
+    @media (max-width: 400px) {
+      .sub-bookmark-bar { padding: 4px; gap: 3px; }
+      .sub-tab-btn { padding: 8px 7px; font-size: 11.5px; }
+      .sub-tab-btn > span[id$="CountBadge"]:not(:empty) {
+        display: inline-block; margin-left: 2px;
+        font-size: 10.5px; font-weight: 800;
+      }
+      .nav-long { display: none; }
+      .nav-short { display: inline; }
+    }
 
     .empty-state {
       max-width: 420px; margin: 26px auto; padding: 36px 28px 32px;
@@ -495,6 +563,67 @@
       background: rgba(5,150,105,.09); border: 1px solid rgba(5,150,105,.16);
     }
     .empty-title { font-family: var(--font-display, serif); font-size: 17px; font-weight: 700; color: #0f172a; }
+    .empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+    .empty-btn {
+      min-height: 44px; padding: 10px 18px; border-radius: 12px; cursor: pointer;
+      font-size: 14px; font-weight: 700;
+      background: rgba(255,255,255,.8); color: var(--primary); border: 1px solid rgba(4,120,87,.35);
+    }
+    .empty-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .empty-btn:hover { border-color: var(--primary); }
+    .empty-btn.primary:hover { background: var(--primary-dark); }
+
+    /* 今日复习：今天要做完的清单 */
+    .review-queue { display: flex; flex-direction: column; gap: 16px; }
+    .review-head {
+      padding: 20px; border-radius: 18px;
+      background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);
+    }
+    .review-count { font-size: 15px; color: #0f172a; }
+    .review-count strong { font-size: 28px; color: var(--primary); margin-right: 2px; }
+    .review-bar { height: 8px; margin: 10px 0 12px; border-radius: 99px; background: rgba(4,120,87,.12); overflow: hidden; }
+    .review-bar > div { height: 100%; border-radius: 99px; background: var(--primary); transition: width .4s ease; }
+    .review-note { font-size: 13px; line-height: 1.7; color: var(--text-muted); margin-bottom: 14px; }
+    .review-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .review-item {
+      width: 100%; display: flex; align-items: flex-start; gap: 12px; text-align: left; cursor: pointer;
+      padding: 14px 16px; border-radius: 14px; font: inherit;
+      background: rgba(255,255,255,.66); border: 1px solid rgba(255,255,255,.8);
+    }
+    .review-item:hover { border-color: rgba(4,120,87,.45); background: rgba(255,255,255,.9); }
+    .review-dot { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%; border: 2px solid rgba(4,120,87,.5); }
+    .review-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .review-q { font-size: 14px; line-height: 1.6; color: #334155; white-space: pre-line;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .review-meta { font-size: 12px; color: var(--text-muted); }
+    .review-meta em { font-style: normal; font-weight: 700; color: #b91c1c; }
+
+    /* 错题本：按章节盘点的库存 */
+    .wrong-book-head { font-size: 13px; line-height: 1.7; color: var(--text-muted); margin-bottom: 14px; }
+    .wrong-book-head strong { color: #b91c1c; font-size: 16px; }
+    .wrong-group {
+      margin-bottom: 14px; padding: 6px 0; border-radius: 16px; overflow: hidden;
+      background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);
+    }
+    .wrong-group-title {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+      padding: 10px 16px 8px; font-size: 13px; font-weight: 700; color: #0f172a;
+    }
+    .wrong-group-n { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: #b91c1c; }
+    .wrong-row {
+      width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer;
+      min-height: 48px; padding: 10px 16px; font: inherit;
+      background: none; border: 0; border-top: 1px solid rgba(15,23,42,.06);
+    }
+    .wrong-row:hover { background: rgba(254,242,242,.7); }
+    .wrong-row-q { flex: 1 1 auto; font-size: 14px; line-height: 1.6; color: #334155; white-space: pre-line;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .wrong-row-go { flex: 0 0 auto; color: #b91c1c; font-weight: 700; }
+
+    .verdict-next {
+      display: block; margin-top: 10px; min-height: 40px; padding: 8px 14px; border-radius: 10px; cursor: pointer;
+      font-size: 13px; font-weight: 700; background: #fff; color: var(--primary); border: 1px solid rgba(4,120,87,.4);
+    }
     .empty-hint { margin-top: 9px; font-size: 13px; line-height: 1.8; color: var(--text-muted); }
 
     .container, header { position: relative; z-index: 1; }
@@ -518,6 +647,7 @@
   <link rel="stylesheet" href="/css/orbit.css">
 </head>
 <body data-scene="off">
+<a class="skip-link" href="#main">跳到主要内容</a>
 
 <div class="floating-shapes" id="floatingShapes">
   <div class="blob blob-1"></div>
@@ -532,20 +662,20 @@
   <div class="custom-photo-layer" id="customPhotoLayer"></div>
 </div>
 
-<nav class="top-nav">
+<nav class="top-nav" aria-label="主选单">
   <div class="nav-inner">
     <button class="nav-item" id="navHomeBtn" onclick="navHome()">主页</button>
     <button class="nav-item" id="navNotesBtn" onclick="openNotesView()">笔记</button>
     <div class="nav-logo" aria-hidden="true">学</div>
     <button class="nav-item" id="navArchiveBtn" onclick="openArchiveView()">题目档</button>
-    <button class="nav-item" id="navFeedbackBtn" onclick="openFeedbackView()">网页问题申诉</button>
+    <button class="nav-item" id="navFeedbackBtn" onclick="openFeedbackView()"><span class="nav-long">网页问题申诉</span><span class="nav-short">报错</span></button>
   </div>
 </nav>
 
-<div class="container">
+<main class="container" id="main" tabindex="-1">
   <div class="util-bar">
-    <div class="breadcrumbs" id="breadcrumbNav">
-      <span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>
+    <div class="breadcrumbs" id="breadcrumbNav" role="navigation" aria-label="目前位置">
+      <span class="breadcrumb-item active" aria-current="page">学科选择</span>
     </div>
     <div class="util-actions">
       <button class="sound-toggle" id="soundBtn" onclick="toggleSound()">🔊 音效：开</button>
@@ -574,12 +704,14 @@
 
   <!-- 视图 2: 题目练习区 -->
   <div id="viewStudy" class="view">
-    <div class="chapter-bookmark-rail" id="chapterRail"></div>
-    <div class="sub-bookmark-bar">
-      <button class="sub-tab-btn active" id="subBtnMcq" onclick="switchSubSection('mcq')">🎴 选择题<span class="tab-long">练习</span></button>
-      <button class="sub-tab-btn" id="subBtnSubj" onclick="switchSubSection('subj')">📝 做答题<span class="tab-long">（背书闪卡）</span></button>
-      <button class="sub-tab-btn" id="subBtnWrong" onclick="switchSubSection('wrong')">📕 错题本 <span id="wrongCountBadge"></span></button>
-      <button class="sub-tab-btn" id="subBtnReview" onclick="switchSubSection('review')">📅 今日复习 <span id="reviewCountBadge"></span></button>
+    <!-- 画面上已有面包屑与章节卡，这个标题只给读屏的「按标题浏览」用 -->
+    <h2 class="sr-only" id="studyHeading"></h2>
+    <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
+    <div class="sub-bookmark-bar" role="tablist" aria-label="练习模式">
+      <button class="sub-tab-btn active" id="subBtnMcq" role="tab" aria-selected="true" onclick="switchSubSection('mcq')">🎴 选择题<span class="tab-long">练习</span></button>
+      <button class="sub-tab-btn" id="subBtnSubj" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('subj')">📝 做答题<span class="tab-long">（背书闪卡）</span></button>
+      <button class="sub-tab-btn" id="subBtnWrong" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('wrong')">📕 错题本 <span id="wrongCountBadge"></span></button>
+      <button class="sub-tab-btn" id="subBtnReview" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('review')">📅 今日复习 <span id="reviewCountBadge"></span></button>
     </div>
     <div id="activeStudyArea"></div>
   </div>
@@ -603,10 +735,10 @@
     </p>
 
     <div class="archive-toolbar">
-      <div class="archive-subject-tabs">
-        <button class="archive-tab active" data-arc-subject="biology" onclick="switchArchiveSubject('biology')">生物</button>
-        <button class="archive-tab" data-arc-subject="chemistry" onclick="switchArchiveSubject('chemistry')">化学</button>
-        <button class="archive-tab" data-arc-subject="physics" onclick="switchArchiveSubject('physics')">物理</button>
+      <div class="archive-subject-tabs" role="tablist" aria-label="科目">
+        <button class="archive-tab active" role="tab" aria-selected="true" data-arc-subject="biology" onclick="switchArchiveSubject('biology')">生物</button>
+        <button class="archive-tab" role="tab" aria-selected="false" tabindex="-1" data-arc-subject="chemistry" onclick="switchArchiveSubject('chemistry')">化学</button>
+        <button class="archive-tab" role="tab" aria-selected="false" tabindex="-1" data-arc-subject="physics" onclick="switchArchiveSubject('physics')">物理</button>
       </div>
       <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#334155; cursor:pointer;">
         <input type="checkbox" checked onchange="setArchiveIncludeAnswers(this.checked)" style="width:15px; height:15px; accent-color: var(--primary);">
@@ -652,7 +784,7 @@
     <h3 class="page-heading" style="font-size:18px; margin-top:30px;">我提交过的问题</h3>
     <div id="fbMyReports" style="margin-top:12px;"></div>
   </div>
-</div>
+</main>
 
 <div class="img-modal" id="imgModal" onclick="closeImageModal()">
   <img id="modalImg" src="" alt="放大考题图">
@@ -1171,7 +1303,7 @@
     stopAmbientMusic();
     renderResumeCard();
     setActiveNav('navHomeBtn');
-    document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" onclick="navigateHome()">学科选择</span>`;
+    document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" aria-current="page">学科选择</span>`;
   }
 
   // 全局当前科目变量（放在脚本顶部与其他 let 变量同一处）
@@ -1241,8 +1373,8 @@ function openSubject(subject, initialChapterIdx) {
   applySubjectBackground(subject);
   if (musicEnabled) startAmbientMusic(subject);
   document.getElementById('breadcrumbNav').innerHTML = `
-    <span class="breadcrumb-item" onclick="navigateHome()">学科选择</span> &gt;
-    <span class="breadcrumb-item active">${SUBJECT_LABELS[subject] || subject}</span>
+    <button type="button" class="breadcrumb-item" onclick="navigateHome()">学科选择</button> &gt;
+    <span class="breadcrumb-item active" aria-current="page">${SUBJECT_LABELS[subject] || subject}</span>
   `;
   // 动态载入对应题库并渲染（loadSubjectData 会在加载后调用 render）
   loadSubjectData(subject, initialChapterIdx);
@@ -1269,8 +1401,9 @@ function openSubject(subject, initialChapterIdx) {
       const card = document.createElement('div');
       card.className = `chapter-card ${activeChapterIdx === idx ? 'active' : ''}`;
       card.onclick = () => selectChapter(idx);
-      card.setAttribute('role', 'button');
-      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'tab');
+      card.setAttribute('aria-selected', String(activeChapterIdx === idx));
+      card.setAttribute('tabindex', activeChapterIdx === idx ? '0' : '-1');
       card.setAttribute('aria-label', sec.title);
 
       const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
@@ -1283,7 +1416,7 @@ function openSubject(subject, initialChapterIdx) {
       card.innerHTML = `
         <span class="chap-badge">${tagText}</span>
         <div class="chap-name">${nameText}</div>
-        <span class="chap-count ${mastered > 0 ? 'has-progress' : ''}">${total > 0 ? (mastered > 0 ? `${mastered}/${total} 已掌握` : `${total} 道题`) : '整理中'}</span>
+        <span class="chap-count ${mastered > 0 ? 'has-progress' : ''}">${total > 0 ? (mastered > 0 ? `${mastered}/${total} 已掌握` : `${total} 道选择题`) : '整理中'}</span>
         ${total > 0 ? `<div class="chap-progress-bar"><div class="chap-progress-fill" style="width:${pct}%"></div></div>` : ''}
       `;
       rail.appendChild(card);
@@ -1291,10 +1424,17 @@ function openSubject(subject, initialChapterIdx) {
 
     if (sections.length === 0) {
       rail.innerHTML = `<div style="padding: 30px 10px; color: var(--text-muted); font-size: 14px;">🚧 该学科题库正在整理中，敬请期待！</div>`;
+    } else if (!rail.querySelector('[tabindex="0"]')) {
+      rail.firstElementChild.setAttribute('tabindex', '0');   // 没有选中章节时，至少让键盘进得来
     }
+
+    const heading = document.getElementById('studyHeading');
+    const cur = sections[activeChapterIdx];
+    if (heading) heading.textContent = `${SUBJECT_LABELS[currentSubject] || ''}${cur ? ' · ' + cur.title : ''}`;
   }
 
   function selectChapter(idx) {
+    cameFromReview = false;
     playSound('flip');
     activeChapterIdx = idx;
     currentMcqIdx = 0;
@@ -1309,6 +1449,8 @@ function openSubject(subject, initialChapterIdx) {
   function saveLastVisit(subject, chapterIdx) {
     const sec = (fullDatabase.sections || [])[chapterIdx];
     if (!sec) return;
+    // 首页最显眼的横幅不能把学生送进一个没有题目的章节
+    if ((sec.mcqs || []).length + (sec.subjectives || []).length === 0) return;
     try {
       localStorage.setItem(LAST_VISIT_KEY, JSON.stringify({
         subject, chapterIdx, chapterTitle: sec.title, ts: Date.now()
@@ -1322,6 +1464,9 @@ function openSubject(subject, initialChapterIdx) {
     let last = null;
     try { last = JSON.parse(localStorage.getItem(LAST_VISIT_KEY)); } catch (e) {}
     if (!last || !last.subject) { holder.innerHTML = ''; return; }
+    // 旧版本可能已经记下了零题科目；轨道载入题数之後会再叫一次这里
+    const orbit = window.OrbitSubjects;
+    if (orbit && orbit.hasQuestions && orbit.hasQuestions(last.subject) === false) { holder.innerHTML = ''; return; }
     const label = SUBJECT_LABELS[last.subject] || last.subject;
     holder.innerHTML = `
       <div class="resume-card" onclick="resumeLastVisit()" role="button" tabindex="0" aria-label="继续上次学习">
@@ -1338,72 +1483,117 @@ function openSubject(subject, initialChapterIdx) {
     openSubject(last.subject, last.chapterIdx);
   }
 
+  const SUB_TAB_IDS = { mcq: 'subBtnMcq', subj: 'subBtnSubj', wrong: 'subBtnWrong', review: 'subBtnReview' };
+  function markSubTab(mode) {
+    Object.entries(SUB_TAB_IDS).forEach(([m, id]) => {
+      const b = document.getElementById(id);
+      const on = m === mode;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', String(on));
+      b.setAttribute('tabindex', on ? '0' : '-1');
+    });
+  }
+
   function switchSubSection(mode) {
+    cameFromReview = false;
     playSound('flip');
     activeSubMode = mode;
-    document.getElementById('subBtnMcq').classList.toggle('active', mode === 'mcq');
-    document.getElementById('subBtnSubj').classList.toggle('active', mode === 'subj');
-    document.getElementById('subBtnWrong').classList.toggle('active', mode === 'wrong');
-    document.getElementById('subBtnReview').classList.toggle('active', mode === 'review');
+    markSubTab(mode);
     renderActiveContent();
   }
 
-  function jumpToWrongQuestion(chapterIdx, mcqIdx) {
+  function jumpToWrongQuestion(chapterIdx, mcqIdx, fromReview) {
+    cameFromReview = Boolean(fromReview);
     playSound('pop');
     activeChapterIdx = chapterIdx;
     currentMcqIdx = mcqIdx;
     activeSubMode = 'mcq';
-    document.getElementById('subBtnMcq').classList.add('active');
-    document.getElementById('subBtnSubj').classList.remove('active');
-    document.getElementById('subBtnWrong').classList.remove('active');
-    document.getElementById('subBtnReview').classList.remove('active');
+    markSubTab('mcq');
     renderChapterRail();
     renderActiveContent();
   }
 
   // 空状态：让「还没有内容」看起来是设计过的，而不是页面坏了
-  function emptyState(glyph, title, hint) {
+  // actions：[[文字, onclick 字串, 是否主按钮], ...]。只接本档案写死的字串。
+  function emptyState(glyph, title, hint, actions) {
+    const btns = (actions || []).map(([label, js, primary]) =>
+      `<button type="button" class="empty-btn${primary ? ' primary' : ''}" onclick="${js}">${label}</button>`).join('');
     return `<div class="empty-state">
       <div class="empty-glyph" aria-hidden="true">${glyph}</div>
       <div class="empty-title">${title}</div>
       ${hint ? `<div class="empty-hint">${hint}</div>` : ''}
+      ${btns ? `<div class="empty-actions">${btns}</div>` : ''}
     </div>`;
   }
+
+  function subjectQuestionCount() {
+    return (fullDatabase.sections || []).reduce(
+      (n, sec) => n + (sec.mcqs || []).length + (sec.subjectives || []).length, 0);
+  }
+
+  // 今日复习的「今天总共几题」：把今天出现过的到期题记下来，做掉的就从到期清单消失，
+  // 两者相减就是进度。只存在这台装置，隔天自动归零。
+  const REVIEW_DAY_KEY = 'UEC_REVIEW_DAY_v1';
+  function todayQueue(subject, due) {
+    const day = new Date().toLocaleDateString('en-CA');
+    let st = null;
+    try { st = JSON.parse(localStorage.getItem(REVIEW_DAY_KEY)); } catch (e) {}
+    if (!st || st.day !== day || !st.seen) st = { day, seen: {} };
+    const seen = new Set(st.seen[subject] || []);
+    due.forEach(d => seen.add(d.chapterIdx + ':' + d.mcqIdx));
+    st.seen[subject] = [...seen];
+    try { localStorage.setItem(REVIEW_DAY_KEY, JSON.stringify(st)); } catch (e) {}
+    return { total: seen.size, done: seen.size - due.length };
+  }
+  let cameFromReview = false;
 
   function renderActiveContent() {
     const area = document.getElementById('activeStudyArea');
     area.innerHTML = '';
 
-    if ((fullDatabase.sections || []).length === 0) {
-      area.innerHTML = emptyState('📚', '这一科的题库还在整理中',
-        '题目会陆续补上。先去生物科练几题，或用上方的「网页问题申诉」告诉我们你最需要哪一章。');
+    const subjectEmpty = subjectQuestionCount() === 0;
+    const subBar = document.querySelector('.sub-bookmark-bar');
+    if (subBar) subBar.style.display = subjectEmpty ? 'none' : '';   // 四个分页在零题科目里全是死路
+    if (subjectEmpty) {
+      const label = SUBJECT_LABELS[currentSubject] || '这一科';
+      const n = (fullDatabase.sections || []).length;
+      area.innerHTML = emptyState('📚', `${label}的题库还没开始`,
+        n ? `目前只有上面这 ${n} 个章节的大纲，还没有任何题目。你最需要哪一章？告诉我们，我们优先补那一章。`
+          : '题目会陆续补上。',
+        [['告诉我们你需要哪一章', 'openFeedbackView()', true],
+         ...(currentSubject !== 'biology' ? [['先去练生物', "openSubject('biology')", false]] : [])]);
       return;
     }
 
     if (activeSubMode === 'review') {
       const sections = fullDatabase.sections || [];
       const due = window.UECReview ? window.UECReview.dueList(currentSubject, sections) : [];
+      const day = todayQueue(currentSubject, due);
       if (due.length === 0) {
         const next = window.UECReview ? window.UECReview.nextDueAt(currentSubject, sections) : null;
-        const when = next
-          ? `下一批复习在 ${new Date(next).toLocaleDateString('zh-CN')}`
-          : '先去做几题，系统才知道该在什么时候提醒你复习。';
-        area.innerHTML = emptyState('☕', '今天没有到期的复习', when);
+        const nextText = next ? `下一批在 ${new Date(next).toLocaleDateString('zh-CN')}。` : '';
+        area.innerHTML = day.total > 0
+          ? emptyState('✅', '今天的复习做完了', `今天一共复习了 ${day.total} 题。${nextText}`)
+          : emptyState('☕', '今天没有到期的复习', nextText || '先去做几题，系统才知道该在什么时候提醒你复习。');
         return;
       }
-      area.innerHTML = `<div class="form-style-container">
-        <div style="margin-bottom:14px; font-size:13px; color:var(--text-muted); line-height:1.7;">
-          这 <strong>${due.length}</strong> 题是依你的作答记录排出来、今天该再看一次的。
-          答对了间隔会拉长，答错就打回明天。
+      const pct = Math.round(day.done / day.total * 100);
+      const first = due[0];
+      area.innerHTML = `<div class="review-queue">
+        <div class="review-head">
+          <div class="review-count">今天 <strong>${day.done}</strong> / ${day.total} 题</div>
+          <div class="review-bar" role="progressbar" aria-label="今日复习进度" aria-valuemin="0" aria-valuemax="${day.total}" aria-valuenow="${day.done}"><div style="width:${pct}%"></div></div>
+          <p class="review-note">依你的作答记录排出来、今天该再看一次的题。答对了间隔会拉长，答错就打回明天。</p>
+          <button type="button" class="empty-btn primary" onclick="jumpToWrongQuestion(${first.chapterIdx}, ${first.mcqIdx}, true)">${day.done ? '继续' : '开始'}今天的复习 →</button>
         </div>
-        ${due.map(d => `
-        <div class="wrong-item-card">
-          <div>
-            <span class="wrong-item-chapter">${d.chapterTitle}${d.overdueDays > 0 ? ` · 逾期 ${d.overdueDays} 天` : ''}</span>
-            <div class="wrong-item-q">${d.question}</div>
-          </div>
-          <button class="wrong-item-jump" onclick="jumpToWrongQuestion(${d.chapterIdx}, ${d.mcqIdx})">开始复习 ➡️</button>
-        </div>`).join('')}</div>`;
+        <ol class="review-list">${due.map(d => `
+          <li><button type="button" class="review-item" onclick="jumpToWrongQuestion(${d.chapterIdx}, ${d.mcqIdx}, true)">
+            <span class="review-dot" aria-hidden="true"></span>
+            <span class="review-body"><span class="review-q">${d.question}</span>
+              <span class="review-meta">${d.chapterTitle}${d.overdueDays > 0 ? ` · <em>逾期 ${d.overdueDays} 天</em>` : ''}</span></span>
+          </button></li>`).join('')}
+        </ol>
+      </div>`;
       return;
     }
 
@@ -1413,15 +1603,21 @@ function openSubject(subject, initialChapterIdx) {
         area.innerHTML = emptyState('🎯', '错题本是空的', '答错的题目会自动收进来，答对之後就会自己消失。保持下去。');
         return;
       }
-      area.innerHTML = `<div class="form-style-container">${wrongList.map(w => `
-        <div class="wrong-item-card">
-          <div>
-            <span class="wrong-item-chapter">${w.chapterTitle}</span>
-            <div class="wrong-item-q">${w.question}</div>
-          </div>
-          <button class="wrong-item-jump" onclick="jumpToWrongQuestion(${w.chapterIdx}, ${w.mcqIdx})">前往复习 ➡️</button>
-        </div>
-      `).join('')}</div>`;
+      // 与「今日复习」刻意长得不一样：这里是按章节盘点的库存，不是今天要做完的清单
+      const groups = [];
+      wrongList.forEach(w => {
+        let g = groups.find(x => x.idx === w.chapterIdx);
+        if (!g) groups.push(g = { idx: w.chapterIdx, title: w.chapterTitle, items: [] });
+        g.items.push(w);
+      });
+      area.innerHTML = `<div class="wrong-book">
+        <p class="wrong-book-head">共 <strong>${wrongList.length}</strong> 题还没答对，分布在 ${groups.length} 个章节。答对之後会自己消失。</p>
+        ${groups.map(g => `<section class="wrong-group">
+          <h3 class="wrong-group-title"><span>${g.title}</span><span class="wrong-group-n">${g.items.length} 题</span></h3>
+          ${g.items.map(w => `<button type="button" class="wrong-row" onclick="jumpToWrongQuestion(${w.chapterIdx}, ${w.mcqIdx})">
+            <span class="wrong-row-q">${w.question}</span><span class="wrong-row-go" aria-hidden="true">→</span></button>`).join('')}
+        </section>`).join('')}
+      </div>`;
       return;
     }
 
@@ -1435,7 +1631,7 @@ function openSubject(subject, initialChapterIdx) {
     if (activeSubMode === 'mcq') {
       if (!sec.mcqs || sec.mcqs.length === 0) {
         area.innerHTML = emptyState('✏️', '这一章还没有选择题',
-          '换一个章节看看，或到「综合做答题」试试。题目正在陆续补上。');
+          '换一个章节看看，或到「做答题」试试。题目正在陆续补上。');
         return;
       }
       const item = sec.mcqs[currentMcqIdx];
@@ -1460,6 +1656,7 @@ function openSubject(subject, initialChapterIdx) {
           <div class="mcq-question">${item.q}</div>
           ${figureHtml}
           <div class="mcq-options" id="optContainer"></div>
+          <div class="mcq-verdict" id="mcqVerdict" role="status" aria-live="polite"></div>
           <div class="explanation" id="expContainer">${item.explanation}</div>
           <div class="card-footer">
             <button class="btn-nav" onclick="navMcq(-1)">⬅️ 上一题</button>
@@ -1479,6 +1676,71 @@ function openSubject(subject, initialChapterIdx) {
       const expBox = document.getElementById('expContainer');
       let isSolved = false;
 
+      // 一题只结算一次。先前答错只加红框、不锁定，学生可以一路乱点到蒙对；
+      // 而每点错一次就写一笔 SM-2 lapse，等於用介面漏洞污染自己的复习排程。
+      function settleMcq(chosenIdx) {
+        if (isSolved) return;
+        isSolved = true;
+        const correct = chosenIdx === item.answer;
+
+        const btns = optBox.querySelectorAll('.option-btn');
+        btns.forEach((b, i) => {
+          b.classList.add('locked');
+          b.setAttribute('aria-disabled', 'true');
+          b.setAttribute('tabindex', '-1');
+          if (i === item.answer) {
+            b.classList.add('correct');
+            // 正确性不能只靠绿色传达：读屏与色觉障碍都读不到颜色
+            const tag = document.createElement('span');
+            tag.className = 'opt-tag';
+            tag.textContent = '正确答案';
+            b.appendChild(tag);
+          }
+        });
+        if (!correct) btns[chosenIdx].classList.add('wrong');
+
+        playSound(correct ? 'correct' : 'wrong');
+        const beforeStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
+        recordMcqResult(currentSubject, sec.id, currentMcqIdx, correct);
+        const afterStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
+        renderChapterRail();
+        updateWrongCountBadge();
+
+        expBox.style.display = 'block';
+        const box = document.getElementById('mcqVerdict');
+        if (box) {
+          // lastReviewInterval 由 recordMcqResult 写入，所以这一段必须排在它後面
+          const when = (window.UECReview && lastReviewInterval > 0)
+            ? window.UECReview.describeInterval(lastReviewInterval) : '';
+          box.className = 'mcq-verdict ' + (correct ? 'is-right' : 'is-wrong');
+          box.textContent = correct
+            ? `答对了。${when ? when + '。' : ''}`
+            : `答错了，正确答案是 ${'ABCD'[item.answer] || (item.answer + 1)}。已收进错题本，${when || '明天再看一次'}。`;
+          if (cameFromReview) {
+            const left = window.UECReview ? window.UECReview.dueCount(currentSubject, fullDatabase.sections || []) : 0;
+            const back = document.createElement('button');
+            back.type = 'button';
+            back.className = 'verdict-next';
+            back.textContent = left ? `回到今日复习（还剩 ${left} 题）→` : '今天的复习做完了 →';
+            back.onclick = () => switchSubSection('review');
+            box.appendChild(back);
+          }
+        }
+
+        if (correct && afterStats.total > 0 && afterStats.mastered === afterStats.total
+            && beforeStats.mastered < afterStats.total) {
+          playSound('achieve');
+          showAchieveToast(sec.title);
+        }
+
+        // 手机上解析常落在折线以下，不滚过去等於没显示
+        const anchor = box || expBox;
+        if (anchor && typeof anchor.scrollIntoView === 'function') {
+          const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          anchor.scrollIntoView({ block: 'center', behavior: still ? 'auto' : 'smooth' });
+        }
+      }
+
       item.options.forEach((opt, oIdx) => {
         const btn = document.createElement('div');
         btn.className = 'option-btn';
@@ -1497,31 +1759,7 @@ function openSubject(subject, initialChapterIdx) {
         }
         btn.setAttribute('role', 'button');
         btn.setAttribute('tabindex', '0');
-        btn.onclick = () => {
-          if (isSolved) return;
-
-          if (oIdx === item.answer) {
-            isSolved = true;
-            playSound('correct');
-            btn.classList.add('correct');
-            expBox.style.display = 'block';
-            optBox.querySelectorAll('.option-btn').forEach(b => b.classList.add('locked'));
-            const beforeStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
-            recordMcqResult(currentSubject, sec.id, currentMcqIdx, true);
-            const afterStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
-            renderChapterRail();
-            updateWrongCountBadge();
-            if (afterStats.total > 0 && afterStats.mastered === afterStats.total && beforeStats.mastered < afterStats.total) {
-              playSound('achieve');
-              showAchieveToast(sec.title);
-            }
-          } else {
-            playSound('wrong');
-            btn.classList.add('wrong');
-            recordMcqResult(currentSubject, sec.id, currentMcqIdx, false);
-            updateWrongCountBadge();
-          }
-        };
+        btn.onclick = () => settleMcq(oIdx);
         optBox.appendChild(btn);
       });
 
@@ -1594,6 +1832,7 @@ function openSubject(subject, initialChapterIdx) {
   let lastNavDir = 1;
 
   function navMcq(delta) {
+    cameFromReview = false;
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
     const newIdx = currentMcqIdx + delta;
     if (newIdx >= 0 && newIdx < sec.mcqs.length) {
@@ -1669,10 +1908,31 @@ function openSubject(subject, initialChapterIdx) {
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const el = document.activeElement;
-    if (el && el.getAttribute && el.getAttribute('role') === 'button') {
+    // 原生 <button> 自己会处理 Enter/空格，再补一次 click 会触发两次
+    if (el && el.getAttribute && el.tagName !== 'BUTTON' && ['button', 'tab'].includes(el.getAttribute('role'))) {
       e.preventDefault();
       el.click();
     }
+  });
+
+  // tablist 里只有选中的那一个在 Tab 顺序里，其余用方向键走（WAI-ARIA 分页惯例）。
+  // 这让 19 张章节卡从 19 个 Tab 停点变成 1 个。
+  document.addEventListener('keydown', (e) => {
+    const tab = e.target.closest && e.target.closest('[role="tab"]');
+    const list = tab && tab.closest('[role="tablist"]');
+    if (!list) return;
+    const tabs = [...list.querySelectorAll('[role="tab"]')];
+    let i = tabs.indexOf(tab);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') i = (i + 1) % tabs.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') i = (i - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'Home') i = 0;
+    else if (e.key === 'End') i = tabs.length - 1;
+    else return;
+    e.preventDefault();
+    tabs[i].click();
+    // 章节卡在 click 之後会整排重画，要去找新的那一颗
+    const now = list.querySelector('[role="tab"][aria-selected="true"]') || list.querySelectorAll('[role="tab"]')[i];
+    if (now) { now.focus(); now.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
   });
 
   // 注册 Service Worker：支持"添加到主屏幕"离线安装，弱网/离线时仍可打开上次访问过的内容
@@ -1684,13 +1944,16 @@ function openSubject(subject, initialChapterIdx) {
 
   // ---- 顶部导航：主页 / 笔记 / 题目档 / 网页问题申诉 ----
   function setActiveNav(btnId) {
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.id === btnId));
+    document.querySelectorAll('.nav-item').forEach(b => {
+      b.classList.toggle('active', b.id === btnId);
+      if (b.id === btnId) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
   }
 
   function setBreadcrumb(label) {
     document.getElementById('breadcrumbNav').innerHTML = `
-      <span class="breadcrumb-item" onclick="navigateHome()">主页</span> &gt;
-      <span class="breadcrumb-item active">${label}</span>`;
+      <button type="button" class="breadcrumb-item" onclick="navigateHome()">主页</button> &gt;
+      <span class="breadcrumb-item active" aria-current="page">${label}</span>`;
   }
 
   function navHome() {

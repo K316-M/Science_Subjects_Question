@@ -38,7 +38,10 @@ async function renderArchiveView() {
   area.innerHTML = `<div class="archive-empty">正在载入题库…</div>`;
 
   document.querySelectorAll('.archive-tab').forEach(t => {
-    t.classList.toggle('active', t.getAttribute('data-arc-subject') === archiveState.subject);
+    const on = t.getAttribute('data-arc-subject') === archiveState.subject;
+    t.classList.toggle('active', on);
+    t.setAttribute('aria-selected', String(on));
+    t.setAttribute('tabindex', on ? '0' : '-1');
   });
 
   const bank = await fetchBank(archiveState.subject);
