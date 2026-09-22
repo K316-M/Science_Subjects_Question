@@ -72,8 +72,20 @@ async function contrast(page, label, scope, R) {
       while (a && a !== document.documentElement) { const c = getComputedStyle(a); if (c.display === 'none' || c.visibility === 'hidden') { hid = true; break; } op *= parseFloat(c.opacity); a = a.parentElement; }
       if (hid || op < .05) continue;
       if (el.closest('.sr-only,.skip-link,[aria-hidden="true"]:not(.orbit-core)')) continue;
-      const r = document.createRange(); r.selectNodeContents(t); const rc = [...r.getClientRects()].find(x => x.width > 2 && x.height > 2);
-      if (!rc || rc.bottom < 0 || rc.top > innerHeight || rc.right < 0 || rc.left > innerWidth) continue;
+      const r = document.createRange(); r.selectNodeContents(t); const raw = [...r.getClientRects()].find(x => x.width > 2 && x.height > 2);
+      if (!raw) continue;
+      // 只取「真正看得到」的那一段：与视窗、以及每一层会裁切的祖先（overflow 不是 visible）取交集。
+      // 否则横向滑轨里被切掉一半的卡片，会取到裁切线外面的背景像素。
+      let L = Math.max(raw.left, 0), T = Math.max(raw.top, 0), Rt = Math.min(raw.right, innerWidth), B = Math.min(raw.bottom, innerHeight);
+      for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+        const c = getComputedStyle(p);
+        if (c.overflowX !== 'visible' || c.overflowY !== 'visible') {
+          const b = p.getBoundingClientRect();
+          L = Math.max(L, b.left); T = Math.max(T, b.top); Rt = Math.min(Rt, b.right); B = Math.min(B, b.bottom);
+        }
+      }
+      if (Rt - L < 4 || B - T < 4) continue;
+      const rc = { left: L, top: T, width: Rt - L, height: B - T };
       // 被黏在顶部的导航之类盖住的字，取到的是上层的像素，不算
       const cx = Math.min(innerWidth - 1, Math.max(0, rc.left + rc.width / 2)), cy = Math.min(innerHeight - 1, Math.max(0, rc.top + rc.height / 2));
       const hit = document.elementFromPoint(cx, cy);

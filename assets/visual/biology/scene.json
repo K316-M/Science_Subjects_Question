@@ -1,0 +1,265 @@
+{
+ "size": [
+  1672,
+  940
+ ],
+ "plate": "scene/plate.webp",
+ "layers": [
+  {
+   "src": "scene/cluster-tl.webp",
+   "box": [
+    0,
+    0,
+    366,
+    406
+   ],
+   "motion": "none",
+   "wide": false,
+   "tall": {
+    "left": "0",
+    "top": "0",
+    "width": "58vmin"
+   }
+  },
+  {
+   "src": "scene/dna.webp",
+   "box": [
+    1433,
+    0,
+    239,
+    571
+   ],
+   "motion": "float",
+   "speed": 14,
+   "wide": false,
+   "tall": {
+    "right": "0",
+    "top": "6%",
+    "width": "28vmin"
+   }
+  },
+  {
+   "src": "scene/cell-l.webp",
+   "box": [
+    89,
+    352,
+    163,
+    160
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "left": "-3%",
+    "top": "44%",
+    "width": "24vmin"
+   }
+  },
+  {
+   "src": "scene/leaf-top.webp",
+   "box": [
+    374,
+    0,
+    100,
+    73
+   ],
+   "motion": "sway",
+   "speed": 8,
+   "origin": "50% 0%",
+   "wide": true
+  },
+  {
+   "src": "scene/leaf-a.webp",
+   "box": [
+    298,
+    198,
+    53,
+    86
+   ],
+   "motion": "drift",
+   "speed": 11,
+   "wide": true,
+   "tall": {
+    "left": "9%",
+    "top": "31%",
+    "width": "7vmin"
+   }
+  },
+  {
+   "src": "scene/leaf-b.webp",
+   "box": [
+    229,
+    191,
+    62,
+    62
+   ],
+   "motion": "sway",
+   "speed": 9,
+   "origin": "0% 100%",
+   "wide": true
+  },
+  {
+   "src": "scene/leaf-c.webp",
+   "box": [
+    240,
+    430,
+    116,
+    83
+   ],
+   "motion": "drift",
+   "speed": 13,
+   "wide": true,
+   "tall": {
+    "left": "5%",
+    "top": "64%",
+    "width": "15vmin"
+   }
+  },
+  {
+   "src": "scene/leaf-d.webp",
+   "box": [
+    350,
+    668,
+    127,
+    116
+   ],
+   "motion": "sway",
+   "speed": 10,
+   "origin": "0% 100%",
+   "wide": true,
+   "tall": {
+    "left": "6%",
+    "bottom": "15%",
+    "width": "20vmin"
+   }
+  },
+  {
+   "src": "scene/leaf-e.webp",
+   "box": [
+    1256,
+    532,
+    83,
+    68
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "wide": true,
+   "tall": {
+    "right": "9%",
+    "top": "56%",
+    "width": "12vmin"
+   }
+  },
+  {
+   "src": "scene/leaf-f.webp",
+   "box": [
+    1382,
+    130,
+    67,
+    57
+   ],
+   "motion": "drift",
+   "speed": 14,
+   "wide": true
+  },
+  {
+   "src": "scene/cell-a.webp",
+   "box": [
+    1388,
+    300,
+    73,
+    73
+   ],
+   "motion": "bob",
+   "speed": 7,
+   "wide": true,
+   "tall": {
+    "right": "24%",
+    "top": "38%",
+    "width": "10vmin"
+   }
+  },
+  {
+   "src": "scene/cell-b.webp",
+   "box": [
+    1448,
+    346,
+    94,
+    65
+   ],
+   "motion": "bob",
+   "speed": 8,
+   "wide": true
+  },
+  {
+   "src": "scene/cell-c.webp",
+   "box": [
+    1360,
+    430,
+    87,
+    72
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "right": "5%",
+    "top": "66%",
+    "width": "13vmin"
+   }
+  },
+  {
+   "src": "scene/cell-d.webp",
+   "box": [
+    1358,
+    592,
+    56,
+    66
+   ],
+   "motion": "bob",
+   "speed": 7.5,
+   "wide": true
+  },
+  {
+   "src": "scene/dot-a.webp",
+   "box": [
+    265,
+    140,
+    39,
+    39
+   ],
+   "motion": "float",
+   "speed": 6,
+   "wide": true
+  },
+  {
+   "src": "scene/dot-b.webp",
+   "box": [
+    195,
+    527,
+    46,
+    46
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true,
+   "tall": {
+    "left": "22%",
+    "top": "50%",
+    "width": "3vmin"
+   }
+  },
+  {
+   "src": "scene/dot-c.webp",
+   "box": [
+    315,
+    729,
+    40,
+    40
+   ],
+   "motion": "float",
+   "speed": 6.5,
+   "wide": true
+  }
+ ]
+}

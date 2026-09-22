@@ -518,6 +518,19 @@
     }
     /* 小屏的背景是会动的，multiply 混合会跟着每帧重算，所以手机上不铺颗粒 */
     @media (max-width: 899px) { .grain-layer { display: none; } }
+    .has-scene .grain-layer { display: none; }
+    /* 会动的背景上，大面积的毛玻璃每帧都要重新模糊背後的画面：实测桌面 1920 从 60 掉到 28 fps，
+       只关掉这几块的模糊就回到 60（顶栏那条小的不影响）。水彩背景本来就淡，改成近乎不透明的纸面。 */
+    .has-scene .flashcard, .has-scene .sub-bookmark-bar, .has-scene .chapter-card,
+    .has-scene .empty-state, .has-scene .archive-toolbar {
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+    }
+    .has-scene { --card-bg: rgba(255, 255, 255, 0.9); }
+    .has-scene .sub-bookmark-bar { background: rgba(255, 255, 255, 0.86); }
+    .has-scene .chapter-card:not(.active) { background: rgba(255, 255, 255, 0.84); }
+    .has-scene .empty-state { background: rgba(255, 255, 255, 0.88); }
+    /* 面包屑直接压在背景上（没有卡片），手机上左上角的叶丛刚好在它後面：实测 4.29:1，调深一档 */
+    .has-scene .breadcrumbs { color: #334155; }
 
     /* 聚光灯：鼠标移过章节卡时，卡面浮现一圈跟着指标走的柔光 */
     .chapter-card::before {
@@ -1056,11 +1069,14 @@
       photoLayer.classList.add('active');
       wash.classList.add('has-photo');
     }
+    // 会动的分层背景：颗粒层的 multiply 混合会跟著每帧重算整个画面，而水彩本身已有纸纹，关掉
+    document.body.classList.toggle('has-scene', Boolean(customUrl && /scene\.json$/.test(customUrl)));
   }
   function clearSubjectBackground() {
     bgSessionId++; // 使尚未完成的自定义素材探测失效
     const wash = document.getElementById('subjectBgWash');
     if (wash) wash.classList.remove('active');
+    document.body.classList.remove('has-scene');
   }
 
   // ---- 环境背景音乐：优先使用 assets/audio/<subject>/ambient.*，找不到则用 Web Audio 生成式合成 ----

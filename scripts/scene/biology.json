@@ -1,0 +1,200 @@
+{
+ "_说明": "编号来自 analyze 输出的 components.png。wide=false 的图层已经画在底图里，只有直式画面（手机）才单独摆出来。",
+ "layers": [
+  {
+   "name": "cluster-tl",
+   "ids": [
+    2,
+    1,
+    6
+   ],
+   "motion": "none",
+   "wide": false,
+   "tall": {
+    "left": "0",
+    "top": "0",
+    "width": "58vmin"
+   }
+  },
+  {
+   "name": "dna",
+   "ids": [
+    4,
+    5
+   ],
+   "motion": "float",
+   "speed": 14,
+   "wide": false,
+   "fade_bottom": 110,
+   "tall": {
+    "right": "0",
+    "top": "6%",
+    "width": "28vmin"
+   }
+  },
+  {
+   "name": "cell-l",
+   "ids": [
+    21,
+    20
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "tall": {
+    "left": "-3%",
+    "top": "44%",
+    "width": "24vmin"
+   }
+  },
+  {
+   "name": "leaf-top",
+   "ids": [
+    3
+   ],
+   "motion": "sway",
+   "speed": 8,
+   "origin": "50% 0%"
+  },
+  {
+   "name": "leaf-a",
+   "ids": [
+    14
+   ],
+   "motion": "drift",
+   "speed": 11,
+   "tall": {
+    "left": "9%",
+    "top": "31%",
+    "width": "7vmin"
+   }
+  },
+  {
+   "name": "leaf-b",
+   "ids": [
+    13
+   ],
+   "motion": "sway",
+   "speed": 9,
+   "origin": "0% 100%"
+  },
+  {
+   "name": "leaf-c",
+   "ids": [
+    27
+   ],
+   "motion": "drift",
+   "speed": 13,
+   "tall": {
+    "left": "5%",
+    "top": "64%",
+    "width": "15vmin"
+   }
+  },
+  {
+   "name": "leaf-d",
+   "ids": [
+    58
+   ],
+   "motion": "sway",
+   "speed": 10,
+   "origin": "0% 100%",
+   "tall": {
+    "left": "6%",
+    "bottom": "15%",
+    "width": "20vmin"
+   }
+  },
+  {
+   "name": "leaf-e",
+   "ids": [
+    31
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "tall": {
+    "right": "9%",
+    "top": "56%",
+    "width": "12vmin"
+   }
+  },
+  {
+   "name": "leaf-f",
+   "ids": [
+    10
+   ],
+   "motion": "drift",
+   "speed": 14
+  },
+  {
+   "name": "cell-a",
+   "ids": [
+    18
+   ],
+   "motion": "bob",
+   "speed": 7,
+   "tall": {
+    "right": "24%",
+    "top": "38%",
+    "width": "10vmin"
+   }
+  },
+  {
+   "name": "cell-b",
+   "ids": [
+    19
+   ],
+   "motion": "bob",
+   "speed": 8
+  },
+  {
+   "name": "cell-c",
+   "ids": [
+    28
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "tall": {
+    "right": "5%",
+    "top": "66%",
+    "width": "13vmin"
+   }
+  },
+  {
+   "name": "cell-d",
+   "ids": [
+    36
+   ],
+   "motion": "bob",
+   "speed": 7.5
+  },
+  {
+   "name": "dot-a",
+   "ids": [
+    12
+   ],
+   "motion": "float",
+   "speed": 6
+  },
+  {
+   "name": "dot-b",
+   "ids": [
+    30
+   ],
+   "motion": "float",
+   "speed": 7,
+   "tall": {
+    "left": "22%",
+    "top": "50%",
+    "width": "3vmin"
+   }
+  },
+  {
+   "name": "dot-c",
+   "ids": [
+    75
+   ],
+   "motion": "float",
+   "speed": 6.5
+  }
+ ]
+}

@@ -11,6 +11,23 @@
  *
  * 找不到对应文件时，退回 assets/visual/default/、assets/audio/default/；
  * 再找不到就什么都不做，页面保持原样，不会报错也不会留白。
+ *
+ * 会动的分层背景：在同一个资料夹放一份 scene.json（优先於 background.*）。
+ *   {
+ *     "size":  [1672, 940],                 ← 原图尺寸（像素）
+ *     "plate": "scene/plate.webp",          ← 静态底图，铺满画面（cover）
+ *     "layers": [{
+ *       "src":    "scene/leaf-a.webp",      ← 路径相对於 scene.json
+ *       "box":    [308, 208, 33, 66],       ← 在原图上的位置 x, y, 宽, 高
+ *       "motion": "sway",                   ← none | sway 摇摆 | float 上下飘 | bob 轻晃 | drift 漂移
+ *       "speed":  9,                        ← 一个来回几秒
+ *       "origin": "50% 0%",                 ← 摇摆的支点（选填）
+ *       "wide":   true,                     ← 横式画面：放在原图的位置
+ *       "tall":   { "left": "4%", "top": "36%", "width": "16vmin" }
+ *                                           ← 直式画面（手机）：贴著视窗摆；不写就不显示
+ *     }]
+ *   }
+ * 为什么直式要另外摆：横图铺满手机时左右会被裁掉，边缘的插画就全不见了。
  */
 (function (global) {
   'use strict';
@@ -69,7 +86,16 @@
   }
 
   // 音乐的正式档名是 ambient，但 background 也认 —— 两个文件夹都用同一个词最不容易记错
-  const findBackground = scene => findIn('visual', scene, ['background', 'ambient'], VISUAL_EXT);
+  const findBackground = async scene => {
+    const scenes = scene === FALLBACK_SCENE ? [scene] : [scene, FALLBACK_SCENE];
+    for (const s of scenes) {
+      const layered = await exists(`/assets/visual/${s}/scene.json`);
+      if (layered) return layered;
+      const flat = await resolve(`/assets/visual/${s}/background`, VISUAL_EXT) || await resolve(`/assets/visual/${s}/ambient`, VISUAL_EXT);
+      if (flat) return flat;
+    }
+    return null;
+  };
   const findMusic = scene => findIn('audio', scene, ['ambient', 'background'], AUDIO_EXT);
 
   /* 把一张背景贴到指定元素上。
@@ -78,10 +104,94 @@
      来源是本站自己的档案，与页面同源，因此用 innerHTML 注入是安全的。 */
   const svgCache = new Map();
 
+  /* ---------- 分层场景（scene.json） ---------- */
+  // 只用 transform 做动画：每个元素是独立的合成层，GPU 直接搬，不重绘（DESIGN.md 原则 4）
+  const SCENE_CSS = `
+.scene{position:absolute;inset:0;overflow:hidden;container-type:size;}
+.scene img{position:absolute;display:block;max-width:none;user-select:none;-webkit-user-drag:none;}
+.scene-stage{position:absolute;left:50%;top:50%;width:100%;height:100%;
+  width:max(100cqw,calc(100cqh * var(--ar)));height:max(100cqh,calc(100cqw / var(--ar)));transform:translate(-50%,-50%);}
+.scene-plate{inset:0;width:100%;height:100%;object-fit:cover;}
+.scene .m-sway,.scene .m-float,.scene .m-bob,.scene .m-drift{will-change:transform;
+  animation:var(--anim) var(--spd,10s) ease-in-out var(--dly,0s) infinite alternate;}
+.scene .m-sway{--anim:scene-sway}.scene .m-float{--anim:scene-float}.scene .m-bob{--anim:scene-bob}.scene .m-drift{--anim:scene-drift}
+@keyframes scene-sway{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+@keyframes scene-float{from{transform:translateY(0)}to{transform:translateY(-9px)}}
+@keyframes scene-bob{from{transform:translate(0,0)}to{transform:translate(3px,-5px)}}
+@keyframes scene-drift{from{transform:translate(0,0) rotate(0)}to{transform:translate(9px,-11px) rotate(9deg)}}
+.scene .is-tall{display:none;}
+@media (max-aspect-ratio: 4/3){.scene .is-wide{display:none;}.scene .is-tall{display:block;}}
+@media (prefers-reduced-motion: reduce){.scene img{animation:none!important;}}
+`;
+  function injectSceneCss() {
+    if (document.getElementById('sceneLayersCss')) return;
+    const style = document.createElement('style');
+    style.id = 'sceneLayersCss';
+    style.textContent = SCENE_CSS;
+    document.head.appendChild(style);
+  }
+
+  const sceneCache = new Map();
+  async function paintScene(el, url) {
+    if (!sceneCache.has(url)) sceneCache.set(url, fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null));
+    const spec = await sceneCache.get(url);
+    if (!spec || !Array.isArray(spec.size)) return false;
+    injectSceneCss();
+    const base = url.replace(/[^/]*$/, '');
+    const [W, H] = spec.size;
+    const img = (src, cls) => {
+      const i = document.createElement('img');
+      i.src = base + src;
+      i.alt = '';
+      i.decoding = 'async';
+      if (cls) i.className = cls;
+      return i;
+    };
+    const root = document.createElement('div');
+    root.className = 'scene';
+    root.setAttribute('aria-hidden', 'true');
+    const stage = document.createElement('div');
+    stage.className = 'scene-stage';
+    stage.style.setProperty('--ar', String(W / H));
+    stage.appendChild(img(spec.plate, 'scene-plate'));
+    root.appendChild(stage);
+
+    (spec.layers || []).forEach((L, i) => {
+      const motion = L.motion && L.motion !== 'none' ? `m-${L.motion}` : '';
+      const tune = node => {
+        if (L.speed) node.style.setProperty('--spd', `${L.speed}s`);
+        // 错开相位，不要全部一起摆（负的延迟 = 一开始就在动画中途）
+        node.style.setProperty('--dly', `${-((i * 2.3) % (L.speed || 10))}s`);
+        if (L.origin) node.style.transformOrigin = L.origin;
+        return node;
+      };
+      if (L.wide && Array.isArray(L.box)) {
+        const [x, y, w, h] = L.box;
+        const n = tune(img(L.src, `is-wide ${motion}`));
+        Object.assign(n.style, { left: `${x / W * 100}%`, top: `${y / H * 100}%`, width: `${w / W * 100}%`, height: `${h / H * 100}%` });
+        stage.appendChild(n);
+      }
+      if (L.tall) {
+        const n = tune(img(L.src, `is-tall ${motion}`));
+        ['left', 'right', 'top', 'bottom', 'width'].forEach(k => { if (L.tall[k] !== undefined) n.style[k] = L.tall[k]; });
+        n.style.height = 'auto';
+        root.appendChild(n);
+      }
+    });
+    el.style.backgroundImage = '';
+    el.replaceChildren(root);
+    return true;
+  }
+
   async function paint(el, url) {
     if (!el) return;
     if (!url) {
       el.style.backgroundImage = '';
+      el.replaceChildren();
+      return;
+    }
+    if (/\.json(\?|$)/i.test(url)) {
+      if (await paintScene(el, url)) return;
       el.replaceChildren();
       return;
     }
