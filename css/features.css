@@ -114,6 +114,16 @@
   border-bottom: 1px solid rgba(148, 163, 184, 0.3);
 }
 .util-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* 手机上工具列放不下第五颗：护眼只留月亮（字还在，只是藏起来给读屏念），开著时整颗按钮上色 */
+#themeBtn[aria-pressed="true"] { border-color: var(--primary); color: var(--primary); }
+@media (max-width: 480px) {
+  .util-actions { gap: 5px; }
+  .util-actions .sound-toggle { padding-left: 8px; padding-right: 8px; }
+  #themeBtn .theme-txt {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+}
 
 /* ---------- 首页复古标题横幅 ---------- */
 .retro-hero { text-align: center; padding: 10px 0 26px; }

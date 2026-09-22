@@ -290,5 +290,9 @@
     "width": "62vmin"
    }
   }
- ]
+ ],
+ "night": {
+  "plate": "scene/plate-night.webp",
+  "layer_opacity": 0.32
+ }
 }

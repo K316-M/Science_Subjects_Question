@@ -1,10 +1,11 @@
-const CACHE_NAME = 'uec-science-cache-v10';
+const CACHE_NAME = 'uec-science-cache-v11';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
   '/css/features.css',
   '/css/orbit.css',
+  '/css/night.css',
   '/js/scene-assets.js',
   '/js/orbit-subjects.js',
   '/js/notes.js',
@@ -15,6 +16,7 @@ const APP_SHELL = [
   '/js/chapter-test.js',
   '/js/sync.js',
   '/js/sync-ui.js',
+  '/js/theme.js',
 ];
 
 self.addEventListener('install', (event) => {

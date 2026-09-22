@@ -10,8 +10,11 @@
   # 2. 看 /tmp/bio/components.png，决定哪些编号要组成哪个图层、怎么动，写进设定档
   #    （参考 scripts/scene/biology.json）
 
-  # 3. 产出：底图、各图层、scene.json
+  # 3. 产出：底图、各图层、scene.json（连护眼模式的夜色底图一起）
   python scripts/scene/build_scene.py build scripts/scene/biology.json /tmp/bio assets/visual/biology
+
+  # 只重做夜色底图（调 NIGHT_PAPER / NIGHT_K 之後）
+  python scripts/scene/build_scene.py night assets/visual/biology
 
 设定档里每个图层：
   ids     参考图上的元素编号（analyze 印出来的）
@@ -40,6 +43,39 @@ def paper_field(im):
     small = cv2.dilate(small, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (31, 31)))
     small = cv2.GaussianBlur(small, (0, 0), 12)
     return cv2.resize(small, (w, h), interpolation=cv2.INTER_CUBIC)
+
+
+# 护眼模式（深夜）的纸色：深暖灰，不用纯黑。颜料在夜里只剩 NIGHT_K 的浓度，像微光。
+# 图层在夜里的 CSS 透明度用同一个数（写进 scene.json 的 night.layer_opacity），底图和会动的元素才对得上。
+NIGHT_PAPER = (29, 27, 24)
+NIGHT_K = 0.32
+
+
+def lab_dist(im, paper):
+    lab = cv2.cvtColor(im, cv2.COLOR_BGR2LAB).astype(np.float32)
+    plab = cv2.cvtColor(paper, cv2.COLOR_BGR2LAB).astype(np.float32)
+    return np.sqrt(((lab - plab) ** 2).sum(axis=2))
+
+
+def make_night(dest):
+    """夜色底图：从白天的底图还原「颜料 + 透明度」，再以 NIGHT_K 的浓度画到深色纸上。"""
+    spec_path = os.path.join(dest, 'scene.json')
+    spec = json.load(open(spec_path, encoding='utf-8'))
+    plate = cv2.imread(os.path.join(dest, spec['plate']))
+    paper = paper_field(plate)
+    a = np.clip((lab_dist(plate, paper) - 5.0) / 32.0, 0, 1) ** 0.85
+    C, P = plate.astype(np.float32), paper.astype(np.float32)
+    F = np.clip((C - (1 - a[..., None]) * P) / np.maximum(a, 0.02)[..., None], 0, 255)
+    N = np.array(NIGHT_PAPER[::-1], np.float32)
+    w = (NIGHT_K * a)[..., None]
+    grain = (C - P) * (1 - a[..., None]) * 0.5           # 保留一点纸纹，深色大面积才不会像塑胶
+    night = np.clip(N * (1 - w) + F * w + grain, 0, 255).astype(np.uint8)
+    rel = os.path.join(os.path.dirname(spec['plate']), 'plate-night.webp')
+    Image.fromarray(night[..., ::-1]).save(os.path.join(dest, rel), quality=84, method=6)
+    spec['night'] = {'plate': rel, 'layer_opacity': NIGHT_K}
+    with open(spec_path, 'w', encoding='utf-8') as f:
+        f.write(json.dumps(spec, ensure_ascii=False, indent=1))
+    print(f"夜色底图 → {os.path.join(dest, rel)}（{os.path.getsize(os.path.join(dest, rel)) // 1024} KB）")
 
 
 def analyze(ref, work):
@@ -138,6 +174,7 @@ def build(config_path, work, dest):
         f.write(json.dumps(spec, ensure_ascii=False, indent=1))
     total = sum(os.path.getsize(os.path.join(layer_dir, x)) for x in os.listdir(layer_dir))
     print(f"{len(layers)} 个图层 + 底图，共 {total // 1024} KB → {dest}/scene.json")
+    make_night(dest)
 
 
 if __name__ == '__main__':
@@ -145,6 +182,8 @@ if __name__ == '__main__':
         analyze(sys.argv[2], sys.argv[3])
     elif len(sys.argv) == 5 and sys.argv[1] == 'build':
         build(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif len(sys.argv) == 3 and sys.argv[1] == 'night':
+        make_night(sys.argv[2])
     else:
         print(__doc__)
         sys.exit(1)

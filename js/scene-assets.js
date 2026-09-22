@@ -25,7 +25,10 @@
  *       "wide":   true,                     ← 横式画面：放在原图的位置
  *       "tall":   { "left": "4%", "top": "36%", "width": "16vmin" }
  *                                           ← 直式画面（手机）：贴著视窗摆；不写就不显示
- *     }]
+ *     }],
+ *     "night": { "plate": "scene/plate-night.webp", "layer_opacity": 0.32 }
+ *                                           ← 护眼模式（<html data-theme="night">）换这张深色底图，
+ *                                             图层降到同样的浓度；由 scripts/scene/build_scene.py 产生
  *   }
  * 为什么直式要另外摆：横图铺满手机时左右会被裁掉，边缘的插画就全不见了。
  */
@@ -127,6 +130,9 @@
   background:radial-gradient(70% 85% at 6% -6%,rgba(255,238,196,.62),rgba(255,238,196,0) 70%),
     radial-gradient(70% 85% at 94% -6%,rgba(255,238,196,.62),rgba(255,238,196,0) 70%);}
 .scene-glow .scene::after{opacity:1;}
+:root[data-theme="night"] .scene img:not(.scene-plate){opacity:var(--night-layer-opacity,.32);}
+:root[data-theme="night"] .scene img.is-tall{opacity:calc(var(--night-layer-opacity,.32) * .6);}
+:root[data-theme="night"] .scene-glow .scene::after{opacity:.35;}
 @media (prefers-reduced-motion: reduce){.scene img{animation:none!important;translate:none!important;transition:none!important;}}
 `;
   function injectSceneCss() {
@@ -135,6 +141,18 @@
     style.id = 'sceneLayersCss';
     style.textContent = SCENE_CSS;
     document.head.appendChild(style);
+  }
+
+  /* 护眼模式：<html data-theme="night">。切换时把已经画好的底图换成夜色那张（只有开护眼才会下载） */
+  const isNight = () => document.documentElement.getAttribute('data-theme') === 'night';
+  if (global.MutationObserver) {
+    new MutationObserver(() => {
+      const night = isNight();
+      document.querySelectorAll('.scene-plate[data-night]').forEach(p => {
+        const want = night ? p.dataset.night : p.dataset.day;
+        if (p.src !== want) p.src = want;
+      });
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
   const sceneCache = new Map();
@@ -159,7 +177,14 @@
     const stage = document.createElement('div');
     stage.className = 'scene-stage';
     stage.style.setProperty('--ar', String(W / H));
-    stage.appendChild(img(spec.plate, 'scene-plate'));
+    const plate = img(spec.plate, 'scene-plate');
+    if (spec.night && spec.night.plate) {
+      plate.dataset.day = plate.src;
+      plate.dataset.night = new URL(base + spec.night.plate, location.href).href;   // 跟 .src 一样用完整网址，才比得出有没有变
+      if (isNight()) plate.src = plate.dataset.night;
+      root.style.setProperty('--night-layer-opacity', String(spec.night.layer_opacity));
+    }
+    stage.appendChild(plate);
     root.appendChild(stage);
 
     (spec.layers || []).forEach((L, i) => {

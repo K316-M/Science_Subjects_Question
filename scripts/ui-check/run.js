@@ -352,6 +352,83 @@ async function run() {
     await m.ctx.close();
   });
 
+  await section('护眼模式', async () => {
+    const theme = page => page.evaluate(() => ({ t: document.documentElement.getAttribute('data-theme'), dcl: window.__themeAtDCL,
+      saved: localStorage.getItem('UEC_THEME_v1'), pressed: (document.getElementById('themeBtn') || {}).getAttribute && document.getElementById('themeBtn').getAttribute('aria-pressed') }));
+    const mark = ctx => ctx.addInitScript(() => document.addEventListener('DOMContentLoaded', () => { window.__themeAtDCL = document.documentElement.getAttribute('data-theme'); }));
+
+    // 装置是深色：一开就是护眼，而且在画面出来之前就定了（不会先闪白）
+    const d = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
+    await mark(d);
+    await d.addInitScript(() => { if (!sessionStorage.getItem('__s')) { sessionStorage.setItem('__s', 1); localStorage.setItem('UEC_ONBOARD_v1', JSON.stringify({ version: 1, ts: 1 })); } });
+    const dp = await d.newPage(); const derr = []; dp.on('pageerror', e => derr.push(String(e).slice(0, 200)));
+    await dp.goto(URL_); await dp.waitForTimeout(800);
+    const sys = await theme(dp);
+    check('护眼模式', '装置是深色模式：自动进入护眼，第一次画面前就定好', sys.t === 'night' && sys.dcl === 'night' && sys.pressed === 'true', JSON.stringify(sys));
+    await dp.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());
+    await dp.waitForTimeout(1500);
+    await dp.evaluate(() => document.querySelector('.panel-enter').click());
+    await dp.waitForTimeout(1800);
+    const sc = await dp.evaluate(() => { const p = document.querySelector('#customPhotoLayer .scene-plate'); const l = document.querySelector('#customPhotoLayer .scene img.is-wide');
+      return { plate: p ? p.src.split('/').pop() : '', op: l ? getComputedStyle(l).opacity : '' }; });
+    check('护眼模式', '水彩换成夜色底图，图层压暗', sc.plate === 'plate-night.webp' && Number(sc.op) < 0.5, JSON.stringify(sc));
+    const ans = CH1.mcqs[0].answer;
+    await dp.evaluate(a => document.querySelectorAll('#optContainer .option-btn')[(a + 1) % 4].click(), ans);
+    await dp.waitForTimeout(700);
+    await dp.evaluate(() => scrollTo(0, 0));
+    await contrast(dp, 'night desktop 答错後', null, R);
+    await shot(dp, 'night-desktop-answered');
+    await dp.evaluate(() => window.switchSubSection('wrong'));
+    await dp.waitForTimeout(400);
+    await contrast(dp, 'night desktop 错题本', null, R);
+    await dp.evaluate(() => { window.switchSubSection('mcq'); document.getElementById('testStartBtn').click(); });
+    await dp.waitForTimeout(500);
+    await dp.evaluate(() => document.querySelectorAll('#viewTest fieldset.test-q').forEach(f => f.querySelector('input').click()));
+    await dp.evaluate(() => document.querySelector('.test-submit').click());
+    await dp.waitForTimeout(500);
+    await contrast(dp, 'night desktop 测验结果', null, R);
+    await dp.evaluate(() => { const b = [...document.querySelectorAll('#viewTest button')].find(x => /返回练习/.test(x.textContent)); b && b.click(); openArchiveView(); });
+    await dp.waitForTimeout(600);
+    await contrast(dp, 'night desktop 题目档', null, R);
+    const pdf = await dp.evaluate(() => getComputedStyle(document.getElementById('pdfStage')).getPropertyValue('--text-main').trim());
+    check('护眼模式', 'PDF 汇出区保持白纸黑字', pdf === '#0f172a', pdf);
+    await dp.emulateMedia({ colorScheme: 'light' });
+    await dp.waitForTimeout(300);
+    const follow = await theme(dp);
+    check('护眼模式', '没手动选过：装置切回浅色就跟著切回', follow.t === 'day', JSON.stringify(follow));
+    check('护眼模式', '没有 JS 错误', derr.length === 0, derr[0]);
+    await d.close();
+
+    // 装置是浅色：手动开 → 记住；再关 → 跟装置一样，清掉纪录回到跟随
+    const { ctx, page, errors } = await open({ width: 390, height: 844, mobile: true });
+    const rows = () => page.evaluate(() => new Set([...document.querySelectorAll('.util-actions .sound-toggle')].map(b => Math.round(b.getBoundingClientRect().top))).size);
+    const r0 = await rows();
+    await page.evaluate(() => document.getElementById('themeBtn').click());
+    const on = await theme(page);
+    await page.reload(); await page.waitForTimeout(800);
+    const kept = await theme(page);
+    const r1 = await rows();
+    await page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());
+    await page.waitForTimeout(1500);
+    await contrast(page, 'night mobile 首页预览', null, R);
+    await shot(page, 'night-mobile-home');
+    await page.evaluate(() => document.querySelector('.panel-enter').click());
+    await page.waitForTimeout(1500);
+    await contrast(page, 'night mobile 做题', null, R);
+    await page.evaluate(() => document.getElementById('syncBtn').click());
+    await page.waitForTimeout(600);
+    await contrast(page, 'night mobile 同步', '.sync-box', R);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    await page.evaluate(() => document.getElementById('themeBtn').click());
+    const off = await theme(page);
+    check('护眼模式', '手动开启：记住选择，重新整理後还是护眼', on.t === 'night' && on.saved === 'night' && kept.t === 'night', `${JSON.stringify(on)} → ${JSON.stringify(kept)}`);
+    check('护眼模式', '再按一次关掉：跟装置一样，清掉纪录回到跟随装置', off.t === 'day' && off.saved === null && off.pressed === 'false', JSON.stringify(off));
+    check('护眼模式', '390px：多了护眼按钮，工具列仍然一行', r0 === 1 && r1 === 1, `白天 ${r0} 行、护眼 ${r1} 行`);
+    check('护眼模式', '没有 JS 错误（手机）', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('零题科目', async () => {
     const { ctx, page, errors } = await open({ width: 1440, height: 900 });
     await contrast(page, 'desktop 首页', null, R);

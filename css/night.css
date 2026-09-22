@@ -1,0 +1,313 @@
+/* 护眼模式（深夜读书）—— 只在 <html data-theme="night"> 时生效，白天的样式一行都没动。
+ *
+ * 开关在 js/theme.js（跟随装置的深色模式，也可以按「🌙 护眼」手动切换）。
+ * 原则（DESIGN.md 第六轮）：
+ *   - 深暖灰纸面，不用纯黑；字是米白，不用纯白。蓝光少、对比够但不刺眼
+ *   - 实心按钮用深玉绿底配米白字，不在黑暗里亮成一块
+ *   - 笔记画布、题目配图保留「纸」的颜色（调暗），深色笔迹和黑线图才看得见
+ *   - PDF 汇出（#pdfStage）永远是白纸黑字，这里不碰
+ * 为什么每条都带 [data-theme="night"]：做题测验、引导、同步的样式是 JS 後插进来的，
+ * 要比它们多一层才盖得过去。
+ */
+
+[data-theme="night"] {
+  color-scheme: dark;
+
+  --n-page: #1a1917;
+  --n-surface: #24221e;
+  --n-raised: #2c2924;
+  --n-hover: #34312b;
+  --n-sunken: #201e1b;
+  --n-border: rgba(240, 228, 206, .11);
+  --n-border-strong: rgba(240, 228, 206, .22);
+  --n-text: #e8e1d4;
+  --n-text-2: #c4bba9;
+  --n-btn: #2b634b;          /* 实心按钮：深玉绿 × 米白字 6.1:1 */
+  --n-btn-hover: #327356;
+  --n-btn-text: #f3eee4;
+  --n-paper: #e4ded1;        /* 笔记画布、配图：调暗的纸 */
+  --n-green: #9ad9b6;
+  --n-green-bg: rgba(111, 196, 150, .14);
+  --n-red: #f2aaa6;
+  --n-red-bg: rgba(226, 104, 98, .15);
+  --n-amber: #e9c682;
+  --n-amber-bg: rgba(230, 176, 84, .14);
+
+  --primary: #86cfa8;
+  --primary-dark: #a5dcbf;
+  --primary-light: rgba(134, 207, 168, .14);
+  --bg-nature: linear-gradient(180deg, #1c1b18 0%, #181715 100%);
+  --card-bg: rgba(36, 34, 30, .92);
+  --card-border: var(--n-border);
+  --text-main: var(--n-text);
+  --text-muted: #c9c0af;
+  --accent: #86c3e6;
+  --success: #7fcf9f;
+  --danger: #ee9a96;
+  --hl-yellow: rgba(233, 198, 130, .24);
+  --hl-green: rgba(134, 207, 168, .22);
+  --hl-pink: rgba(240, 168, 200, .22);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 16px -8px rgba(0, 0, 0, .45);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 24px -10px rgba(0, 0, 0, .55), 0 28px 56px -28px rgba(0, 0, 0, .6);
+  --shadow-form: 0 10px 25px -5px rgba(0, 0, 0, .4), 0 8px 10px -6px rgba(0, 0, 0, .3);
+
+  --retro-teal: #3f6a6f;
+  --retro-teal-dark: #8fc3c9;
+  --retro-cream: #2e2a24;
+  --retro-coral: #e7866f;
+  --retro-coral-deep: #e59a86;
+  --retro-dark: var(--n-text);
+  --retro-sand: #4a453d;
+
+  scrollbar-color: #4a453d var(--n-page);
+}
+
+/* ---------- 浏览器自己的部分：选取、游标、捲轴、表单 ---------- */
+[data-theme="night"] ::selection { background: rgba(134, 207, 168, .32); color: var(--n-text); }
+[data-theme="night"] body { caret-color: var(--primary); accent-color: var(--primary); }
+[data-theme="night"] .skip-link { background: var(--n-text); color: var(--n-page); }
+
+/* ---------- 背景 ---------- */
+[data-theme="night"] .floating-shapes .blob { opacity: .1; }
+[data-theme="night"] .subject-bg-wash .blob { opacity: .08; }
+[data-theme="night"] .grain-layer { display: none; }
+/* 白天这层是提亮的白纱；夜里改成顶端微微压暗，让导航与面包屑站得住 */
+[data-theme="night"] .custom-photo-layer::after {
+  background: linear-gradient(180deg, rgba(26, 25, 23, .35), rgba(26, 25, 23, 0) 40%);
+}
+[data-theme="night"] .has-scene { --card-bg: rgba(36, 34, 30, .93); }
+[data-theme="night"] .has-scene .sub-bookmark-bar { background: rgba(36, 34, 30, .9); }
+[data-theme="night"] .has-scene .chapter-card:not(.active) { background: rgba(36, 34, 30, .9); }
+[data-theme="night"] .has-scene .empty-state { background: rgba(36, 34, 30, .92); }
+/* 直接压在水彩上的字（没有卡片垫著）：手机上角落的元素就在它们後面，用最亮的那档字 */
+[data-theme="night"] .has-scene .breadcrumbs,
+[data-theme="night"] .has-scene .node-label { color: var(--n-text); }
+
+/* ---------- 顶栏、工具列 ---------- */
+[data-theme="night"] .nav-inner {
+  background: rgba(34, 32, 28, .78);
+  border-color: var(--n-border);
+  box-shadow: inset 0 1px 0 rgba(255, 244, 224, .06), 0 2px 6px rgba(0, 0, 0, .25), 0 18px 44px -20px rgba(0, 0, 0, .6);
+}
+[data-theme="night"] .nav-item { color: var(--n-text-2); }
+[data-theme="night"] .nav-item:hover, [data-theme="night"] .nav-item.active { color: var(--primary); }
+[data-theme="night"] .nav-logo {
+  background: linear-gradient(145deg, #3a352d, #2a2620);
+  border-color: rgba(233, 225, 212, .55);
+  color: var(--n-text);
+  box-shadow: 0 0 0 5px rgba(34, 32, 28, .8), inset 0 1px 2px rgba(255, 244, 224, .08), 0 10px 24px -10px rgba(0, 0, 0, .6);
+}
+[data-theme="night"] .util-bar { border-bottom-color: var(--n-border); }
+[data-theme="night"] .archive-toolbar label { color: var(--n-text) !important; }   /* 这个 label 的颜色写在 HTML 的 style 里 */
+[data-theme="night"] .sound-toggle { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
+
+/* ---------- 首页 ---------- */
+[data-theme="night"] .retro-hero-title {
+  color: var(--retro-teal-dark);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, .45), 5px 5px 0 rgba(143, 195, 201, .12);
+}
+[data-theme="night"] .retro-ribbon { box-shadow: 0 4px 0 rgba(0, 0, 0, .35); }
+[data-theme="night"] .page-heading, [data-theme="night"] .subject-title { color: var(--n-text); }
+[data-theme="night"] .subject-card:hover { background: var(--n-raised); }
+[data-theme="night"] .resume-card { background: linear-gradient(135deg, #2b634b, #2a5a74); color: var(--n-btn-text); }
+
+[data-theme="night"] .orbit-track.outer { border-color: rgba(134, 207, 168, .2); }
+[data-theme="night"] .orbit-track.inner { border-color: rgba(134, 195, 230, .12); }
+/* 球心在白天是一颗发亮的薄荷球；夜里是整页最亮的一点，压暗成科目色的暗面，字改米白 */
+[data-theme="night"] .orbit-core {
+  background: radial-gradient(circle at 34% 28%, color-mix(in oklab, var(--core-soft, #a7f3d0) 55%, #1a1917) 0%, color-mix(in oklab, var(--core-deep, #059669) 42%, #1a1917) 100%);
+  box-shadow: 0 0 0 10px rgba(134, 207, 168, .04), 0 14px 32px -12px rgba(0, 0, 0, .7);
+}
+[data-theme="night"] .orbit-core span { color: var(--n-text); text-shadow: 0 1px 3px rgba(0, 0, 0, .6); }
+[data-theme="night"] .node-disc { background: var(--n-raised); border-color: var(--n-border-strong); box-shadow: 0 8px 20px -10px rgba(0, 0, 0, .7); }
+[data-theme="night"] .node-arc .arc-bg { stroke: rgba(240, 228, 206, .1); }
+[data-theme="night"] .node-label { color: var(--n-text-2); text-shadow: 0 0 5px var(--n-page), 0 0 5px var(--n-page), 0 1px 2px rgba(0, 0, 0, .9); }
+[data-theme="night"] .orbit-node.is-selected .node-label {
+  color: var(--n-text); color: color-mix(in oklab, var(--accent-color) 45%, #fff);
+  background: rgba(36, 34, 30, .94); text-shadow: none;
+}
+[data-theme="night"] .orbit-panel { background: rgba(36, 34, 30, .97); border-color: var(--n-border-strong); box-shadow: 0 20px 44px -18px rgba(0, 0, 0, .8); }
+[data-theme="night"] .panel-bar { background: rgba(240, 228, 206, .1); }
+[data-theme="night"] .panel-stat strong { color: color-mix(in oklab, var(--accent-color) 45%, #fff); }
+[data-theme="night"] .panel-enter { color: var(--n-btn-text); background: color-mix(in oklab, var(--accent-color) 55%, #000); box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .8); }
+[data-theme="night"] .panel-enter[disabled] { background: var(--n-hover); color: var(--n-text-2); }
+[data-theme="night"] .panel-enter.is-quiet { background: transparent; color: var(--n-text); box-shadow: inset 0 0 0 1px var(--n-border-strong); }
+
+/* ---------- 章节卡、分页 ---------- */
+[data-theme="night"] .chapter-card { background: rgba(36, 34, 30, .72); border-color: var(--n-border); }
+[data-theme="night"] .chapter-card:hover { background: rgba(44, 41, 36, .92); border-color: rgba(134, 207, 168, .45); }
+[data-theme="night"] .chapter-card.active { background: var(--n-raised); border-color: var(--primary); }
+[data-theme="night"] .chapter-card::before { background: radial-gradient(160px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 244, 224, .07), rgba(255, 244, 224, 0) 62%); }
+[data-theme="night"] .chap-name { color: var(--n-text); }
+[data-theme="night"] .chap-progress-bar { background: rgba(240, 228, 206, .1); }
+[data-theme="night"] #wrongCountBadge { background: #b54640; color: #fff; }
+[data-theme="night"] .sub-bookmark-bar { background: rgba(36, 34, 30, .7); border-color: var(--n-border); box-shadow: inset 0 1px 0 rgba(255, 244, 224, .04), 0 1px 2px rgba(0, 0, 0, .2); }
+[data-theme="night"] .sub-tab-btn.active { background: var(--n-hover); }
+
+/* ---------- 选择题 ---------- */
+[data-theme="night"] .flashcard { box-shadow: inset 0 1px 0 rgba(255, 244, 224, .05), var(--shadow-md); }
+[data-theme="night"] .mcq-question, [data-theme="night"] .form-question-text { color: var(--n-text); }
+[data-theme="night"] .option-btn {
+  background: var(--n-raised); border-color: var(--n-border); color: var(--n-text);
+  box-shadow: inset 0 1px 0 rgba(255, 244, 224, .04), 0 1px 2px rgba(0, 0, 0, .2);
+}
+[data-theme="night"] .option-btn:hover:not(.locked) { background: var(--n-hover); border-color: rgba(134, 207, 168, .45); box-shadow: 0 6px 18px -8px rgba(0, 0, 0, .6); }
+[data-theme="night"] .opt-badge { background: var(--n-sunken); border-color: var(--n-border-strong); color: var(--n-text-2); box-shadow: none; }
+[data-theme="night"] .option-btn:hover:not(.locked) .opt-badge { background: var(--n-btn); border-color: var(--n-btn); color: var(--n-btn-text); }
+[data-theme="night"] .option-btn.correct { background: var(--n-green-bg) !important; border-color: var(--success) !important; color: var(--n-green) !important; }
+[data-theme="night"] .option-btn.correct .opt-badge { background: var(--n-btn); border-color: var(--n-btn); color: var(--n-btn-text); }
+[data-theme="night"] .option-btn.wrong { background: var(--n-red-bg); border-color: var(--danger); color: var(--n-red); }
+[data-theme="night"] .option-btn.wrong .opt-badge { background: #9b3434; border-color: #9b3434; color: var(--n-btn-text); }
+[data-theme="night"] .opt-tag { color: var(--n-green); border-color: rgba(154, 217, 182, .45); }
+[data-theme="night"] .mcq-verdict.is-right { background: var(--n-green-bg); color: var(--n-green); border-left-color: var(--primary); }
+[data-theme="night"] .mcq-verdict.is-wrong { background: var(--n-amber-bg); color: var(--n-amber); border-left-color: #c58b3a; }
+[data-theme="night"] .verdict-next { background: var(--n-raised); color: var(--primary); border-color: rgba(134, 207, 168, .4); }
+[data-theme="night"] .explanation { background: var(--n-green-bg); color: var(--n-green); }
+[data-theme="night"] .figure-container { background: var(--n-paper); border-color: var(--n-border); }
+[data-theme="night"] .figure-caption { color: #2a5a74; }
+[data-theme="night"] .card-footer { border-top-color: var(--n-border); }
+[data-theme="night"] .btn-nav { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .kbd-hint kbd { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .card-note-btn { box-shadow: 0 3px 8px rgba(0, 0, 0, .35); }
+[data-theme="night"] .card-note-btn:hover { background: var(--retro-teal); color: var(--n-text); }
+[data-theme="night"] .card-note-btn.has-note { background: #9c4a3a; border-color: #9c4a3a; color: var(--n-btn-text); }
+
+/* 实心的主要按钮：深玉绿 × 米白字 */
+[data-theme="night"] .empty-btn.primary, [data-theme="night"] .test-entry-btn, [data-theme="night"] .wrong-item-jump,
+[data-theme="night"] .test-submit, [data-theme="night"] .test-btn.primary, [data-theme="night"] .ob-btn:not(.ghost),
+[data-theme="night"] .sync-btn:not(.ghost), [data-theme="night"] .test-q.is-answered .test-q-no {
+  background: var(--n-btn); border-color: var(--n-btn); color: var(--n-btn-text); box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .7);
+}
+[data-theme="night"] .empty-btn.primary:hover, [data-theme="night"] .test-entry-btn:hover, [data-theme="night"] .wrong-item-jump:hover,
+[data-theme="night"] .test-submit:hover, [data-theme="night"] .test-btn.primary:hover { background: var(--n-btn-hover); }
+
+/* ---------- 做答题（闪卡）、划重点 ---------- */
+[data-theme="night"] .form-question-card { background: var(--n-surface); border-color: var(--n-border); }
+[data-theme="night"] .form-card-top-bar { background: linear-gradient(90deg, #2b634b, #2a5a74); }
+[data-theme="night"] .answer-flip-panel { background: var(--n-sunken); border-color: var(--n-border); }
+[data-theme="night"] .flip-toggle-header { background: var(--n-raised); }
+[data-theme="night"] .flip-toggle-header:hover { background: var(--n-hover); }
+[data-theme="night"] .flip-toggle-title { color: var(--n-text-2); }
+[data-theme="night"] .flip-status-pill { background: var(--n-sunken); }
+[data-theme="night"] .flip-answer-content { background: var(--n-surface); color: var(--n-text); }
+[data-theme="night"] .hl-btn-action { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .hl-color-btn.selected { border-color: var(--n-text); }
+[data-theme="night"] .hl-mark-yellow { color: var(--n-amber); }
+[data-theme="night"] .hl-mark-green { color: var(--n-green); }
+[data-theme="night"] .hl-mark-pink { color: #f0a8c8; }
+
+/* ---------- 空状态、今日复习、错题本、整章测验入口 ---------- */
+[data-theme="night"] .empty-state { background: rgba(36, 34, 30, .88); border-color: var(--n-border); box-shadow: inset 0 1px 0 rgba(255, 244, 224, .04), var(--shadow-sm); }
+[data-theme="night"] .empty-glyph { background: var(--n-green-bg); border-color: rgba(134, 207, 168, .2); }
+[data-theme="night"] .empty-title, [data-theme="night"] .review-count, [data-theme="night"] .test-entry-text strong,
+[data-theme="night"] .wrong-group-title { color: var(--n-text); }
+[data-theme="night"] .empty-btn { background: var(--n-raised); color: var(--primary); border-color: rgba(134, 207, 168, .35); }
+[data-theme="night"] .review-bar { background: rgba(134, 207, 168, .14); }
+[data-theme="night"] .review-item { background: var(--n-raised); border-color: var(--n-border); }
+[data-theme="night"] .review-item:hover { background: var(--n-hover); border-color: rgba(134, 207, 168, .45); }
+[data-theme="night"] .review-dot { border-color: rgba(134, 207, 168, .55); }
+[data-theme="night"] .review-q, [data-theme="night"] .wrong-row-q, [data-theme="night"] .wrong-item-q { color: var(--n-text); }
+[data-theme="night"] .review-meta em, [data-theme="night"] .wrong-book-head strong, [data-theme="night"] .wrong-group-n,
+[data-theme="night"] .wrong-group.is-stubborn .wrong-group-title, [data-theme="night"] .wrong-row-go { color: var(--n-red); }
+[data-theme="night"] .wrong-item-chapter { background: var(--n-red-bg); color: var(--n-red); }
+[data-theme="night"] .wrong-row { border-top-color: var(--n-border); }
+[data-theme="night"] .wrong-row:hover { background: rgba(226, 104, 98, .08); }
+[data-theme="night"] .wrong-row-meta em { color: var(--n-green); }
+[data-theme="night"] .wrong-group.is-stubborn { border-color: rgba(242, 170, 166, .35); box-shadow: 0 0 0 3px rgba(226, 104, 98, .08), var(--shadow-sm); }
+[data-theme="night"] .test-entry { background: rgba(36, 34, 30, .9); border-color: var(--n-border); box-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
+[data-theme="night"] .achieve-toast { background: linear-gradient(135deg, #2b634b, #2a5a74); color: var(--n-btn-text); box-shadow: 0 14px 30px -8px rgba(0, 0, 0, .6); }
+
+/* ---------- 整章测验（样式在 js/chapter-test.js） ---------- */
+[data-theme="night"] .test-bar, [data-theme="night"] .test-result { background: rgba(36, 34, 30, .95); border-color: var(--n-border); box-shadow: 0 2px 6px rgba(0, 0, 0, .25), 0 16px 36px -20px rgba(0, 0, 0, .7); }
+[data-theme="night"] .test-title, [data-theme="night"] .test-q-head, [data-theme="night"] .test-confirm-title { color: var(--n-text); }
+[data-theme="night"] .test-exit { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .test-meter { background: rgba(240, 228, 206, .1); }
+[data-theme="night"] .test-q { background: rgba(36, 34, 30, .93); border-color: var(--n-border); box-shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 10px 24px -14px rgba(0, 0, 0, .6); }
+[data-theme="night"] .test-q.is-missing { border-color: #c58b3a; box-shadow: 0 0 0 3px rgba(197, 139, 58, .2); }
+[data-theme="night"] .test-q-no { color: var(--n-green); background: var(--n-green-bg); }
+[data-theme="night"] .test-opt { background: var(--n-raised); border-color: var(--n-border); color: var(--n-text); }
+[data-theme="night"] .test-opt:hover { border-color: rgba(134, 207, 168, .45); }
+[data-theme="night"] .test-opt.is-checked, [data-theme="night"] .test-opt.is-right { background: var(--n-green-bg); border-color: var(--primary); color: var(--n-green); }
+[data-theme="night"] .test-opt.is-checked .opt-badge, [data-theme="night"] .test-opt.is-right .opt-badge { background: var(--n-btn); border-color: var(--n-btn); color: var(--n-btn-text); }
+[data-theme="night"] .test-opt.is-wrong { background: var(--n-red-bg); border-color: var(--danger); color: var(--n-red); }
+[data-theme="night"] .test-opt.is-wrong .opt-badge { background: #9b3434; border-color: #9b3434; color: var(--n-btn-text); }
+[data-theme="night"] .test-opt.is-plain:hover { border-color: var(--n-border); }
+[data-theme="night"] .test-submit[aria-disabled="true"] { background: var(--n-hover); border-color: var(--n-hover); color: var(--n-text-2); box-shadow: none; }
+[data-theme="night"] .test-submit-note.is-warn { color: var(--n-amber); }
+[data-theme="night"] .test-score, [data-theme="night"] .test-score-msg, [data-theme="night"] .test-confirm-body { color: var(--n-text); }
+[data-theme="night"] .test-btn { background: var(--n-raised); color: var(--primary); border-color: rgba(134, 207, 168, .35); }
+[data-theme="night"] .test-btn.danger { background: #9b3434; border-color: #9b3434; color: var(--n-btn-text); }
+[data-theme="night"] .test-q.is-result-wrong { border-color: rgba(242, 170, 166, .35); }
+[data-theme="night"] .test-exp { background: var(--n-green-bg); color: var(--n-green); border-left-color: var(--primary); }
+[data-theme="night"] .test-confirm-box { background: var(--n-surface); box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .8); }
+
+/* ---------- 对话框：首次引导、同步、笔记 ---------- */
+[data-theme="night"] .ob-mask, [data-theme="night"] .sync-mask, [data-theme="night"] .note-modal { background: rgba(8, 8, 7, .62); }
+[data-theme="night"] .ob-box, [data-theme="night"] .sync-box { background: rgba(36, 34, 30, .98); border-color: var(--n-border); box-shadow: inset 0 1px 0 rgba(255, 244, 224, .05), 0 28px 70px -28px rgba(0, 0, 0, .85); }
+[data-theme="night"] .ob-title, [data-theme="night"] .sync-title { color: var(--n-text); }
+[data-theme="night"] .ob-body { color: var(--n-text-2); }
+[data-theme="night"] .ob-dot { background: var(--n-border-strong); }
+[data-theme="night"] .ob-btn.ghost { color: var(--n-text-2); }
+[data-theme="night"] .ob-btn.ghost:hover { color: var(--n-text); }
+[data-theme="night"] .sync-code { background: var(--n-sunken); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .sync-btn.ghost { background: var(--n-raised); color: var(--n-text); border-color: var(--n-border-strong); }
+[data-theme="night"] .sync-btn[disabled] { background: var(--n-hover); color: var(--n-text-2); }
+[data-theme="night"] .sync-input, [data-theme="night"] .fb-input, [data-theme="night"] .fb-textarea, [data-theme="night"] .fb-select {
+  background: var(--n-sunken); border-color: var(--n-border-strong); color: var(--n-text);
+}
+
+[data-theme="night"] .note-dialog { background: var(--n-surface); box-shadow: 0 24px 60px -12px rgba(0, 0, 0, .8); }
+[data-theme="night"] .note-dialog-head { color: var(--n-text); }
+[data-theme="night"] .note-close-btn { color: var(--n-text); }
+[data-theme="night"] .note-toolbar, [data-theme="night"] .note-dialog-foot { background: var(--n-sunken); border-color: var(--n-border); }
+[data-theme="night"] .note-tool-btn { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .note-tool-btn.active { background: var(--retro-teal); border-color: var(--retro-teal); color: var(--n-text); }
+[data-theme="night"] .note-color-dot.selected { border-color: var(--n-text); }
+/* 画布保留纸色：笔记里有深色笔迹，画在黑底上会看不见 */
+[data-theme="night"] .note-stage-scroll { background: var(--n-sunken); }
+[data-theme="night"] .note-stage { background: var(--n-paper); border-color: var(--n-border); }
+[data-theme="night"] .note-snapshot-q { color: #1e293b; }
+[data-theme="night"] .note-snapshot-opt { color: #3b4453; border-color: rgba(30, 41, 59, .18); }
+[data-theme="night"] .note-snapshot-hint { color: #4b5563; }
+[data-theme="night"] .note-snapshot-tag { background: rgba(4, 120, 87, .14); color: #065f46; }
+[data-theme="night"] .note-text-area { border-top-color: var(--n-border); }
+[data-theme="night"] .note-text-area textarea { background: var(--n-sunken); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .btn-primary-retro { background: #9c4a3a; color: var(--n-btn-text); box-shadow: 0 4px 12px -2px rgba(0, 0, 0, .5); }
+[data-theme="night"] .btn-ghost-retro { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
+
+/* ---------- 笔记、题目档、申诉页 ---------- */
+[data-theme="night"] .note-card-preview { background: var(--n-paper); border-bottom-color: var(--n-border); }
+[data-theme="night"] .note-card-q { color: var(--n-text); }
+[data-theme="night"] .note-card-actions { background: var(--n-sunken); border-top-color: var(--n-border); }
+[data-theme="night"] .note-mini-btn { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .archive-subject-tabs { background: var(--n-sunken); border-color: var(--n-border); }
+[data-theme="night"] .archive-tab.active { background: var(--n-hover); }
+[data-theme="night"] .archive-chapter-head { background: var(--n-raised); }
+[data-theme="night"] .archive-chapter-title, [data-theme="night"] .archive-q-text { color: var(--n-text); }
+[data-theme="night"] .archive-q-row { border-bottom-color: var(--n-border); }
+[data-theme="night"] .archive-q-row:hover { background: var(--n-hover); }
+[data-theme="night"] .archive-q-badge.mcq { background: rgba(134, 195, 230, .16); color: #9fcfec; }
+[data-theme="night"] .archive-q-badge.subj { background: var(--n-amber-bg); color: var(--n-amber); }
+[data-theme="night"] .pdf-progress-box { background: var(--n-surface); }
+[data-theme="night"] .pdf-progress-text { color: var(--n-text); }
+[data-theme="night"] .fb-label, [data-theme="night"] .fb-report-text { color: var(--n-text); }
+[data-theme="night"] .fb-status.pending { background: var(--n-amber-bg); color: var(--n-amber); }
+[data-theme="night"] .fb-status.resolved { background: var(--n-green-bg); color: var(--n-green); }
+[data-theme="night"] .fb-report-reply { background: var(--n-green-bg); color: var(--n-green); }
+
+/* 通知小精灵 */
+[data-theme="night"] .sprite-panel, [data-theme="night"] .sprite-char { box-shadow: 0 12px 28px -8px rgba(0, 0, 0, .7); }
+[data-theme="night"] .sprite-btn { background: var(--n-raised); }
+[data-theme="night"] .sprite-btn:hover { background: var(--retro-teal); color: var(--n-text); }
+[data-theme="night"] .sprite-btn.ok:hover { background: var(--n-btn); color: var(--n-btn-text); }
+[data-theme="night"] .sprite-toggle { background: var(--n-hover); }
+[data-theme="night"] .sprite-toggle::after { background: var(--n-text); }
+[data-theme="night"] .sprite-bubble { background: #9c4a3a; color: var(--n-btn-text); }
+[data-theme="night"] .sprite-badge { border-color: var(--n-surface); }
+[data-theme="night"] .sprite-new-issue-box { background: var(--n-surface); }
+
+/* ---------- PDF 汇出：永远白纸黑字 ---------- */
+[data-theme="night"] #pdfStage {
+  color-scheme: light;
+  --text-main: #0f172a; --text-muted: #475569; --primary: #047857; --primary-dark: #065f46; --primary-light: #ecfdf5;
+}

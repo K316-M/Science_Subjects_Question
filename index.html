@@ -12,6 +12,15 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23047857'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='white' font-family='serif'%3E%E5%AD%A6%3C/text%3E%3C/svg%3E">
   <meta name="theme-color" content="#059669">
+  <script>
+    // 护眼模式：在画面第一次画出来之前就决定，不然会先闪一下白底。之後的切换在 js/theme.js
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('UEC_THEME_v1'); } catch (e) {}
+      if (t !== 'night' && t !== 'day') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="理科自学">
@@ -693,6 +702,7 @@
   <!-- 新功能样式放在最后，确保能覆盖上面的基础样式 -->
   <link rel="stylesheet" href="/css/features.css">
   <link rel="stylesheet" href="/css/orbit.css">
+  <link rel="stylesheet" href="/css/night.css">
 </head>
 <body data-scene="off">
 <a class="skip-link" href="#main">跳到主要内容</a>
@@ -728,6 +738,7 @@
     <div class="util-actions">
       <button class="sound-toggle" id="soundBtn" onclick="toggleSound()">🔊 音效：开</button>
       <button class="sound-toggle" id="musicBtn" onclick="toggleMusic()">🎼 音乐：关</button>
+      <button class="sound-toggle" id="themeBtn" type="button" aria-pressed="false" title="深夜读书用的深色画面"><span aria-hidden="true">🌙</span><span class="theme-txt"> 护眼：关</span></button>
       <button class="sound-toggle" id="syncBtn" type="button">☁️ 同步</button>
       <button class="sound-toggle" id="guideBtn" type="button">❔ 引导</button>
     </div>
@@ -2165,6 +2176,7 @@ function openSubject(subject, initialChapterIdx) {
 
 </script>
 <script src="/js/orbit-subjects.js"></script>
+<script src="/js/theme.js"></script>
 <script src="/js/notes.js"></script>
 <script src="/js/archive.js"></script>
 <script src="/js/feedback.js"></script>
