@@ -1,0 +1,364 @@
+#!/usr/bin/env node
+/* 一键 UI 检查
+ *   第一次：cd scripts/ui-check && npm install
+ *   之後：  node scripts/ui-check/run.js
+ *
+ * 每一项都来自评审或 bug 实际抓到过的问题——不是泛泛的测试，是「这些坏过，别再坏」。
+ * 全部通过才会回传 0；截图放在 scripts/ui-check/out/，改版後至少看一眼。
+ */
+const fs = require('fs');
+const path = require('path');
+const { chromium } = require('playwright-core');
+const { ROOT, OUT, serve, findChrome, contrast } = require('./lib');
+
+const DAY = 864e5;
+const results = [];
+const check = (group, name, pass, detail) => results.push({ group, name, pass: Boolean(pass), detail: detail === undefined ? '' : detail });
+const bank = JSON.parse(fs.readFileSync(path.join(ROOT, 'papers', 'biology_question_bank.json'), 'utf8'));
+const CH1 = bank.sections[0];
+
+let URL_, browser;
+
+async function open({ width = 390, height = 844, mobile = false, reducedMotion, seed } = {}) {
+  const ctx = await browser.newContext({ viewport: { width, height }, hasTouch: mobile, isMobile: mobile, reducedMotion });
+  // sessionStorage 标记：只在第一次载入时塞资料，重新整理不会把测试中的状态洗掉
+  await ctx.addInitScript((seed) => {
+    if (sessionStorage.getItem('__seeded')) return;
+    sessionStorage.setItem('__seeded', '1');
+    localStorage.setItem('UEC_ONBOARD_v1', JSON.stringify({ version: 1, ts: 1 }));
+    if (seed) Object.entries(seed).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
+  }, seed || null);
+  const page = await ctx.newPage();
+  const errors = [], requests = [];
+  page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
+  page.on('request', r => requests.push(new URL(r.url()).pathname));
+  await page.goto(URL_);
+  await page.waitForTimeout(1000);
+  return { ctx, page, errors, requests };
+}
+async function enter(page, orbitIdx = 0) {
+  // 轨道球一直在转，Playwright 等不到「静止」，所以直接在页面里点
+  await page.evaluate(i => document.querySelectorAll('.orbit-node')[i].click(), orbitIdx);
+  await page.waitForTimeout(450);
+  await page.evaluate(() => document.querySelector('.panel-enter').click());
+  await page.waitForTimeout(1100);
+}
+async function section(group, fn) {
+  try { await fn(); }
+  catch (e) { check(group, '执行时出错', false, String(e.message || e).split('\n')[0].slice(0, 160)); }
+}
+const shot = (page, name) => page.screenshot({ path: path.join(OUT, name + '.png') });
+
+/* ================================================================ */
+
+async function run() {
+  fs.mkdirSync(OUT, { recursive: true });
+  const R = [];   // 对比度样本
+
+  await section('载入', async () => {
+    const { ctx, page, errors, requests } = await open();
+    check('载入', '没有 JS 错误', errors.length === 0, errors[0]);
+    check('载入', '不会每次载入就打同步 API', !requests.some(u => u.startsWith('/api/sync')));
+    check('载入', '不会去要 /favicon.ico', !requests.includes('/favicon.ico'));
+    await contrast(page, 'mobile 首页', null, R);
+    await shot(page, 'mobile-home');
+    await ctx.close();
+  });
+
+  await section('版面', async () => {
+    for (const w of [320, 360, 390, 768, 1440]) {
+      const { ctx, page } = await open({ width: w, height: 844 });
+      await enter(page);
+      await page.evaluate(() => { document.getElementById('wrongCountBadge').textContent = '12'; document.getElementById('reviewCountBadge').textContent = '8'; });
+      await page.waitForTimeout(150);
+      const r = await page.evaluate(() => {
+        const tops = new Set([...document.querySelectorAll('.nav-item')].map(e => Math.round(e.getBoundingClientRect().top)));
+        return { overflow: document.documentElement.scrollWidth - innerWidth, rows: tops.size,
+          fb: document.getElementById('navFeedbackBtn').innerText.trim() };
+      });
+      check('版面', `${w}px 带双徽章：无横向溢出`, r.overflow === 0, `溢出 ${r.overflow}px`);
+      check('版面', `${w}px：顶栏一行且「报错／申诉」有字`, r.rows === 1 && r.fb.length > 0, `${r.rows} 行，标签「${r.fb}」`);
+      await ctx.close();
+    }
+  });
+
+  await section('答错结算', async () => {
+    const { ctx, page, errors } = await open();
+    await enter(page);
+    const ans = CH1.mcqs[0].answer;
+    const r = await page.evaluate((ans) => {
+      const o = [...document.querySelectorAll('#optContainer .option-btn')];
+      const wrong = o.findIndex((_, i) => i !== ans);
+      o[wrong].click();
+      o.forEach(x => x.click());   // 乱点：每一颗都再点一次
+      const rec = JSON.parse(localStorage.getItem('UEC_REVIEW_v1') || '{}');
+      return {
+        wrongMarked: o.filter(x => x.classList.contains('wrong')).length,
+        locked: o.every(x => x.classList.contains('locked') && x.getAttribute('aria-disabled') === 'true'),
+        correctTagged: !!o[ans].querySelector('.opt-tag'),
+        exp: getComputedStyle(document.getElementById('expContainer')).display,
+        verdict: document.getElementById('mcqVerdict').textContent,
+        lapses: Object.values(rec)[0] && Object.values(rec)[0].lapses,
+      };
+    }, ans);
+    check('答错结算', '答错即锁定，乱点也只记一个错', r.wrongMarked === 1 && r.locked, `标错 ${r.wrongMarked} 个`);
+    check('答错结算', '标出正确答案（有文字，不只靠颜色）', r.correctTagged);
+    check('答错结算', '展开解析并说出正确答案', r.exp === 'block' && r.verdict.includes('正确答案是'), r.verdict);
+    check('答错结算', '复习排程只记一次错', r.lapses === 1, `lapses=${r.lapses}`);
+    check('答错结算', '没有 JS 错误', errors.length === 0, errors[0]);
+    await page.waitForTimeout(600);
+    await page.evaluate(() => scrollTo(0, 0));
+    await contrast(page, 'mobile 答错後', null, R);
+    await shot(page, 'mobile-answered');
+    await ctx.close();
+  });
+
+  await section('错题本', async () => {
+    const legacyWrong = { biology: { [bank.sections[1].id]: { 0: 'wrong' } } };   // 复习功能上线前留下的错题
+    const { ctx, page, errors } = await open({ seed: { UEC_PROGRESS_v1: legacyWrong } });
+    await enter(page);
+    const r = await page.evaluate(({ c1, DAY }) => {
+      const R = window.UECReview;
+      const base = new Date(); base.setHours(10, 0, 0, 0);
+      const t = base.getTime();
+      const s = [];
+      R.record('biology', c1, 0, false, t);             s.push(R.isWeakItem('biology', c1, 0));   // 答错 → 收进来
+      R.record('biology', c1, 0, true, t + 3600e3);     s.push(R.isWeakItem('biology', c1, 0));   // 同一天答对 → 还在
+      R.record('biology', c1, 0, true, t + 7200e3);     s.push(R.isWeakItem('biology', c1, 0));   // 同一天再对 → 还在
+      R.record('biology', c1, 0, true, t + DAY);        s.push(R.isWeakItem('biology', c1, 0));   // 隔天答对 → 移出
+      R.record('biology', c1, 0, false, t + 5 * DAY);   s.push(R.isWeakItem('biology', c1, 0));   // 掌握後又错 → 回来
+      for (let k = 0; k < 3; k++) R.record('biology', c1, 1, false, t + k * DAY);                  // 连错 3 次 → 顽固
+      window.updateWrongCountBadge();   // 上面绕过介面直接写纪录；真实作答时介面会做这一步
+      return s;
+    }, { c1: CH1.id, DAY });
+    check('错题本', '答错就收进来', r[0] === true);
+    check('错题本', '同一天连对两次不移出', r[1] === true && r[2] === true);
+    check('错题本', '不同的两天都答对才移出', r[3] === false);
+    check('错题本', '以前答对过、後来又错，会重新收回', r[4] === true);
+    await page.evaluate(() => window.switchSubSection('wrong'));
+    await page.waitForTimeout(500);
+    const v = await page.evaluate(() => ({
+      stubbornTitle: (document.querySelector('.wrong-group.is-stubborn .wrong-group-title') || {}).textContent || '',
+      stubbornMeta: (document.querySelector('.wrong-group.is-stubborn .wrong-row-meta') || {}).textContent || '',
+      rows: document.querySelectorAll('.wrong-row').length,
+      badge: document.getElementById('wrongCountBadge').textContent,
+    }));
+    check('错题本', '错 3 次以上排在「顽固题」', v.stubbornTitle.includes('顽固') && v.stubbornMeta.includes('错过 3 次'), v.stubbornMeta);
+    check('错题本', '旧版留下的错题也在（共 3 题：顽固 1、重新收回 1、旧版 1）', v.rows === 3 && v.badge === '3', `${v.rows} 行，徽章 ${v.badge}`);
+    check('错题本', '没有 JS 错误', errors.length === 0, errors[0]);
+    await contrast(page, 'mobile 错题本', null, R);
+    await shot(page, 'mobile-wrong-book');
+    await ctx.close();
+  });
+
+  await section('今日复习', async () => {
+    const now = Date.now();
+    const rec = off => ({ ease: 2.3, interval: 3, reps: 1, lapses: 0, last: now - 5 * DAY, due: now - off });
+    const seed = { UEC_REVIEW_v1: { [`biology__${bank.sections[1].id}__1`]: rec(4 * DAY), [`biology__${bank.sections[2].id}__2`]: rec(60e3) } };
+    const { ctx, page, errors } = await open({ seed });
+    await enter(page);
+    await page.evaluate(() => window.switchSubSection('review'));
+    await page.waitForTimeout(400);
+    const c0 = await page.evaluate(() => document.querySelector('.review-count').textContent.trim());
+    await contrast(page, 'mobile 今日复习', null, R);
+    await shot(page, 'mobile-review');
+    await page.evaluate(() => document.querySelector('.review-head .empty-btn').click());
+    await page.waitForTimeout(600);
+    await page.evaluate(() => document.querySelectorAll('#optContainer .option-btn')[0].click());
+    await page.waitForTimeout(300);
+    const back = await page.evaluate(() => (document.querySelector('.verdict-next') || {}).textContent || '');
+    await page.evaluate(() => document.querySelector('.verdict-next').click());
+    await page.waitForTimeout(400);
+    const c1 = await page.evaluate(() => document.querySelector('.review-count').textContent.trim());
+    await page.evaluate(() => document.querySelector('.review-head .empty-btn').click());
+    await page.waitForTimeout(600);
+    await page.evaluate(() => document.querySelectorAll('#optContainer .option-btn')[0].click());
+    await page.waitForTimeout(300);
+    await page.evaluate(() => window.switchSubSection('review'));
+    await page.waitForTimeout(400);
+    const end = await page.evaluate(() => (document.querySelector('.empty-title') || {}).textContent || '');
+    check('今日复习', '显示今天的进度', c0.replace(/\s+/g, '') === '今天0/2题', c0);
+    check('今日复习', '从复习进来的题，作答後有「回到今日复习」', back.includes('回到今日复习'), back);
+    check('今日复习', '做一题後进度前进', c1.replace(/\s+/g, '') === '今天1/2题', c1);
+    check('今日复习', '做完有收尾画面', end.includes('做完了'), end);
+    check('今日复习', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
+  await section('键盘', async () => {
+    const { ctx, page, errors } = await open({ width: 1280, height: 900 });
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(300);
+    const skip = await page.evaluate(() => ({ cls: document.activeElement.className, top: document.activeElement.getBoundingClientRect().top }));
+    check('键盘', '第一下 Tab 出现「跳到主要内容」', skip.cls === 'skip-link' && skip.top >= 0);
+    await enter(page);
+    // 走「跳到主要内容」这条捷径：第一下 Tab 到跳转链接、Enter，之後再数
+    // 直接聚焦跳转链接：Chrome 会记住「上次 Tab 到哪」，blur 之後再按 Tab 不一定从页首开始
+    await page.evaluate(() => { scrollTo(0, 0); document.querySelector('.skip-link').focus(); });
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(200);
+    let n = 0;
+    for (; n < 40; n++) {
+      await page.keyboard.press('Tab');
+      if (await page.evaluate(() => document.activeElement.classList.contains('option-btn'))) break;
+    }
+    check('键盘', '经跳转链接到第一个选项 ≤ 10 下 Tab', n + 1 <= 10, `${n + 1} 下`);
+    await page.evaluate(() => document.querySelector('#chapterRail [tabindex="0"]').focus());
+    const ch0 = await page.evaluate(() => document.querySelector('#chapterRail [aria-selected="true"]').getAttribute('aria-label'));
+    await page.keyboard.press('ArrowRight');
+    await page.waitForTimeout(600);
+    const ch = await page.evaluate(() => ({ now: document.querySelector('#chapterRail [aria-selected="true"]').getAttribute('aria-label'),
+      focused: document.activeElement.getAttribute('aria-selected') === 'true' }));
+    check('键盘', '章节列用方向键切换，焦点跟著走', ch.now !== ch0 && ch.focused);
+    await page.evaluate(() => { window.openSubject('biology'); });
+    await page.waitForTimeout(1100);
+    await page.evaluate(() => document.body.focus());
+    const q1 = await page.evaluate(() => document.querySelector('.mcq-question').textContent);
+    await page.keyboard.press('b');
+    await page.waitForTimeout(250);
+    const answered = await page.evaluate(() => document.querySelectorAll('#optContainer .option-btn')[1].matches('.correct,.wrong'));
+    await page.keyboard.press('ArrowRight');
+    await page.waitForTimeout(500);
+    const q2 = await page.evaluate(() => document.querySelector('.mcq-question').textContent);
+    check('键盘', '快捷键：B 作答、→ 换题', answered && q1 !== q2);
+    for (const [btn, box] of [['#syncBtn', '.sync-box'], ['#guideBtn', '.ob-box']]) {
+      await page.evaluate(() => window.navigateHome());
+      await page.waitForTimeout(400);
+      await page.focus(btn);
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(600);
+      const inside = await page.evaluate(s => document.querySelector(s).contains(document.activeElement), box);
+      let stayed = 0;
+      for (let k = 0; k < 8; k++) { await page.keyboard.press(k % 3 === 2 ? 'Shift+Tab' : 'Tab'); if (await page.evaluate(s => document.querySelector(s).contains(document.activeElement), box)) stayed++; }
+      if (box === '.sync-box') await contrast(page, 'desktop 同步弹窗', '.sync-box', R);
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(500);
+      const restored = await page.evaluate(b => document.activeElement === document.querySelector(b), btn);
+      check('键盘', `${box === '.sync-box' ? '同步' : '引导'}弹窗：焦点进入、困住、关闭後还原`, inside && stayed === 8 && restored, `进入 ${inside}，困住 ${stayed}/8，还原 ${restored}`);
+    }
+    check('键盘', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
+  await section('减少动态', async () => {
+    const { ctx, page } = await open({ reducedMotion: 'reduce' });
+    await enter(page);
+    const r = await page.evaluate(() => ({
+      card: getComputedStyle(document.querySelector('.flashcard')).animationName,
+      view: getComputedStyle(document.getElementById('viewStudy')).animationName,
+    }));
+    check('减少动态', '题卡与视图不做滑入动画', r.card === 'none' && r.view === 'none', `题卡 ${r.card}，视图 ${r.view}`);
+    await ctx.close();
+  });
+
+  await section('零题科目', async () => {
+    const { ctx, page, errors } = await open({ width: 1440, height: 900 });
+    await contrast(page, 'desktop 首页', null, R);
+    await page.evaluate(() => document.querySelectorAll('.orbit-node')[1].click());
+    await page.waitForTimeout(600);
+    const panel = await page.evaluate(() => { const e = document.querySelector('.panel-enter'); return { text: e.textContent, quiet: e.classList.contains('is-quiet') }; });
+    check('零题科目', '轨道面板：主按钮降级为「看章节大纲」', panel.quiet && panel.text === '看章节大纲', panel.text);
+    await contrast(page, 'desktop 轨道面板（化学）', '#orbitStage', R);
+    await page.evaluate(() => document.querySelector('.panel-enter').click());
+    await page.waitForTimeout(1100);
+    const r = await page.evaluate(() => ({ title: (document.querySelector('.empty-title') || {}).textContent || '',
+      bar: getComputedStyle(document.querySelector('.sub-bookmark-bar')).display }));
+    check('零题科目', '进去是诚实的终点，并收起四个分页', r.title.includes('还没开始') && r.bar === 'none', r.title);
+    check('零题科目', '没有 JS 错误', errors.length === 0, errors[0]);
+    await contrast(page, 'desktop 化学空科目', null, R);
+    await ctx.close();
+  });
+
+  for (const vp of [{ width: 390, height: 844, mobile: true, tag: 'mobile' }, { width: 1440, height: 900, mobile: false, tag: 'desktop' }]) {
+    await section(`整章测验（${vp.tag}）`, async () => {
+      const G = `整章测验（${vp.tag}）`;
+      const { ctx, page, errors } = await open(vp);
+      await enter(page);
+      await page.evaluate(() => document.getElementById('testStartBtn').click());
+      await page.waitForTimeout(500);
+      const s = await page.evaluate(() => ({
+        nav: getComputedStyle(document.querySelector('.top-nav')).display,
+        n: document.querySelectorAll('#viewTest fieldset.test-q').length,
+        legendInside: (() => { const f = document.querySelector('#viewTest fieldset.test-q'); return f.querySelector('legend').getBoundingClientRect().top >= f.getBoundingClientRect().top + 4; })(),
+        overflow: document.documentElement.scrollWidth - innerWidth,
+      }));
+      check(G, '进入後隐藏导航，一次列出整章', s.nav === 'none' && s.n === CH1.mcqs.length, `${s.n} 题`);
+      check(G, '题号与题干在卡片里、无横向溢出', s.legendInside && s.overflow === 0);
+      if (vp.tag === 'mobile') { await contrast(page, 'mobile 测验作答', null, R); await shot(page, 'mobile-test-form'); }
+      await page.evaluate(() => document.querySelector('.test-submit').click());
+      await page.waitForTimeout(500);
+      const miss = await page.evaluate(() => document.querySelectorAll('.test-q.is-missing').length);
+      check(G, '没答完不能交卷，漏掉的题会标出来', miss === s.n, `标出 ${miss} 题`);
+      await page.evaluate(() => document.querySelectorAll('#viewTest fieldset.test-q').forEach(f => f.querySelector('input').click()));
+      await page.evaluate(() => document.querySelector('.test-exit').click());
+      await page.waitForTimeout(250);
+      const cf = await page.evaluate(() => ({ shown: !document.querySelector('.test-confirm').hidden, focus: document.activeElement.textContent }));
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(200);
+      const still = await page.evaluate(() => document.getElementById('viewTest').classList.contains('active') && document.querySelector('.test-confirm').hidden);
+      check(G, '作答中退出要确认，预设停在「继续作答」，Esc 取消', cf.shown && cf.focus === '继续作答' && still);
+      await page.evaluate(() => document.querySelector('.test-submit').click());
+      await page.waitForTimeout(700);
+      const rec1 = await page.evaluate(() => localStorage.getItem('UEC_REVIEW_v1'));
+      const keys = Object.keys(JSON.parse(rec1 || '{}')).length;
+      check(G, '交卷後每题记一次', keys === s.n, `${keys} 笔纪录`);
+      if (vp.tag === 'mobile') { await contrast(page, 'mobile 测验结果', null, R); await shot(page, 'mobile-test-result'); }
+      else await shot(page, 'desktop-test-result');
+      const redo = await page.evaluate(() => { const b = [...document.querySelectorAll('.test-actions .test-btn')].find(x => x.textContent.startsWith('重做')); if (b) b.click(); return !!b; });
+      if (redo) {
+        await page.waitForTimeout(400);
+        await page.evaluate(() => document.querySelectorAll('#viewTest fieldset.test-q').forEach(f => f.querySelectorAll('input')[1].click()));
+        await page.evaluate(() => document.querySelector('.test-submit').click());
+        await page.waitForTimeout(600);
+        const rec2 = await page.evaluate(() => localStorage.getItem('UEC_REVIEW_v1'));
+        check(G, '重做不写进复习排程', rec2 === rec1);
+      }
+      await page.evaluate(() => [...document.querySelectorAll('.test-actions .test-btn')].find(x => x.textContent === '返回练习').click());
+      await page.waitForTimeout(600);
+      const back = await page.evaluate(() => ({ study: document.getElementById('viewStudy').classList.contains('active'), focus: document.activeElement.id }));
+      check(G, '返回练习，焦点回到「开始测验」', back.study && back.focus === 'testStartBtn');
+      await page.evaluate(() => document.getElementById('testStartBtn').click());
+      await page.waitForTimeout(300);
+      await page.evaluate(() => document.querySelector('#viewTest input').click());
+      let dialog = null;
+      page.on('dialog', async d => { dialog = d.type(); await d.dismiss(); });
+      check(G, '没有 JS 错误', errors.length === 0, errors[0]);
+      await page.close({ runBeforeUnload: true });
+      await new Promise(r => setTimeout(r, 600));
+      check(G, '作答中关闭分页会被拦下', dialog === 'beforeunload');
+      await ctx.close();
+    });
+  }
+
+  // 对比度汇总：同一个元素同一种颜色只算一次，取最差的那个样本
+  const uniq = {};
+  R.forEach(x => { const k = x.sel + '|' + x.fg; if (!uniq[k] || x.r < uniq[k].r) uniq[k] = x; });
+  const all = Object.values(uniq);
+  const fails = all.filter(x => x.r < x.need).sort((a, b) => a.r - b.r);
+  check('对比度', `${all.length} 组文字 / 背景全部达 WCAG AA`, fails.length === 0,
+    fails.length ? fails.slice(0, 6).map(x => `${x.r}:1 ${x.sel} 「${x.txt}」 [${x.view}]`).join('\n        ')
+      : `最薄余量 ${all.sort((a, b) => (a.r - a.need) - (b.r - b.need))[0].r}:1`);
+}
+
+(async () => {
+  const exe = findChrome();
+  try { browser = await chromium.launch({ executablePath: exe }); }
+  catch (e) {
+    console.error('找不到 Chromium。请在 scripts/ui-check 里执行：npx playwright-core install chromium\n（或设定 CHROME_PATH 指向 Chrome／Chromium）');
+    process.exit(2);
+  }
+  const { server, url } = await serve();
+  URL_ = url;
+  const t0 = Date.now();
+  try { await run(); }
+  finally { await browser.close(); server.close(); }
+
+  let group = '';
+  for (const r of results) {
+    if (r.group !== group) { group = r.group; console.log(`\n${group}`); }
+    console.log(`  ${r.pass ? '✅' : '❌'} ${r.name}${!r.pass && r.detail ? `\n        ${r.detail}` : (r.pass && r.detail && r.group === '对比度' ? `（${r.detail}）` : '')}`);
+  }
+  const failed = results.filter(r => !r.pass).length;
+  console.log(`\n${failed ? '❌' : '✅'} ${results.length - failed} / ${results.length} 通过，用时 ${Math.round((Date.now() - t0) / 1000)} 秒。截图在 ${path.relative(process.cwd(), OUT) || OUT}/`);
+  process.exit(failed ? 1 : 0);
+})();

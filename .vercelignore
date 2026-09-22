@@ -1,0 +1,20 @@
+# 不部署到网站的档案。
+# repo 是私有的，但网站是公开的：不排除的话，下面这些都能直接用网址读到。
+# 注意：papers/ 与 data/ 前台和工作台会读，不能排除。
+
+# 维护用文件
+OPERATIONS.md
+DESIGN.md
+CLAUDE.md
+FEATURE.md
+INSPECTION_REPORT.md
+All_chapter.md
+has_issues.txt
+
+# GitHub Actions 与本机工具用的脚本、素材，网站用不到
+scripts/
+drafts/
+syllabus/
+.github/
+.claude/
+.vscode/

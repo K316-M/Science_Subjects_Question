@@ -22,6 +22,12 @@
 
   const itemKey = (subject, chapterId, mcqIdx) => `${subject}__${chapterId}__${mcqIdx}`;
 
+  // 错题本的移出条件：答错之後，要在「不同的两天」都答对。
+  // 同一天连对两次不算——刚看完答案马上答对，多半只是短期记忆。
+  const WEAK_EXIT_DAYS = 2;
+  const STUBBORN_LAPSES = 3;      // 错 3 次以上标「顽固」
+  const localDay = t => new Date(t).toLocaleDateString('en-CA');   // YYYY-MM-DD，用本地时区
+
   function load() {
     try { return JSON.parse(localStorage.getItem(REVIEW_KEY)) || {}; }
     catch (e) { return {}; }
@@ -38,6 +44,9 @@
     const prev = store[key] || { ease: EASE_START, interval: 0, reps: 0, lapses: 0 };
 
     let { ease, interval, reps, lapses } = prev;
+    // 旧纪录没有 okDays，用 reps 近似（reps 也是「上次答错之後答对几次」）
+    let okDays = prev.okDays !== undefined ? prev.okDays : Math.min(prev.reps || 0, WEAK_EXIT_DAYS);
+    let lastOkDay = prev.lastOkDay || null;
 
     if (isCorrect) {
       reps += 1;
@@ -46,11 +55,15 @@
       if (reps === 1) interval = 1;
       else if (reps === 2) interval = 3;
       else interval = Math.min(MAX_INTERVAL_DAYS, Math.round(interval * ease));
+      const today = localDay(now);
+      if (lastOkDay !== today) { okDays += 1; lastOkDay = today; }
     } else {
       reps = 0;
       lapses += 1;
       ease = Math.max(EASE_MIN, ease - EASE_DOWN);
       interval = 1;
+      okDays = 0;          // 以前答对过也一样：忘了就重新收回错题本
+      lastOkDay = null;
     }
 
     store[key] = {
@@ -58,6 +71,8 @@
       interval,
       reps,
       lapses,
+      okDays,
+      lastOkDay,
       last: now,
       due: now + interval * DAY,
     };
@@ -88,6 +103,43 @@
     return out;
   }
 
+  /* 这一题算不算「还没掌握」：答错过，而且答错之後还没在不同的两天都答对 */
+  function isWeak(rec) {
+    if (!rec || !rec.lapses) return false;
+    const ok = rec.okDays !== undefined ? rec.okDays : Math.min(rec.reps || 0, WEAK_EXIT_DAYS);
+    return ok < WEAK_EXIT_DAYS;
+  }
+
+  /* 错题本：该科所有还没掌握的题，顽固的（错 3 次以上）排前面 */
+  function weakList(subject, sections) {
+    const store = load();
+    const out = [];
+    (sections || []).forEach((sec, chapterIdx) => {
+      (sec.mcqs || []).forEach((q, mcqIdx) => {
+        const rec = store[itemKey(subject, sec.id, mcqIdx)];
+        if (!isWeak(rec)) return;
+        const okDays = rec.okDays !== undefined ? rec.okDays : Math.min(rec.reps || 0, WEAK_EXIT_DAYS);
+        out.push({
+          chapterIdx, mcqIdx,
+          chapterTitle: sec.title || `第 ${chapterIdx + 1} 章`,
+          question: q.q || '',
+          lapses: rec.lapses,
+          okDays,
+          stubborn: rec.lapses >= STUBBORN_LAPSES,
+        });
+      });
+    });
+    return out;
+  }
+
+  /* 某一题是否有复习纪录（错题本要知道「这题是不是在复习功能上线前答的」） */
+  function hasRecord(subject, chapterId, mcqIdx) {
+    return Boolean(load()[itemKey(subject, chapterId, mcqIdx)]);
+  }
+  function isWeakItem(subject, chapterId, mcqIdx) {
+    return isWeak(load()[itemKey(subject, chapterId, mcqIdx)]);
+  }
+
   function dueCount(subject, sections, now = Date.now()) {
     return dueList(subject, sections, now).length;
   }
@@ -112,5 +164,9 @@
     return `约 ${Math.round(days / 30)} 个月后再看`;
   }
 
-  global.UECReview = { REVIEW_KEY, record, dueList, dueCount, nextDueAt, describeInterval, itemKey };
+  global.UECReview = {
+    REVIEW_KEY, WEAK_EXIT_DAYS, STUBBORN_LAPSES,
+    record, dueList, dueCount, nextDueAt, describeInterval, itemKey,
+    weakList, isWeakItem, hasRecord,
+  };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,0 +1,12 @@
+{
+  "name": "uec-ui-check",
+  "private": true,
+  "description": "一键 UI 检查：版面、对比度、键盘、作答与测验流程",
+  "scripts": {
+    "check": "node run.js"
+  },
+  "devDependencies": {
+    "playwright-core": "1.63.0",
+    "pngjs": "7.0.0"
+  }
+}

@@ -133,7 +133,14 @@ https://science-subjects-question.vercel.app/dev/#pending
 - 网址加 `?guide=1` 会强制重看，方便你自己检查
 - 引导内容如果日後大改，把 `js/onboarding.js` 里的 `VERSION` 加一，老用户会再看一次
 
-**📕 错题本** —— 答错过、还没答对的题目会自动收进来。
+**📕 错题本** —— 收的是「还没掌握」的题：
+
+- 任何时候答错都会收进来，**以前答对过也一样**（忘了就重新收回）
+- 要在**不同的两天**都答对才会移出；同一天连对两次不算（刚看完答案马上答对，多半只是短期记忆）
+- 错 3 次以上的题排在最上面的「顽固题」
+- 规则写在 `js/review.js` 开头的 `WEAK_EXIT_DAYS`（几天）与 `STUBBORN_LAPSES`（几次算顽固）
+
+**📝 整章测验** —— 选择题画面上方的「开始测验」。一次做完一章的全部选择题，全部答完才能交卷，交卷才看答案；测验中隐藏导航，只能交卷或「退出测验」。**只计第一次交卷**，重做只当练习，不影响复习排程。
 
 **📅 今日复习** —— 依间隔重复排程，告诉学生今天该再看哪几题：
 
@@ -332,6 +339,21 @@ python3 -m http.server 8080
 
 ⚠️ 这样开的话 `/api/` 接口不会动（开发者工作台登不进去），但学生网站的所有功能都能测。
 
+### 一键 UI 检查（改了介面之後跑一次）
+
+自动开浏览器把网站走一遍：手机与桌面的版面、文字对比度、键盘操作、答错结算、错题本规则、今日复习、整章测验。每一项都是以前真的坏过的地方。
+
+```bash
+cd scripts/ui-check
+npm install                      # 只有第一次需要
+npx playwright-core install chromium   # 只有第一次、而且电脑上没有 Chromium 时才需要
+node run.js
+```
+
+- 全部 ✅ 才代表可以推送；有 ❌ 会写出是哪一项、差多少
+- 截图放在 `scripts/ui-check/out/`，至少看一眼——有些问题只有眼睛看得出来
+- 大约跑 2–3 分钟
+
 ### 流水线跑完了，却没有开 PR
 
 「创建待审核 Pull Request」那步显示 ⊘（跳过）＋整个 job 只花几秒 ＝ **一题都没产出**。
@@ -373,9 +395,14 @@ python3 -m http.server 8080
 
 **这个仓库目前是私有的**（你已经改过来了），所以：
 
-- 试卷照片、题目、答案不会被外人看到，版权压力小很多
 - 但**网站本身仍然是公开的** —— 任何人都能打开 `science-subjects-question.vercel.app`
-  看到题目。私有的只是原始码与素材档案
+  看到题目
+- ⚠️ **Vercel 预设会把整个仓库当网站部署**。仓库私有，不代表里面的档案不能用网址读到。
+  所以根目录有一份 `.vercelignore`，列出**不部署**的档案：这份手册、DESIGN.md、
+  `drafts/`（试卷照片）、`syllabus/`（考纲）、`scripts/`、`.github/` 等
+- 以後新增「只给自己看」的档案或资料夹，记得加进 `.vercelignore`。
+  检查方法：浏览器打开 `https://science-subjects-question.vercel.app/档案路径`，应该是 404
+- `papers/`（题库）与 `data/`（申诉处理结果）**不能**排除：网站和工作台要读
 - 任何密钥、令牌、密码**只能放在 Vercel／GitHub 的设定页**，绝不能写进档案
   （就算仓库私有也一样：档案会被部署到公开网站上）
 - Vercel 和 GitHub 两边都建议开两步验证
@@ -416,6 +443,8 @@ js/scene-assets.js      背景与音乐的装载器（路径规则在这）
 js/notes.js             笔记画布
 js/archive.js           题目档与 PDF 下载
 js/feedback.js          申诉与通知小精灵
+js/review.js            复习排程与错题本规则
+js/chapter-test.js      整章测验
 
 papers/*.json           三科正式题库
 papers/pending_approval.json   待审区（AI 产物先进这里）
@@ -427,6 +456,8 @@ assets/visual|audio/    背景图与音乐
 api/                    Vercel 无伺服器接口（登录、会话、一键发布）
 dev/                    开发者工作台（独立的深色网站）
 scripts/                录题、出题、巡检三支 Python 脚本
+scripts/ui-check/       一键 UI 检查（node run.js）
+.vercelignore           不部署到网站的档案清单
 .github/workflows/      三条自动化流水线
 data/resolved_issues.json      申诉处理结果（由工作台写入）
 ```

@@ -9,3 +9,7 @@ GENERATION_REPORT.md
 
 # impeccable 的执行期快取（二进位档下载到这里，不该进仓库）
 .impeccable/
+
+# 一键 UI 检查：依赖与截图输出不进仓库
+scripts/ui-check/node_modules/
+scripts/ui-check/out/
