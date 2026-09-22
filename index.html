@@ -519,6 +519,8 @@
     /* 小屏的背景是会动的，multiply 混合会跟着每帧重算，所以手机上不铺颗粒 */
     @media (max-width: 899px) { .grain-layer { display: none; } }
     .has-scene .grain-layer { display: none; }
+    /* 首页预览水彩时，底下的四颗模糊光团被整张盖住；等淡入做完（.7s）就不画了 */
+    .has-scene .floating-shapes { visibility: hidden; transition: visibility 0s .7s; }
     /* 会动的背景上，大面积的毛玻璃每帧都要重新模糊背後的画面：实测桌面 1920 从 60 掉到 28 fps，
        只关掉这几块的模糊就回到 60（顶栏那条小的不影响）。水彩背景本来就淡，改成近乎不透明的纸面。 */
     .has-scene .flashcard, .has-scene .sub-bookmark-bar, .has-scene .chapter-card,
@@ -1046,6 +1048,8 @@
   // assets/audio/<科目>/ambient.*，找不到时退回 default/，再找不到就用内置的生成式设计。
 
   let bgSessionId = 0;
+  // 背景层现在画著哪一科：首页预览过的，按「进入」时直接沿用，不要清掉重画（会闪一下）
+  let bgShown = null;
 
   async function applySubjectBackground(subject) {
     const sessionId = ++bgSessionId;
@@ -1053,6 +1057,15 @@
     const theme = SUBJECT_THEME[subject];
     const photoLayer = document.getElementById('customPhotoLayer');
     if (!wash || !theme) return;
+    SceneAssets.setParallax(photoLayer, false);
+    if (bgShown && bgShown.subject === subject) {
+      wash.classList.add('active');
+      document.body.classList.toggle('has-scene', bgShown.scene);
+      updateSceneGlow();
+      return;
+    }
+    bgShown = null;
+    SceneAssets.glow(photoLayer, false);
 
     document.getElementById('washBlobA').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
     document.getElementById('washBlobB').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
@@ -1068,15 +1081,43 @@
       if (sessionId !== bgSessionId) return;
       photoLayer.classList.add('active');
       wash.classList.add('has-photo');
+      bgShown = { subject, scene: /scene\.json$/.test(customUrl) };
     }
     // 会动的分层背景：颗粒层的 multiply 混合会跟著每帧重算整个画面，而水彩本身已有纸纹，关掉
-    document.body.classList.toggle('has-scene', Boolean(customUrl && /scene\.json$/.test(customUrl)));
+    document.body.classList.toggle('has-scene', Boolean(bgShown && bgShown.scene));
+    updateSceneGlow();
   }
   function clearSubjectBackground() {
     bgSessionId++; // 使尚未完成的自定义素材探测失效
     const wash = document.getElementById('subjectBgWash');
     if (wash) wash.classList.remove('active');
     document.body.classList.remove('has-scene');
+    SceneAssets.setParallax(null, false);
+  }
+
+  // 首页：在轨道上选到有水彩场景的科目，先把那一科的背景淡入，桌面上跟著鼠标错开。
+  // 只有 scene.json 的科目才预览；其他科目维持首页原本的光团。由 js/orbit-subjects.js 呼叫。
+  let previewing = null;
+  async function previewSubjectBackground(subject) {
+    previewing = subject;
+    const onHome = () => document.getElementById('viewSubjects').classList.contains('active');
+    if (!subject || !onHome()) { clearSubjectBackground(); return; }
+    const url = await SceneAssets.findBackground(subject);
+    if (previewing !== subject || !onHome()) return;
+    if (!url || !/scene\.json$/.test(url)) { clearSubjectBackground(); return; }
+    await applySubjectBackground(subject);
+    if (previewing === subject && onHome()) SceneAssets.setParallax(document.getElementById('customPhotoLayer'), true);
+  }
+
+  // 今天这一科的复习做完了，背景透进一片暖光（js/scene-assets.js 的 glow），一直留到换科目。
+  // 背景和题库各自非同步载入，两边都到齐、而且是同一科才算（loadedSubject 在 loadSubjectData 里设）
+  function updateSceneGlow() {
+    let done = false;
+    if (bgShown && bgShown.scene && bgShown.subject === loadedSubject && window.UECReview) {
+      const due = window.UECReview.dueList(loadedSubject, fullDatabase.sections || []);
+      done = due.length === 0 && todayQueue(loadedSubject, due).total > 0;
+    }
+    SceneAssets.glow(document.getElementById('customPhotoLayer'), done);
   }
 
   // ---- 环境背景音乐：优先使用 assets/audio/<subject>/ambient.*，找不到则用 Web Audio 生成式合成 ----
@@ -1360,6 +1401,7 @@
 
   // 全局当前科目变量（放在脚本顶部与其他 let 变量同一处）
 let currentSubject = 'biology';
+let loadedSubject = null;   // fullDatabase 目前装的是哪一科（载入中时 currentSubject 已经换了，它还没）
 
 // 支持根据当前选中的学科，动态载入对应的题库
 async function loadSubjectData(subjectName, initialChapterIdx) {
@@ -1391,11 +1433,13 @@ async function loadSubjectData(subjectName, initialChapterIdx) {
       }
 
       // 更新界面
+      loadedSubject = subjectName;
       activeChapterIdx = (typeof initialChapterIdx === 'number' && fullDatabase.sections[initialChapterIdx]) ? initialChapterIdx : 0;
       currentMcqIdx = 0;
       renderChapterRail();
       renderActiveContent();
       updateWrongCountBadge();
+      updateSceneGlow();
       if (fullDatabase.sections.length > 0) saveLastVisit(subjectName, activeChapterIdx);
       console.log(`✅ 从 ${targetPath} 载入题库成功`);
       return;
@@ -1776,6 +1820,7 @@ function openSubject(subject, initialChapterIdx) {
         const afterStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
         renderChapterRail();
         updateWrongCountBadge();
+        updateSceneGlow();
 
         expBox.style.display = 'block';
         const box = document.getElementById('mcqVerdict');
@@ -1803,6 +1848,8 @@ function openSubject(subject, initialChapterIdx) {
             && beforeStats.mastered < afterStats.total) {
           playSound('achieve');
           showAchieveToast(sec.title);
+          // 背景回应学习：整章都答对的那一刻，水彩里的元素闪一下金光（平常答对、答错背景都不动）
+          SceneAssets.shine(document.getElementById('customPhotoLayer'));
         }
 
         // 手机上解析常落在折线以下，不滚过去等於没显示
@@ -1908,18 +1955,27 @@ function openSubject(subject, initialChapterIdx) {
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
     if (!sec || !(sec.mcqs || []).length || !window.UECTest) return;
     const subject = currentSubject;
+    // 跟练习一样：这一次交卷让整章从「还没全对」变成「全对」，背景闪一下金光
+    let wasComplete = getChapterProgress(subject, sec.id, sec.mcqs.length).mastered === sec.mcqs.length;
     window.UECTest.start({
       subjectLabel: SUBJECT_LABELS[subject] || '',
       chapterTitle: sec.title,
       questions: sec.mcqs.map((m, idx) => Object.assign({}, m, { idx })),
       showView,
       playSound,
-      onRecord: (idx, correct) => recordMcqResult(subject, sec.id, idx, correct),
+      onRecord: (idx, correct) => {
+        recordMcqResult(subject, sec.id, idx, correct);
+        const now = getChapterProgress(subject, sec.id, sec.mcqs.length);
+        const complete = now.mastered === now.total;
+        if (complete && !wasComplete) SceneAssets.shine(document.getElementById('customPhotoLayer'));
+        wasComplete = complete;
+      },
       onClose: () => {
         showView('viewStudy');
         renderChapterRail();
         updateWrongCountBadge();
         renderActiveContent();
+        updateSceneGlow();
         const btn = document.getElementById('testStartBtn');
         if (btn) btn.focus({ preventScroll: true });
       },

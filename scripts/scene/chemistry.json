@@ -1,0 +1,25 @@
+{
+ "_说明": "rect = 在参考图上圈出元素的框 [x, y, 宽, 高]。小元素排前面、大的锚点排最後，锚点才不会把框里的小元素也拿走。wide=false 的图层已经画在底图里，只有直式画面（手机）才单独摆出来。叠在底部色带上的小元素不拆（一拆就会把色带也挖走一块）。",
+ "layers": [
+  {"name": "hex-a",     "rect": [307, 114, 65, 69],   "motion": "drift", "speed": 13, "tall": {"left": "9%", "top": "31%", "width": "9vmin"}},
+  {"name": "dot-a",     "rect": [381, 41, 30, 29],    "motion": "float", "speed": 6},
+  {"name": "bubble-a",  "rect": [227, 188, 38, 37],   "motion": "float", "speed": 7, "tall": {"left": "22%", "top": "50%", "width": "5vmin"}},
+  {"name": "atom-l",    "rect": [86, 285, 145, 142],  "motion": "bob",   "speed": 9, "tall": {"left": "-3%", "top": "44%", "width": "22vmin"}},
+  {"name": "water-l",   "rect": [223, 410, 92, 73],   "motion": "drift", "speed": 11},
+  {"name": "drop-l",    "rect": [15, 442, 36, 54],    "motion": "float", "speed": 7},
+  {"name": "flask-l",   "rect": [78, 488, 87, 122],   "motion": "bob",   "speed": 10, "tall": {"left": "5%", "top": "63%", "width": "13vmin"}},
+  {"name": "bubbles-l", "rect": [218, 583, 89, 77],   "motion": "float", "speed": 8, "tall": {"left": "6%", "bottom": "15%", "width": "15vmin"}},
+  {"name": "dot-r",     "rect": [1366, 54, 29, 29],   "motion": "float", "speed": 6.5},
+  {"name": "bubble-r",  "rect": [1312, 102, 46, 45],  "motion": "float", "speed": 7.5},
+  {"name": "atom-r",    "rect": [1399, 197, 109, 109],"motion": "bob",   "speed": 9, "tall": {"right": "22%", "top": "36%", "width": "15vmin"}},
+  {"name": "hex-r",     "rect": [1465, 435, 59, 62],  "motion": "drift", "speed": 12},
+  {"name": "bubble-r2", "rect": [1554, 512, 37, 36],  "motion": "float", "speed": 7},
+  {"name": "drop-r",    "rect": [1375, 518, 39, 59],  "motion": "float", "speed": 7.5, "tall": {"right": "9%", "top": "56%", "width": "6vmin"}},
+  {"name": "flask-r",   "rect": [1432, 561, 78, 107], "motion": "bob",   "speed": 10, "tall": {"right": "5%", "top": "66%", "width": "12vmin"}},
+  {"name": "water-r",   "rect": [1260, 613, 92, 69],  "motion": "drift", "speed": 11},
+  {"name": "bubble-r3", "rect": [1567, 644, 66, 65],  "motion": "float", "speed": 8},
+  {"name": "dot-r2",    "rect": [1158, 719, 25, 25],  "motion": "float", "speed": 6},
+  {"name": "cluster",   "rect": [0, 0, 312, 334],     "motion": "none",  "wide": false, "tall": {"left": "0", "top": "0", "width": "52vmin"}},
+  {"name": "chain",     "rect": [1440, 0, 232, 580],  "motion": "float", "speed": 14, "wide": false, "tall": {"right": "0", "top": "5%", "width": "26vmin"}}
+ ]
+}

@@ -121,7 +121,13 @@
 @keyframes scene-drift{from{transform:translate(0,0) rotate(0)}to{transform:translate(9px,-11px) rotate(9deg)}}
 .scene .is-tall{display:none;}
 @media (max-aspect-ratio: 4/3){.scene .is-wide{display:none;}.scene .is-tall{display:block;}}
-@media (prefers-reduced-motion: reduce){.scene img{animation:none!important;}}
+.scene img:not(.scene-plate){translate:calc(var(--px,0) * var(--depth,6px) * -1) calc(var(--py,0) * var(--depth,6px) * -1);
+  transition:translate .9s cubic-bezier(.2,.8,.2,1);}
+.scene::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 2.4s ease;
+  background:radial-gradient(70% 85% at 6% -6%,rgba(255,238,196,.62),rgba(255,238,196,0) 70%),
+    radial-gradient(70% 85% at 94% -6%,rgba(255,238,196,.62),rgba(255,238,196,0) 70%);}
+.scene-glow .scene::after{opacity:1;}
+@media (prefers-reduced-motion: reduce){.scene img{animation:none!important;translate:none!important;transition:none!important;}}
 `;
   function injectSceneCss() {
     if (document.getElementById('sceneLayersCss')) return;
@@ -158,7 +164,10 @@
 
     (spec.layers || []).forEach((L, i) => {
       const motion = L.motion && L.motion !== 'none' ? `m-${L.motion}` : '';
+      // 视差的深度：越大的元素看起来越近，跟著鼠标错开得越多（4 到 14 像素）
+      const depth = Array.isArray(L.box) ? 4 + 10 * Math.min(1, Math.sqrt(L.box[2] * L.box[3]) / 160) : 6;
       const tune = node => {
+        node.style.setProperty('--depth', `${depth.toFixed(1)}px`);
         if (L.speed) node.style.setProperty('--spd', `${L.speed}s`);
         // 错开相位，不要全部一起摆（负的延迟 = 一开始就在动画中途）
         node.style.setProperty('--dly', `${-((i * 2.3) % (L.speed || 10))}s`);
@@ -181,6 +190,55 @@
     el.style.backgroundImage = '';
     el.replaceChildren(root);
     return true;
+  }
+
+  /* ---------- 视差：图层跟著鼠标往反方向错开几个像素，底图不动（动了会露出边） ----------
+     只在有鼠标的装置、没开「减少动态」时；手机没有游标，读陀螺仪在 iOS 还要跳权限视窗，不做。 */
+  const mq = q => (global.matchMedia ? global.matchMedia(q) : { matches: false });
+  const finePointer = mq('(hover: hover) and (pointer: fine)');
+  const reducedMotion = mq('(prefers-reduced-motion: reduce)');
+  let plxEl = null, plxRaf = 0, plxX = 0, plxY = 0;
+  function onPointer(e) {
+    plxX = e.clientX / global.innerWidth * 2 - 1;
+    plxY = e.clientY / global.innerHeight * 2 - 1;
+    if (plxRaf) return;
+    plxRaf = requestAnimationFrame(() => {
+      plxRaf = 0;
+      if (!plxEl) return;
+      plxEl.style.setProperty('--px', plxX.toFixed(3));
+      plxEl.style.setProperty('--py', plxY.toFixed(3));
+    });
+  }
+  function setParallax(el, on) {
+    const next = on && el && finePointer.matches && !reducedMotion.matches ? el : null;
+    if (plxEl && plxEl !== next) {            // 关掉时让图层滑回原位
+      plxEl.style.setProperty('--px', '0');
+      plxEl.style.setProperty('--py', '0');
+    }
+    if (next && !plxEl) global.addEventListener('pointermove', onPointer, { passive: true });
+    if (!next && plxEl) global.removeEventListener('pointermove', onPointer);
+    plxEl = next;
+  }
+
+  /* ---------- 回应学习 ----------
+     shine：一整章都答对的那一刻，会动的元素闪一下微弱的金光，由左到右扫过去。
+       只动 filter（一圈 4px 的金色 drop-shadow），不动位置，原本的摇摆照常进行。
+       比过三种：加 brightness 会把水彩洗白、两层 shadow 较慢；这一种最清楚也最快（桌面 1920 闪的 1.6 秒内 54 fps）。
+       「减少动态」时照样闪（它是光，不是移动），只是不扫、全部同时。
+     glow：今天的复习做完了，画面上方透进一片暖光，一直留到换科目。 */
+  const GOLD_OFF = 'drop-shadow(0 0 0 rgba(245, 170, 20, 0))';
+  const GOLD_ON = 'drop-shadow(0 0 4px rgba(245, 170, 20, 0.85))';
+  function shine(el) {
+    if (!el) return;
+    el.querySelectorAll('.scene .m-sway, .scene .m-float, .scene .m-bob, .scene .m-drift').forEach(n => {
+      const r = n.getBoundingClientRect();
+      if (!r.width) return;                    // 这个版面没显示的那一份（is-wide / is-tall）
+      n.animate([{ filter: GOLD_OFF }, { filter: GOLD_ON, offset: 0.3 }, { filter: GOLD_OFF }],
+        { duration: 1600, delay: reducedMotion.matches ? 0 : Math.max(0, r.left / global.innerWidth) * 600, easing: 'ease-in-out' });
+    });
+  }
+  function glow(el, on) {
+    if (el) el.classList.toggle('scene-glow', Boolean(on));
   }
 
   async function paint(el, url) {
@@ -376,7 +434,7 @@
   }
 
   global.SceneAssets = {
-    use, setMusic, resolve, findBackground, findMusic, paint,
+    use, setMusic, resolve, findBackground, findMusic, paint, setParallax, shine, glow,
     isMusicOn: () => state.musicOn,
     currentScene: () => state.scene,
   };

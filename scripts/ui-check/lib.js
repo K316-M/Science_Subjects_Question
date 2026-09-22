@@ -85,14 +85,19 @@ async function contrast(page, label, scope, R) {
         }
       }
       if (Rt - L < 4 || B - T < 4) continue;
-      const rc = { left: L, top: T, width: Rt - L, height: B - T };
-      // 被黏在顶部的导航之类盖住的字，取到的是上层的像素，不算
-      const cx = Math.min(innerWidth - 1, Math.max(0, rc.left + rc.width / 2)), cy = Math.min(innerHeight - 1, Math.max(0, rc.top + rc.height / 2));
-      const hit = document.elementFromPoint(cx, cy);
-      if (hit && !el.contains(hit) && !hit.contains(el)) continue;
+      // 7×3 个取样点，逐点检查有没有被盖住：黏在顶部的导航、压在标签上的面板……
+      // 盖住的那几点取到的是上层的像素，不算（以前只看中心点，半边被盖住的字会误报）
+      const pts = [];
+      for (let i = 0; i < 7; i++) for (let j = 0; j < 3; j++) {
+        const x = Math.min(innerWidth - 1, Math.max(0, L + (Rt - L) * (i + .5) / 7));
+        const y = Math.min(innerHeight - 1, Math.max(0, T + (B - T) * (j + .5) / 3));
+        const hit = document.elementFromPoint(x, y);
+        if (!hit || el.contains(hit) || hit.contains(el)) pts.push([x, y]);
+      }
+      if (!pts.length) continue;
       const cs = getComputedStyle(el);
       const sel = el.id ? '#' + el.id : el.tagName.toLowerCase() + (typeof el.className === 'string' && el.className ? '.' + el.className.trim().split(/\s+/).join('.') : '');
-      out.push({ sel, txt: txt.slice(0, 16), color: cs.color, op, fs: parseFloat(cs.fontSize), fw: parseInt(cs.fontWeight), x: rc.left, y: rc.top, w: rc.width, h: rc.height });
+      out.push({ sel, txt: txt.slice(0, 16), color: cs.color, op, fs: parseFloat(cs.fontSize), fw: parseInt(cs.fontWeight), pts });
     }
     return out;
   }, scope);
@@ -106,9 +111,9 @@ async function contrast(page, label, scope, R) {
   for (const it of items) {
     const fg = parse(it.color); if (!fg) continue;
     const a = fg[3] * it.op; let worst = null;
-    for (let i = 0; i < 7; i++) for (let j = 0; j < 3; j++) {
-      const x = Math.min(png.width - 1, Math.max(0, Math.round((it.x + it.w * (i + .5) / 7) * dpr)));
-      const y = Math.min(png.height - 1, Math.max(0, Math.round((it.y + it.h * (j + .5) / 3) * dpr)));
+    for (const [px, py] of it.pts) {
+      const x = Math.min(png.width - 1, Math.max(0, Math.round(px * dpr)));
+      const y = Math.min(png.height - 1, Math.max(0, Math.round(py * dpr)));
       const o = (y * png.width + x) * 4; const bg = [png.data[o], png.data[o + 1], png.data[o + 2]];
       const eff = [0, 1, 2].map(k => Math.round(fg[k] * a + bg[k] * (1 - a)));
       const r = ratio(eff, bg); if (!worst || r < worst.r) worst = { r, bg, eff };

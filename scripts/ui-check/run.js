@@ -251,6 +251,107 @@ async function run() {
     await ctx.close();
   });
 
+  await section('背景回应', async () => {
+    const now = Date.now();
+    const q = bank.sections[1].mcqs[1];
+    // 第一章只差第 1 题就全对：用来测「整章都答对」的金光
+    const almost = Object.fromEntries(CH1.mcqs.map((_, i) => [i, 'mastered']).slice(1));
+    const seed = { UEC_REVIEW_v1: { [`biology__${bank.sections[1].id}__1`]: { ease: 2.3, interval: 3, reps: 1, lapses: 0, last: now - 5 * DAY, due: now - DAY } },
+      UEC_PROGRESS_v1: { biology: { [CH1.id]: almost } } };
+    const state = page => page.evaluate(() => {
+      const l = document.getElementById('customPhotoLayer');
+      const leaf = l.querySelector('.scene .is-wide.m-drift');
+      return { scene: document.body.classList.contains('has-scene'), on: document.getElementById('subjectBgWash').classList.contains('active'),
+        px: l.style.getPropertyValue('--px'), shift: leaf ? getComputedStyle(leaf).translate : '', glow: l.classList.contains('scene-glow') };
+    });
+    const shines = page => page.evaluate(() => document.getAnimations().filter(a => a.effect && a.effect.getKeyframes().some(k => 'filter' in k)).length);
+    const answerReview = async page => {
+      await page.evaluate(() => window.switchSubSection('review'));
+      await page.waitForTimeout(400);
+      await page.evaluate(() => document.querySelector('.review-head .empty-btn').click());
+      await page.waitForTimeout(600);
+      await page.evaluate(i => document.querySelectorAll('#optContainer .option-btn')[i].click(), q.answer);
+      await page.waitForTimeout(150);
+    };
+
+    const { ctx, page, errors } = await open({ width: 1440, height: 900, seed });
+    await page.evaluate(() => document.querySelectorAll('.orbit-node')[3].click());      // 数学：还没开放
+    await page.waitForTimeout(900);
+    const chem = await state(page);
+    await page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());      // 生物
+    await page.waitForTimeout(1400);
+    await page.mouse.move(200, 150);
+    await page.mouse.move(1300, 800, { steps: 8 });
+    await page.waitForTimeout(1200);
+    const bio = await state(page);
+    await contrast(page, 'desktop 首页预览（生物）', null, R);
+    await shot(page, 'desktop-home-preview');
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    const off = await state(page);
+    await page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());
+    await page.waitForTimeout(1400);
+    await page.evaluate(() => { document.querySelector('#customPhotoLayer .scene').dataset.mark = '1'; document.querySelector('.panel-enter').click(); });
+    await page.waitForTimeout(1200);
+    const kept = await page.evaluate(() => Boolean(document.querySelector('#customPhotoLayer .scene[data-mark]')));
+    await page.mouse.move(100, 100, { steps: 4 });
+    await page.waitForTimeout(300);
+    const study = await state(page);
+    await answerReview(page);
+    const n = await shines(page);
+    const done = await state(page);
+    await page.evaluate(() => { window.switchSubSection('mcq'); selectChapter(0); });
+    await page.waitForTimeout(500);
+    await page.evaluate(i => document.querySelectorAll('#optContainer .option-btn')[i].click(), CH1.mcqs[0].answer);
+    await page.waitForTimeout(150);
+    const gold = await shines(page);
+    check('背景回应', '还没开放的科目，首页不预览', !chem.on && !chem.scene, JSON.stringify(chem));
+    check('背景回应', '首页选到生物：淡入那一科的水彩', bio.on && bio.scene);
+    check('背景回应', '桌面：图层跟著鼠标往反方向错开', /^-\d/.test(bio.shift), bio.shift);
+    check('背景回应', '取消选择：退回首页原本的背景', !off.on && !off.scene && off.px === '0', JSON.stringify(off));
+    check('背景回应', '按「进入」：沿用同一张，不清掉重画', kept);
+    check('背景回应', '做题页：视差停止', study.px === '0' && !study.glow, JSON.stringify(study));
+    check('背景回应', '平常答对一题：背景不动', n === 0, `${n} 个`);
+    check('背景回应', '整章都答对（练习）：元素闪一下金光', gold > 0, `${gold} 个`);
+    check('背景回应', '做完今日复习：背景透进暖光', done.glow);
+    check('背景回应', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+
+    const rm = await open({ width: 1440, height: 900, seed, reducedMotion: 'reduce' });
+    await rm.page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());
+    await rm.page.waitForTimeout(1400);
+    await rm.page.mouse.move(1300, 800, { steps: 8 });
+    await rm.page.waitForTimeout(300);
+    const still = await state(rm.page);
+    await rm.page.evaluate(() => document.querySelector('.panel-enter').click());
+    await rm.page.waitForTimeout(1200);
+    await answerReview(rm.page);
+    const rdone = await state(rm.page);
+    check('背景回应', '减少动态：不跟鼠标，暖光照样出现', still.scene && still.px === '' && rdone.glow, `px「${still.px}」`);
+    await rm.ctx.close();
+
+    // 整章测验：这一次交卷让整章全对，也要闪
+    const t = await open({ width: 1440, height: 900, seed });
+    await enter(t.page);
+    await t.page.evaluate(() => document.getElementById('testStartBtn').click());
+    await t.page.waitForTimeout(500);
+    await t.page.evaluate(ans => document.querySelectorAll('#viewTest fieldset.test-q').forEach((f, i) => f.querySelectorAll('input')[ans[i]].click()),
+      CH1.mcqs.map(m => m.answer));
+    await t.page.evaluate(() => document.querySelector('.test-submit').click());
+    await t.page.waitForTimeout(150);
+    const tg = await shines(t.page);
+    check('背景回应', '整章都答对（整章测验）：元素闪一下金光', tg > 0, `${tg} 个`);
+    check('背景回应', '整章测验没有 JS 错误', t.errors.length === 0, t.errors[0]);
+    await t.ctx.close();
+
+    const m = await open({ seed });
+    await m.page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());
+    await m.page.waitForTimeout(1400);
+    await contrast(m.page, 'mobile 首页预览（生物）', null, R);
+    await shot(m.page, 'mobile-home-preview');
+    await m.ctx.close();
+  });
+
   await section('零题科目', async () => {
     const { ctx, page, errors } = await open({ width: 1440, height: 900 });
     await contrast(page, 'desktop 首页', null, R);

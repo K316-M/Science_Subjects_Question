@@ -1,0 +1,25 @@
+{
+ "_说明": "rect = 在参考图上圈出元素的框 [x, y, 宽, 高]。小元素排前面、大的锚点（左上的圆、右边那排立体）排最後。数学科还没开放：图层先放著，开放时在 index.html 的 SUBJECT_THEME 补上 math 就会用到。",
+ "layers": [
+  {"name": "dot-a",     "rect": [394, 27, 29, 29],    "motion": "float", "speed": 6},
+  {"name": "tri-a",     "rect": [410, 252, 53, 48],   "motion": "drift", "speed": 12, "tall": {"left": "10%", "top": "31%", "width": "8vmin"}},
+  {"name": "dot-b",     "rect": [345, 336, 29, 30],   "motion": "float", "speed": 6.5},
+  {"name": "dot-c",     "rect": [14, 341, 29, 30],    "motion": "float", "speed": 7},
+  {"name": "cube-l",    "rect": [65, 369, 76, 75],    "motion": "bob",   "speed": 9, "tall": {"left": "-2%", "top": "44%", "width": "14vmin"}},
+  {"name": "tetra-l",   "rect": [142, 399, 81, 85],   "motion": "drift", "speed": 12},
+  {"name": "spiral-l",  "rect": [42, 496, 79, 79],    "motion": "sway",  "speed": 9, "tall": {"left": "5%", "top": "60%", "width": "12vmin"}},
+  {"name": "dot-d",     "rect": [293, 509, 27, 28],   "motion": "float", "speed": 6},
+  {"name": "dice-l",    "rect": [183, 579, 75, 71],   "motion": "bob",   "speed": 10, "tall": {"left": "6%", "bottom": "15%", "width": "13vmin"}},
+  {"name": "tri-b",     "rect": [41, 602, 41, 42],    "motion": "drift", "speed": 11},
+  {"name": "wave",      "rect": [228, 654, 171, 78],  "motion": "drift", "speed": 13},
+  {"name": "tri-r",     "rect": [1429, 166, 39, 38],  "motion": "drift", "speed": 11},
+  {"name": "cube-r",    "rect": [1407, 286, 65, 62],  "motion": "bob",   "speed": 9, "tall": {"right": "22%", "top": "37%", "width": "11vmin"}},
+  {"name": "spiral-r",  "rect": [1482, 352, 63, 98],  "motion": "sway",  "speed": 9},
+  {"name": "tri-r2",    "rect": [1388, 475, 65, 60],  "motion": "drift", "speed": 12, "tall": {"right": "9%", "top": "57%", "width": "10vmin"}},
+  {"name": "dice-r",    "rect": [1454, 569, 65, 64],  "motion": "bob",   "speed": 10, "tall": {"right": "5%", "top": "68%", "width": "11vmin"}},
+  {"name": "tetra-r",   "rect": [1377, 664, 55, 53],  "motion": "bob",   "speed": 9},
+  {"name": "ball-r",    "rect": [1595, 670, 45, 44],  "motion": "float", "speed": 7},
+  {"name": "circle",    "rect": [0, 0, 468, 372],     "motion": "none",  "wide": false, "tall": {"left": "0", "top": "0", "width": "56vmin"}},
+  {"name": "solids",    "rect": [1476, 0, 196, 618],  "motion": "float", "speed": 16, "wide": false, "tall": {"right": "0", "top": "4%", "width": "26vmin"}}
+ ]
+}

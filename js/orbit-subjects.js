@@ -228,6 +228,8 @@
     });
     fillPanel(i);
     panel.classList.add('is-open');
+    // 背景先换成这一科的水彩（index.html）；还没开放的科目不预览
+    if (typeof window.previewSubjectBackground === 'function') window.previewSubjectBackground(SUBJECTS[i].enabled ? SUBJECTS[i].key : null);
 
     const target = targetRingFor(i);
     if (reduceMotion) { ring = target; applyRing(); }
@@ -243,6 +245,7 @@
     stage.classList.remove('has-selection');
     nodes.forEach(n => { n.classList.remove('is-selected'); n.setAttribute('aria-expanded', 'false'); });
     panel.classList.remove('is-open');
+    if (typeof window.previewSubjectBackground === 'function') window.previewSubjectBackground(null);
   }
 
   function enterSelected() {

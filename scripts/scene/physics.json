@@ -1,0 +1,25 @@
+{
+ "_说明": "rect = 在参考图上圈出元素的框 [x, y, 宽, 高]。小元素排前面、大的锚点排最後。单摆以顶端为支点真的在摆（sway + origin 50% 0%），横式、直式都有。透镜只在直式画面单独摆出来。叠在底部色带上的小元素不拆。",
+ "layers": [
+  {"name": "pendulum",  "rect": [1389, 0, 96, 374],   "motion": "sway",  "speed": 3.2, "origin": "50% 0%", "tall": {"right": "7%", "top": "0", "width": "10vmin"}},
+  {"name": "prism-l",   "rect": [23, 281, 113, 97],   "motion": "bob",   "speed": 9, "tall": {"left": "4%", "top": "30%", "width": "14vmin"}},
+  {"name": "ball-l",    "rect": [188, 331, 44, 43],   "motion": "float", "speed": 7},
+  {"name": "spring-l",  "rect": [19, 409, 80, 71],    "motion": "bob",   "speed": 8},
+  {"name": "atom-l",    "rect": [150, 422, 124, 109], "motion": "bob",   "speed": 10, "tall": {"left": "-3%", "top": "46%", "width": "20vmin"}},
+  {"name": "bulb-l",    "rect": [43, 506, 75, 108],   "motion": "bob",   "speed": 9, "tall": {"left": "5%", "top": "64%", "width": "10vmin"}},
+  {"name": "wave-l",    "rect": [168, 572, 117, 66],  "motion": "drift", "speed": 12},
+  {"name": "magnet-l",  "rect": [296, 620, 84, 91],   "motion": "drift", "speed": 11, "tall": {"left": "7%", "bottom": "14%", "width": "12vmin"}},
+  {"name": "ball-r0",   "rect": [1513, 19, 28, 29],   "motion": "float", "speed": 6},
+  {"name": "spring-r",  "rect": [1524, 73, 96, 79],   "motion": "bob",   "speed": 8},
+  {"name": "prism-r",   "rect": [1569, 163, 67, 93],  "motion": "drift", "speed": 12},
+  {"name": "atom-r",    "rect": [1545, 340, 104, 89], "motion": "bob",   "speed": 10, "tall": {"right": "-2%", "top": "40%", "width": "17vmin"}},
+  {"name": "ball-r",    "rect": [1333, 422, 40, 39],  "motion": "float", "speed": 7},
+  {"name": "bulb-r",    "rect": [1497, 434, 73, 95],  "motion": "bob",   "speed": 9, "tall": {"right": "8%", "top": "57%", "width": "10vmin"}},
+  {"name": "wave-r",    "rect": [1344, 528, 110, 61], "motion": "drift", "speed": 12},
+  {"name": "ball-r2",   "rect": [1587, 532, 44, 44],  "motion": "float", "speed": 7.5},
+  {"name": "magnet-r",  "rect": [1442, 575, 90, 93],  "motion": "drift", "speed": 11, "tall": {"right": "5%", "top": "70%", "width": "12vmin"}},
+  {"name": "prism-r2",  "rect": [1535, 644, 74, 68],  "motion": "bob",   "speed": 9},
+  {"name": "ball-r3",   "rect": [1243, 661, 43, 42],  "motion": "float", "speed": 7},
+  {"name": "lens",      "rect": [0, 10, 505, 276],    "motion": "none",  "wide": false, "tall": {"left": "0", "top": "0", "width": "62vmin"}}
+ ]
+}

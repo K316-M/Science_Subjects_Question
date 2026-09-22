@@ -1,0 +1,294 @@
+{
+ "size": [
+  1672,
+  940
+ ],
+ "plate": "scene/plate.webp",
+ "layers": [
+  {
+   "src": "scene/pendulum.webp",
+   "box": [
+    1381,
+    0,
+    112,
+    380
+   ],
+   "motion": "sway",
+   "speed": 3.2,
+   "origin": "50% 0%",
+   "wide": true,
+   "tall": {
+    "right": "7%",
+    "top": "0",
+    "width": "10vmin"
+   }
+  },
+  {
+   "src": "scene/prism-l.webp",
+   "box": [
+    17,
+    275,
+    125,
+    109
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "left": "4%",
+    "top": "30%",
+    "width": "14vmin"
+   }
+  },
+  {
+   "src": "scene/ball-l.webp",
+   "box": [
+    182,
+    325,
+    56,
+    55
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true
+  },
+  {
+   "src": "scene/spring-l.webp",
+   "box": [
+    13,
+    403,
+    92,
+    83
+   ],
+   "motion": "bob",
+   "speed": 8,
+   "wide": true
+  },
+  {
+   "src": "scene/atom-l.webp",
+   "box": [
+    144,
+    416,
+    138,
+    121
+   ],
+   "motion": "bob",
+   "speed": 10,
+   "wide": true,
+   "tall": {
+    "left": "-3%",
+    "top": "46%",
+    "width": "20vmin"
+   }
+  },
+  {
+   "src": "scene/bulb-l.webp",
+   "box": [
+    37,
+    500,
+    87,
+    119
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "left": "5%",
+    "top": "64%",
+    "width": "10vmin"
+   }
+  },
+  {
+   "src": "scene/wave-l.webp",
+   "box": [
+    162,
+    566,
+    129,
+    78
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "wide": true
+  },
+  {
+   "src": "scene/magnet-l.webp",
+   "box": [
+    290,
+    614,
+    96,
+    103
+   ],
+   "motion": "drift",
+   "speed": 11,
+   "wide": true,
+   "tall": {
+    "left": "7%",
+    "bottom": "14%",
+    "width": "12vmin"
+   }
+  },
+  {
+   "src": "scene/ball-r0.webp",
+   "box": [
+    1507,
+    13,
+    40,
+    40
+   ],
+   "motion": "float",
+   "speed": 6,
+   "wide": true
+  },
+  {
+   "src": "scene/spring-r.webp",
+   "box": [
+    1518,
+    67,
+    108,
+    91
+   ],
+   "motion": "bob",
+   "speed": 8,
+   "wide": true
+  },
+  {
+   "src": "scene/prism-r.webp",
+   "box": [
+    1563,
+    158,
+    79,
+    104
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "wide": true
+  },
+  {
+   "src": "scene/atom-r.webp",
+   "box": [
+    1539,
+    335,
+    116,
+    100
+   ],
+   "motion": "bob",
+   "speed": 10,
+   "wide": true,
+   "tall": {
+    "right": "-2%",
+    "top": "40%",
+    "width": "17vmin"
+   }
+  },
+  {
+   "src": "scene/ball-r.webp",
+   "box": [
+    1327,
+    416,
+    52,
+    51
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true
+  },
+  {
+   "src": "scene/bulb-r.webp",
+   "box": [
+    1491,
+    428,
+    85,
+    109
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "right": "8%",
+    "top": "57%",
+    "width": "10vmin"
+   }
+  },
+  {
+   "src": "scene/wave-r.webp",
+   "box": [
+    1338,
+    522,
+    122,
+    72
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "wide": true
+  },
+  {
+   "src": "scene/ball-r2.webp",
+   "box": [
+    1581,
+    526,
+    56,
+    56
+   ],
+   "motion": "float",
+   "speed": 7.5,
+   "wide": true
+  },
+  {
+   "src": "scene/magnet-r.webp",
+   "box": [
+    1436,
+    569,
+    102,
+    105
+   ],
+   "motion": "drift",
+   "speed": 11,
+   "wide": true,
+   "tall": {
+    "right": "5%",
+    "top": "70%",
+    "width": "12vmin"
+   }
+  },
+  {
+   "src": "scene/prism-r2.webp",
+   "box": [
+    1529,
+    638,
+    86,
+    80
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true
+  },
+  {
+   "src": "scene/ball-r3.webp",
+   "box": [
+    1237,
+    655,
+    55,
+    54
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true
+  },
+  {
+   "src": "scene/lens.webp",
+   "box": [
+    0,
+    2,
+    511,
+    291
+   ],
+   "motion": "none",
+   "wide": false,
+   "tall": {
+    "left": "0",
+    "top": "0",
+    "width": "62vmin"
+   }
+  }
+ ]
+}

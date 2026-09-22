@@ -1,0 +1,293 @@
+{
+ "size": [
+  1672,
+  940
+ ],
+ "plate": "scene/plate.webp",
+ "layers": [
+  {
+   "src": "scene/dot-a.webp",
+   "box": [
+    388,
+    21,
+    41,
+    41
+   ],
+   "motion": "float",
+   "speed": 6,
+   "wide": true
+  },
+  {
+   "src": "scene/tri-a.webp",
+   "box": [
+    404,
+    246,
+    65,
+    60
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "wide": true,
+   "tall": {
+    "left": "10%",
+    "top": "31%",
+    "width": "8vmin"
+   }
+  },
+  {
+   "src": "scene/dot-b.webp",
+   "box": [
+    339,
+    330,
+    41,
+    42
+   ],
+   "motion": "float",
+   "speed": 6.5,
+   "wide": true
+  },
+  {
+   "src": "scene/dot-c.webp",
+   "box": [
+    8,
+    335,
+    41,
+    42
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true
+  },
+  {
+   "src": "scene/cube-l.webp",
+   "box": [
+    59,
+    363,
+    88,
+    87
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "left": "-2%",
+    "top": "44%",
+    "width": "14vmin"
+   }
+  },
+  {
+   "src": "scene/tetra-l.webp",
+   "box": [
+    136,
+    393,
+    93,
+    97
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "wide": true
+  },
+  {
+   "src": "scene/spiral-l.webp",
+   "box": [
+    36,
+    490,
+    91,
+    91
+   ],
+   "motion": "sway",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "left": "5%",
+    "top": "60%",
+    "width": "12vmin"
+   }
+  },
+  {
+   "src": "scene/dot-d.webp",
+   "box": [
+    287,
+    503,
+    39,
+    40
+   ],
+   "motion": "float",
+   "speed": 6,
+   "wide": true
+  },
+  {
+   "src": "scene/dice-l.webp",
+   "box": [
+    177,
+    573,
+    87,
+    83
+   ],
+   "motion": "bob",
+   "speed": 10,
+   "wide": true,
+   "tall": {
+    "left": "6%",
+    "bottom": "15%",
+    "width": "13vmin"
+   }
+  },
+  {
+   "src": "scene/tri-b.webp",
+   "box": [
+    35,
+    596,
+    53,
+    54
+   ],
+   "motion": "drift",
+   "speed": 11,
+   "wide": true
+  },
+  {
+   "src": "scene/wave.webp",
+   "box": [
+    222,
+    648,
+    183,
+    90
+   ],
+   "motion": "drift",
+   "speed": 13,
+   "wide": true
+  },
+  {
+   "src": "scene/tri-r.webp",
+   "box": [
+    1423,
+    160,
+    51,
+    49
+   ],
+   "motion": "drift",
+   "speed": 11,
+   "wide": true
+  },
+  {
+   "src": "scene/cube-r.webp",
+   "box": [
+    1401,
+    280,
+    77,
+    74
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "right": "22%",
+    "top": "37%",
+    "width": "11vmin"
+   }
+  },
+  {
+   "src": "scene/spiral-r.webp",
+   "box": [
+    1476,
+    346,
+    75,
+    109
+   ],
+   "motion": "sway",
+   "speed": 9,
+   "wide": true
+  },
+  {
+   "src": "scene/tri-r2.webp",
+   "box": [
+    1382,
+    469,
+    77,
+    72
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "wide": true,
+   "tall": {
+    "right": "9%",
+    "top": "57%",
+    "width": "10vmin"
+   }
+  },
+  {
+   "src": "scene/dice-r.webp",
+   "box": [
+    1448,
+    563,
+    77,
+    76
+   ],
+   "motion": "bob",
+   "speed": 10,
+   "wide": true,
+   "tall": {
+    "right": "5%",
+    "top": "68%",
+    "width": "11vmin"
+   }
+  },
+  {
+   "src": "scene/tetra-r.webp",
+   "box": [
+    1371,
+    658,
+    67,
+    65
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true
+  },
+  {
+   "src": "scene/ball-r.webp",
+   "box": [
+    1589,
+    664,
+    57,
+    56
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true
+  },
+  {
+   "src": "scene/circle.webp",
+   "box": [
+    0,
+    0,
+    477,
+    379
+   ],
+   "motion": "none",
+   "wide": false,
+   "tall": {
+    "left": "0",
+    "top": "0",
+    "width": "56vmin"
+   }
+  },
+  {
+   "src": "scene/solids.webp",
+   "box": [
+    1468,
+    0,
+    204,
+    625
+   ],
+   "motion": "float",
+   "speed": 16,
+   "wide": false,
+   "tall": {
+    "right": "0",
+    "top": "4%",
+    "width": "26vmin"
+   }
+  }
+ ]
+}

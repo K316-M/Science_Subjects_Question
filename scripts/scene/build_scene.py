@@ -15,6 +15,9 @@
 
 设定档里每个图层：
   ids     参考图上的元素编号（analyze 印出来的）
+  rect    或者用一个框 [x, y, 宽, 高] 圈出元素：框里所有「不是纸」的像素都算，
+          连 analyze 抓不到的淡线（轨道、光线、淡色轮廓）也会跟著一起动。
+          前面图层已经拿走的像素不会重复拿，所以框可以大一点，把小元素排在前面。
   motion  none | sway 摇摆 | float 上下飘 | bob 轻晃 | drift 漂移
   wide    横式画面是否在原位显示（false = 已经画在底图里，只在直式画面单独出现）
   tall    直式画面（手机）贴著视窗的位置，例如 {"left": "4%", "top": "36%", "width": "16vmin"}
@@ -83,10 +86,20 @@ def build(config_path, work, dest):
     os.makedirs(layer_dir, exist_ok=True)
 
     moving = np.zeros((H, W), np.uint8)
+    claimed = np.zeros((H, W), np.uint8)
     layers = []
     for L in cfg['layers']:
-        m = np.isin(labels, L['ids']).astype(np.uint8)
-        m = cv2.dilate(m, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13)))
+        if 'rect' in L:
+            x, y, w, h = L['rect']
+            box = np.zeros((H, W), np.uint8)
+            box[y:y + h, x:x + w] = 1
+            # 纸纹离纸色都在 7 以内，8 以上就是画上去的东西，淡线也抓得到
+            m = ((dist > 8) & (box > 0) & (claimed == 0)).astype(np.uint8)
+            m = cv2.dilate(m, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))) & (1 - claimed)
+        else:
+            m = np.isin(labels, L['ids']).astype(np.uint8)
+            m = cv2.dilate(m, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13)))
+        claimed |= m
         m = cv2.GaussianBlur(m.astype(np.float32), (0, 0), 2.0)
         # 离纸色越远越不透明；水彩的淡边保留成半透明
         a = np.clip((dist - 5.0) / 32.0, 0, 1) ** 0.85 * np.clip(m * 1.4, 0, 1)

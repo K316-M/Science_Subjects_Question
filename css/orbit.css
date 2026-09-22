@@ -134,11 +134,14 @@
   transition: color .35s ease, top .35s ease;
 }
 /* 选中的球放大 1.22 倍并加一圈光晕，标签会压在光晕上（实测 2.5:1）。给它一块白底，底下是什么颜色都站得住 */
+/* 字用科目色压深一档：生物 #059669、物理、数学的原色在白底上都不到 4.5:1（小字） */
 .orbit-node.is-selected .node-label {
-  color: var(--accent-color); top: calc(100% + 18px);
+  color: var(--text-main, #0f172a); color: color-mix(in oklab, var(--accent-color) 70%, #000); top: calc(100% + 18px);
   padding: 3px 10px; border-radius: 999px;
   background: rgba(255, 255, 255, .92); box-shadow: 0 2px 8px -4px rgba(15, 23, 42, .25);
 }
+/* 首页预览水彩时，底部的山丘在标签後面：实测 4.24:1，调深一档 */
+.has-scene .node-label { color: #334155; }
 .node-label em { display: block; font-style: normal; font-size: 10px; font-weight: 500; }
 
 /* ---------- 每颗球周围的动态插图 ---------- */

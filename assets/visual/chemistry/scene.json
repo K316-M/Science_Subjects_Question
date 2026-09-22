@@ -1,0 +1,298 @@
+{
+ "size": [
+  1672,
+  940
+ ],
+ "plate": "scene/plate.webp",
+ "layers": [
+  {
+   "src": "scene/hex-a.webp",
+   "box": [
+    301,
+    108,
+    77,
+    81
+   ],
+   "motion": "drift",
+   "speed": 13,
+   "wide": true,
+   "tall": {
+    "left": "9%",
+    "top": "31%",
+    "width": "9vmin"
+   }
+  },
+  {
+   "src": "scene/dot-a.webp",
+   "box": [
+    375,
+    35,
+    42,
+    41
+   ],
+   "motion": "float",
+   "speed": 6,
+   "wide": true
+  },
+  {
+   "src": "scene/bubble-a.webp",
+   "box": [
+    221,
+    182,
+    50,
+    49
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true,
+   "tall": {
+    "left": "22%",
+    "top": "50%",
+    "width": "5vmin"
+   }
+  },
+  {
+   "src": "scene/atom-l.webp",
+   "box": [
+    80,
+    279,
+    157,
+    154
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "left": "-3%",
+    "top": "44%",
+    "width": "22vmin"
+   }
+  },
+  {
+   "src": "scene/water-l.webp",
+   "box": [
+    217,
+    401,
+    108,
+    88
+   ],
+   "motion": "drift",
+   "speed": 11,
+   "wide": true
+  },
+  {
+   "src": "scene/drop-l.webp",
+   "box": [
+    9,
+    436,
+    48,
+    66
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true
+  },
+  {
+   "src": "scene/flask-l.webp",
+   "box": [
+    72,
+    479,
+    101,
+    137
+   ],
+   "motion": "bob",
+   "speed": 10,
+   "wide": true,
+   "tall": {
+    "left": "5%",
+    "top": "63%",
+    "width": "13vmin"
+   }
+  },
+  {
+   "src": "scene/bubbles-l.webp",
+   "box": [
+    212,
+    578,
+    101,
+    91
+   ],
+   "motion": "float",
+   "speed": 8,
+   "wide": true,
+   "tall": {
+    "left": "6%",
+    "bottom": "15%",
+    "width": "15vmin"
+   }
+  },
+  {
+   "src": "scene/dot-r.webp",
+   "box": [
+    1360,
+    48,
+    41,
+    41
+   ],
+   "motion": "float",
+   "speed": 6.5,
+   "wide": true
+  },
+  {
+   "src": "scene/bubble-r.webp",
+   "box": [
+    1306,
+    96,
+    58,
+    57
+   ],
+   "motion": "float",
+   "speed": 7.5,
+   "wide": true
+  },
+  {
+   "src": "scene/atom-r.webp",
+   "box": [
+    1390,
+    190,
+    124,
+    122
+   ],
+   "motion": "bob",
+   "speed": 9,
+   "wide": true,
+   "tall": {
+    "right": "22%",
+    "top": "36%",
+    "width": "15vmin"
+   }
+  },
+  {
+   "src": "scene/hex-r.webp",
+   "box": [
+    1459,
+    429,
+    71,
+    73
+   ],
+   "motion": "drift",
+   "speed": 12,
+   "wide": true
+  },
+  {
+   "src": "scene/bubble-r2.webp",
+   "box": [
+    1548,
+    506,
+    49,
+    48
+   ],
+   "motion": "float",
+   "speed": 7,
+   "wide": true
+  },
+  {
+   "src": "scene/drop-r.webp",
+   "box": [
+    1369,
+    513,
+    53,
+    69
+   ],
+   "motion": "float",
+   "speed": 7.5,
+   "wide": true,
+   "tall": {
+    "right": "9%",
+    "top": "56%",
+    "width": "6vmin"
+   }
+  },
+  {
+   "src": "scene/flask-r.webp",
+   "box": [
+    1424,
+    552,
+    92,
+    122
+   ],
+   "motion": "bob",
+   "speed": 10,
+   "wide": true,
+   "tall": {
+    "right": "5%",
+    "top": "66%",
+    "width": "12vmin"
+   }
+  },
+  {
+   "src": "scene/water-r.webp",
+   "box": [
+    1254,
+    608,
+    104,
+    80
+   ],
+   "motion": "drift",
+   "speed": 11,
+   "wide": true
+  },
+  {
+   "src": "scene/bubble-r3.webp",
+   "box": [
+    1561,
+    638,
+    78,
+    77
+   ],
+   "motion": "float",
+   "speed": 8,
+   "wide": true
+  },
+  {
+   "src": "scene/dot-r2.webp",
+   "box": [
+    1150,
+    711,
+    41,
+    41
+   ],
+   "motion": "float",
+   "speed": 6,
+   "wide": true
+  },
+  {
+   "src": "scene/cluster.webp",
+   "box": [
+    0,
+    0,
+    321,
+    343
+   ],
+   "motion": "none",
+   "wide": false,
+   "tall": {
+    "left": "0",
+    "top": "0",
+    "width": "52vmin"
+   }
+  },
+  {
+   "src": "scene/chain.webp",
+   "box": [
+    1432,
+    0,
+    240,
+    583
+   ],
+   "motion": "float",
+   "speed": 14,
+   "wide": false,
+   "tall": {
+    "right": "0",
+    "top": "5%",
+    "width": "26vmin"
+   }
+  }
+ ]
+}
