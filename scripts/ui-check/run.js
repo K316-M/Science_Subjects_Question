@@ -65,6 +65,17 @@ async function run() {
     await ctx.close();
   });
 
+  await section('效能', async () => {
+    // 首页的光团一直在飘；盖在上面的全屏图层只要带混合模式，整个画面就得每帧重算（1920 曾经只有 31 fps）
+    const { ctx, page } = await open({ width: 1920, height: 1080 });
+    const blended = await page.evaluate(() => [...document.querySelectorAll('body *')].filter(el => {
+      const cs = getComputedStyle(el), r = el.getBoundingClientRect();
+      return cs.mixBlendMode !== 'normal' && cs.display !== 'none' && cs.visibility !== 'hidden' && r.width * r.height > innerWidth * innerHeight / 2;
+    }).map(el => `.${el.className}`));
+    check('效能', '桌面首页：没有全屏图层用混合模式', blended.length === 0, blended.join(', '));
+    await ctx.close();
+  });
+
   await section('版面', async () => {
     for (const w of [320, 360, 390, 768, 1440]) {
       const { ctx, page } = await open({ width: w, height: 844 });

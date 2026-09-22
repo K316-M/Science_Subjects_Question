@@ -519,13 +519,16 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(236,254,255,0.10));
     }
 
-    /* 细颗粒质感：一张 200×200 的噪点贴图平铺，静态、只栅格化一次 */
+    /* 细颗粒质感：一张 200×200 的噪点贴图平铺，静态、只栅格化一次。
+       噪点做成「黑色＋深浅不一的透明度」，普通叠加就等於 multiply 压暗；
+       不用 mix-blend-mode，是因为混合要跟着底下飘动的光团每帧重算整个画面（桌面 1920 从 60 掉到 31 fps）。
+       透明度与曲线是对着旧版 multiply .05 量出来的：白底平均暗 1.5、颗粒起伏相同。 */
     .grain-layer {
       position: fixed; inset: 0; z-index: 2; pointer-events: none;
-      opacity: .05; mix-blend-mode: multiply;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: .012;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.5 0 0 0 1.25'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
     }
-    /* 小屏的背景是会动的，multiply 混合会跟着每帧重算，所以手机上不铺颗粒 */
+    /* 手机上一向不铺颗粒（当初是为了避开 multiply 的每帧重算；现在不混合了，但小屏看不出颗粒，维持原样） */
     @media (max-width: 899px) { .grain-layer { display: none; } }
     .has-scene .grain-layer { display: none; }
     /* 首页预览水彩时，底下的四颗模糊光团被整张盖住；等淡入做完（.7s）就不画了 */
