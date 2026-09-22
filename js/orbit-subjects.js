@@ -19,7 +19,7 @@
     { key: 'biology',   name: '生物',     en: 'Biology',     accent: '#059669', deco: 'dna',       glyph: 'leaf',     enabled: true,  note: '光合呼吸 · 神经调节 · 遗传育种' },
     { key: 'chemistry', name: '化学',     en: 'Chemistry',   accent: '#7c3aed', deco: 'atom',      glyph: 'flask',    enabled: true,  note: '题库整理中' },
     { key: 'physics',   name: '物理',     en: 'Physics',     accent: '#0284c7', deco: 'pendulum',  glyph: 'wave',     enabled: true,  note: '题库整理中' },
-    { key: 'math',      name: '高级数学', en: 'Adv. Maths',  accent: '#d97706', deco: 'geometry',  glyph: 'triangle', enabled: false, note: '尚未开放' },
+    { key: 'math',      name: '高级数学', en: 'Adv. Maths',  accent: '#d97706', deco: 'geometry',  glyph: 'graph',    enabled: false, note: '尚未开放' },
   ];
   /* ======================================== */
 
@@ -29,7 +29,8 @@
     leaf: '<path d="M12 21c0-6.5 3.2-10.6 9-12.4-.7 7.6-4.2 11.6-9 12.4Z"/><path d="M12 21C7.7 17.3 4.8 12.8 4 6.4c6.2 1.3 8 6.3 8 14.6Z"/>',
     flask: '<path d="M9.5 3h5M10.5 3v6.2L5.6 18a2.2 2.2 0 0 0 1.9 3.3h9a2.2 2.2 0 0 0 1.9-3.3l-4.9-8.8V3"/><path d="M7.8 15h8.4"/>',
     wave: '<path d="M2.5 12c2.6-6.5 5.2 6.5 7.8 0s5.2-6.5 7.8 0 3.4 3 3.4 3"/>',
-    triangle: '<path d="M12 4.5 20.5 19.5h-17z"/><path d="M12 4.5v15M7.8 19.5 12 12"/>',
+    // 座标轴 + 抛物线。原本是三角形，缩小後看起来像 ⚠️ 警告标志，第一次来的学生会以为网站坏了
+    graph: '<path d="M4.5 3.5v16h16"/><path d="M7.5 6.5c1.8 10 8.4 10 10.5 0"/>',
   };
 
   const DECOS = {
