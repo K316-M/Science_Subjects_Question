@@ -317,6 +317,57 @@ async function syncResolutions() {
 /* ---------- 通知小精灵 ---------- */
 let spriteReport = null;
 
+// 姿势图（assets/sprite/，由 scripts/sprite/build.py 产出）。第一次出现才载入，平常不占流量
+const SPRITE_POSES = ['idle', 'blink', 'wave', 'present', 'talk', 'portal'];
+let spritePoseTimer = null;
+let spriteBlinkTimer = null;
+
+function ensureSpritePoses() {
+  const box = document.getElementById('spritePoses');
+  if (!box || box.childElementCount) return;
+  SPRITE_POSES.forEach(name => {
+    const img = document.createElement('img');
+    img.className = 'sprite-pose' + (name === 'idle' ? ' on' : '');
+    img.src = `/assets/sprite/${name}.webp`;
+    img.alt = '';
+    img.dataset.pose = name;
+    img.decoding = 'async';
+    box.appendChild(img);
+  });
+}
+
+// 换成某个姿势；给 ms 就在那之後回到 idle
+function setSpritePose(name, ms) {
+  const box = document.getElementById('spritePoses');
+  if (!box) return;
+  clearTimeout(spritePoseTimer);
+  box.querySelectorAll('.sprite-pose').forEach(img => img.classList.toggle('on', img.dataset.pose === name));
+  box.dataset.pose = name;
+  if (ms) spritePoseTimer = setTimeout(() => setSpritePose('idle'), ms);
+}
+
+// 闲着的时候每 3~6 秒眨一次眼；只在 idle 时眨，不打断别的动作
+function startSpriteBlink() {
+  clearTimeout(spriteBlinkTimer);
+  spriteBlinkTimer = setTimeout(() => {
+    const box = document.getElementById('spritePoses');
+    const wrap = document.getElementById('spriteWrap');
+    if (!wrap || !wrap.classList.contains('active')) return;
+    if (box && box.dataset.pose === 'idle') setSpritePose('blink', 140);
+    startSpriteBlink();
+  }, 3000 + Math.random() * 3000);
+}
+
+function showSprite() {
+  const wrap = document.getElementById('spriteWrap');
+  const wasActive = wrap.classList.contains('active');
+  ensureSpritePoses();
+  wrap.classList.add('active');
+  // 刚飞进来先挥挥手
+  if (!wasActive) setSpritePose('wave', 1600);
+  startSpriteBlink();
+}
+
 function pendingSpriteReport() {
   return loadFeedbackStore().reports.find(r => r.status === 'resolved' && !r.acknowledged) || null;
 }
@@ -333,7 +384,7 @@ function refreshSprite() {
   if (badge) { badge.textContent = '!'; badge.style.display = ''; }
   document.getElementById('spritePanel').classList.remove('open');
   document.getElementById('spriteConnector').classList.add('hidden');
-  wrap.classList.add('active');
+  showSprite();
 }
 
 // 导览介绍小精灵时，没有真的通知也让它出现一下；结束後回到原本的状态
@@ -343,7 +394,7 @@ function spriteDemo(on) {
   if (on) {
     const badge = document.getElementById('spriteBadge');
     if (badge && !pendingSpriteReport()) badge.style.display = 'none';
-    wrap.classList.add('active');
+    showSprite();
   } else {
     refreshSprite();
   }
@@ -356,6 +407,8 @@ function toggleSpritePanel() {
   const connector = document.getElementById('spriteConnector');
   const open = panel.classList.toggle('open');
   connector.classList.toggle('hidden', !open);
+  // 打开面板时摆出「给你看」的姿势，关掉回到 idle
+  setSpritePose(open ? 'present' : 'idle');
   if (typeof playSound === 'function') playSound('pop');
 
   if (open) {
@@ -372,6 +425,8 @@ function spriteGoLook() {
   const target = (spriteReport.reply && spriteReport.reply.target) || spriteReport.location;
   document.getElementById('spritePanel').classList.remove('open');
   document.getElementById('spriteConnector').classList.add('hidden');
+  // 打开传送门，带用户过去
+  setSpritePose('portal', 900);
   navigateToTarget(target);
 }
 
@@ -405,10 +460,13 @@ function spriteConfirmFixed() {
   const bubble = document.getElementById('spriteBubble');
   bubble.textContent = '谢谢！';
   bubble.classList.add('show');
+  setSpritePose('talk', 1200);
   if (typeof playSound === 'function') playSound('achieve');
 
   setTimeout(() => {
     const wrap = document.getElementById('spriteWrap');
+    // 钻进传送门离开
+    setSpritePose('portal');
     wrap.classList.add('leaving');
     setTimeout(() => {
       wrap.classList.remove('active', 'leaving');

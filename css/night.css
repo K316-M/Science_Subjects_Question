@@ -320,7 +320,8 @@
 [data-theme="night"] .fb-report-reply { background: var(--n-green-bg); color: var(--n-green); }
 
 /* 通知小精灵 */
-[data-theme="night"] .sprite-panel, [data-theme="night"] .sprite-char { box-shadow: 0 12px 28px -8px rgba(0, 0, 0, .7); }
+[data-theme="night"] .sprite-panel { box-shadow: 0 12px 28px -8px rgba(0, 0, 0, .7); }
+[data-theme="night"] .sprite-char { filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .6)); }
 [data-theme="night"] .sprite-btn { background: var(--n-raised); }
 [data-theme="night"] .sprite-btn:hover { background: var(--retro-teal); color: var(--n-text); }
 [data-theme="night"] .sprite-btn.ok:hover { background: var(--n-btn); color: var(--n-btn-text); }
