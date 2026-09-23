@@ -159,28 +159,48 @@
     .subject-title { font-family: var(--font-display); font-size: 19px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
     .subject-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 
-    /* 统考倒数：首页横幅下面安静的一行。日期是学生自己设的，存在这台装置里 */
-    .exam-countdown { margin-top: 12px; font-size: 13px; color: var(--text-muted); }
-    .exam-countdown strong { font-size: 19px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; margin: 0 2px; }
-    .exam-btn {
-      background: none; border: 0; padding: 2px 4px; margin-left: 4px;
-      font-size: 12px; font-weight: 700; color: var(--primary); cursor: pointer;
-      border-bottom: 1px solid currentColor; border-radius: 2px;
+    /* 统考时间表：一颗卡通日历，旁边伸出一个对话框写著最靠近的那一场。
+       日期一律取自 js/exam-timetable.js，程序不自己编日期 */
+    .exam-next { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 12px; }
+    .exam-cal { width: 48px; height: 48px; flex: 0 0 auto; transform: rotate(-6deg); overflow: visible; }
+    .exam-cal .cal-paper { fill: var(--retro-cream); }
+    .exam-cal .cal-head { fill: var(--retro-coral); }
+    .exam-cal .cal-ring { fill: #fff; }
+    .exam-cal .cal-ink { stroke: var(--retro-dark); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .exam-cal .cal-line { fill: none; }
+    .exam-cal .cal-face { fill: var(--retro-dark); }
+    .exam-cal .cal-smile { fill: none; stroke: var(--retro-dark); stroke-width: 2; stroke-linecap: round; }
+    .exam-cal .cal-blush { fill: var(--retro-coral); opacity: .45; }
+
+    .exam-bubble {
+      position: relative;
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px 8px 14px;
+      background: var(--retro-cream);
+      border: 2px solid var(--retro-teal-dark);
+      border-radius: 14px;
+      box-shadow: 0 4px 0 rgba(77, 129, 137, .25);
+      text-align: left;
     }
-    .exam-form { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
-    .exam-form input {
-      font: inherit; font-size: 13px; color: var(--text-main);
-      padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff;
+    /* 对话框的尖角：後面一片是边框色，前面一片是底色，错开 2px 就接上了 */
+    .exam-bubble::before, .exam-bubble::after {
+      content: ''; position: absolute; top: 50%; width: 0; height: 0;
+      border-top: 8px solid transparent; border-bottom: 8px solid transparent;
     }
-    .exam-form button { font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
-    .exam-form .exam-save { border: 0; color: #fff; background: var(--primary); }
-    .exam-form .exam-cancel { border: 1px solid #cbd5e1; background: #fff; color: var(--text-muted); }
+    .exam-bubble::before { left: -10px; margin-top: -8px; border-right: 10px solid var(--retro-teal-dark); }
+    .exam-bubble::after { left: -6px; margin-top: -8px; border-right: 10px solid var(--retro-cream); }
+    .exam-subject { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--retro-dark); }
+    .exam-when { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
+    .exam-when b { font-size: 19px; font-weight: 800; color: var(--retro-teal-dark); font-variant-numeric: tabular-nums; }
+    .exam-when em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--retro-teal-dark); }   /* 原本用浅青，在米色底上只有 2.4:1 */
+    .exam-done { font-size: 13px; font-weight: 700; color: var(--retro-dark); }
+    @media (max-width: 480px) { .exam-cal { width: 40px; height: 40px; } }
 
     /* 题库覆盖：这一科依考纲有几章、其中几章已经有题目。学生有权知道题库还缺多少 */
     .bank-coverage { font-size: 12px; color: var(--text-muted); margin: 0 4px 8px; }
     .page-hint { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
     /* 水彩背景上这两行会落在深色的水彩上（实测 4.0–4.3:1）：压在水彩上的字一律用最深那档 */
-    .has-scene .bank-coverage, .has-scene .page-hint, .has-scene .exam-countdown { color: var(--text-main); }
+    .has-scene .bank-coverage, .has-scene .page-hint { color: var(--text-main); }
 
     /* PPT 章节大纲竖型书签轨道 */
     .chapter-bookmark-rail {
@@ -786,7 +806,7 @@
     <div class="retro-hero">
       <h1 class="retro-hero-title">独中理科</h1>
       <div class="retro-ribbon">自主学习 · 统考题库</div>
-      <div class="exam-countdown" id="examCountdown"></div>
+      <div class="exam-next" id="examNext"></div>
     </div>
     <div id="resumeCard"></div>
     <h2 class="page-heading">选择学习学科</h2>
@@ -1445,7 +1465,7 @@
     clearSubjectBackground();
     stopAmbientMusic();
     renderResumeCard();
-    renderExamCountdown(false);
+    renderExamNext();
     setActiveNav('navHomeBtn');
     document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" aria-current="page">学科选择</span>`;
   }
@@ -1641,63 +1661,50 @@ function openSubject(subject, initialChapterIdx) {
     openSubject(last.subject, last.chapterIdx);
   }
 
-  // ---- 统考倒数 ----
-  // 每个学生考的年份不一样（初中／高中、重考），所以日期由学生自己设，存在这台装置里。
-  // 没设就只是一句邀请，不会自作主张显示一个不知道哪来的日期。
-  const EXAM_KEY = 'UEC_EXAM_v1';
+  // ---- 统考时间表：首页显示最靠近的一场 ----
+  // 日期全部来自 js/exam-timetable.js（董总公布的时间表），程序不自己编日期。
+  const CAL_SVG = `
+    <svg class="exam-cal" viewBox="0 0 48 48" aria-hidden="true">
+      <rect class="cal-ring cal-ink" x="12.5" y="3" width="6" height="11" rx="3"/>
+      <rect class="cal-ring cal-ink" x="29.5" y="3" width="6" height="11" rx="3"/>
+      <rect class="cal-paper cal-ink" x="4" y="8" width="40" height="35" rx="8"/>
+      <path class="cal-head" d="M12 8h24a8 8 0 0 1 8 8v3H4v-3a8 8 0 0 1 8-8z"/>
+      <path class="cal-ink cal-line" d="M4 19h40M4 16a8 8 0 0 1 8-8h24a8 8 0 0 1 8 8v19a8 8 0 0 1-8 8H12a8 8 0 0 1-8-8z"/>
+      <ellipse class="cal-blush" cx="13" cy="33" rx="3.4" ry="2.4"/>
+      <ellipse class="cal-blush" cx="35" cy="33" rx="3.4" ry="2.4"/>
+      <circle class="cal-face" cx="18.5" cy="29.5" r="2.1"/>
+      <circle class="cal-face" cx="29.5" cy="29.5" r="2.1"/>
+      <path class="cal-smile" d="M19 35.5c1.7 2 3.3 3 5 3s3.3-1 5-3"/>
+    </svg>`;
 
-  function loadExamDate() {
-    try {
-      const raw = JSON.parse(localStorage.getItem(EXAM_KEY));
-      return raw && /^\d{4}-\d{2}-\d{2}$/.test(raw.date) ? raw.date : null;
-    } catch (e) { return null; }
+  function nextExamPaper(today) {
+    const table = window.UEC_EXAM;
+    if (!table || !Array.isArray(table.papers) || !table.papers.length) return null;
+    const stamp = today || new Date().toISOString().slice(0, 10);
+    // 同一天先上午後下午；今天的场次也算「最靠近」
+    return table.papers
+      .filter(p => p.date >= stamp)
+      .sort((a, b) => a.date.localeCompare(b.date) || (a.half === '上午' ? -1 : 1))[0] || null;
   }
-  function saveExamDate(date) {
-    try { date ? localStorage.setItem(EXAM_KEY, JSON.stringify({ date })) : localStorage.removeItem(EXAM_KEY); } catch (e) {}
-  }
-  function daysUntilExam(date) {
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const exam = new Date(`${date}T00:00:00`);
-    return Math.round((exam - today) / 864e5);
-  }
-  const examDateText = date => {
-    const [y, m, d] = date.split('-');
-    return `${y} 年 ${Number(m)} 月 ${Number(d)} 日`;
-  };
 
-  function renderExamCountdown(editing) {
-    const box = document.getElementById('examCountdown');
+  function renderExamNext() {
+    const box = document.getElementById('examNext');
     if (!box) return;
-    const date = loadExamDate();
-    if (editing) {
-      box.innerHTML = `
-        <form class="exam-form" onsubmit="return submitExamDate(event)">
-          <label class="sr-only" for="examDateInput">统考日期</label>
-          <input type="date" id="examDateInput" value="${date || ''}" required>
-          <button type="submit" class="exam-save">存起来</button>
-          <button type="button" class="exam-cancel" onclick="renderExamCountdown(false)">取消</button>
-        </form>`;
-      const input = document.getElementById('examDateInput');
-      if (input) input.focus();
+    const paper = nextExamPaper();
+    if (!paper) {
+      const table = window.UEC_EXAM;
+      box.innerHTML = table && table.papers && table.papers.length
+        ? `${CAL_SVG}<div class="exam-bubble"><span class="exam-done">${table.title} 已经考完了</span></div>`
+        : '';
       return;
     }
-    if (!date) {
-      box.innerHTML = `<button type="button" class="exam-btn" onclick="renderExamCountdown(true)">设定统考日期，这里就会倒数</button>`;
-      return;
-    }
-    const left = daysUntilExam(date);
-    const line = left > 0 ? `距离统考还有 <strong>${left}</strong> 天 · ${examDateText(date)}`
-      : left === 0 ? `<strong>今天</strong>就是统考 · ${examDateText(date)}`
-      : `${examDateText(date)} 的统考已经考完了`;
-    box.innerHTML = `${line}<button type="button" class="exam-btn" onclick="renderExamCountdown(true)">${left < 0 ? '设定下一次' : '改日期'}</button>`;
-  }
-
-  function submitExamDate(e) {
-    e.preventDefault();
-    const input = document.getElementById('examDateInput');
-    if (input && input.value) saveExamDate(input.value);
-    renderExamCountdown(false);
-    return false;
+    const [y, m, d] = paper.date.split('-');
+    box.innerHTML = `${CAL_SVG}
+      <div class="exam-bubble">
+        <span class="exam-subject">${paper.subject}</span>
+        <span class="exam-when"><b>${Number(d)}/${Number(m)}</b><em>${paper.half}</em></span>
+      </div>
+      <span class="sr-only">最靠近的统考科目：${paper.subject}，${y} 年 ${Number(m)} 月 ${Number(d)} 日${paper.half}</span>`;
   }
 
   // ---- 题库覆盖：这一科依考纲有几章、其中几章已经有题目 ----
@@ -2182,7 +2189,7 @@ function openSubject(subject, initialChapterIdx) {
     document.getElementById('imgModal').classList.remove('active');
   }
 
-  document.addEventListener('DOMContentLoaded', () => { renderResumeCard(); renderExamCountdown(false); });
+  document.addEventListener('DOMContentLoaded', () => { renderResumeCard(); renderExamNext(); });
 
   // 键盘可达性：让所有 role="button" 的自定义卡片也能用 Enter / 空格触发
   document.addEventListener('keydown', (e) => {
@@ -2293,6 +2300,7 @@ function openSubject(subject, initialChapterIdx) {
   }
 
 </script>
+<script src="/js/exam-timetable.js"></script>
 <script src="/js/orbit-subjects.js"></script>
 <script src="/js/theme.js"></script>
 <script src="/js/notes.js"></script>

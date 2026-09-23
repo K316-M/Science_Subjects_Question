@@ -117,31 +117,43 @@ async function run() {
     }
   });
 
-  await section('统考倒数与题库覆盖', async () => {
+  await section('统考时间表与题库覆盖', async () => {
     const { ctx, page, errors } = await open();
-    const invite = await page.textContent('#examCountdown');
-    check('统考倒数与题库覆盖', '没设过日期：只邀请，不自己编一个日期', /设定统考日期/.test(invite) && !/\d{4} 年/.test(invite), invite.trim());
-    await page.click('#examCountdown .exam-btn');
-    const d = new Date(Date.now() + 100 * DAY);
-    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    await page.fill('#examDateInput', iso);
-    await page.click('.exam-save');
-    await page.waitForTimeout(200);
-    const set = (await page.textContent('#examCountdown')).trim();
-    await page.reload(); await page.waitForTimeout(800);
-    const kept = (await page.textContent('#examCountdown')).trim();
-    check('统考倒数与题库覆盖', '设了日期：算出天数，重新整理还记得', /还有\s*100\s*天/.test(set) && kept === set, `${set} → ${kept}`);
-    // 考完了：不该继续倒数成负数
-    await page.evaluate(() => localStorage.setItem('UEC_EXAM_v1', JSON.stringify({ date: '2020-12-01' })));
-    await page.reload(); await page.waitForTimeout(800);
-    const past = (await page.textContent('#examCountdown')).trim();
-    check('统考倒数与题库覆盖', '日期已过：说考完了，并给「设定下一次」', /考完了/.test(past) && /设定下一次/.test(past), past);
+    const r = await page.evaluate(() => {
+      const box = document.getElementById('examNext');
+      const table = window.UEC_EXAM || {};
+      const today = new Date().toISOString().slice(0, 10);
+      const next = (table.papers || []).filter(p => p.date >= today)
+        .sort((a, b) => a.date.localeCompare(b.date) || (a.half === '上午' ? -1 : 1))[0];
+      return {
+        subject: (box.querySelector('.exam-subject') || {}).textContent,
+        when: (box.querySelector('.exam-when b') || {}).textContent,
+        half: (box.querySelector('.exam-when em') || {}).textContent,
+        cal: !!box.querySelector('svg.exam-cal'),
+        sr: (box.querySelector('.sr-only') || {}).textContent,
+        subjects: (table.papers || []).map(p => p.subject),
+        next,
+      };
+    });
+    const [, m, d] = (r.next || { date: '--' }).date.split('-');
+    check('统考时间表与题库覆盖', '首页显示最靠近的一场：图标 + 科目 + 日/月', r.cal && r.subject === r.next.subject && r.when === `${Number(d)}/${Number(m)}` && r.half === r.next.half,
+      JSON.stringify({ subject: r.subject, when: r.when, half: r.half }));
+    check('统考时间表与题库覆盖', '读屏念得出完整日期', /最靠近的统考科目/.test(r.sr || '') && /\d+ 年 \d+ 月 \d+ 日/.test(r.sr || ''), (r.sr || '').trim());
+    const banned = ['会计学', '经济学', '电学原理', '美术', '平面设计'];
+    check('统考时间表与题库覆盖', '时间表不收商科、美设科、电科', !r.subjects.some(x => banned.includes(x)), r.subjects.join('、'));
+    // 全部考完：不该继续显示某一科
+    const done = await page.evaluate(() => {
+      window.UEC_EXAM.papers = window.UEC_EXAM.papers.map(p => ({ ...p, date: '2020-10-21' }));
+      renderExamNext();
+      return document.getElementById('examNext').textContent.trim();
+    });
+    check('统考时间表与题库覆盖', '全部考完：说考完了，不再挑一科出来', /已经考完了/.test(done) && !/上午|下午/.test(done), done);
     await enter(page);
     const cov = (await page.textContent('#bankCoverage')).trim();
     const withQ = bank.sections.filter(s => (s.mcqs || []).length + (s.subjectives || []).length > 0).length;
     const total = bank.sections.reduce((n, s) => n + (s.mcqs || []).length, 0);
-    check('统考倒数与题库覆盖', '做题页写明题库覆盖了考纲几章', cov === `依考纲共 ${bank.sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`, cov);
-    check('统考倒数与题库覆盖', '没有 JS 错误', errors.length === 0, errors[0]);
+    check('统考时间表与题库覆盖', '做题页写明题库覆盖了考纲几章', cov === `依考纲共 ${bank.sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`, cov);
+    check('统考时间表与题库覆盖', '没有 JS 错误', errors.length === 0, errors[0]);
     await ctx.close();
   });
 

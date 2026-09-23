@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uec-science-cache-v12';
+const CACHE_NAME = 'uec-science-cache-v13';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -14,6 +14,7 @@ const APP_SHELL = [
   '/js/onboarding.js',
   '/js/review.js',
   '/js/chapter-test.js',
+  '/js/exam-timetable.js',
   '/js/sync.js',
   '/js/sync-ui.js',
   '/js/theme.js',
