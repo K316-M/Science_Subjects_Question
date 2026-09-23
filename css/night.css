@@ -133,13 +133,18 @@
 [data-theme="night"] .panel-enter[disabled] { background: var(--n-hover); color: var(--n-text-2); }
 [data-theme="night"] .panel-enter.is-quiet { background: transparent; color: var(--n-text); box-shadow: inset 0 0 0 1px var(--n-border-strong); }
 
+/* ---------- 统考倒数 ---------- */
+[data-theme="night"] .exam-form input { background: var(--n-sunken); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .exam-form .exam-save { background: var(--n-btn); color: var(--n-btn-text); }
+[data-theme="night"] .exam-form .exam-cancel { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text-2); }
+
 /* ---------- 章节卡、分页 ---------- */
 [data-theme="night"] .chapter-card { background: rgba(36, 34, 30, .72); border-color: var(--n-border); }
 [data-theme="night"] .chapter-card:hover { background: rgba(44, 41, 36, .92); border-color: rgba(134, 207, 168, .45); }
 [data-theme="night"] .chapter-card.active { background: var(--n-raised); border-color: var(--primary); }
 [data-theme="night"] .chapter-card::before { background: radial-gradient(160px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 244, 224, .07), rgba(255, 244, 224, 0) 62%); }
 [data-theme="night"] .chap-name { color: var(--n-text); }
-[data-theme="night"] .chap-progress-bar { background: rgba(240, 228, 206, .1); }
+[data-theme="night"] .chap-bar { background: rgba(240, 228, 206, .12); }
 [data-theme="night"] #wrongCountBadge { background: #b54640; color: #fff; }
 [data-theme="night"] .sub-bookmark-bar { background: rgba(36, 34, 30, .7); border-color: var(--n-border); box-shadow: inset 0 1px 0 rgba(255, 244, 224, .04), 0 1px 2px rgba(0, 0, 0, .2); }
 [data-theme="night"] .sub-tab-btn.active { background: var(--n-hover); }

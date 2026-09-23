@@ -76,6 +76,75 @@ async function run() {
     await ctx.close();
   });
 
+  await section('字阶与间距', async () => {
+    // 字级、行高、间距各收成一套阶梯（DESIGN.md 第七轮）。新样式用了阶梯外的值，这里会指名道姓
+    const FS = [11, 12, 13, 14, 16, 19, 23, 28, 32, 40, 56];
+    const LH = ['1', '1.2', '1.4', '1.6', '1.75'];
+    const SP = [1, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 36, 40, 48, 56];
+    const files = ['index.html', 'css/features.css', 'css/orbit.css', 'css/night.css',
+      ...fs.readdirSync(path.join(ROOT, 'js')).filter(f => f.endsWith('.js')).map(f => 'js/' + f)];
+    const bad = { 字级: [], 行高: [], 间距: [] };
+    for (const rel of files) {
+      const src = fs.readFileSync(path.join(ROOT, rel), 'utf8');
+      for (const m of src.matchAll(/font-size\s*:\s*([0-9.]+)px/g)) if (!FS.includes(Number(m[1]))) bad.字级.push(`${rel} ${m[1]}px`);
+      for (const m of src.matchAll(/line-height\s*:\s*([0-9.]+)\s*[;}\n]/g)) if (!LH.includes(m[1])) bad.行高.push(`${rel} ${m[1]}`);
+      for (const m of src.matchAll(/(?:margin|padding|gap|row-gap|column-gap)(?:-top|-bottom|-left|-right)?\s*:\s*([^;}\n]+)/g)) {
+        if (/calc\(|var\(|clamp\(|min\(|max\(/.test(m[1])) continue;
+        for (const n of m[1].matchAll(/-?([0-9.]+)px/g)) if (!SP.includes(Number(n[1]))) bad.间距.push(`${rel} ${n[0]}`);
+      }
+    }
+    for (const [k, list] of Object.entries(bad))
+      check('字阶与间距', `${k}只用阶梯上的值`, list.length === 0, `${list.length} 处：${[...new Set(list)].slice(0, 6).join('、')}`);
+  });
+
+  await section('首页轨道', async () => {
+    for (const w of [320, 360, 390]) {
+      const { ctx, page } = await open({ width: w, height: 800, mobile: true });
+      const rows = await page.evaluate(() => new Set([...document.querySelectorAll('.util-actions .sound-toggle')].map(b => Math.round(b.getBoundingClientRect().top))).size);
+      check('首页轨道', `${w}px：工具列五颗按钮排成一行`, rows === 1, `${rows} 行`);
+      await page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());
+      await page.waitForTimeout(900);
+      // 确认面板摆在轨道的空心里；伸出去就会盖住旁边的球，那些球还要能点
+      const hit = await page.evaluate(() => {
+        const pr = document.querySelector('.orbit-panel').getBoundingClientRect();
+        const over = a => Math.min(a.right, pr.right) > Math.max(a.left, pr.left) && Math.min(a.bottom, pr.bottom) > Math.max(a.top, pr.top);
+        return [...document.querySelectorAll('.orbit-node:not(.is-selected)')]
+          .filter(n => over(n.querySelector('.node-label').getBoundingClientRect()) || over(n.querySelector('.node-disc').getBoundingClientRect()))
+          .map(n => n.querySelector('.node-label').textContent.trim());
+      });
+      check('首页轨道', `${w}px：确认面板不盖住其他科目的球与标签`, hit.length === 0, hit.join('、'));
+      await ctx.close();
+    }
+  });
+
+  await section('统考倒数与题库覆盖', async () => {
+    const { ctx, page, errors } = await open();
+    const invite = await page.textContent('#examCountdown');
+    check('统考倒数与题库覆盖', '没设过日期：只邀请，不自己编一个日期', /设定统考日期/.test(invite) && !/\d{4} 年/.test(invite), invite.trim());
+    await page.click('#examCountdown .exam-btn');
+    const d = new Date(Date.now() + 100 * DAY);
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    await page.fill('#examDateInput', iso);
+    await page.click('.exam-save');
+    await page.waitForTimeout(200);
+    const set = (await page.textContent('#examCountdown')).trim();
+    await page.reload(); await page.waitForTimeout(800);
+    const kept = (await page.textContent('#examCountdown')).trim();
+    check('统考倒数与题库覆盖', '设了日期：算出天数，重新整理还记得', /还有\s*100\s*天/.test(set) && kept === set, `${set} → ${kept}`);
+    // 考完了：不该继续倒数成负数
+    await page.evaluate(() => localStorage.setItem('UEC_EXAM_v1', JSON.stringify({ date: '2020-12-01' })));
+    await page.reload(); await page.waitForTimeout(800);
+    const past = (await page.textContent('#examCountdown')).trim();
+    check('统考倒数与题库覆盖', '日期已过：说考完了，并给「设定下一次」', /考完了/.test(past) && /设定下一次/.test(past), past);
+    await enter(page);
+    const cov = (await page.textContent('#bankCoverage')).trim();
+    const withQ = bank.sections.filter(s => (s.mcqs || []).length + (s.subjectives || []).length > 0).length;
+    const total = bank.sections.reduce((n, s) => n + (s.mcqs || []).length, 0);
+    check('统考倒数与题库覆盖', '做题页写明题库覆盖了考纲几章', cov === `依考纲共 ${bank.sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`, cov);
+    check('统考倒数与题库覆盖', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('版面', async () => {
     for (const w of [320, 360, 390, 768, 1440]) {
       const { ctx, page } = await open({ width: w, height: 844 });

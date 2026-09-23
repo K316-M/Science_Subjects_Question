@@ -90,7 +90,7 @@
       padding-bottom: 14px;
       border-bottom: 1px solid rgba(148, 163, 184, 0.3);
     }
-    .brand { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; letter-spacing: 0.2px; }
+    .brand { font-family: var(--font-display); font-size: 19px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; letter-spacing: 0.2px; }
     .page-heading { font-family: var(--font-display); font-size: 23px; font-weight: 800; color: #1e293b; letter-spacing: 0.3px; }
     .header-actions { display: flex; align-items: center; gap: 10px; }
     
@@ -125,21 +125,21 @@
     .resume-card {
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: #fff; padding: 14px 20px; border-radius: 16px; margin-bottom: 18px;
+      color: #fff; padding: 14px 20px; border-radius: 16px; margin-bottom: 16px;
       cursor: pointer; box-shadow: var(--shadow-md); transition: transform 0.2s;
     }
     .resume-card:hover { transform: translateY(-2px); }
-    .resume-card-text { font-size: 13.5px; line-height: 1.5; }
-    .resume-card-text strong { font-family: var(--font-display); font-size: 15px; }
-    .resume-card-arrow { font-size: 20px; flex: 0 0 auto; }
+    .resume-card-text { font-size: 13px; line-height: 1.6; }
+    .resume-card-text strong { font-family: var(--font-display); font-size: 16px; }
+    .resume-card-arrow { font-size: 19px; flex: 0 0 auto; }
 
-    .grid-subjects { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-top: 18px; }
+    .grid-subjects { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-top: 16px; }
     .subject-card {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 24px 18px;
+      padding: 24px 16px;
       cursor: pointer;
       text-align: center;
       box-shadow: var(--shadow-sm);
@@ -149,15 +149,38 @@
     .subject-ascii-wrap { height: 138px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; overflow: hidden; }
     .subject-ascii {
       font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
-      font-size: 10px; line-height: 1.18; letter-spacing: 0;
+      font-size: 11px; line-height: 1.2; letter-spacing: 0;
       text-align: left; white-space: pre; margin: 0;
       color: var(--retro-teal-dark, #4d8189);
       transition: color 0.25s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .subject-card:hover .subject-ascii { color: var(--retro-coral, #e1614c); transform: scale(1.04); }
     @media (max-width: 640px) { .subject-ascii { font-size: 11px; } }
-    .subject-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
-    .subject-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+    .subject-title { font-family: var(--font-display); font-size: 19px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+    .subject-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* 统考倒数：首页横幅下面安静的一行。日期是学生自己设的，存在这台装置里 */
+    .exam-countdown { margin-top: 12px; font-size: 13px; color: var(--text-muted); }
+    .exam-countdown strong { font-size: 19px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; margin: 0 2px; }
+    .exam-btn {
+      background: none; border: 0; padding: 2px 4px; margin-left: 4px;
+      font-size: 12px; font-weight: 700; color: var(--primary); cursor: pointer;
+      border-bottom: 1px solid currentColor; border-radius: 2px;
+    }
+    .exam-form { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+    .exam-form input {
+      font: inherit; font-size: 13px; color: var(--text-main);
+      padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff;
+    }
+    .exam-form button { font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+    .exam-form .exam-save { border: 0; color: #fff; background: var(--primary); }
+    .exam-form .exam-cancel { border: 1px solid #cbd5e1; background: #fff; color: var(--text-muted); }
+
+    /* 题库覆盖：这一科依考纲有几章、其中几章已经有题目。学生有权知道题库还缺多少 */
+    .bank-coverage { font-size: 12px; color: var(--text-muted); margin: 0 4px 8px; }
+    .page-hint { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
+    /* 水彩背景上这两行会落在深色的水彩上（实测 4.0–4.3:1）：压在水彩上的字一律用最深那档 */
+    .has-scene .bank-coverage, .has-scene .page-hint, .has-scene .exam-countdown { color: var(--text-main); }
 
     /* PPT 章节大纲竖型书签轨道 */
     .chapter-bookmark-rail {
@@ -172,18 +195,18 @@
     .chapter-bookmark-rail::-webkit-scrollbar { display: none; }
 
     .chapter-card {
-      flex: 0 0 130px;
-      height: 126px;
+      flex: 0 0 152px;
+      height: 128px;
       background: rgba(255, 255, 255, 0.62);
       backdrop-filter: blur(16px) saturate(150%);
       -webkit-backdrop-filter: blur(16px) saturate(150%);
       border: 1px solid rgba(255,255,255,.75);
       border-radius: 18px;
-      padding: 12px 10px;
+      padding: 12px 12px 12px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
+      align-items: stretch;
+      text-align: left;
       cursor: pointer;
       box-shadow: var(--shadow-sm);
       transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -206,28 +229,39 @@
       background: var(--primary);
       border-radius: 4px;
     }
-    .chap-badge { font-size: 11px; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 2px 7px; border-radius: 8px; }
-    .chap-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: #1e293b; text-align: center; line-height: 1.35; margin: 4px 0; }
-    .chap-count { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-    .chap-count.has-progress { color: var(--primary); font-weight: 700; }
-    .chap-progress-bar { width: 100%; height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 4px; }
-    .chap-progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.3s; }
+    /* 章号是资料（课本的第几章），不是标签：用等宽数字、压在标题上方一行 */
+    .chap-index { font-size: 11px; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .chap-name {
+      font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #1e293b;
+      line-height: 1.4; margin: 4px 0 0;
+      /* 章名长短差很多（「细胞分化」到「细胞内物质和能量的转换」），最多三行，剩下的省略 */
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+      text-wrap: balance;   /* 不让最後一个字孤零零掉到下一行 */
+    }
+    @media (max-width: 480px) { .chapter-card { flex-basis: 142px; } }
+    /* 底部一行讲「掌握到哪」：还没开始只写题数（空进度条是装饰，不画） */
+    .chap-foot { margin-top: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+    .chap-foot .num { color: var(--primary); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .chap-bar { flex: 1; height: 4px; border-radius: 4px; background: rgba(15, 23, 42, .12); overflow: hidden; }
+    .chap-bar i { display: block; height: 100%; border-radius: 4px; background: var(--primary); transition: width .6s cubic-bezier(.22, 1, .36, 1); }
+    .chap-done { display: inline-flex; align-items: center; gap: 4px; color: var(--primary); font-weight: 700; }
+    .chap-done svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
-    #wrongCountBadge { background: #dc2626; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 2px; }
+    #wrongCountBadge { background: #dc2626; color: #fff; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 2px; }
     #wrongCountBadge:empty { display: none; }
 
     .wrong-item-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 14px;
-      padding: 18px 20px;
+      padding: 16px 20px;
       box-shadow: var(--shadow-sm);
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 14px;
     }
-    .wrong-item-chapter { font-size: 11px; font-weight: 700; color: var(--danger); background: #fef2f2; padding: 3px 9px; border-radius: 8px; display: inline-block; margin-bottom: 8px; }
+    .wrong-item-chapter { font-size: 11px; font-weight: 700; color: var(--danger); background: #fef2f2; padding: 4px 8px; border-radius: 8px; display: inline-block; margin-bottom: 8px; }
     .wrong-item-q { font-size: 14px; color: #334155; line-height: 1.6; white-space: pre-line; }
     .wrong-item-jump { flex: 0 0 auto; background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .wrong-item-jump:hover { background: var(--primary-dark); }
@@ -243,7 +277,7 @@
       scrollbar-width: none;
       -ms-overflow-style: none;
       gap: 10px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
       background: rgba(255, 255, 255, 0.55);
       backdrop-filter: blur(16px) saturate(150%);
       -webkit-backdrop-filter: blur(16px) saturate(150%);
@@ -259,7 +293,7 @@
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 7px 16px;
+      padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
       font-size: 13px;
@@ -280,12 +314,12 @@
       -webkit-backdrop-filter: blur(20px) saturate(150%);
       border: 1px solid var(--card-border);
       border-radius: 22px;
-      padding: 30px;
+      padding: 28px;
       /* 内缘那道 1px 高光是玻璃质感的关键，没有它就只是半透明方块 */
       box-shadow: inset 0 1px 0 rgba(255,255,255,.7), var(--shadow-md);
     }
     .mcq-question {
-      font-size: 19px; font-weight: 600; line-height: 1.75; margin-bottom: 22px;
+      font-size: 19px; font-weight: 600; line-height: 1.75; margin-bottom: 20px;
       white-space: pre-line; color: #0f172a; letter-spacing: 0.2px;
     }
 
@@ -310,7 +344,7 @@
     .option-btn:nth-child(4) { animation-delay: .19s; }
 
     /* 选项前的 A/B/C/D 圆形徽章 */
-    .option-btn { display: flex; align-items: flex-start; gap: 13px; }
+    .option-btn { display: flex; align-items: flex-start; gap: 12px; }
     .opt-badge {
       flex: 0 0 auto;
       width: 27px; height: 27px; margin-top: -1px;
@@ -335,7 +369,7 @@
     }
 
     .figure-container {
-      margin: 12px 0 18px 0;
+      margin: 12px 0 16px 0;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 12px;
@@ -355,11 +389,11 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(15,23,42,.04);
       color: #334155;
       text-align: left;
-      padding: 15px 20px;
+      padding: 16px 20px;
       border-radius: 14px;
       cursor: pointer;
-      font-size: 15px;
-      line-height: 1.5;
+      font-size: 16px;
+      line-height: 1.6;
       transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .18s ease, background .18s ease, border-color .18s ease;
     }
     .option-btn:hover:not(.locked) {
@@ -390,25 +424,25 @@
       padding: 12px 14px;
       border-radius: 10px;
       font-size: 14px;
-      line-height: 1.7;
+      line-height: 1.75;
       font-weight: 600;
     }
     .mcq-verdict.is-right { display: block; background: #ecfdf5; color: #065f46; border-left: 4px solid #047857; }
     .mcq-verdict.is-wrong { display: block; background: #fffbeb; color: #92400e; border-left: 4px solid #b45309; }
 
     .explanation {
-      margin-top: 18px;
+      margin-top: 16px;
       padding: 16px;
       background: #f0fdf4;
       border-radius: 10px;
       font-size: 14px;
-      line-height: 1.7;
+      line-height: 1.75;
       color: #166534;
       border-left: 4px solid var(--primary);
       display: none;
     }
     .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
-    .btn-nav { min-height: 40px; background: #fff; border: 1px solid #cbd5e1; color: #334155; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .btn-nav { min-height: 40px; background: #fff; border: 1px solid #cbd5e1; color: #334155; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
     .btn-nav:hover { border-color: var(--primary); color: var(--primary); }
 
     /* Google 表单式大卡片排版 */
@@ -423,8 +457,8 @@
     }
     .form-question-card:hover { box-shadow: 0 14px 28px -4px rgba(0,0,0,0.08); }
     .form-card-top-bar { height: 6px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
-    .form-card-body { padding: 26px 24px; }
-    .form-question-text { font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.8; margin-bottom: 20px; white-space: pre-line; }
+    .form-card-body { padding: 24px 24px; }
+    .form-question-text { font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.75; margin-bottom: 20px; white-space: pre-line; }
 
     /* 翻转背书闪卡 */
     .answer-flip-panel {
@@ -434,7 +468,7 @@
       background: #f8fafc;
     }
     .flip-toggle-header {
-      padding: 12px 18px;
+      padding: 12px 16px;
       background: #f1f5f9;
       cursor: pointer;
       display: flex;
@@ -445,13 +479,13 @@
     }
     .flip-toggle-header:hover { background: #e2e8f0; }
     .flip-toggle-title { font-size: 13px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 6px; }
-    .flip-status-pill { font-size: 11px; font-weight: 600; color: var(--primary); background: #fff; padding: 3px 8px; border-radius: 12px; }
+    .flip-status-pill { font-size: 11px; font-weight: 600; color: var(--primary); background: #fff; padding: 4px 8px; border-radius: 12px; }
 
     .flip-answer-content {
       padding: 20px;
       display: none;
-      font-size: 14.5px;
-      line-height: 1.9;
+      font-size: 14px;
+      line-height: 1.75;
       color: #334155;
       background: #fff;
       animation: softFadeIn 0.2s ease;
@@ -558,26 +592,26 @@
     /* 窄屏：四个分页放不下就挤成三行，很难看也难点。把非必要的字缩起来 */
     @media (max-width: 680px) {
       .tab-long { display: none; }
-      .sub-bookmark-bar { padding: 5px; gap: 4px; }
-      .sub-tab-btn { padding: 7px 10px; font-size: 12.5px; }
+      .sub-bookmark-bar { padding: 4px; gap: 4px; }
+      .sub-tab-btn { padding: 8px 10px; font-size: 12px; }
     }
     /* 默认只显示完整标签；要写在下面的媒体查询之前，否则同特异度会把它盖掉 */
     .nav-short { display: none; }
     /* 360px 的安卓机（红米／Galaxy A／Oppo A）在马来西亚很常见。
        回访学生会同时带著错题与复习两个徽章，680 那一档在这里就不够收了。 */
     @media (max-width: 400px) {
-      .sub-bookmark-bar { padding: 4px; gap: 3px; }
-      .sub-tab-btn { padding: 8px 7px; font-size: 11.5px; }
+      .sub-bookmark-bar { padding: 4px; gap: 4px; }
+      .sub-tab-btn { padding: 8px 8px; font-size: 12px; }
       .sub-tab-btn > span[id$="CountBadge"]:not(:empty) {
         display: inline-block; margin-left: 2px;
-        font-size: 10.5px; font-weight: 800;
+        font-size: 11px; font-weight: 800;
       }
       .nav-long { display: none; }
       .nav-short { display: inline; }
     }
 
     .empty-state {
-      max-width: 420px; margin: 26px auto; padding: 36px 28px 32px;
+      max-width: 420px; margin: 24px auto; padding: 36px 28px 32px;
       text-align: center; border-radius: 22px;
       background: rgba(255,255,255,.62);
       backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%);
@@ -586,13 +620,13 @@
     }
     .empty-glyph {
       width: 58px; height: 58px; margin: 0 auto 14px;
-      display: grid; place-items: center; font-size: 26px; border-radius: 50%;
+      display: grid; place-items: center; font-size: 28px; border-radius: 50%;
       background: rgba(5,150,105,.09); border: 1px solid rgba(5,150,105,.16);
     }
-    .empty-title { font-family: var(--font-display, serif); font-size: 17px; font-weight: 700; color: #0f172a; }
+    .empty-title { font-family: var(--font-display, serif); font-size: 16px; font-weight: 700; color: #0f172a; }
     .empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
     .empty-btn {
-      min-height: 44px; padding: 10px 18px; border-radius: 12px; cursor: pointer;
+      min-height: 44px; padding: 10px 16px; border-radius: 12px; cursor: pointer;
       font-size: 14px; font-weight: 700;
       background: rgba(255,255,255,.8); color: var(--primary); border: 1px solid rgba(4,120,87,.35);
     }
@@ -606,11 +640,11 @@
       padding: 20px; border-radius: 18px;
       background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);
     }
-    .review-count { font-size: 15px; color: #0f172a; }
+    .review-count { font-size: 14px; color: #0f172a; }
     .review-count strong { font-size: 28px; color: var(--primary); margin-right: 2px; }
     .review-bar { height: 8px; margin: 10px 0 12px; border-radius: 99px; background: rgba(4,120,87,.12); overflow: hidden; }
     .review-bar > div { height: 100%; border-radius: 99px; background: var(--primary); transition: width .4s ease; }
-    .review-note { font-size: 13px; line-height: 1.7; color: var(--text-muted); margin-bottom: 14px; }
+    .review-note { font-size: 13px; line-height: 1.75; color: var(--text-muted); margin-bottom: 14px; }
     .review-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
     .review-item {
       width: 100%; display: flex; align-items: flex-start; gap: 12px; text-align: left; cursor: pointer;
@@ -626,7 +660,7 @@
     .review-meta em { font-style: normal; font-weight: 700; color: #b91c1c; }
 
     /* 错题本：按章节盘点的库存 */
-    .wrong-book-head { font-size: 13px; line-height: 1.7; color: var(--text-muted); margin-bottom: 14px; }
+    .wrong-book-head { font-size: 13px; line-height: 1.75; color: var(--text-muted); margin-bottom: 14px; }
     .wrong-book-head strong { color: #b91c1c; font-size: 16px; }
     .wrong-group {
       margin-bottom: 14px; padding: 6px 0; border-radius: 16px; overflow: hidden;
@@ -643,7 +677,7 @@
       background: none; border: 0; border-top: 1px solid rgba(15,23,42,.06);
     }
     .wrong-row:hover { background: rgba(254,242,242,.7); }
-    .wrong-row-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .wrong-row-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
     .wrong-row-meta { font-size: 12px; color: var(--text-muted); }
     .wrong-row-meta em { font-style: normal; font-weight: 700; color: #065f46; }
     .wrong-group.is-stubborn { border-color: rgba(185,28,28,.35); box-shadow: 0 0 0 3px rgba(185,28,28,.06), var(--shadow-sm); }
@@ -660,9 +694,9 @@
     }
     .test-entry-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
     .test-entry-text strong { font-size: 14px; color: #0f172a; }
-    .test-entry-text span { font-size: 12.5px; color: var(--text-muted); }
+    .test-entry-text span { font-size: 12px; color: var(--text-muted); }
     .test-entry-btn {
-      flex: 0 0 auto; min-height: 42px; padding: 9px 16px; border-radius: 12px; border: 0; cursor: pointer;
+      flex: 0 0 auto; min-height: 42px; padding: 8px 16px; border-radius: 12px; border: 0; cursor: pointer;
       font-size: 14px; font-weight: 700; color: #fff; background: var(--primary);
     }
     .test-entry-btn:hover { background: var(--primary-dark); }
@@ -684,7 +718,7 @@
       display: block; margin-top: 10px; min-height: 40px; padding: 8px 14px; border-radius: 10px; cursor: pointer;
       font-size: 13px; font-weight: 700; background: #fff; color: var(--primary); border: 1px solid rgba(4,120,87,.4);
     }
-    .empty-hint { margin-top: 9px; font-size: 13px; line-height: 1.8; color: var(--text-muted); }
+    .empty-hint { margin-top: 8px; font-size: 13px; line-height: 1.75; color: var(--text-muted); }
 
     .container, header { position: relative; z-index: 1; }
     .view { z-index: 1; }
@@ -694,8 +728,8 @@
       position: fixed; top: 20px; left: 50%; z-index: 1200;
       transform: translateX(-50%) translateY(-16px) scale(0.92);
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: #fff; padding: 13px 22px; border-radius: 14px;
-      font-size: 13.5px; font-weight: 700; text-align: center; line-height: 1.5;
+      color: #fff; padding: 12px 20px; border-radius: 14px;
+      font-size: 13px; font-weight: 700; text-align: center; line-height: 1.6;
       box-shadow: 0 14px 30px -8px rgba(5, 150, 105, 0.45);
       opacity: 0; pointer-events: none;
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -752,10 +786,11 @@
     <div class="retro-hero">
       <h1 class="retro-hero-title">独中理科</h1>
       <div class="retro-ribbon">自主学习 · 统考题库</div>
+      <div class="exam-countdown" id="examCountdown"></div>
     </div>
     <div id="resumeCard"></div>
     <h2 class="page-heading">选择学习学科</h2>
-    <p style="color: var(--text-muted); margin-top: 4px; font-size: 14px;">点一下轨道上的圆球，它会转到正上方并显示你的进度；按「进入」开始，点其他地方取消。</p>
+    <p class="page-hint">点一下轨道上的圆球，它会转到正上方并显示你的进度；按「进入」开始，点其他地方取消。</p>
     <div class="orbit-stage" id="orbitStage" role="group" aria-label="学科选择轨道">
       <div class="orbit-track outer" aria-hidden="true"></div>
       <div class="orbit-track inner" aria-hidden="true"></div>
@@ -768,6 +803,7 @@
   <div id="viewStudy" class="view">
     <!-- 画面上已有面包屑与章节卡，这个标题只给读屏的「按标题浏览」用 -->
     <h2 class="sr-only" id="studyHeading"></h2>
+    <p class="bank-coverage" id="bankCoverage"></p>
     <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
     <div class="sub-bookmark-bar" role="tablist" aria-label="练习模式">
       <button class="sub-tab-btn active" id="subBtnMcq" role="tab" aria-selected="true" onclick="switchSubSection('mcq')">🎴 选择题<span class="tab-long">练习</span></button>
@@ -802,14 +838,14 @@
         <button class="archive-tab" role="tab" aria-selected="false" tabindex="-1" data-arc-subject="chemistry" onclick="switchArchiveSubject('chemistry')">化学</button>
         <button class="archive-tab" role="tab" aria-selected="false" tabindex="-1" data-arc-subject="physics" onclick="switchArchiveSubject('physics')">物理</button>
       </div>
-      <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#334155; cursor:pointer;">
+      <label style="display:flex; align-items:center; gap: 6px; font-size:12px; font-weight:700; color:#334155; cursor:pointer;">
         <input type="checkbox" checked onchange="setArchiveIncludeAnswers(this.checked)" style="width:15px; height:15px; accent-color: var(--primary);">
         含答案与解析
       </label>
       <span class="archive-count" id="archiveCount">已选 0 题</span>
     </div>
 
-    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+    <div style="display:flex; gap: 8px; flex-wrap:wrap; margin-bottom: 16px;">
       <button class="btn-primary-retro" id="archiveDownloadBtn" onclick="downloadArchivePdf()" disabled>⬇️ 下载 PDF</button>
       <button class="btn-ghost-retro" onclick="printArchive()">🖨️ 打印版</button>
       <button class="btn-ghost-retro" onclick="clearArchiveSelection()">清空勾选</button>
@@ -840,11 +876,11 @@
         <input class="fb-input" id="fbContact" placeholder="邮箱或 WhatsApp，方便管理员追问细节">
       </div>
       <button class="btn-primary-retro" id="fbSubmitBtn" onclick="submitFeedback()">📮 提交申诉</button>
-      <div id="fbSubmitResult" style="margin-top:14px;"></div>
+      <div id="fbSubmitResult" style="margin-top: 14px;"></div>
     </div>
 
-    <h3 class="page-heading" style="font-size:18px; margin-top:30px;">我提交过的问题</h3>
-    <div id="fbMyReports" style="margin-top:12px;"></div>
+    <h3 class="page-heading" style="font-size:19px; margin-top: 28px;">我提交过的问题</h3>
+    <div id="fbMyReports" style="margin-top: 12px;"></div>
   </div>
 </main>
 
@@ -889,7 +925,7 @@
 
     <div class="note-dialog-foot">
       <span class="note-save-hint" id="noteSaveHint">尚未保存</span>
-      <div style="display:flex; gap:8px;">
+      <div style="display:flex; gap: 8px;">
         <button class="btn-ghost-retro" onclick="closeNoteEditor()">取消</button>
         <button class="btn-primary-retro" onclick="saveCurrentNote()">💾 保存笔记</button>
       </div>
@@ -935,9 +971,9 @@
       <span class="note-dialog-title">✍️ 还有什么问题？</span>
       <button class="note-close-btn" onclick="closeSpriteNewIssue()" aria-label="关闭">×</button>
     </div>
-    <div style="padding:16px;">
+    <div style="padding: 16px;">
       <textarea class="fb-textarea" id="spriteIssueText" placeholder="把还没解决、或者新发现的问题写在这里…"></textarea>
-      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+      <div style="display:flex; gap: 8px; justify-content:flex-end; margin-top: 12px;">
         <button class="btn-ghost-retro" onclick="closeSpriteNewIssue()">取消</button>
         <button class="btn-primary-retro" onclick="submitSpriteNewIssue()">提交</button>
       </div>
@@ -1409,6 +1445,7 @@
     clearSubjectBackground();
     stopAmbientMusic();
     renderResumeCard();
+    renderExamCountdown(false);
     setActiveNav('navHomeBtn');
     document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" aria-current="page">学科选择</span>`;
   }
@@ -1527,20 +1564,27 @@ function openSubject(subject, initialChapterIdx) {
       const { mastered } = getChapterProgress(currentSubject, sec.id, total);
       const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
 
+      let foot;
+      if (total === 0) foot = '整理中';
+      else if (mastered === 0) foot = `${total} 题`;
+      else if (mastered === total) foot = `<span class="chap-done"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.6l3.2 3.2L13 5"/></svg>已掌握</span>`;
+      else foot = `<span class="num">${mastered}/${total}</span><span class="chap-bar"><i style="width:${pct}%"></i></span>`;
+
       card.innerHTML = `
-        <span class="chap-badge">${tagText}</span>
+        <span class="chap-index">${tagText}</span>
         <div class="chap-name">${nameText}</div>
-        <span class="chap-count ${mastered > 0 ? 'has-progress' : ''}">${total > 0 ? (mastered > 0 ? `${mastered}/${total} 已掌握` : `${total} 道选择题`) : '整理中'}</span>
-        ${total > 0 ? `<div class="chap-progress-bar"><div class="chap-progress-fill" style="width:${pct}%"></div></div>` : ''}
+        <div class="chap-foot">${foot}</div>
       `;
       rail.appendChild(card);
     });
 
     if (sections.length === 0) {
-      rail.innerHTML = `<div style="padding: 30px 10px; color: var(--text-muted); font-size: 14px;">🚧 该学科题库正在整理中，敬请期待！</div>`;
+      rail.innerHTML = `<div style="padding: 28px 10px; color: var(--text-muted); font-size: 14px;">🚧 该学科题库正在整理中，敬请期待！</div>`;
     } else if (!rail.querySelector('[tabindex="0"]')) {
       rail.firstElementChild.setAttribute('tabindex', '0');   // 没有选中章节时，至少让键盘进得来
     }
+
+    renderBankCoverage();
 
     const heading = document.getElementById('studyHeading');
     const cur = sections[activeChapterIdx];
@@ -1595,6 +1639,77 @@ function openSubject(subject, initialChapterIdx) {
     try { last = JSON.parse(localStorage.getItem(LAST_VISIT_KEY)); } catch (e) {}
     if (!last || !last.subject) return;
     openSubject(last.subject, last.chapterIdx);
+  }
+
+  // ---- 统考倒数 ----
+  // 每个学生考的年份不一样（初中／高中、重考），所以日期由学生自己设，存在这台装置里。
+  // 没设就只是一句邀请，不会自作主张显示一个不知道哪来的日期。
+  const EXAM_KEY = 'UEC_EXAM_v1';
+
+  function loadExamDate() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(EXAM_KEY));
+      return raw && /^\d{4}-\d{2}-\d{2}$/.test(raw.date) ? raw.date : null;
+    } catch (e) { return null; }
+  }
+  function saveExamDate(date) {
+    try { date ? localStorage.setItem(EXAM_KEY, JSON.stringify({ date })) : localStorage.removeItem(EXAM_KEY); } catch (e) {}
+  }
+  function daysUntilExam(date) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const exam = new Date(`${date}T00:00:00`);
+    return Math.round((exam - today) / 864e5);
+  }
+  const examDateText = date => {
+    const [y, m, d] = date.split('-');
+    return `${y} 年 ${Number(m)} 月 ${Number(d)} 日`;
+  };
+
+  function renderExamCountdown(editing) {
+    const box = document.getElementById('examCountdown');
+    if (!box) return;
+    const date = loadExamDate();
+    if (editing) {
+      box.innerHTML = `
+        <form class="exam-form" onsubmit="return submitExamDate(event)">
+          <label class="sr-only" for="examDateInput">统考日期</label>
+          <input type="date" id="examDateInput" value="${date || ''}" required>
+          <button type="submit" class="exam-save">存起来</button>
+          <button type="button" class="exam-cancel" onclick="renderExamCountdown(false)">取消</button>
+        </form>`;
+      const input = document.getElementById('examDateInput');
+      if (input) input.focus();
+      return;
+    }
+    if (!date) {
+      box.innerHTML = `<button type="button" class="exam-btn" onclick="renderExamCountdown(true)">设定统考日期，这里就会倒数</button>`;
+      return;
+    }
+    const left = daysUntilExam(date);
+    const line = left > 0 ? `距离统考还有 <strong>${left}</strong> 天 · ${examDateText(date)}`
+      : left === 0 ? `<strong>今天</strong>就是统考 · ${examDateText(date)}`
+      : `${examDateText(date)} 的统考已经考完了`;
+    box.innerHTML = `${line}<button type="button" class="exam-btn" onclick="renderExamCountdown(true)">${left < 0 ? '设定下一次' : '改日期'}</button>`;
+  }
+
+  function submitExamDate(e) {
+    e.preventDefault();
+    const input = document.getElementById('examDateInput');
+    if (input && input.value) saveExamDate(input.value);
+    renderExamCountdown(false);
+    return false;
+  }
+
+  // ---- 题库覆盖：这一科依考纲有几章、其中几章已经有题目 ----
+  function renderBankCoverage() {
+    const el = document.getElementById('bankCoverage');
+    if (!el) return;
+    const sections = fullDatabase.sections || [];
+    const withQ = sections.filter(sec => (sec.mcqs || []).length + (sec.subjectives || []).length > 0).length;
+    const total = sections.reduce((n, sec) => n + (sec.mcqs || []).length, 0);
+    el.textContent = sections.length
+      ? `依考纲共 ${sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`
+      : '';
   }
 
   const SUB_TAB_IDS = { mcq: 'subBtnMcq', subj: 'subBtnSubj', wrong: 'subBtnWrong', review: 'subBtnReview' };
@@ -2067,7 +2182,7 @@ function openSubject(subject, initialChapterIdx) {
     document.getElementById('imgModal').classList.remove('active');
   }
 
-  document.addEventListener('DOMContentLoaded', renderResumeCard);
+  document.addEventListener('DOMContentLoaded', () => { renderResumeCard(); renderExamCountdown(false); });
 
   // 键盘可达性：让所有 role="button" 的自定义卡片也能用 Enter / 空格触发
   document.addEventListener('keydown', (e) => {

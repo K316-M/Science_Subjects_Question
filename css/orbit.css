@@ -5,7 +5,8 @@
  */
 
 .orbit-stage {
-  --orbit-radius: clamp(108px, 31vw, 200px);   /* 轨道半径 */
+  /* 轨道半径：手机上尽量放大，让中央的空心装得下确认面板（上限是小球外圈的装饰不出屏幕） */
+  --orbit-radius: clamp(108px, calc(36vw - 8px), 200px);
   --node-size: clamp(54px, 14.5vw, 72px);      /* 小球直径 */
   --deco-size: calc(var(--node-size) * 1.8);   /* 小球外圈动态插图的范围 */
   --ring: 0;                                   /* 轨道角度，由 JS 每帧写入 */
@@ -128,7 +129,7 @@
   position: absolute; top: calc(100% + 8px); left: 50%;
   transform: translateX(-50%);
   white-space: nowrap; text-align: center;
-  font-size: 12.5px; font-weight: 700; color: var(--text-muted, #64748b);
+  font-size: 12px; font-weight: 700; color: var(--text-muted, #64748b);
   z-index: 2;
   text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 1px 2px rgba(255, 255, 255, .95);
   transition: color .35s ease, top .35s ease;
@@ -137,12 +138,12 @@
 /* 字用科目色压深一档：生物 #059669、物理、数学的原色在白底上都不到 4.5:1（小字） */
 .orbit-node.is-selected .node-label {
   color: var(--text-main, #0f172a); color: color-mix(in oklab, var(--accent-color) 70%, #000); top: calc(100% + 18px);
-  padding: 3px 10px; border-radius: 999px;
+  padding: 4px 10px; border-radius: 999px;
   background: rgba(255, 255, 255, .92); box-shadow: 0 2px 8px -4px rgba(15, 23, 42, .25);
 }
 /* 首页预览水彩时，底部的山丘在标签後面：实测 4.24:1，调深一档 */
-.has-scene .node-label { color: #334155; }
-.node-label em { display: block; font-style: normal; font-size: 10px; font-weight: 500; }
+.has-scene .node-label { color: #1e293b; }
+.node-label em { display: block; font-style: normal; font-size: 11px; font-weight: 500; }
 
 /* ---------- 每颗球周围的动态插图 ---------- */
 .node-deco {
@@ -200,8 +201,9 @@
 /* ---------- 中央确认面板 ---------- */
 .orbit-panel {
   position: absolute; left: 50%; top: 50%;
-  width: min(236px, 63vw);
-  padding: 15px 16px 13px;
+  /* 宽度跟著轨道的空心走：伸出去就会盖住左右两颗球的标签 */
+  width: min(236px, calc(var(--orbit-radius) * 2 - var(--node-size) - 18px));
+  padding: 16px 16px 12px;
   border-radius: 18px;
   background: rgba(255, 255, 255, .97);
   border: 1px solid var(--card-border, rgba(226, 232, 240, .95));
@@ -216,15 +218,15 @@
   opacity: 1; visibility: visible; pointer-events: auto;
   transform: translate(-50%, -50%) scale(1);
 }
-.panel-title { font-family: var(--font-display, serif); font-size: 17px; font-weight: 700; color: var(--text-main, #0f172a); }
-.panel-sub { font-size: 11.5px; color: var(--text-muted, #64748b); margin-top: 2px; }
-.panel-bar { height: 7px; border-radius: 99px; background: rgba(15, 23, 42, .08); overflow: hidden; margin: 11px 0 6px; }
+.panel-title { font-family: var(--font-display, serif); font-size: 16px; font-weight: 700; color: var(--text-main, #0f172a); }
+.panel-sub { font-size: 12px; color: var(--text-muted, #64748b); margin-top: 2px; }
+.panel-bar { height: 7px; border-radius: 99px; background: rgba(15, 23, 42, .08); overflow: hidden; margin: 12px 0 6px; }
 .panel-bar i { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--accent-color); transition: width .9s cubic-bezier(.22, 1, .36, 1); }
-.panel-stat { font-size: 11.5px; color: var(--text-muted, #64748b); }
+.panel-stat { font-size: 12px; color: var(--text-muted, #64748b); }
 .panel-stat strong { color: var(--accent-color); font-size: 14px; }
 .panel-enter {
-  margin-top: 11px; width: 100%;
-  padding: 9px 14px; border: 0; border-radius: 11px; cursor: pointer;
+  margin-top: 12px; width: 100%;
+  padding: 8px 14px; border: 0; border-radius: 11px; cursor: pointer;
   font-size: 14px; font-weight: 700; color: #fff;
   background: var(--accent-color);
   box-shadow: 0 8px 18px -8px var(--accent-color);
@@ -234,7 +236,26 @@
 .panel-enter:active { transform: translateY(0); }
 .panel-enter[disabled] { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
 .panel-enter.is-quiet { background: transparent; color: #334155; box-shadow: inset 0 0 0 1px rgba(51,65,85,.35); }
-.panel-hint { margin-top: 8px; font-size: 10.5px; color: var(--text-muted, #64748b); }
+.panel-hint { margin-top: 8px; font-size: 11px; color: var(--text-muted, #64748b); }
+
+/* 手机的空心比较小：面板收紧，章节预览只留一行，
+   「点其他地方取消」也省下来——轨道上方的说明已经写了这句 */
+@media (max-width: 560px) {
+  .orbit-panel { padding: 12px 12px 12px; }
+  .panel-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .panel-bar { margin: 8px 0 4px; }
+  .panel-enter { margin-top: 8px; padding: 8px 12px; }
+  .panel-hint { display: none; }
+  /* 选中那颗球的标签会被面板压住一半；面板上已经写了科目名，让它淡出 */
+  .orbit-stage.has-selection .orbit-node.is-selected .node-label { opacity: 0; transition: opacity .25s ease; }
+}
+/* 320px：空心只剩 162px 高，标题和进度一折行就会压到下面那颗球。字级降一档、章节预览省略 */
+@media (max-width: 340px) {
+  .panel-title { font-size: 14px; }
+  .panel-sub { display: none; }
+  .panel-stat { font-size: 11px; }
+  .panel-stat strong { font-size: 13px; }
+}
 
 /* ---------- 无障碍：尊重「减少动态效果」 ---------- */
 @media (prefers-reduced-motion: reduce) {

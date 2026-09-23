@@ -231,8 +231,8 @@ function buildPdfBlocks(groups) {
     <div class="pdf-block pdf-title-block">
       <h1>独中理科 · 题目档</h1>
       <p>董总华文独中高中统考 · 自选练习卷</p>
-      <p style="margin-top:14px;">共 ${totalCount} 题　|　${groups.map(g => escapeArc(g.subjectLabel)).join('、')}　|　生成日期：${today}</p>
-      <p style="margin-top:10px; font-size:12px; color:#777;">${archiveState.includeAnswers ? '本卷含参考答案与解析' : '本卷不含答案（纯做题版）'}</p>
+      <p style="margin-top: 14px;">共 ${totalCount} 题　|　${groups.map(g => escapeArc(g.subjectLabel)).join('、')}　|　生成日期：${today}</p>
+      <p style="margin-top: 10px; font-size:12px; color:#777;">${archiveState.includeAnswers ? '本卷含参考答案与解析' : '本卷不含答案（纯做题版）'}</p>
     </div>`);
 
   let qNo = 0;
@@ -392,7 +392,7 @@ async function printArchive() {
     <title>独中理科 · 题目档</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/features.css">
-    <style>body{margin:0;background:#fff;} .pdf-block{page-break-inside:avoid;}</style>
+    <style>body{margin: 0;background:#fff;} .pdf-block{page-break-inside:avoid;}</style>
     </head><body>${blocks.join('')}</body></html>`);
   win.document.close();
   setTimeout(() => win.print(), 800);

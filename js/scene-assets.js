@@ -48,7 +48,7 @@
 .scene-bg::after{content:'';position:absolute;inset:0;
   background:var(--scene-veil,linear-gradient(180deg,rgba(240,253,244,.55),rgba(240,253,244,.85)));}
 .scene-music-btn{position:fixed;right:16px;bottom:16px;z-index:9999;
-  font:inherit;font-size:14px;line-height:1;padding:9px 14px;border-radius:999px;cursor:pointer;
+  font:inherit;font-size:14px;line-height:1;padding: 8px 14px;border-radius:999px;cursor:pointer;
   border:1px solid rgba(0,0,0,.18);background:rgba(255,255,255,.92);color:#1f2937;
   box-shadow:0 2px 10px rgba(0,0,0,.12);transition:transform .15s ease,box-shadow .15s ease;}
 .scene-music-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.16);}

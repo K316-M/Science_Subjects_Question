@@ -214,7 +214,7 @@ function showSubmitResult(report) {
           <span class="fb-report-id">${escapeFb(report.id)}</span>
         </div>
         <div class="fb-report-text">问题已记录在你的浏览器里，但暂时没能送出（可能是网络问题）。请用下面任一方式发给管理员：</div>
-        <div style="display:flex; gap:8px; margin-top:11px; flex-wrap:wrap;">
+        <div style="display:flex; gap: 8px; margin-top: 12px; flex-wrap:wrap;">
           <button class="btn-ghost-retro" onclick="copyReportText('${escapeFb(report.id)}')">📋 复制问题内容</button>
           <a class="btn-ghost-retro" style="text-decoration:none; display:inline-block;" href="${mailto}">✉️ 用邮件发送</a>
           <button class="btn-ghost-retro" onclick="resendReport('${escapeFb(report.id)}')">🔁 重新发送</button>
@@ -246,7 +246,7 @@ function renderMyReports() {
   if (!box) return;
   const reports = loadFeedbackStore().reports;
   if (!reports.length) {
-    box.innerHTML = `<div class="archive-empty" style="padding:26px;">你还没有提交过任何问题。</div>`;
+    box.innerHTML = `<div class="archive-empty" style="padding: 24px;">你还没有提交过任何问题。</div>`;
     return;
   }
   box.innerHTML = reports.map(r => `
@@ -260,7 +260,7 @@ function renderMyReports() {
       </div>
       <div class="fb-report-text">${escapeFb(r.text)}</div>
       ${r.reply ? `<div class="fb-report-reply"><strong>管理员回复：</strong>${escapeFb(r.reply.summary)}</div>` : ''}
-      <div style="margin-top:9px; display:flex; gap:7px; flex-wrap:wrap;">
+      <div style="margin-top: 8px; display:flex; gap: 8px; flex-wrap:wrap;">
         ${r.sent === false && r.status !== 'resolved' ? `<button class="note-mini-btn" style="flex:0 0 auto;" onclick="resendReport('${escapeFb(r.id)}')">🔁 重新发送</button>` : ''}
         <button class="note-mini-btn" style="flex:0 0 auto;" onclick="copyReportText('${escapeFb(r.id)}')">📋 复制</button>
         <button class="note-mini-btn danger" style="flex:0 0 auto;" onclick="deleteReport('${escapeFb(r.id)}')">🗑️ 删除</button>

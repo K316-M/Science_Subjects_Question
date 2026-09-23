@@ -11,27 +11,27 @@
   const VERSION = 1;
 
   const CSS = `
-.ob-mask{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding:20px;
+.ob-mask{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding: 20px;
   background:rgba(15,23,42,.46);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s;}
 /* 打开时 visibility 要立即生效：过渡的第 0 帧仍算 hidden，紧接著的 focus() 会静默失败 */
 .ob-mask.is-open{opacity:1;visibility:visible;transition:opacity .3s ease,visibility 0s;}
-.ob-box{width:min(470px,100%);padding:28px 26px 22px;border-radius:24px;
+.ob-box{width:min(470px,100%);padding: 28px 24px 20px;border-radius:24px;
   background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.85);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 28px 70px -28px rgba(15,23,42,.55);
   transform:translateY(16px) scale(.96);transition:transform .4s cubic-bezier(.16,1,.3,1);}
 .ob-mask.is-open .ob-box{transform:none;}
-.ob-art{height:126px;display:grid;place-items:center;margin-bottom:6px;}
+.ob-art{height:126px;display:grid;place-items:center;margin-bottom: 6px;}
 .ob-art svg{width:126px;height:126px;}
-.ob-title{font-family:var(--font-display,serif);font-size:21px;font-weight:800;color:#0f172a;text-align:center;}
-.ob-body{margin-top:9px;font-size:14px;line-height:1.85;color:#475569;text-align:center;}
+.ob-title{font-family:var(--font-display,serif);font-size:19px;font-weight:800;color:#0f172a;text-align:center;}
+.ob-body{margin-top: 8px;font-size:14px;line-height:1.75;color:#475569;text-align:center;}
 .ob-body strong{color:var(--primary,#059669);}
-.ob-dots{display:flex;gap:7px;justify-content:center;margin:18px 0 14px;}
+.ob-dots{display:flex;gap: 8px;justify-content:center;margin: 16px 0 14px;}
 .ob-dot{width:7px;height:7px;border-radius:50%;background:#cbd5e1;transition:all .3s ease;}
 .ob-dot.on{width:22px;border-radius:99px;background:var(--primary,#059669);}
-.ob-row{display:flex;gap:10px;align-items:center;}
-.ob-btn{flex:1 1 0;padding:12px 16px;border-radius:13px;border:0;cursor:pointer;
-  font-size:14.5px;font-weight:700;color:#fff;background:var(--primary,#059669);
+.ob-row{display:flex;gap: 10px;align-items:center;}
+.ob-btn{flex:1 1 0;padding: 12px 16px;border-radius:13px;border:0;cursor:pointer;
+  font-size:14px;font-weight:700;color:#fff;background:var(--primary,#059669);
   box-shadow:0 8px 20px -8px var(--primary,#059669);transition:transform .15s ease,filter .2s ease;}
 .ob-btn:hover{transform:translateY(-1px);filter:brightness(1.06);}
 .ob-btn.ghost{flex:0 0 auto;background:transparent;color:#64748b;box-shadow:none;font-weight:600;}
