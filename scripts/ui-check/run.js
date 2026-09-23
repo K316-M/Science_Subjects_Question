@@ -122,8 +122,9 @@ async function run() {
     const r = await page.evaluate(() => {
       const box = document.getElementById('examNext');
       const table = window.UEC_EXAM || {};
-      const today = new Date().toISOString().slice(0, 10);
-      const up = (table.papers || []).filter(p => p.date >= today)
+      // 还没考完（结束时间还没到）的场次才算
+      const now = new Date();
+      const up = (table.papers || []).filter(p => new Date(`${p.date}T${p.end}:00`) > now)
         .sort((a, b) => a.date.localeCompare(b.date) || (a.half === b.half ? 0 : a.half === '上午' ? -1 : 1));
       const next = up[0] && { ...up[0], subjects: up.filter(p => p.date === up[0].date && p.half === up[0].half).map(p => p.subject) };
       return {
@@ -133,15 +134,17 @@ async function run() {
         cal: !!box.querySelector('svg.exam-cal'),
         sr: (box.querySelector('.sr-only') || {}).textContent,
         subjects: (table.papers || []).map(p => p.subject),
+        times: (table.papers || []).flatMap(p => [p.start, p.end]),
         next,
       };
     });
     const [, m, d] = (r.next || { date: '--' }).date.split('-');
-    check('统考时间表与题库覆盖', '首页显示最靠近的一场：图标 + 科目 + 日/月', r.cal && r.subject === r.next.subjects.join('·') && r.when === `${Number(d)}/${Number(m)}` && r.half === r.next.half,
+    check('统考时间表与题库覆盖', '首页显示最靠近的一场：图标 + 科目 + 日/月 + 上下午与开始时间', r.cal && r.subject === r.next.subjects.join('·') && r.when === `${Number(d)}/${Number(m)}` && r.half.startsWith(r.next.half) && /\d{1,2}:\d{2}$/.test(r.half),
       JSON.stringify({ subject: r.subject, when: r.when, half: r.half }));
     check('统考时间表与题库覆盖', '读屏念得出完整日期', /最靠近的统考科目/.test(r.sr || '') && /\d+ 年 \d+ 月 \d+ 日/.test(r.sr || ''), (r.sr || '').trim());
-    const banned = ['会计学', '商业学', '经济学', '电学原理', '电子学', '电机学', '数位逻辑', '美术', '美术赏析', '平面设计'];
-    check('统考时间表与题库覆盖', '时间表不收商科、美设科、电科', !r.subjects.some(x => banned.includes(x)), r.subjects.join('、'));
+    const banned = ['会计学', '商业学', '经济学', '电学原理', '电子学', '电机学', '数位逻辑', '美术赏析', '平面设计', '地理', '餐饮理论与实务', '厨艺理论与实务'];
+    check('统考时间表与题库覆盖', '时间表只收理科生可报考的科目', !r.subjects.some(x => banned.includes(x)) && r.subjects.includes('美术'), r.subjects.join('、'));
+    check('统考时间表与题库覆盖', '每一场都有开始与结束时间（HH:MM）', r.times.every(t => /^\d{2}:\d{2}$/.test(t)), r.times.join(' '));
     // 点开日历：列出全部场次（同一天同一时段合成一列），Esc 收起
     await page.click('#examNext .exam-toggle');
     const list = await page.evaluate(() => {

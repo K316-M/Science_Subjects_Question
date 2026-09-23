@@ -156,6 +156,8 @@
 [data-theme="night"] .exam-day-date b, [data-theme="night"] .exam-slot { color: var(--n-text); }
 [data-theme="night"] .exam-day { border-top-color: var(--n-border-strong); }
 [data-theme="night"] .exam-slot.is-past { color: var(--n-text-2); }
+[data-theme="night"] .exam-slot-time { color: var(--n-text); }
+[data-theme="night"] .exam-slot-note, [data-theme="night"] .exam-list-hint { color: var(--n-text-2); }
 [data-theme="night"] .exam-slot.is-next .exam-slot-tag { background: #9c4a3a; color: var(--n-btn-text); }
 [data-theme="night"] .exam-slot.is-past .exam-slot-subj { text-decoration-color: rgba(255, 255, 255, .3); }
 /* 日历在暗底上：纸面压暗、墨线换成米白，红色抬头收一档 */

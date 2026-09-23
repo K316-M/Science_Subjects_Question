@@ -503,12 +503,13 @@
 .sprite-toggle.on { background: var(--retro-coral); }
 .sprite-toggle.on::after { transform: translateX(18px); }
 
-.sprite-connector { width: 16px; height: 2px; background: var(--retro-teal-dark); margin-bottom: 40px; flex: 0 0 auto; }
+.sprite-connector { width: 16px; height: 2px; background: var(--retro-teal-dark); margin-bottom: 56px; flex: 0 0 auto; }
 .sprite-connector.hidden { visibility: hidden; }
 
-/* 姿势图是透明底的 WebP（scripts/sprite/build.py 产出），换姿势 = 换哪一张显示 */
+/* 姿势图是透明底的 WebP（scripts/sprite/build.py 产出），换姿势 = 换哪一张显示。
+   直接换、不交叉淡变：两张同时半透明时背景会透出来，整只泛白一下 */
 .sprite-char {
-  width: 88px; height: 88px; flex: 0 0 auto;
+  width: 128px; height: 128px; flex: 0 0 auto;
   cursor: pointer; position: relative;
   filter: drop-shadow(0 6px 8px rgba(15, 23, 42, 0.28));
   animation: spriteBob 2.6s ease-in-out infinite;
@@ -517,7 +518,7 @@
 .sprite-poses { position: absolute; inset: 0; }
 .sprite-pose {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  opacity: 0; transition: opacity 0.09s linear;
+  opacity: 0;
   pointer-events: none; user-select: none; -webkit-user-drag: none;
 }
 .sprite-pose.on { opacity: 1; }
@@ -530,7 +531,6 @@
 /* 尊重系统的「减少动态效果」设定；持续跳动的元素对前庭敏感的人不友好，也更难点中 */
 @media (prefers-reduced-motion: reduce) {
   .sprite-char { animation: none; }
-  .sprite-pose { transition: none; }
   .sprite-wrap.active { animation: none; }
   .sprite-wrap.leaving { animation: spriteOut 0.3s ease forwards; }
   .blob { animation: none; }
@@ -544,7 +544,7 @@
   border: 2px solid #fff;
 }
 .sprite-bubble {
-  position: absolute; bottom: 92px; right: 0;
+  position: absolute; bottom: 132px; right: 0;
   background: var(--retro-coral-deep); color: #fff;
   padding: 8px 14px; border-radius: 12px;
   font-size: 13px; font-weight: 700; white-space: nowrap;
@@ -559,8 +559,8 @@
 
 @media (max-width: 480px) {
   .sprite-panel { max-width: 200px; padding: 12px 12px; }
-  .sprite-char { width: 72px; height: 72px; }
-  .sprite-bubble { bottom: 76px; }
+  .sprite-char { width: 104px; height: 104px; }
+  .sprite-bubble { bottom: 108px; }
 }
 
 /* 新问题输入对话框 */

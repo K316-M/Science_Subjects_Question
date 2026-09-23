@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uec-science-cache-v15';
+const CACHE_NAME = 'uec-science-cache-v16';
 const APP_SHELL = [
   '/',
   '/index.html',

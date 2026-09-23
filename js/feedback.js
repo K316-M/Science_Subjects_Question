@@ -435,10 +435,7 @@ function navigateToTarget(target) {
   if (typeof playSound === 'function') playSound('flip');
 
   if (target.view === 'viewStudy' && target.subject && typeof openSubject === 'function') {
-    openSubject(target.subject, target.chapterIdx || 0);
-    if (target.subMode && typeof switchSubSection === 'function') {
-      setTimeout(() => switchSubSection(target.subMode), 700);
-    }
+    openSubject(target.subject, target.chapterIdx || 0, target.subMode);
     return;
   }
   if (target.view === 'viewNotes' && typeof openNotesView === 'function') return openNotesView();
