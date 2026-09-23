@@ -27,6 +27,10 @@
 .sync-input{width:100%;margin-top: 10px;padding: 12px 12px;border-radius:12px;border:1px solid #cbd5e1;
   font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;letter-spacing:1.2px;text-transform:uppercase;}
 .sync-note{margin-top: 12px;font-size:12px;line-height:1.75;color:var(--text-muted,#64748b);}
+.sync-qr{width:176px;height:176px;margin: 14px auto 4px;padding: 8px;border-radius:14px;background:#fff;
+  border:1px solid #e2e8f0;display:grid;place-items:center;}
+.sync-qr svg{width:100%;height:100%;display:block;}
+.sync-qr-cap{font-size:12px;text-align:center;color:var(--text-muted,#64748b);}
 .sync-msg{margin-top: 12px;font-size:12px;font-weight:600;}
 .sync-msg.ok{color:var(--success,#10b981);} .sync-msg.bad{color:var(--danger,#ef4444);}
 @media (prefers-reduced-motion: reduce){.sync-mask,.sync-box{transition:none;}}
@@ -123,22 +127,37 @@
       box.appendChild(row2);
     } else {
       box.appendChild(el('div', 'sync-sub', `上次同步：${when(s.lastSyncAt)}`));
+
+      // 另一台装置用相机扫这个码，或打开下面的链结，就会自动接上——不用手打 20 个字
+      const link = `${location.origin}/#sync=${s.code}`;
+      const qr = el('div', 'sync-qr');
+      qr.setAttribute('role', 'img');
+      qr.setAttribute('aria-label', '同步用的 QR 码');
+      box.appendChild(qr);
+      box.appendChild(el('div', 'sync-qr-cap', '用另一台装置的相机扫这个码'));
+      drawQr(qr, link);
+
       box.appendChild(el('div', 'sync-code', window.UECSync.pretty(s.code)));
 
       const row = el('div', 'sync-row');
+      const copyLink = el('button', 'sync-btn', '复制同步链结');
+      copyLink.onclick = async () => {
+        try { await navigator.clipboard.writeText(link); say('已复制链结。传给自己，在另一台装置打开就会接上。', true); }
+        catch (e) { say('复制失败，请改用上面的同步码', false); }
+      };
       const copy = el('button', 'sync-btn ghost', '复制同步码');
       copy.onclick = async () => {
         try { await navigator.clipboard.writeText(s.code); say('已复制到剪贴簿', true); }
         catch (e) { say('复制失败，请手动选取上面那串码', false); }
       };
-      const now = el('button', 'sync-btn', s.syncing ? '同步中…' : '立即同步');
+      const now = el('button', 'sync-btn ghost', s.syncing ? '同步中…' : '立即同步');
       now.disabled = s.syncing;
       now.onclick = doSync;
-      row.append(now, copy);
+      row.append(copyLink, copy, now);
       box.appendChild(row);
 
       box.appendChild(el('div', 'sync-note',
-        '把这串码抄到另一台装置的同一个画面，按「连接」即可。两边的进度会自动合并——答对过的题目不会因为另一台没做过而被覆盖掉。'));
+        '扫码、打开链结，或在另一台装置输入这串码，两边的进度就会自动合并——答对过的题目不会因为另一台没做过而被覆盖掉。这个码和链结就是你的钥匙，只传给自己，不要贴到群组里。'));
 
       const row2 = el('div', 'sync-row');
       const off = el('button', 'sync-btn ghost', '在这台装置断开');
@@ -153,6 +172,35 @@
 
     msgEl = el('div', 'sync-msg');
     box.appendChild(msgEl);
+  }
+
+  let qrLib = null;
+  function loadQr() {
+    if (window.qrcode) return Promise.resolve(window.qrcode);
+    if (qrLib) return qrLib;
+    qrLib = new Promise((resolve, reject) => {
+      const tag = document.createElement('script');
+      tag.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';
+      tag.integrity = 'sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1';
+      tag.crossOrigin = 'anonymous';
+      tag.onload = () => (window.qrcode ? resolve(window.qrcode) : reject(new Error('qr')));
+      tag.onerror = () => { qrLib = null; reject(new Error('qr')); };
+      document.head.appendChild(tag);
+    });
+    return qrLib;
+  }
+  function drawQr(holder, text) {
+    loadQr().then(qrcode => {
+      const q = qrcode(0, 'M');
+      q.addData(text);
+      q.make();
+      holder.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+    }).catch(() => {
+      // 离线或载入失败：不画码，只留同步码与链结
+      const cap = holder.nextSibling;
+      holder.remove();
+      if (cap && cap.classList && cap.classList.contains('sync-qr-cap')) cap.remove();
+    });
   }
 
   async function doSync() {
@@ -205,6 +253,10 @@
     build();
     const btn = document.getElementById('syncBtn');
     if (btn) btn.addEventListener('click', open);
+
+    const link = window.UECSync.takeLink();
+    if (link.linked) { open(); say('已透过链结连接，正在同步…', true); doSync(); }
+    else if (link.message) { open(); say(link.message, false); }
     window.UECSync.onChange(() => { if (mask && mask.classList.contains('is-open')) render(); });
   });
 })();

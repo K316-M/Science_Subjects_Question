@@ -197,6 +197,23 @@ async function run() {
     await ctx.close();
   });
 
+  await section('同步链结', async () => {
+    // 另一台装置打开「网址/#sync=同步码」：问一次、接上、网址列马上清掉、面板出现 QR 码
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    await ctx.addInitScript(() => localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1 })));
+    const page = await ctx.newPage();
+    const errors = []; page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
+    const asked = []; page.on('dialog', d => { asked.push(d.message()); d.accept(); });
+    await page.goto(URL_ + '#sync=ABCD-EFGH-JKLM-NPQR-STUV'); await page.waitForTimeout(2500);
+    const r = await page.evaluate(() => ({ hash: location.hash, code: (JSON.parse(localStorage.getItem('UEC_SYNC_v1') || '{}')).code,
+      open: document.querySelector('.sync-mask').classList.contains('is-open'), qr: !!document.querySelector('.sync-qr svg') }));
+    check('同步链结', '打开链结：先问一次才接上', asked.length === 1 && r.code === 'ABCDEFGHJKLMNPQRSTUV', `问了 ${asked.length} 次，码 ${r.code}`);
+    check('同步链结', '同步码马上从网址列拿掉', r.hash === '', r.hash);
+    check('同步链结', '面板打开，并画出给另一台装置扫的 QR 码', r.open && r.qr, JSON.stringify(r));
+    check('同步链结', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('版面', async () => {
     for (const w of [320, 360, 390, 768, 1440]) {
       const { ctx, page } = await open({ width: w, height: 844 });

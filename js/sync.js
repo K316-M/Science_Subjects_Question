@@ -189,7 +189,10 @@
           state.lastSyncAt = Date.now();
           state.snapshot = snapshotOf(merged);
           saveState(state);
-          if (!silent && typeof refreshAfterSync === 'function') refreshAfterSync();
+          // 背景同步平常不动画面；但另一台装置真的带来了新资料，数字就要跟著更新
+          const changed = KEYS.some(key => merged[key] &&
+            fingerprint(merged[key].value) !== fingerprint((mine[key] || {}).value));
+          if ((!silent || changed) && typeof refreshAfterSync === 'function') refreshAfterSync();
           return { ok: true };
         }
         if (pushed.status === 409) {
@@ -233,16 +236,40 @@
     });
   }
 
+  // 同步链结：另一台装置打开「网址/#sync=同步码」就能接上，不用手打 20 个字。
+  // 码放在 # 後面：浏览器不会把它送到伺服器，也就不会留在主机的请求纪录里。
+  // 读到之後马上从网址列拿掉，免得留在书签或分享出去的网址里。
+  function takeLink() {
+    const m = location.hash.match(/(?:^#|&)sync=([A-Za-z0-9-]+)/);
+    if (!m) return { linked: false };
+    history.replaceState(null, '', location.pathname + location.search);
+    const code = normalize(m[1]);
+    if (code.length !== CODE_LEN) return { linked: false, message: '这个同步链结不完整，请重新复制一次。' };
+    const cur = loadState().code;
+    if (cur === code) return { linked: false, already: true };
+    const ask = cur
+      ? '这台装置已经连著另一串同步码。要改接这个链结的同步码吗？两边的进度会合并在一起。'
+      : '要把这台装置接上这个同步链结吗？两边的做题进度、错题本和笔记会合并在一起。';
+    if (!confirm(ask)) return { linked: false };
+    return { linked: connect(code).ok };
+  }
+
   window.UECSync = {
-    makeCode, pretty, normalize, connect, disconnect, sync, status,
+    makeCode, pretty, normalize, connect, disconnect, sync, status, takeLink,
     onChange: fn => { listeners.add(fn); return () => listeners.delete(fn); },
     hasLocalChanges,
   };
 
   // 进站先拉一次；离开分页与每分钟各检查一次，有变动才真的送出
   document.addEventListener('DOMContentLoaded', () => { if (loadState().code) sync({ silent: true }); });
+  // 离开分页：有变动就推；回到分页：拉一次（手机上网页一直开著，电脑做的题也要过得来），30 秒内不重复拉
+  let lastPullAt = Date.now();
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden' && loadState().code && hasLocalChanges()) sync({ silent: true });
+    if (!loadState().code) return;
+    if (document.visibilityState === 'hidden') { if (hasLocalChanges()) sync({ silent: true }); return; }
+    if (Date.now() - lastPullAt < 30 * 1000) return;
+    lastPullAt = Date.now();
+    sync({ silent: true });
   });
   setInterval(() => { if (loadState().code && hasLocalChanges()) sync({ silent: true }); }, AUTO_EVERY_MS);
 })();
