@@ -133,7 +133,7 @@ def generate(api_key, parts, temperature=0.4, timeout=120):
     global _resolved
     last = None
 
-    for _ in range(3):                       # 最多换 3 个模型
+    for _ in range(5):                       # 最多换 5 个模型（尖峰时段常常连着好几个都忙）
         model = resolve_model(api_key)
 
         for attempt, wait in enumerate((0,) + BACKOFF):

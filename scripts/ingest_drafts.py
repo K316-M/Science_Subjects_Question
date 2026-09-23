@@ -299,8 +299,12 @@ def generate_report(report):
     lines = ["# 🧪 AI 录题与审题报告", "",
              f"> 录入 **{len(acc)}** 题进待审区"
              + (f"，其中 **{len(doubtful)}** 题答案有疑" if doubtful else "")
-             + (f"；退回 **{len(rej)}** 题" if rej else "") + "。",
-             "> 合并这个 PR 只是把题目放进待审区；之後到 /dev「AI 录题待审」逐题核对、按「采纳」，才会进正式题库。", ""]
+             + (f"；退回 **{len(rej)}** 题" if rej else "") + "。"]
+    if acc:
+        lines.append("> 合并这个 PR 只是把题目放进待审区；之後到 /dev「AI 录题待审」逐题核对、按「采纳」，才会进正式题库。")
+    else:
+        lines.append("> 这次一题都没录到，原因看下面「档案」那一栏。转写失败的档案留在原处，下次推送或手动重跑工作流会再试。")
+    lines.append("")
     if report["notes"]:
         lines += ["**注意**", ""] + [f"- {n}" for n in report["notes"]] + [""]
 
@@ -314,7 +318,8 @@ def generate_report(report):
             why = "；".join(f for f in r["flags"] if f.startswith("⚠️"))
             lines.append(f"| {stem_of(r)[:40]}… | {why} |")
 
-    lines += ["", "## 录入的题目", "", "| 科目 | 章节 | 题目 | 答案 | 提醒 |", "|---|---|---|---|---|"]
+    if acc:
+        lines += ["", "## 录入的题目", "", "| 科目 | 章节 | 题目 | 答案 | 提醒 |", "|---|---|---|---|---|"]
     for r in acc:
         ans = LETTERS[r["answer"]] if r["type"] == "mcq" else "简答"
         src = "（原档标）" if r.get("answer_source") == "marked" and r["type"] == "mcq" else ""
