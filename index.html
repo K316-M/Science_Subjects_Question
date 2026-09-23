@@ -27,7 +27,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@600;800&display=swap" rel="stylesheet">
+  <!-- 内文用系统中文字体（Android 是 Noto Sans CJK、iPhone 是苹方）；标题宋体只下载用到的字，
+       整套字体 1.1MB 会把手机首屏拖到 9 秒。改了标题或章节名，跑 node scripts/fonts/serif-subset.js -->
+  <!-- serif-subset:start（自动产生，别手改） -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600&text=%25%2F0123456789%E3%80%81%E3%80%82%E3%80%8C%E3%80%8D%E4%B8%80%E4%B8%8A%E4%B8%8B%E4%B8%8D%E4%B8%8E%E4%B8%A4%E4%B8%AD%E4%B8%BA%E4%B9%88%E4%B9%8B%E4%B9%96%E4%B9%9F%E4%B9%A0%E4%BA%86%E4%BA%A4%E4%BB%80%E4%BB%A3%E4%BB%A5%E4%BC%9A%E4%BD%8F%E4%BD%9C%E4%BD%A0%E4%BE%9D%E4%BF%9D%E5%81%9A%E5%81%9C%E5%85%88%E5%85%A5%E5%85%A8%E5%85%B1%E5%85%B6%E5%86%8D%E5%86%99%E5%87%A0%E5%87%BA%E5%88%86%E5%88%99%E5%88%9A%E5%88%B0%E5%89%8D%E5%8A%A8%E5%8D%81%E5%8D%A1%E5%8D%B7%E5%8E%9F%E5%8E%BB%E5%8F%AA%E5%8F%AF%E5%90%8C%E5%90%97%E5%91%88%E5%92%8C%E5%9B%9E%E5%9B%BE%E5%9C%A8%E5%A4%8D%E5%A4%96%E5%A4%A9%E5%A4%B4%E5%A5%BD%E5%A6%82%E5%AD%97%E5%AD%98%E5%AD%A6%E5%AE%89%E5%AE%8C%E5%AE%9A%E5%AF%B9%E5%AF%BC%E5%B0%B1%E5%B1%8F%E5%B7%AE%E5%B7%B2%E5%B8%A7%E5%B9%B2%E5%BA%8F%E5%BA%93%E5%BC%80%E5%BC%8F%E5%BC%A0%E5%BD%93%E5%BD%95%E5%BE%85%E5%BE%8C%E5%BF%83%E5%BF%B5%E6%88%91%E6%88%96%E6%89%80%E6%89%8B%E6%89%8D%E6%8A%8A%E6%8A%A4%E6%8B%A9%E6%8C%89%E6%8E%92%E6%92%91%E6%94%B6%E6%94%B9%E6%94%BE%E6%95%B0%E6%95%B4%E6%97%B6%E6%98%8E%E6%98%AF%E6%98%BE%E6%99%AF%E6%9C%80%E6%9C%89%E6%9C%AC%E6%9C%BA%E6%9D%A5%E6%9E%90%E6%9E%9C%E6%A0%B7%E6%A1%86%E6%A1%88%E6%A3%80%E6%A8%A1%E6%AC%A1%E6%AD%A3%E6%AF%8D%E6%AF%8F%E6%AF%9B%E6%B2%A1%E6%B5%8B%E6%B5%AE%E6%B7%80%E7%81%8C%E7%84%A6%E7%86%9F%E7%89%87%E7%8E%B0%E7%8E%BB%E7%92%83%E7%94%9F%E7%94%A8%E7%94%BB%E7%9A%84%E7%9B%AE%E7%9C%8B%E7%9F%A5%E7%A1%AE%E7%A4%BA%E7%A6%BB%E7%A8%8B%E7%AB%A0%E7%AC%AC%E7%AD%89%E7%AD%94%E7%AE%97%E7%B2%89%E7%B3%96%E7%BA%BF%E7%BB%83%E7%BB%8F%E7%BB%A7%E7%BB%AD%E7%BC%80%E8%81%9A%E8%83%8C%E8%83%BD%E8%87%AA%E8%88%AA%E8%89%B2%E8%97%8F%E8%A1%A5%E8%A1%A8%E8%A2%AB%E8%A6%81%E8%A7%81%E8%A7%A3%E8%AE%A1%E8%AE%B0%E8%AE%BE%E8%AF%AF%E8%AF%B4%E8%AF%BB%E8%BE%B9%E8%BF%87%E8%BF%94%E8%BF%98%E8%BF%99%E8%BF%9B%E9%80%80%E9%80%89%E9%80%90%E9%81%8D%E9%81%93%E9%83%A8%E9%83%BD%E9%87%8C%E9%87%8D%E9%92%AE%E9%94%99%E9%95%BF%E9%97%AE%E9%97%B4%E9%98%B2%E9%99%84%E9%9A%8F%E9%9A%90%E9%9A%94%E9%9D%A0%E9%9D%A2%E9%A1%B5%E9%A2%84%E9%A2%97%E9%A2%98%E9%A2%9C%E9%A9%AC%E9%AA%8C%E9%AA%91%EF%BC%81%EF%BC%88%EF%BC%89%EF%BC%8C%EF%BC%8E%EF%BC%9A%EF%BC%9B%EF%BC%9F&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@800&text=%25%2F0123456789%C2%A9%C2%B7%E2%85%A0%E2%85%A1%E3%80%81%E3%80%82%E3%80%8C%E3%80%8D%E4%B8%80%E4%B8%83%E4%B8%89%E4%B8%8A%E4%B8%8B%E4%B8%8D%E4%B8%8E%E4%B8%A2%E4%B8%A4%E4%B8%AD%E4%B8%BA%E4%B8%BB%E4%B9%88%E4%B9%8B%E4%B9%96%E4%B9%9D%E4%B9%9F%E4%B9%A0%E4%BA%86%E4%BA%8C%E4%BA%94%E4%BA%9A%E4%BA%A4%E4%BB%80%E4%BB%8E%E4%BB%A3%E4%BB%A5%E4%BC%9A%E4%BC%A0%E4%BD%8F%E4%BD%93%E4%BD%9C%E4%BD%A0%E4%BE%9D%E4%BF%9D%E5%81%9A%E5%81%9C%E5%81%A5%E5%85%83%E5%85%88%E5%85%89%E5%85%8D%E5%85%A5%E5%85%A8%E5%85%AB%E5%85%AD%E5%85%B1%E5%85%B6%E5%85%B7%E5%85%BB%E5%86%85%E5%86%8D%E5%86%99%E5%87%A0%E5%87%BA%E5%88%86%E5%88%97%E5%88%99%E5%88%9A%E5%88%B0%E5%89%8D%E5%8A%9B%E5%8A%9F%E5%8A%A1%E5%8A%A8%E5%8C%96%E5%8D%81%E5%8D%8E%E5%8D%8F%E5%8D%A1%E5%8D%A4%E5%8D%B0%E5%8D%B7%E5%8E%86%E5%8E%9F%E5%8E%A8%E5%8E%BB%E5%8F%8A%E5%8F%8D%E5%8F%91%E5%8F%AA%E5%8F%AF%E5%8F%B2%E5%90%88%E5%90%8C%E5%90%97%E5%91%88%E5%91%A8%E5%92%8C%E5%93%AA%E5%9B%9B%E5%9B%9E%E5%9B%A0%E5%9B%BE%E5%9C%A8%E5%9C%B0%E5%9C%BA%E5%9F%BA%E5%A2%83%E5%A4%84%E5%A4%8D%E5%A4%96%E5%A4%9A%E5%A4%A9%E5%A4%B4%E5%A5%BD%E5%A6%82%E5%A7%8B%E5%AD%90%E5%AD%97%E5%AD%98%E5%AD%A6%E5%AE%88%E5%AE%89%E5%AE%8C%E5%AE%9A%E5%AE%9E%E5%AF%B9%E5%AF%BC%E5%B0%84%E5%B0%8F%E5%B0%B1%E5%B1%8F%E5%B1%95%E5%B7%A5%E5%B7%AE%E5%B7%B2%E5%B8%A7%E5%B9%B2%E5%B9%B3%E5%BA%8F%E5%BA%93%E5%BA%94%E5%BA%A6%E5%BA%B7%E5%BC%80%E5%BC%8F%E5%BC%A0%E5%BD%93%E5%BD%95%E5%BE%85%E5%BE%8B%E5%BE%8C%E5%BF%83%E5%BF%B5%E6%80%81%E6%80%A7%E6%81%92%E6%84%9F%E6%88%90%E6%88%91%E6%88%96%E6%89%80%E6%89%8B%E6%89%8D%E6%89%93%E6%8A%8A%E6%8A%98%E6%8A%A4%E6%8B%A9%E6%8C%81%E6%8C%89%E6%8C%91%E6%8C%AF%E6%8D%A2%E6%8D%AE%E6%8E%92%E6%8F%90%E6%92%91%E6%94%B6%E6%94%B9%E6%94%BE%E6%95%B0%E6%95%B4%E6%96%87%E6%96%B9%E6%97%B6%E6%98%8E%E6%98%AF%E6%98%BE%E6%99%AF%E6%9C%80%E6%9C%89%E6%9C%9F%E6%9C%AC%E6%9C%BA%E6%9D%A5%E6%9E%84%E6%9E%90%E6%9E%9C%E6%A0%B7%E6%A0%B8%E6%A1%86%E6%A1%88%E6%A1%A3%E6%A2%B0%E6%A3%80%E6%A3%B1%E6%A4%8D%E6%A8%A1%E6%AC%A1%E6%AC%A2%E6%AD%A3%E6%AD%A5%E6%AE%96%E6%AF%8D%E6%AF%8F%E6%AF%92%E6%AF%9B%E6%B0%94%E6%B0%A2%E6%B0%A7%E6%B0%AE%E6%B0%B4%E6%B2%A1%E6%B3%84%E6%B3%95%E6%B3%A2%E6%B5%81%E6%B5%8B%E6%B5%AE%E6%B6%88%E6%B6%B2%E6%B7%80%E6%B8%A1%E6%B8%A9%E6%BA%B6%E6%BC%94%E7%81%8C%E7%81%B5%E7%82%94%E7%83%83%E7%83%AD%E7%83%AF%E7%83%B7%E7%84%A6%E7%86%9F%E7%89%87%E7%89%9B%E7%89%A9%E7%8B%AC%E7%8E%87%E7%8E%AF%E7%8E%B0%E7%8E%BB%E7%90%86%E7%92%83%E7%94%9F%E7%94%A8%E7%94%B1%E7%94%B3%E7%94%B5%E7%94%BB%E7%96%AB%E7%97%85%E7%9A%84%E7%9B%90%E7%9B%AE%E7%9B%B4%E7%9C%8B%E7%9F%A5%E7%A1%80%E7%A1%85%E7%A1%AB%E7%A1%AE%E7%A2%B1%E7%A2%B3%E7%A3%81%E7%A3%B7%E7%A4%BA%E7%A6%BB%E7%A7%8D%E7%A7%91%E7%A7%BB%E7%A8%8B%E7%AB%A0%E7%AC%94%E7%AC%AC%E7%AD%89%E7%AD%94%E7%AE%97%E7%B2%89%E7%B2%BE%E7%B3%96%E7%B3%BB%E7%B4%A0%E7%BA%A7%E7%BA%BF%E7%BB%83%E7%BB%84%E7%BB%86%E7%BB%8F%E7%BB%93%E7%BB%9F%E7%BB%A7%E7%BB%AD%E7%BC%80%E7%BD%91%E7%BD%AE%E7%BE%A7%E8%80%83%E8%81%9A%E8%82%B2%E8%83%8C%E8%83%9E%E8%83%BD%E8%84%91%E8%87%AA%E8%88%AA%E8%89%B2%E8%89%BA%E8%8A%82%E8%8A%B3%E8%8B%B1%E8%8F%8C%E8%90%A5%E8%97%8F%E8%A1%8D%E8%A1%A1%E8%A1%A5%E8%A1%A8%E8%A2%AB%E8%A3%82%E8%A3%85%E8%A5%BF%E8%A6%81%E8%A7%81%E8%A7%A3%E8%AE%A1%E8%AE%AF%E8%AE%B0%E8%AE%BA%E8%AE%BE%E8%AF%89%E8%AF%AF%E8%AF%B4%E8%AF%BB%E8%B0%83%E8%B0%A2%E8%B4%A8%E8%B5%84%E8%B7%A8%E8%BD%A8%E8%BD%AC%E8%BD%BD%E8%BE%93%E8%BE%B9%E8%BF%87%E8%BF%8E%E8%BF%90%E8%BF%94%E8%BF%98%E8%BF%99%E8%BF%9B%E9%80%80%E9%80%89%E9%80%8F%E9%80%90%E9%80%92%E9%80%94%E9%80%9F%E9%81%8D%E9%81%93%E9%81%97%E9%83%A8%E9%83%BD%E9%85%9A%E9%85%AE%E9%85%B8%E9%86%87%E9%86%9B%E9%87%8C%E9%87%8D%E9%87%8F%E9%92%99%E9%92%A0%E9%92%AE%E9%92%BE%E9%93%9D%E9%94%99%E9%94%AE%E9%95%81%E9%95%9C%E9%95%BF%E9%97%AE%E9%97%B4%E9%98%B2%E9%99%84%E9%9A%8F%E9%9A%90%E9%9A%94%E9%9D%99%E9%9D%A0%E9%9D%A2%E9%A1%B5%E9%A1%BF%E9%A2%84%E9%A2%97%E9%A2%98%E9%A2%9C%E9%A3%9F%E9%A4%90%E9%A5%AE%E9%A6%99%E9%A9%AC%E9%AA%8C%E9%AA%91%E9%AB%98%EF%BC%81%EF%BC%88%EF%BC%89%EF%BC%8C%EF%BC%8E%EF%BC%9A%EF%BC%9B%EF%BC%9F&display=swap" rel="stylesheet" media="print" onload="this.media='all'">  <!-- serif-subset:end -->
   <!-- 书法楷体只用在导航徽章的「学」字上，用 text= 让 Google Fonts 只下发这一个字，几 KB 而已 -->
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E5%AD%A6&display=swap" rel="stylesheet">
   <style>
@@ -199,7 +203,33 @@
 
     /* 统考时间表：一颗卡通日历，旁边伸出一个对话框写著最靠近的那一场。
        日期一律取自 js/exam-timetable.js，程序不自己编日期 */
-    .exam-next { display: flex; align-items: center; gap: 8px; width: fit-content; margin: 12px auto 0; }
+    .exam-next { display: flex; flex-direction: column; align-items: center; gap: 12px; width: fit-content; max-width: 100%; margin: 12px auto 0; }
+    /* 整颗日历加气泡是一个按钮：点开下面的完整时间表 */
+    .exam-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; padding: 0; cursor: pointer; color: inherit; font: inherit; border-radius: 14px; }
+    .exam-toggle:focus-visible { outline: 2px solid var(--retro-teal-dark); outline-offset: 4px; }
+    .exam-toggle:hover .exam-bubble { transform: translateY(-1px); box-shadow: 0 5px 0 rgba(77, 129, 137, .3); }
+    .exam-caret { width: 8px; height: 8px; margin-left: 2px; border-right: 2px solid var(--retro-teal-dark); border-bottom: 2px solid var(--retro-teal-dark); transform: rotate(45deg) translateY(-2px); transition: transform .2s ease; }
+    .exam-toggle[aria-expanded="true"] .exam-caret { transform: rotate(-135deg) translate(-2px, 0); }
+    .exam-list {
+      width: min(360px, calc(100vw - 32px));
+      background: var(--retro-cream); border: 2px solid var(--retro-teal-dark); border-radius: 14px;
+      padding: 12px 16px; text-align: left; animation: softFadeIn .2s ease;
+    }
+    .exam-list[hidden] { display: none; }
+    .exam-list-title { font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); margin-bottom: 8px; }
+    .exam-day { display: grid; grid-template-columns: 56px 1fr; gap: 10px; padding: 8px 0; border-top: 1px dashed rgba(77, 129, 137, .35); }
+    .exam-day:first-of-type { border-top: none; }
+    .exam-day-date { display: flex; flex-direction: column; line-height: 1.2; }
+    .exam-day-date b { font-size: 16px; font-weight: 800; color: var(--retro-dark); font-variant-numeric: tabular-nums; }
+    .exam-day-date em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--retro-teal-dark); }
+    .exam-slot { display: flex; align-items: baseline; gap: 8px; font-size: 14px; line-height: 1.6; color: var(--retro-dark); }
+    .exam-slot-half { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); }
+    .exam-slot-subj { font-weight: 700; }
+    .exam-slot-tag { flex: 0 0 auto; margin-left: auto; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 6px; }
+    .exam-slot.is-next .exam-slot-tag { background: var(--retro-coral-deep); color: #fff; }
+    .exam-slot.is-past { color: var(--text-muted); }
+    .exam-slot.is-past .exam-slot-subj { font-weight: 400; text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, .3); }
+    .exam-slot.is-past .exam-slot-tag { color: var(--text-muted); border: 1px solid currentColor; }
     .exam-cal { width: 48px; height: 48px; flex: 0 0 auto; transform: rotate(-6deg); overflow: visible; }
     .exam-cal .cal-paper { fill: var(--retro-cream); }
     .exam-cal .cal-head { fill: var(--retro-coral); }
@@ -234,6 +264,7 @@
     .exam-when em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--retro-teal-dark); }   /* 原本用浅青，在米色底上只有 2.4:1 */
     .exam-done { font-size: 13px; font-weight: 700; color: var(--retro-dark); }
     @media (max-width: 480px) { .exam-cal { width: 40px; height: 40px; } }
+    @media (prefers-reduced-motion: reduce) { .exam-caret { transition: none; } .exam-list { animation: none; } }
 
     /* 题库覆盖：这一科依考纲有几章、其中几章已经有题目。学生有权知道题库还缺多少 */
     .bank-coverage { font-size: 12px; color: var(--text-muted); margin: 0 4px 8px; }
@@ -1400,11 +1431,14 @@
     }, theme.arpGap);
   }
 
+  // 首页放 assets/audio/default/ 的曲子，不是某一科的
+  const onHomeView = () => document.getElementById('viewSubjects').classList.contains('active');
+
   function toggleMusic() {
     musicEnabled = !musicEnabled;
     setBtnLabel(document.getElementById('musicBtn'), musicEnabled ? 'music' : 'music-off', musicEnabled ? '音乐：开' : '音乐：关', musicEnabled);
     if (musicEnabled) {
-      startAmbientMusic(currentSubject);
+      startAmbientMusic(onHomeView() ? 'default' : currentSubject);
     } else {
       stopAmbientMusic();
     }
@@ -1546,7 +1580,9 @@
     playSound('flip');
     showView('viewSubjects');
     clearSubjectBackground();
-    stopAmbientMusic();
+    // 音乐开著就换回首页的曲子（交叉淡入），不是整个停掉
+    if (musicEnabled) startAmbientMusic('default');
+    else stopAmbientMusic();
     renderResumeCard();
     renderExamNext();
     setActiveNav('navHomeBtn');
@@ -1777,24 +1813,76 @@ function openSubject(subject, initialChapterIdx) {
     return { ...first, subjects: sameSlot.map(p => p.subject) };
   }
 
+  const WEEKDAY = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  const halfOrder = h => (h === '上午' ? 0 : 1);
+
+  // 完整时间表：按日期、上下午排好；考过的划掉，下一场标出来
+  function examListHtml(table, next, stamp) {
+    const days = new Map();
+    [...table.papers]
+      .sort((a, b) => a.date.localeCompare(b.date) || halfOrder(a.half) - halfOrder(b.half))
+      .forEach(p => {
+        if (!days.has(p.date)) days.set(p.date, new Map());
+        const slots = days.get(p.date);
+        if (!slots.has(p.half)) slots.set(p.half, []);
+        slots.get(p.half).push(p.subject);
+      });
+    const rows = [...days].map(([date, slots]) => {
+      const [y, m, d] = date.split('-').map(Number);
+      const wd = WEEKDAY[new Date(y, m - 1, d).getDay()];
+      const slotHtml = [...slots].map(([half, subjects]) => {
+        const isNext = next && next.date === date && next.half === half;
+        const isPast = date < stamp;
+        const cls = isNext ? ' is-next' : isPast ? ' is-past' : '';
+        const tag = isNext ? '<span class="exam-slot-tag">下一场</span>' : isPast ? '<span class="exam-slot-tag">已考</span>' : '';
+        return `<div class="exam-slot${cls}"><span class="exam-slot-half">${half}</span><span class="exam-slot-subj">${subjects.join('、')}</span>${tag}</div>`;
+      }).join('');
+      return `<div class="exam-day"><div class="exam-day-date"><b>${d}/${m}</b><em>${wd}</em></div><div>${slotHtml}</div></div>`;
+    }).join('');
+    return `<div class="exam-list-title">${table.title} · 全部场次</div>${rows}`;
+  }
+
   function renderExamNext() {
     const box = document.getElementById('examNext');
     if (!box) return;
-    const paper = nextExamPaper();
+    const table = window.UEC_EXAM;
+    if (!table || !Array.isArray(table.papers) || !table.papers.length) { box.innerHTML = ''; return; }
+    const stamp = new Date().toISOString().slice(0, 10);
+    const paper = nextExamPaper(stamp);
+    const wasOpen = box.querySelector('.exam-toggle[aria-expanded="true"]') !== null;
+    let bubble, label;
     if (!paper) {
-      const table = window.UEC_EXAM;
-      box.innerHTML = table && table.papers && table.papers.length
-        ? `${CAL_SVG}<div class="exam-bubble"><span class="exam-done">${table.title} 已经考完了</span></div>`
-        : '';
-      return;
+      bubble = `<span class="exam-done">${table.title} 已经考完了</span>`;
+      label = `${table.title} 已经考完了`;
+    } else {
+      const [y, m, d] = paper.date.split('-');
+      bubble = `<span class="exam-subject">${paper.subjects.join('<i>·</i>')}</span>
+        <span class="exam-when"><b>${Number(d)}/${Number(m)}</b><em>${paper.half}</em></span>`;
+      label = `最靠近的统考科目：${paper.subjects.join('、')}，${y} 年 ${Number(m)} 月 ${Number(d)} 日${paper.half}`;
     }
-    const [y, m, d] = paper.date.split('-');
-    box.innerHTML = `${CAL_SVG}
-      <div class="exam-bubble">
-        <span class="exam-subject">${paper.subjects.join('<i>·</i>')}</span>
-        <span class="exam-when"><b>${Number(d)}/${Number(m)}</b><em>${paper.half}</em></span>
-      </div>
-      <span class="sr-only">最靠近的统考科目：${paper.subjects.join('、')}，${y} 年 ${Number(m)} 月 ${Number(d)} 日${paper.half}</span>`;
+    box.innerHTML = `
+      <button type="button" class="exam-toggle" aria-expanded="${wasOpen}" aria-controls="examList">
+        ${CAL_SVG}
+        <span class="exam-bubble" aria-hidden="true">${bubble}<span class="exam-caret"></span></span>
+        <span class="sr-only">${label}。按一下${wasOpen ? '收起' : '展开'}全部场次</span>
+      </button>
+      <div class="exam-list" id="examList" ${wasOpen ? '' : 'hidden'}>${examListHtml(table, paper, stamp)}</div>`;
+    const toggle = box.querySelector('.exam-toggle');
+    const list = box.querySelector('.exam-list');
+    const setOpen = open => {
+      toggle.setAttribute('aria-expanded', String(open));
+      list.hidden = !open;
+      toggle.querySelector('.sr-only').textContent = `${label}。按一下${open ? '收起' : '展开'}全部场次`;
+    };
+    toggle.addEventListener('click', () => {
+      setOpen(list.hidden);
+      if (typeof playSound === 'function') playSound('pop');
+    });
+    const onEsc = e => {
+      if (e.key === 'Escape' && !list.hidden) { setOpen(false); toggle.focus(); }
+    };
+    toggle.addEventListener('keydown', onEsc);
+    list.addEventListener('keydown', onEsc);
   }
 
   // ---- 题库覆盖：这一科依考纲有几章、其中几章已经有题目 ----

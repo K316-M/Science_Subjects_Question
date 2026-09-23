@@ -142,11 +142,22 @@ async function run() {
     check('统考时间表与题库覆盖', '读屏念得出完整日期', /最靠近的统考科目/.test(r.sr || '') && /\d+ 年 \d+ 月 \d+ 日/.test(r.sr || ''), (r.sr || '').trim());
     const banned = ['会计学', '商业学', '经济学', '电学原理', '电子学', '电机学', '数位逻辑', '美术', '美术赏析', '平面设计'];
     check('统考时间表与题库覆盖', '时间表不收商科、美设科、电科', !r.subjects.some(x => banned.includes(x)), r.subjects.join('、'));
+    // 点开日历：列出全部场次（同一天同一时段合成一列），Esc 收起
+    await page.click('#examNext .exam-toggle');
+    const list = await page.evaluate(() => {
+      const slots = new Set(window.UEC_EXAM.papers.map(p => p.date + p.half)).size;
+      return { exp: document.querySelector('#examNext .exam-toggle').getAttribute('aria-expanded'), shown: !document.getElementById('examList').hidden,
+        rows: document.querySelectorAll('#examList .exam-slot').length, slots, next: document.querySelectorAll('#examList .exam-slot.is-next').length };
+    });
+    check('统考时间表与题库覆盖', '点开日历：按顺序列出全部场次，标出下一场', list.exp === 'true' && list.shown && list.rows === list.slots && list.next === 1, JSON.stringify(list));
+    await page.keyboard.press('Escape');
+    check('统考时间表与题库覆盖', '按 Esc 收起时间表', await page.evaluate(() => document.getElementById('examList').hidden));
     // 全部考完：不该继续显示某一科
     const done = await page.evaluate(() => {
       window.UEC_EXAM.papers = window.UEC_EXAM.papers.map(p => ({ ...p, date: '2020-10-21' }));
       renderExamNext();
-      return document.getElementById('examNext').textContent.trim();
+      // 只看首页气泡；点开的完整时间表本来就列著每一场的上午／下午
+      return document.querySelector('#examNext .exam-bubble').textContent.trim();
     });
     check('统考时间表与题库覆盖', '全部考完：说考完了，不再挑一科出来', /已经考完了/.test(done) && !/上午|下午/.test(done), done);
     await enter(page);
@@ -221,7 +232,10 @@ async function run() {
       await page.evaluate(() => { document.getElementById('wrongCountBadge').textContent = '12'; document.getElementById('reviewCountBadge').textContent = '8'; });
       await page.waitForTimeout(150);
       const r = await page.evaluate(() => {
-        const tops = new Set([...document.querySelectorAll('.nav-item')].map(e => Math.round(e.getBoundingClientRect().top)));
+        // 相差不到半个按钮高就算同一行：系统字体的基线会让某颗按钮低个 1px，那不是换行
+        const rects = [...document.querySelectorAll('.nav-item')].map(e => e.getBoundingClientRect());
+        const top0 = Math.min(...rects.map(r => r.top));
+        const tops = new Set(rects.map(r => Math.round((r.top - top0) / (r.height / 2))));
         return { overflow: document.documentElement.scrollWidth - innerWidth, rows: tops.size,
           fb: document.getElementById('navFeedbackBtn').innerText.trim() };
       });

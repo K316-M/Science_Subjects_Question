@@ -406,11 +406,8 @@ table.data td.wrap { white-space: normal; min-width: 220px; }
   padding: 10px 12px; max-width: 250px; color: #3f3e3c; font-size: 12.5px; font-weight: 700; line-height: 1.55;
 }
 .sprite-preview .panel em { font-style: normal; color: #e1614c; }
-.sprite-preview .line { width: 14px; height: 2px; background: #4d8189; margin-bottom: 22px; }
-.sprite-preview .char {
-  width: 46px; height: 46px; border-radius: 50%; background: #f6efdd; border: 2px solid #4d8189;
-  display: flex; align-items: center; justify-content: center; font-size: 22px;
-}
+.sprite-preview .line { width: 14px; height: 2px; background: #4d8189; margin-bottom: 34px; }
+.sprite-preview .char { width: 72px; height: 72px; flex: 0 0 auto; filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.25)); }
 
 /* 巡检与待审列表 */
 .issue { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; }

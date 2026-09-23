@@ -525,7 +525,9 @@ function targetEditor(initial, onChange) {
 function spritePreview(summary) {
   const panel = el('div', { class: 'panel' }, '已解决 ', el('em', { text: `【${summary || '处理说明'}】` }), '，要查看吗？›');
   return el('div', { class: 'sprite-preview', attrs: { 'aria-label': '学生会看到的通知' } },
-    panel, el('div', { class: 'line' }), el('div', { class: 'char', text: '🧚' }));
+    panel, el('div', { class: 'line' }),
+    // 学生打开面板时，小精灵正是这个「给你看」的姿势
+    el('img', { class: 'char', attrs: { src: '/assets/sprite/present.webp', alt: '' } }));
 }
 
 function renderIssues(body, actions) {

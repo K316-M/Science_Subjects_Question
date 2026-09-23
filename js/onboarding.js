@@ -74,9 +74,10 @@
 
   const CSS = `
 .tour-block{position:fixed;inset:0;z-index:1500;}
-.tour-spot{position:fixed;z-index:1501;pointer-events:none;border-radius:16px;
+/* 位置用 transform 移动，起点钉在左上角：用 top/left 移动会被算进 CLS（版面位移） */
+.tour-spot{position:fixed;top:0;left:0;z-index:1501;pointer-events:none;border-radius:16px;
   box-shadow:0 0 0 9999px rgba(15,23,42,.55);outline:3px solid var(--retro-cream,#f6efdd);outline-offset:0;
-  transition:top .38s cubic-bezier(.22,1,.36,1),left .38s cubic-bezier(.22,1,.36,1),
+  transition:transform .38s cubic-bezier(.22,1,.36,1),
     width .38s cubic-bezier(.22,1,.36,1),height .38s cubic-bezier(.22,1,.36,1),border-radius .38s ease;}
 .tour-spot.is-center{outline:none;}
 .tour-tip{position:fixed;z-index:1502;width:min(340px,calc(100vw - 32px));padding:16px 16px 12px;
@@ -155,7 +156,7 @@
     const tw = tip.offsetWidth, th = tip.offsetHeight;
     tip.classList.remove('below', 'above', 'center');
     if (!target) {
-      Object.assign(spot.style, { top: `${vh / 2}px`, left: `${vw / 2}px`, width: '0px', height: '0px' });
+      Object.assign(spot.style, { transform: `translate(${vw / 2}px, ${vh / 2}px)`, width: '0px', height: '0px' });
       spot.classList.add('is-center');
       tip.classList.add('center');
       tip.style.left = `${Math.round((vw - tw) / 2)}px`;
@@ -166,7 +167,7 @@
     const r = target.getBoundingClientRect();
     const top = Math.max(4, r.top - pad), left = Math.max(4, r.left - pad);
     const w = Math.min(vw - 8, r.width + pad * 2), h = Math.min(vh - 8, r.height + pad * 2);
-    Object.assign(spot.style, { top: `${top}px`, left: `${left}px`, width: `${w}px`, height: `${h}px` });
+    Object.assign(spot.style, { transform: `translate(${left}px, ${top}px)`, width: `${w}px`, height: `${h}px` });
 
     let y, side;
     if (top + h + gap + th <= vh - 8) { y = top + h + gap; side = 'below'; }
