@@ -1,8 +1,9 @@
 name: AI 自动录题流水线 (Ingest Drafts)
 
-# 管理员把手机拍的试卷照片丢进 drafts/<biology|chemistry|physics>/ 目录并推送，
-# 本工作流会自动调用 Gemini 多模态模型转写题目，汇总为待审核 JSON，
-# 并开出一个 Pull Request，管理员在手机上审核后点击合并即可正式发布。
+# 管理员把题目档（照片、PDF、Word .docx、PowerPoint .pptx、纯文字）丢进
+# drafts/<biology|chemistry|physics>/ 并推送，本工作流调用 Gemini 转写题目、
+# 自动审题（格式、重复、答案复核），写进待审区并开一个 Pull Request。
+# 没录到题但有档案失败（例如旧版 .doc）时改开 Issue，不会再静默结束。
 #
 # 使用前请先在仓库 Settings -> Secrets and variables -> Actions 中添加：
 #   GEMINI_API_KEY  你的 Gemini API Key
@@ -17,6 +18,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   ingest:
@@ -41,6 +43,10 @@ jobs:
           else
             echo "has_new=false" >> "$GITHUB_OUTPUT"
           fi
+          if [ -f has_ingest_problems.txt ] && [ "$(cat has_ingest_problems.txt)" = "true" ]; then
+            echo "has_problems=true" >> "$GITHUB_OUTPUT"
+          fi
+          rm -f has_new_ingest.txt has_ingest_problems.txt
 
       - name: 创建待审核 Pull Request
         if: steps.ingest.outputs.has_new == 'true'
@@ -52,3 +58,11 @@ jobs:
           title: "🧪 AI 自动录题待审核 · 批次 #${{ github.run_number }}"
           body-path: INGEST_REPORT.md
           labels: "待审核, AI录题"
+
+      - name: 没录到题但有档案失败：开 Issue 提醒
+        if: steps.ingest.outputs.has_new != 'true' && steps.ingest.outputs.has_problems == 'true'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "⚠️ AI 录题：有档案没处理成功"
+          content-filepath: INGEST_REPORT.md
+          labels: "AI录题"

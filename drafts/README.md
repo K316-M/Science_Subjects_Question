@@ -1,21 +1,44 @@
 # 草稿录题目录（drafts/）
 
-把手机拍的试卷照片（JPG/PNG）丢进对应科目的子目录，推送到 `main` 分支后，
-GitHub Actions 会自动调用 AI 把照片转写为题库格式，并开出一个待审核 Pull Request：
+把题目档丢进对应科目的子目录，推送到 `main` 分支后，GitHub Actions 会自动请 AI 录题、审题，
+再开一个待审核 Pull Request：
 
-- `drafts/biology/`   生物试卷照片
-- `drafts/chemistry/` 化学试卷照片
-- `drafts/physics/`   物理试卷照片
+- `drafts/biology/`   生物
+- `drafts/chemistry/` 化学
+- `drafts/physics/`   物理
+
+## 收哪些格式
+
+| 格式 | 说明 |
+|---|---|
+| 照片 `.jpg` `.png` `.webp` `.heic` | 拍清楚题干、选项、图表；含图的题会先放整页原图，请自己裁 |
+| PDF `.pdf` | 扫描档或电子档都可以，18MB 以内 |
+| Word `.docx` | 文字、表格、内嵌图片都会读；**萤光笔、底线、彩色字会保留**，用来标答案最方便 |
+| PowerPoint `.pptx` | 每页的文字与图片 |
+| 纯文字 `.txt` `.md` | 直接贴题目 |
+
+旧版 `.doc` `.ppt`、Excel 等读不了，报告会写「请另存为 .docx」。
+
+## 答案怎么给
+
+- **最推荐**：在 Word 里用萤光笔（或底线、红字）标出正确选项，或在文末附答案表
+- 没标答案也行，AI 会自己作答，但报告会注明「答案由 AI 作答」，请特别核对
+
+## 自动审题做了什么
+
+1. **格式**：题干不能空、选择题要恰好 A–D 四个选项、选项不能重复——不合格的题直接退回
+2. **重复**：和正式题库、待审区里的题目比对，太像的退回
+3. **答案复核**：AI 在看不到答案的情况下再做一次，和原档标的答案不一致就标「⚠️ 答案有疑」，排在最前面
 
 ## 使用步骤
 
-1. 拍照，确保题干、选项、图表清晰可读。
-2. 用 GitHub 手机 App（或网页 Upload files）把照片上传到对应科目目录，直接 Commit 到 `main`。
-3. 几分钟后仓库会多出一个标题为「🧪 AI 自动录题待审核」的 Pull Request，里面附带 `INGEST_REPORT.md` 审核报告。
-4. 打开 PR，对照原图核对每一题的题干、选项、答案、章节归类是否正确；含配图的题目目前只是整页原图，需要你手动裁剪替换成精确的题目截图。
-5. 确认无误后点击 **Merge**，Vercel 会在几秒内自动把新题目发布上线。
+1. 用 GitHub 手机 App（或网页 Upload files）把档案上传到对应科目目录，直接 Commit 到 `main`。
+2. 几分钟后会出现「🧪 AI 自动录题待审核」的 Pull Request，里面的 `INGEST_REPORT.md` 写着录了几题、退回几题、哪些答案有疑。
+   **一题都没录到**（例如全部是旧版 .doc）会改开一个 Issue 告诉你原因。
+3. 看过报告就**合并这个 PR**——它只是把题目放进待审区，学生还看不到。
+4. 到网站的 /dev「AI 录题待审」逐题核对，按「采纳」才进正式题库。
 
-已处理过的照片会被自动移动到 `_processed/` 子目录，避免重复处理。
+处理成功的档案会移到 `_processed/`；读不了或转写失败的留在原处，改好再推一次就会重试。
 
-> 首次使用前，需要仓库管理员在 GitHub 仓库 Settings → Secrets and variables → Actions
-> 中添加一个名为 `GEMINI_API_KEY` 的 Secret（Gemini API Key），否则工作流会跳过录题。
+> 首次使用前，需要在 GitHub 仓库 Settings → Secrets and variables → Actions
+> 添加 `GEMINI_API_KEY`，否则工作流会跳过录题。

@@ -806,7 +806,7 @@ function renderPending(body, actions) {
   if (!state.pending.length) {
     body.appendChild(el('div', { class: 'card' }, el('div', { class: 'empty' }, icon('sparkles'),
       el('div', { text: '目前没有待审核的题目。' }),
-      el('div', { class: 'field-hint', style: 'margin-top:6px', text: '把试卷照片放进 drafts/biology、drafts/chemistry 或 drafts/physics 并推送；或到 Actions 手动跑「AI 依考纲出题」。' }))));
+      el('div', { class: 'field-hint', style: 'margin-top:6px', text: '把题目档（照片、PDF、Word、PowerPoint、纯文字都可以）放进 drafts/biology、drafts/chemistry 或 drafts/physics 并推送；或到 Actions 手动跑「AI 依考纲出题」。' }))));
     return;
   }
 
@@ -817,7 +817,9 @@ function renderPending(body, actions) {
       el('div', { style: 'margin-top:6px' }, '⚠️ AI 生成的题目请先自己核对科学正确性与答案，章节归错了可以在下拉选单改。'))));
 
   const card = el('div', { class: 'card list-card' });
-  state.pending.forEach(item => {
+  // 答案有疑（AI 复核和原档标的不一样）的排最前面，先处理最可能出错的
+  const doubtful = item => (item.flags || []).some(f => f.startsWith('⚠️'));
+  [...state.pending].sort((a, b) => doubtful(b) - doubtful(a)).forEach(item => {
     const flags = (item.flags || []).map(f => el('span', { class: 'status status-serious' }, icon('warning'), el('span', { text: f })));
     const sections = state.banks[item.subject] || [];
 
@@ -856,7 +858,9 @@ function renderPending(body, actions) {
       el('div', { class: 'issue-top' },
         el('span', { class: 'pill', text: SUBJECT_LABEL[item.subject] || item.subject || '未知科目' }),
         el('span', { class: 'pill', text: item.type === 'subjective' ? '做答题' : '选择题' }),
-        item.origin === 'ai_generated' ? el('span', { class: 'pill', text: '🤖 AI 出题' }) : el('span', { class: 'pill', text: '📷 拍题录入' })),
+        item.origin === 'ai_generated' ? el('span', { class: 'pill', text: '🤖 AI 出题' }) : el('span', { class: 'pill', text: '📄 档案录入' }),
+        item.type !== 'subjective' && item.answer_source
+          ? el('span', { class: 'pill', text: item.answer_source === 'marked' ? '答案：原档标的' : '答案：AI 作答' }) : null),
       flags.length ? el('div', { class: 'stack', style: 'gap:4px' }, flags) : null,
       questionPreview(item, item.type === 'subjective' ? 'subj' : 'mcq'),
       el('div', { class: 'row', style: 'gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px' },
