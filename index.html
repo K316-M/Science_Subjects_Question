@@ -190,6 +190,7 @@
     .exam-bubble::before { left: -10px; margin-top: -8px; border-right: 10px solid var(--retro-teal-dark); }
     .exam-bubble::after { left: -6px; margin-top: -8px; border-right: 10px solid var(--retro-cream); }
     .exam-subject { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--retro-dark); }
+    .exam-subject i { font-style: normal; color: var(--retro-teal); margin: 0 4px; }   /* 同一时段有多科时的分隔点 */
     .exam-when { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
     .exam-when b { font-size: 19px; font-weight: 800; color: var(--retro-teal-dark); font-variant-numeric: tabular-nums; }
     .exam-when em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--retro-teal-dark); }   /* 原本用浅青，在米色底上只有 2.4:1 */
@@ -1682,9 +1683,14 @@ function openSubject(subject, initialChapterIdx) {
     if (!table || !Array.isArray(table.papers) || !table.papers.length) return null;
     const stamp = today || new Date().toISOString().slice(0, 10);
     // 同一天先上午後下午；今天的场次也算「最靠近」
-    return table.papers
+    const upcoming = table.papers
       .filter(p => p.date >= stamp)
-      .sort((a, b) => a.date.localeCompare(b.date) || (a.half === '上午' ? -1 : 1))[0] || null;
+      .sort((a, b) => a.date.localeCompare(b.date) || (a.half === b.half ? 0 : a.half === '上午' ? -1 : 1));
+    if (!upcoming.length) return null;
+    const first = upcoming[0];
+    // 同一时段可能同时考好几科（例如数学与高级数学Ⅱ都在 23 日上午）
+    const sameSlot = upcoming.filter(p => p.date === first.date && p.half === first.half);
+    return { ...first, subjects: sameSlot.map(p => p.subject) };
   }
 
   function renderExamNext() {
@@ -1701,10 +1707,10 @@ function openSubject(subject, initialChapterIdx) {
     const [y, m, d] = paper.date.split('-');
     box.innerHTML = `${CAL_SVG}
       <div class="exam-bubble">
-        <span class="exam-subject">${paper.subject}</span>
+        <span class="exam-subject">${paper.subjects.join('<i>·</i>')}</span>
         <span class="exam-when"><b>${Number(d)}/${Number(m)}</b><em>${paper.half}</em></span>
       </div>
-      <span class="sr-only">最靠近的统考科目：${paper.subject}，${y} 年 ${Number(m)} 月 ${Number(d)} 日${paper.half}</span>`;
+      <span class="sr-only">最靠近的统考科目：${paper.subjects.join('、')}，${y} 年 ${Number(m)} 月 ${Number(d)} 日${paper.half}</span>`;
   }
 
   // ---- 题库覆盖：这一科依考纲有几章、其中几章已经有题目 ----

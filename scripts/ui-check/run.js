@@ -123,8 +123,9 @@ async function run() {
       const box = document.getElementById('examNext');
       const table = window.UEC_EXAM || {};
       const today = new Date().toISOString().slice(0, 10);
-      const next = (table.papers || []).filter(p => p.date >= today)
-        .sort((a, b) => a.date.localeCompare(b.date) || (a.half === '上午' ? -1 : 1))[0];
+      const up = (table.papers || []).filter(p => p.date >= today)
+        .sort((a, b) => a.date.localeCompare(b.date) || (a.half === b.half ? 0 : a.half === '上午' ? -1 : 1));
+      const next = up[0] && { ...up[0], subjects: up.filter(p => p.date === up[0].date && p.half === up[0].half).map(p => p.subject) };
       return {
         subject: (box.querySelector('.exam-subject') || {}).textContent,
         when: (box.querySelector('.exam-when b') || {}).textContent,
@@ -136,10 +137,10 @@ async function run() {
       };
     });
     const [, m, d] = (r.next || { date: '--' }).date.split('-');
-    check('统考时间表与题库覆盖', '首页显示最靠近的一场：图标 + 科目 + 日/月', r.cal && r.subject === r.next.subject && r.when === `${Number(d)}/${Number(m)}` && r.half === r.next.half,
+    check('统考时间表与题库覆盖', '首页显示最靠近的一场：图标 + 科目 + 日/月', r.cal && r.subject === r.next.subjects.join('·') && r.when === `${Number(d)}/${Number(m)}` && r.half === r.next.half,
       JSON.stringify({ subject: r.subject, when: r.when, half: r.half }));
     check('统考时间表与题库覆盖', '读屏念得出完整日期', /最靠近的统考科目/.test(r.sr || '') && /\d+ 年 \d+ 月 \d+ 日/.test(r.sr || ''), (r.sr || '').trim());
-    const banned = ['会计学', '经济学', '电学原理', '美术', '平面设计'];
+    const banned = ['会计学', '商业学', '经济学', '电学原理', '电子学', '电机学', '数位逻辑', '美术', '美术赏析', '平面设计'];
     check('统考时间表与题库覆盖', '时间表不收商科、美设科、电科', !r.subjects.some(x => banned.includes(x)), r.subjects.join('、'));
     // 全部考完：不该继续显示某一科
     const done = await page.evaluate(() => {
