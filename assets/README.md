@@ -115,6 +115,9 @@ SceneAssets.use('formula-chapter3');   // 立刻切到 assets/visual/formula-cha
 **音乐**
 - 文件名叫 `ambient`（叫 `background` 也认得，两边用同一个词比较好记），支持 `.mp3` `.ogg` `.m4a` `.wav`
 - 会自动循环播放、音量已调低，你不用自己做淡入淡出
+- **建议先过一遍处理脚本**：把原档放进 `scripts/audio/src/<场景名>/ambient.mp3`（不会部署），跑 `python3 scripts/audio/build.py`，
+  它会剪掉头尾静音（不然每轮循环都会安静好几秒）、把结尾接回开头做成无缝循环、统一音量、压小档案，再放进这里
+- 还没决定要不要用的候选曲放 `scripts/audio/candidates/`，不会上网站
 - 建议 1–3MB；**选没有明显旋律起伏的纯音乐**（lo-fi、环境音、钢琴铺底），做题时才不会分心
 - ⚠️ 浏览器规定「用户没点过页面就不许出声」，所以音乐一定是在第一次点击之后才响，这是正常现象，不是坏了
 
