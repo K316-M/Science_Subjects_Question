@@ -50,7 +50,45 @@
       --shadow-md: 0 1px 2px rgba(15,23,42,.05), 0 10px 24px -10px rgba(15,23,42,.14), 0 28px 56px -28px rgba(5,150,105,.28);
       --shadow-form: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
       --font-display: "Noto Serif SC", "Noto Sans SC", serif;
+
+      /* 功能色：按钮的颜色说明它会做什么。绿＝前进与确认，红＝会删掉或中断，
+         琥珀＝要修正的东西，青＝跟时间和资料有关，灰＝中性。
+         颜色永远不是唯一讯号：每颗按钮都还有文字与图标。 */
+      --fn-go: var(--primary);
+      --fn-go-soft: #ecfdf5;
+      --fn-danger: #b91c1c;
+      --fn-danger-soft: #fef2f2;
+      --fn-warn: #b45309;
+      --fn-warn-soft: #fffbeb;
+      --fn-time: #0e7490;
+      --fn-time-soft: #ecfeff;
+      --fn-quiet: #334155;
     }
+
+    /* 图标 */
+    .ic {
+      width: 1.15em; height: 1.15em; flex: 0 0 auto;
+      fill: none; stroke: currentColor; stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+      vertical-align: -0.2em;
+    }
+    .ic-lg { width: 1.6em; height: 1.6em; }
+    .empty-glyph .ic { width: 30px; height: 30px; stroke-width: 1.8; }
+    .flip-status-pill, .figure-caption { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* 按钮里图标与文字并排 */
+    .sound-toggle, .btn-nav, .note-tool-btn, .btn-primary-retro, .btn-ghost-retro,
+    .card-note-btn, .sprite-btn, .note-mini-btn, .hl-btn-action, .sub-tab-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    /* 开著的开关＝绿色（已开启／会继续），关著就是中性白底 */
+    .sound-toggle.is-on { color: var(--fn-go); border-color: var(--fn-go); background: var(--fn-go-soft); }
+    /* 跟资料、时间有关的动作用青色 */
+    #syncBtn { color: var(--fn-time); border-color: rgba(14, 116, 144, .4); }
+    /* 分页的图标各自带功能色：错题＝要修正的，今日复习＝跟时间有关 */
+    #subBtnWrong .ic { color: var(--fn-danger); }
+    #subBtnReview .ic { color: var(--fn-time); }
+    /* 会删掉东西的按钮：规则写在 css/features.css（它在这段行内样式之後载入） */
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", sans-serif; -webkit-tap-highlight-color: transparent; }
     [role="button"]:focus-visible, [role="tab"]:focus-visible, button:focus-visible, .breadcrumb-item:focus-visible {
@@ -763,6 +801,42 @@
   <link rel="stylesheet" href="/css/night.css">
 </head>
 <body data-scene="off">
+<!-- 图标：一套自绘线条图，24×24 网格、2px 描边、颜色用 currentColor（emoji 做不到跟著按钮的语意颜色走） -->
+<svg class="icon-sprite" aria-hidden="true" style="display:none">
+  <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12L7.5 14.5H4z"/><path d="M15.5 9.5a4 4 0 0 1 0 5"/><path d="M18 7a7.5 7.5 0 0 1 0 10"/></symbol>
+  <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12L7.5 14.5H4z"/><path d="M16 10l5 4M21 10l-5 4"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5.5l10-2V16"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></symbol>
+  <symbol id="i-music-off" viewBox="0 0 24 24"><path d="M9 18V5.5l10-2V16"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/><path d="M3 3l18 18"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M6.5 15.5a3.7 3.7 0 0 1 .4-7.4 6 6 0 0 1 11.3 1.5 3.4 3.4 0 0 1 .4 6"/><path d="M10 13.5v6.5M8 18l2 2 2-2"/><path d="M14 20.5V14M12 16l2-2 2 2"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.6A2.4 2.4 0 1 1 12.8 12c-.6.3-1 .9-1 1.6v.4"/><circle cx="11.9" cy="17" r=".2"/></symbol>
+  <symbol id="i-cards" viewBox="0 0 24 24"><rect x="9" y="3.5" width="11" height="15" rx="2.5"/><path d="M6 7v11a2.5 2.5 0 0 0 2.5 2.5H15"/></symbol>
+  <symbol id="i-doc-lines" viewBox="0 0 24 24"><path d="M6 3.5h7l5 5v12H6a1.5 1.5 0 0 1-1.5-1.5V5a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M12.5 3.5V9H18"/><path d="M8 13h7M8 16.5h5"/></symbol>
+  <symbol id="i-book-x" viewBox="0 0 24 24"><path d="M4.5 5.5A2 2 0 0 1 6.5 3.5h13v17h-13a2 2 0 0 1-2-2z"/><path d="M8 3.5v17"/><path d="M12 9l4 4M16 9l-4 4"/></symbol>
+  <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15l2.2 2.2L15.5 13"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l.8-4L15 5.8a2 2 0 0 1 2.8 0l.4.4a2 2 0 0 1 0 2.8L8 19.2z"/><path d="M13.5 7.5l3 3"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2.5"/><rect x="9" y="2.5" width="6" height="4" rx="1.5"/><path d="M9 11.5h6M9 15.5h4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7"/><path d="M6.5 7l.9 12a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L17.5 7"/><path d="M10.5 11v6M13.5 11v6"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5.5 4.5h10L19 8v11.5a1.5 1.5 0 0 1-1.5 1.5h-12A1.5 1.5 0 0 1 4 19.5V6a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M8 4.5v5h7"/><rect x="8" y="13" width="8" height="5.5" rx="1"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3.5L3 10.2l7.5 3.3L13.8 21z"/><path d="M21 3.5l-10.5 10"/></symbol>
+  <symbol id="i-brush" viewBox="0 0 24 24"><path d="M3.5 20.5c3.2.3 5.4-.8 6.5-3l6.6-6.6-3.5-3.5L6.5 14c-2.2 1.1-3.3 3.3-3 6.5z"/><path d="M15.5 4.5l4 4"/></symbol>
+  <symbol id="i-eraser" viewBox="0 0 24 24"><path d="M9 20.5l-4.5-4.5a2 2 0 0 1 0-2.8l7.3-7.3a2 2 0 0 1 2.8 0l4.5 4.5a2 2 0 0 1 0 2.8l-7.3 7.3z"/><path d="M20 20.5h-9M8 10.5l5.5 5.5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-thumb-up" viewBox="0 0 24 24"><path d="M8 21V10.5l4-7.5a2 2 0 0 1 2 2l-1 4h5.5a2 2 0 0 1 2 2.4l-1.6 7A2 2 0 0 1 17 21z"/><rect x="3.5" y="10.5" width="4.5" height="10.5" rx="1.5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3.5v11M8 11l4 4 4-4"/><path d="M4.5 19.5h15"/></symbol>
+  <symbol id="i-printer" viewBox="0 0 24 24"><path d="M7 8.5V4h10v4.5"/><path d="M7 16.5H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="6.5" rx="1.5"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4.5h11.5l-2.5 4 2.5 4H6z"/></symbol>
+  <symbol id="i-notebook" viewBox="0 0 24 24"><rect x="5.5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9.5 3.5v17M12.5 8.5h4M12.5 12.5h4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10.5 13.5a4 4 0 0 0 5.7 0l2.8-2.8a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M13.5 10.5a4 4 0 0 0-5.7 0L5 13.3a4 4 0 0 0 5.7 5.7l1.4-1.4"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M5.5 15.5h-.5a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v.5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".2"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7.5A4 4 0 0 0 8 5H3.5v12H8a4 4 0 0 1 4 2.5"/><path d="M12 7.5A4 4 0 0 1 16 5h4.5v12H16a4 4 0 0 0-4 2.5z"/></symbol>
+  <symbol id="i-marker" viewBox="0 0 24 24"><path d="M15 4.5l4.5 4.5-7 7-4.5-4.5z"/><path d="M8 11.5l-2.5 5.5 5.5-2.5"/><path d="M4 21h16" stroke-width="3"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M4 13.5h4l1.6 2.5h4.8l1.6-2.5h4"/><path d="M4.5 13.5l2-8.5h11l2 8.5v4.5a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z"/></symbol>
+</svg>
 <a class="skip-link" href="#main">跳到主要内容</a>
 
 <div class="floating-shapes" id="floatingShapes">
@@ -794,11 +868,11 @@
       <span class="breadcrumb-item active" aria-current="page">学科选择</span>
     </div>
     <div class="util-actions">
-      <button class="sound-toggle" id="soundBtn" onclick="toggleSound()">🔊 音效：开</button>
-      <button class="sound-toggle" id="musicBtn" onclick="toggleMusic()">🎼 音乐：关</button>
-      <button class="sound-toggle" id="themeBtn" type="button" aria-pressed="false" title="深夜读书用的深色画面"><span aria-hidden="true">🌙</span><span class="theme-txt"> 护眼：关</span></button>
-      <button class="sound-toggle" id="syncBtn" type="button">☁️ 同步</button>
-      <button class="sound-toggle" id="guideBtn" type="button">❔ 引导</button>
+      <button class="sound-toggle is-on" id="soundBtn" onclick="toggleSound()"><svg class="ic" aria-hidden="true"><use href="#i-sound-on"></use></svg><span class="btn-txt">音效：开</span></button>
+      <button class="sound-toggle" id="musicBtn" onclick="toggleMusic()"><svg class="ic" aria-hidden="true"><use href="#i-music-off"></use></svg><span class="btn-txt">音乐：关</span></button>
+      <button class="sound-toggle" id="themeBtn" type="button" aria-pressed="false" title="深夜读书用的深色画面"><svg class="ic" aria-hidden="true"><use href="#i-moon"></use></svg><span class="theme-txt">护眼：关</span></button>
+      <button class="sound-toggle" id="syncBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-sync"></use></svg><span class="btn-txt">同步</span></button>
+      <button class="sound-toggle" id="guideBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-help"></use></svg><span class="btn-txt">引导</span></button>
     </div>
   </div>
 
@@ -827,19 +901,19 @@
     <p class="bank-coverage" id="bankCoverage"></p>
     <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
     <div class="sub-bookmark-bar" role="tablist" aria-label="练习模式">
-      <button class="sub-tab-btn active" id="subBtnMcq" role="tab" aria-selected="true" onclick="switchSubSection('mcq')">🎴 选择题<span class="tab-long">练习</span></button>
-      <button class="sub-tab-btn" id="subBtnSubj" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('subj')">📝 做答题<span class="tab-long">（背书闪卡）</span></button>
-      <button class="sub-tab-btn" id="subBtnWrong" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('wrong')">📕 错题本 <span id="wrongCountBadge"></span></button>
-      <button class="sub-tab-btn" id="subBtnReview" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('review')">📅 今日复习 <span id="reviewCountBadge"></span></button>
+      <button class="sub-tab-btn active" id="subBtnMcq" role="tab" aria-selected="true" onclick="switchSubSection('mcq')"><svg class="ic" aria-hidden="true"><use href="#i-cards"></use></svg><span>选择题<span class="tab-long">练习</span></span></button>
+      <button class="sub-tab-btn" id="subBtnSubj" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('subj')"><svg class="ic" aria-hidden="true"><use href="#i-doc-lines"></use></svg><span>做答题<span class="tab-long">（背书闪卡）</span></span></button>
+      <button class="sub-tab-btn" id="subBtnWrong" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('wrong')"><svg class="ic" aria-hidden="true"><use href="#i-book-x"></use></svg><span>错题本</span><span id="wrongCountBadge"></span></button>
+      <button class="sub-tab-btn" id="subBtnReview" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('review')"><svg class="ic" aria-hidden="true"><use href="#i-calendar-check"></use></svg><span>今日复习</span><span id="reviewCountBadge"></span></button>
     </div>
     <div id="activeStudyArea"></div>
   </div>
 
   <!-- 视图 4: 笔记 -->
   <div id="viewNotes" class="view">
-    <h2 class="page-heading">📓 我的笔记</h2>
+    <h2 class="page-heading"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-notebook"></use></svg> 我的笔记</h2>
     <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px; line-height: 1.6;">
-      在任意题目卡右下角点「✏️ 做笔记」，就能把那道题导入成自己的笔记，
+      在任意题目卡右下角点「做笔记」，就能把那道题导入成自己的笔记，
       并用鼠标或手指直接在上面手写、画图；之后随时可以回来用橡皮擦修改。
     </p>
     <div id="notesListArea"></div>
@@ -847,7 +921,7 @@
 
   <!-- 视图 5: 题目档（可下载） -->
   <div id="viewArchive" class="view">
-    <h2 class="page-heading">📥 题目档（可下载）</h2>
+    <h2 class="page-heading"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-download"></use></svg> 题目档（可下载）</h2>
     <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px; line-height: 1.6;">
       勾选需要的题目，点下载就会生成一份 PDF 存到你的电脑。
       题目一律按照网站本身的顺序排版，与你勾选的先后无关。
@@ -867,8 +941,8 @@
     </div>
 
     <div style="display:flex; gap: 8px; flex-wrap:wrap; margin-bottom: 16px;">
-      <button class="btn-primary-retro" id="archiveDownloadBtn" onclick="downloadArchivePdf()" disabled>⬇️ 下载 PDF</button>
-      <button class="btn-ghost-retro" onclick="printArchive()">🖨️ 打印版</button>
+      <button class="btn-primary-retro" id="archiveDownloadBtn" onclick="downloadArchivePdf()" disabled><svg class="ic" aria-hidden="true"><use href="#i-download"></use></svg>下载 PDF</button>
+      <button class="btn-ghost-retro" onclick="printArchive()"><svg class="ic" aria-hidden="true"><use href="#i-printer"></use></svg>打印版</button>
       <button class="btn-ghost-retro" onclick="clearArchiveSelection()">清空勾选</button>
     </div>
 
@@ -877,7 +951,7 @@
 
   <!-- 视图 6: 网页问题申诉 -->
   <div id="viewFeedback" class="view">
-    <h2 class="page-heading">🛠️ 网页问题申诉 ©</h2>
+    <h2 class="page-heading"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-flag"></use></svg> 网页问题申诉 ©</h2>
     <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px; line-height: 1.6;">
       网站哪里坏了、哪里怪怪的，都可以在这里告诉管理员。
       管理员修好之后，你下次打开网站会看到一个通知小精灵，点它就能直接跳回出问题的地方复查。
@@ -896,7 +970,7 @@
         <label class="fb-label" for="fbContact">联络方式（选填）</label>
         <input class="fb-input" id="fbContact" placeholder="邮箱或 WhatsApp，方便管理员追问细节">
       </div>
-      <button class="btn-primary-retro" id="fbSubmitBtn" onclick="submitFeedback()">📮 提交申诉</button>
+      <button class="btn-primary-retro" id="fbSubmitBtn" onclick="submitFeedback()"><svg class="ic" aria-hidden="true"><use href="#i-send"></use></svg><span class="btn-txt">提交申诉</span></button>
       <div id="fbSubmitResult" style="margin-top: 14px;"></div>
     </div>
 
@@ -913,13 +987,13 @@
 <div class="note-modal" id="noteModal">
   <div class="note-dialog">
     <div class="note-dialog-head">
-      <span class="note-dialog-title">📓 题目笔记</span>
+      <span class="note-dialog-title"><svg class="ic" aria-hidden="true"><use href="#i-notebook"></use></svg> 题目笔记</span>
       <button class="note-close-btn" onclick="closeNoteEditor()" aria-label="关闭">×</button>
     </div>
 
     <div class="note-toolbar">
-      <button class="note-tool-btn active" data-note-tool="pen" onclick="setNoteTool('pen', this)">🖊️ 画笔</button>
-      <button class="note-tool-btn" data-note-tool="eraser" onclick="setNoteTool('eraser', this)">🧽 橡皮擦</button>
+      <button class="note-tool-btn active" data-note-tool="pen" onclick="setNoteTool('pen', this)"><svg class="ic" aria-hidden="true"><use href="#i-brush"></use></svg>画笔</button>
+      <button class="note-tool-btn" data-note-tool="eraser" onclick="setNoteTool('eraser', this)"><svg class="ic" aria-hidden="true"><use href="#i-eraser"></use></svg>橡皮擦</button>
       <div class="note-pen-colors">
         <div class="note-color-dot selected" style="background:#1e293b;" onclick="setNoteColor('#1e293b', this)" title="黑"></div>
         <div class="note-color-dot" style="background:#e11d48;" onclick="setNoteColor('#e11d48', this)" title="红"></div>
@@ -929,8 +1003,8 @@
       </div>
       <span class="note-toolbar-label">粗细</span>
       <input class="note-size-range" type="range" min="1" max="14" value="3" onchange="setNoteSize(this.value)" oninput="setNoteSize(this.value)">
-      <button class="note-tool-btn" onclick="undoNoteStroke()">↩️ 撤销</button>
-      <button class="note-tool-btn" onclick="clearNoteCanvas()">🗑️ 清空</button>
+      <button class="note-tool-btn" onclick="undoNoteStroke()"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"></use></svg>撤销</button>
+      <button class="note-tool-btn btn-danger" onclick="clearNoteCanvas()"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>清空</button>
     </div>
 
     <div class="note-stage-scroll">
@@ -948,7 +1022,7 @@
       <span class="note-save-hint" id="noteSaveHint">尚未保存</span>
       <div style="display:flex; gap: 8px;">
         <button class="btn-ghost-retro" onclick="closeNoteEditor()">取消</button>
-        <button class="btn-primary-retro" onclick="saveCurrentNote()">💾 保存笔记</button>
+        <button class="btn-primary-retro" onclick="saveCurrentNote()"><svg class="ic" aria-hidden="true"><use href="#i-save"></use></svg>保存笔记</button>
       </div>
     </div>
   </div>
@@ -969,8 +1043,8 @@
   <div class="sprite-panel" id="spritePanel">
     <div class="sprite-panel-title" id="spritePanelTitle"></div>
     <div class="sprite-panel-actions">
-      <button class="sprite-btn" onclick="spriteGoLook()">🔍 带我去看看</button>
-      <button class="sprite-btn ok" onclick="spriteConfirmFixed()">👍 没问题了！</button>
+      <button class="sprite-btn" onclick="spriteGoLook()"><svg class="ic" aria-hidden="true"><use href="#i-search"></use></svg>带我去看看</button>
+      <button class="sprite-btn ok" onclick="spriteConfirmFixed()"><svg class="ic" aria-hidden="true"><use href="#i-thumb-up"></use></svg>没问题了！</button>
     </div>
     <div class="sprite-toggle-row">
       <span class="sprite-toggle-label">还有别的问题？</span>
@@ -989,7 +1063,7 @@
 <div class="sprite-new-issue" id="spriteNewIssue">
   <div class="sprite-new-issue-box">
     <div class="note-dialog-head">
-      <span class="note-dialog-title">✍️ 还有什么问题？</span>
+      <span class="note-dialog-title"><svg class="ic" aria-hidden="true"><use href="#i-pencil"></use></svg> 还有什么问题？</span>
       <button class="note-close-btn" onclick="closeSpriteNewIssue()" aria-label="关闭">×</button>
     </div>
     <div style="padding: 16px;">
@@ -1016,7 +1090,7 @@
 
   function toggleSound() {
     soundEnabled = !soundEnabled;
-    document.getElementById('soundBtn').innerText = soundEnabled ? '🔊 音效：开' : '🔇 音效：关';
+    setBtnLabel(document.getElementById('soundBtn'), soundEnabled ? 'sound-on' : 'sound-off', soundEnabled ? '音效：开' : '音效：关', soundEnabled);
     if (soundEnabled) playSound('pop');
   }
 
@@ -1328,7 +1402,7 @@
 
   function toggleMusic() {
     musicEnabled = !musicEnabled;
-    document.getElementById('musicBtn').innerText = musicEnabled ? '🎵 音乐：开' : '🎼 音乐：关';
+    setBtnLabel(document.getElementById('musicBtn'), musicEnabled ? 'music' : 'music-off', musicEnabled ? '音乐：开' : '音乐：关', musicEnabled);
     if (musicEnabled) {
       startAmbientMusic(currentSubject);
     } else {
@@ -1459,6 +1533,14 @@
     card.style.setProperty('--mx', `${e.clientX - r.left}px`);
     card.style.setProperty('--my', `${e.clientY - r.top}px`);
   }, { passive: true });
+
+  // 按钮内容一律是「图标 + 文字」；on 决定要不要上「开著」的绿色
+  function setBtnLabel(el, icon, text, on) {
+    if (!el) return;
+    el.innerHTML = `<svg class="ic" aria-hidden="true"><use href="#i-${icon}"></use></svg><span class="btn-txt">${text}</span>`;
+    if (on !== undefined) el.classList.toggle('is-on', Boolean(on));
+  }
+  window.setBtnLabel = setBtnLabel;
 
   function navigateHome() {
     playSound('flip');
@@ -1600,7 +1682,7 @@ function openSubject(subject, initialChapterIdx) {
     });
 
     if (sections.length === 0) {
-      rail.innerHTML = `<div style="padding: 28px 10px; color: var(--text-muted); font-size: 14px;">🚧 该学科题库正在整理中，敬请期待！</div>`;
+      rail.innerHTML = `<div style="padding: 28px 10px; color: var(--text-muted); font-size: 14px;">该学科题库正在整理中，敬请期待！</div>`;
     } else if (!rail.querySelector('[tabindex="0"]')) {
       rail.firstElementChild.setAttribute('tabindex', '0');   // 没有选中章节时，至少让键盘进得来
     }
@@ -1650,7 +1732,7 @@ function openSubject(subject, initialChapterIdx) {
     holder.innerHTML = `
       <div class="resume-card" onclick="resumeLastVisit()" role="button" tabindex="0" aria-label="继续上次学习">
         <div class="resume-card-text">继续上次学习进度<br><strong>${label} · ${last.chapterTitle}</strong></div>
-        <div class="resume-card-arrow">➡️</div>
+        <div class="resume-card-arrow"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-arrow-right"></use></svg></div>
       </div>
     `;
   }
@@ -1757,11 +1839,11 @@ function openSubject(subject, initialChapterIdx) {
 
   // 空状态：让「还没有内容」看起来是设计过的，而不是页面坏了
   // actions：[[文字, onclick 字串, 是否主按钮], ...]。只接本档案写死的字串。
-  function emptyState(glyph, title, hint, actions) {
+  function emptyState(icon, title, hint, actions) {
     const btns = (actions || []).map(([label, js, primary]) =>
       `<button type="button" class="empty-btn${primary ? ' primary' : ''}" onclick="${js}">${label}</button>`).join('');
     return `<div class="empty-state">
-      <div class="empty-glyph" aria-hidden="true">${glyph}</div>
+      <div class="empty-glyph" aria-hidden="true"><svg class="ic"><use href="#i-${icon}"></use></svg></div>
       <div class="empty-title">${title}</div>
       ${hint ? `<div class="empty-hint">${hint}</div>` : ''}
       ${btns ? `<div class="empty-actions">${btns}</div>` : ''}
@@ -1799,7 +1881,7 @@ function openSubject(subject, initialChapterIdx) {
     if (subjectEmpty) {
       const label = SUBJECT_LABELS[currentSubject] || '这一科';
       const n = (fullDatabase.sections || []).length;
-      area.innerHTML = emptyState('📚', `${label}的题库还没开始`,
+      area.innerHTML = emptyState('inbox', `${label}的题库还没开始`,
         n ? `目前只有上面这 ${n} 个章节的大纲，还没有任何题目。你最需要哪一章？告诉我们，我们优先补那一章。`
           : '题目会陆续补上。',
         [['告诉我们你需要哪一章', 'openFeedbackView()', true],
@@ -1815,8 +1897,8 @@ function openSubject(subject, initialChapterIdx) {
         const next = window.UECReview ? window.UECReview.nextDueAt(currentSubject, sections) : null;
         const nextText = next ? `下一批在 ${new Date(next).toLocaleDateString('zh-CN')}。` : '';
         area.innerHTML = day.total > 0
-          ? emptyState('✅', '今天的复习做完了', `今天一共复习了 ${day.total} 题。${nextText}`)
-          : emptyState('☕', '今天没有到期的复习', nextText || '先去做几题，系统才知道该在什么时候提醒你复习。');
+          ? emptyState('check-circle', '今天的复习做完了', `今天一共复习了 ${day.total} 题。${nextText}`)
+          : emptyState('calendar-check', '今天没有到期的复习', nextText || '先去做几题，系统才知道该在什么时候提醒你复习。');
         return;
       }
       const pct = Math.round(day.done / day.total * 100);
@@ -1842,7 +1924,7 @@ function openSubject(subject, initialChapterIdx) {
     if (activeSubMode === 'wrong') {
       const wrongList = getWrongList(currentSubject);
       if (wrongList.length === 0) {
-        area.innerHTML = emptyState('🎯', '错题本是空的', '答错的题会自动收进来；要在不同的两天都答对，才会从这里移出。');
+        area.innerHTML = emptyState('book-x', '错题本是空的', '答错的题会自动收进来；要在不同的两天都答对，才会从这里移出。');
         return;
       }
       // 与「今日复习」刻意长得不一样：这里是「我哪里弱」的库存，不是今天要做完的清单。
@@ -1875,13 +1957,13 @@ function openSubject(subject, initialChapterIdx) {
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
 
     if (!sec) {
-      area.innerHTML = emptyState('📄', '找不到这个章节', '可能是题库刚更新过，回到学科页重新进来一次就好。');
+      area.innerHTML = emptyState('doc-lines', '找不到这个章节', '可能是题库刚更新过，回到学科页重新进来一次就好。');
       return;
     }
 
     if (activeSubMode === 'mcq') {
       if (!sec.mcqs || sec.mcqs.length === 0) {
-        area.innerHTML = emptyState('✏️', '这一章还没有选择题',
+        area.innerHTML = emptyState('cards', '这一章还没有选择题',
           '换一个章节看看，或到「做答题」试试。题目正在陆续补上。');
         return;
       }
@@ -1897,7 +1979,7 @@ function openSubject(subject, initialChapterIdx) {
         figureHtml = `
           <div class="figure-container" onclick="openImageModal('${item.image}')">
             <img src="${item.image}" alt="考题高清图">
-            <div class="figure-caption">🔍 点击查看高清大图</div>
+            <div class="figure-caption"><svg class="ic" aria-hidden="true"><use href="#i-search"></use></svg> 点击查看高清大图</div>
           </div>`;
       } else if (item.figure) {
         figureHtml = `
@@ -1915,12 +1997,12 @@ function openSubject(subject, initialChapterIdx) {
           <div class="mcq-verdict" id="mcqVerdict" role="status" aria-live="polite"></div>
           <div class="explanation" id="expContainer">${item.explanation}</div>
           <div class="card-footer">
-            <button class="btn-nav" onclick="navMcq(-1)">⬅️ 上一题</button>
+            <button class="btn-nav" onclick="navMcq(-1)"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"></use></svg>上一题</button>
             <span style="font-size:12px; color:var(--text-muted); font-weight:600;">第 ${currentMcqIdx + 1} / ${sec.mcqs.length} 题</span>
-            <button class="btn-nav" onclick="navMcq(1)">下一题 ➡️</button>
+            <button class="btn-nav" onclick="navMcq(1)">下一题<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></button>
           </div>
           <button class="card-note-btn" onclick="openMcqNote()"
-            data-note-key="${currentSubject}__${sec.id}__mcq__${currentMcqIdx}">✏️ 做笔记</button>
+            data-note-key="${currentSubject}__${sec.id}__mcq__${currentMcqIdx}"><svg class="ic" aria-hidden="true"><use href="#i-pencil"></use></svg><span class="btn-txt">做笔记</span></button>
           <div class="kbd-hint" aria-hidden="true"><kbd>A</kbd>–<kbd>D</kbd> 作答 · <kbd>←</kbd> <kbd>→</kbd> 换题</div>
         </div>
       `;
@@ -2028,7 +2110,7 @@ function openSubject(subject, initialChapterIdx) {
     } else {
       const subjs = sec.subjectives || [];
       if (subjs.length === 0) {
-        area.innerHTML = emptyState('📝', '这一章还没有做答题', '可以先到「选择题练习」，那边的题目比较多。');
+        area.innerHTML = emptyState('doc-lines', '这一章还没有做答题', '可以先到「选择题练习」，那边的题目比较多。');
         return;
       }
       let cardsHtml = '';
@@ -2041,7 +2123,7 @@ function openSubject(subject, initialChapterIdx) {
               <div class="form-question-text">${q.question}</div>
               <div class="answer-flip-panel">
                 <div class="flip-toggle-header" onclick="toggleAnswerFlip(this)" role="button" tabindex="0">
-                  <span class="flip-toggle-title">📖 参考标准答案与要点</span>
+                  <span class="flip-toggle-title"><svg class="ic" aria-hidden="true"><use href="#i-book-open"></use></svg> 参考标准答案与要点</span>
                   <span class="flip-status-pill">点击展开 / 遮挡默背</span>
                 </div>
                 <div class="flip-answer-content" id="${q.id || 'subj_' + qIndex}">
@@ -2049,7 +2131,7 @@ function openSubject(subject, initialChapterIdx) {
                 </div>
               </div>
               <button class="card-note-btn" onclick="openSubjNote(${qIndex})"
-                data-note-key="${currentSubject}__${sec.id}__subj__${qIndex}">✏️ 做笔记</button>
+                data-note-key="${currentSubject}__${sec.id}__subj__${qIndex}"><svg class="ic" aria-hidden="true"><use href="#i-pencil"></use></svg><span class="btn-txt">做笔记</span></button>
             </div>
           </div>
         `;
@@ -2061,8 +2143,8 @@ function openSubject(subject, initialChapterIdx) {
           <div class="hl-color-btn selected" style="background: var(--hl-yellow);" onclick="setColor('yellow', this)"></div>
           <div class="hl-color-btn" style="background: var(--hl-green);" onclick="setColor('green', this)"></div>
           <div class="hl-color-btn" style="background: var(--hl-pink);" onclick="setColor('pink', this)"></div>
-          <button class="hl-btn-action" onclick="applyHighlight()">✏️ 划线高亮</button>
-          <button class="hl-btn-action" onclick="clearHighlights()">🗑️ 清除所有</button>
+          <button class="hl-btn-action" onclick="applyHighlight()"><svg class="ic" aria-hidden="true"><use href="#i-marker"></use></svg>划线高亮</button>
+          <button class="hl-btn-action btn-danger" onclick="clearHighlights()"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>清除所有</button>
           <span class="status-toast" id="saveToast">自动保存已开启</span>
         </div>
         <div class="form-style-container" id="subjFormContainer">${cardsHtml}</div>
@@ -2083,7 +2165,7 @@ function openSubject(subject, initialChapterIdx) {
       const btn = document.createElement('button');
       btn.className = 'card-note-btn';
       btn.setAttribute('data-note-key', `${currentSubject}__${sec.id}__subj__${i}`);
-      btn.textContent = '✏️ 做笔记';
+      setBtnLabel(btn, 'pencil', '做笔记');
       btn.onclick = () => openSubjNote(i);
       body.appendChild(btn);
     });
@@ -2140,7 +2222,9 @@ function openSubject(subject, initialChapterIdx) {
     playSound('pop');
     const content = headerEl.nextElementSibling;
     const isShown = content.classList.toggle('revealed');
-    headerEl.querySelector('.flip-status-pill').innerText = isShown ? '🙈 点击遮盖默背' : '📖 点击展开答案';
+    headerEl.querySelector('.flip-status-pill').innerHTML = isShown
+      ? '<svg class="ic" aria-hidden="true"><use href="#i-book-open"></use></svg>点击遮盖默背'
+      : '<svg class="ic" aria-hidden="true"><use href="#i-book-open"></use></svg>点击展开答案';
   }
 
   function setColor(color, el) {
@@ -2281,7 +2365,7 @@ function openSubject(subject, initialChapterIdx) {
     clearSubjectBackground();
     stopAmbientMusic();
     setActiveNav('navNotesBtn');
-    setBreadcrumb('📓 我的笔记');
+    setBreadcrumb('我的笔记');
     renderNotesView();
   }
 
@@ -2291,7 +2375,7 @@ function openSubject(subject, initialChapterIdx) {
     clearSubjectBackground();
     stopAmbientMusic();
     setActiveNav('navArchiveBtn');
-    setBreadcrumb('📥 题目档（可下载）');
+    setBreadcrumb('题目档（可下载）');
     renderArchiveView();
   }
 
@@ -2301,7 +2385,7 @@ function openSubject(subject, initialChapterIdx) {
     clearSubjectBackground();
     stopAmbientMusic();
     setActiveNav('navFeedbackBtn');
-    setBreadcrumb('🛠️ 网页问题申诉');
+    setBreadcrumb('网页问题申诉');
     renderFeedbackView();
   }
 

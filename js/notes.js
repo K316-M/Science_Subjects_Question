@@ -352,7 +352,8 @@ function refreshNoteButtons() {
   document.querySelectorAll('[data-note-key]').forEach(btn => {
     const has = !!store[btn.getAttribute('data-note-key')];
     btn.classList.toggle('has-note', has);
-    btn.textContent = has ? '📓 已有笔记' : '✏️ 做笔记';
+    if (window.setBtnLabel) window.setBtnLabel(btn, has ? 'notebook' : 'pencil', has ? '已有笔记' : '做笔记');
+    else btn.textContent = has ? '已有笔记' : '做笔记';
   });
 }
 
@@ -366,9 +367,9 @@ function renderNotesView() {
   if (notes.length === 0) {
     area.innerHTML = `
       <div class="archive-empty">
-        <div style="font-size: 40px; margin-bottom: 10px;">📓</div>
+        <div style="margin-bottom: 10px;"><svg class="ic" aria-hidden="true"><use href="#i-notebook"></use></svg></div>
         还没有任何笔记。<br>
-        <span style="font-size: 13px;">进入任意科目，在题目卡右下角点「✏️ 做笔记」即可把该题导入成自己的笔记。</span>
+        <span style="font-size: 13px;">进入任意科目，在题目卡右下角点「做笔记」即可把该题导入成自己的笔记。</span>
       </div>`;
     return;
   }
@@ -382,9 +383,9 @@ function renderNotesView() {
         <div class="note-card-time">更新于 ${new Date(n.updatedAt).toLocaleString('zh-CN')}</div>
       </div>
       <div class="note-card-actions">
-        <button class="note-mini-btn" onclick="editNoteById('${escapeNoteHtml(n.id)}')">✏️ 编辑</button>
-        <button class="note-mini-btn" onclick="gotoNoteQuestion('${escapeNoteHtml(n.id)}')">🔗 前往该题</button>
-        <button class="note-mini-btn danger" onclick="deleteNoteById('${escapeNoteHtml(n.id)}')">🗑️ 删除</button>
+        <button class="note-mini-btn" onclick="editNoteById('${escapeNoteHtml(n.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-pencil"></use></svg>编辑</button>
+        <button class="note-mini-btn is-time" onclick="gotoNoteQuestion('${escapeNoteHtml(n.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-link"></use></svg>前往该题</button>
+        <button class="note-mini-btn danger" onclick="deleteNoteById('${escapeNoteHtml(n.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>删除</button>
       </div>
     </div>
   `).join('')}</div>`;

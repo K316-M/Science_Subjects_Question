@@ -118,7 +118,7 @@ function renderFeedbackView() {
   const locSel = document.getElementById('fbLocation');
   if (locSel) {
     const opts = [
-      { v: 'auto', t: `🎯 我刚才所在的位置：${describeContext(lastContentContext)}` },
+      { v: 'auto', t: `我刚才所在的位置：${describeContext(lastContentContext)}` },
       { v: 'viewSubjects', t: '主页（学科选择）' },
       { v: 'study:biology', t: '生物科 · 做题页' },
       { v: 'study:chemistry', t: '化学科 · 做题页' },
@@ -171,7 +171,7 @@ async function submitFeedback() {
   if (btn) { btn.disabled = true; btn.textContent = '发送中…'; }
   const sent = await sendReportToAdmin(report);
   markReportSent(report.id, sent);
-  if (btn) { btn.disabled = false; btn.textContent = '📮 提交申诉'; }
+  if (btn) { btn.disabled = false; if (window.setBtnLabel) window.setBtnLabel(btn, 'send', '提交申诉'); else btn.textContent = '提交申诉'; }
 
   textEl.value = '';
   if (typeof playSound === 'function') playSound(sent ? 'correct' : 'pop');
@@ -203,19 +203,19 @@ function showSubmitResult(report) {
   box.innerHTML = report.sent
     ? `<div class="fb-report-item" style="border-color: var(--primary);">
         <div class="fb-report-head">
-          <span class="fb-status resolved">✅ 已送达管理员</span>
+          <span class="fb-status resolved"><svg class="ic" aria-hidden="true"><use href="#i-check-circle"></use></svg>已送达管理员</span>
           <span class="fb-report-id">${escapeFb(report.id)}</span>
         </div>
         <div class="fb-report-text">谢谢反馈！管理员修好之后，你下次打开网站会看到通知小精灵。</div>
       </div>`
     : `<div class="fb-report-item" style="border-color: var(--danger);">
         <div class="fb-report-head">
-          <span class="fb-status pending">⚠️ 自动发送失败</span>
+          <span class="fb-status pending"><svg class="ic" aria-hidden="true"><use href="#i-alert"></use></svg>自动发送失败</span>
           <span class="fb-report-id">${escapeFb(report.id)}</span>
         </div>
         <div class="fb-report-text">问题已记录在你的浏览器里，但暂时没能送出（可能是网络问题）。请用下面任一方式发给管理员：</div>
         <div style="display:flex; gap: 8px; margin-top: 12px; flex-wrap:wrap;">
-          <button class="btn-ghost-retro" onclick="copyReportText('${escapeFb(report.id)}')">📋 复制问题内容</button>
+          <button class="btn-ghost-retro" onclick="copyReportText('${escapeFb(report.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-copy"></use></svg>复制问题内容</button>
           <a class="btn-ghost-retro" style="text-decoration:none; display:inline-block;" href="${mailto}">✉️ 用邮件发送</a>
           <button class="btn-ghost-retro" onclick="resendReport('${escapeFb(report.id)}')">🔁 重新发送</button>
         </div>
@@ -252,7 +252,7 @@ function renderMyReports() {
   box.innerHTML = reports.map(r => `
     <div class="fb-report-item">
       <div class="fb-report-head">
-        <span class="fb-status ${r.status}">${r.status === 'resolved' ? '✅ 已解决' : '⏳ 处理中'}</span>
+        <span class="fb-status ${r.status}">${r.status === 'resolved' ? '<svg class="ic" aria-hidden="true"><use href="#i-check-circle"></use></svg>已解决' : '<svg class="ic" aria-hidden="true"><use href="#i-alert"></use></svg>处理中'}</span>
         <span class="fb-report-id">${escapeFb(r.id)}</span>
         <span class="fb-report-id">${new Date(r.createdAt).toLocaleDateString('zh-CN')}</span>
         <span class="fb-report-id">📍 ${escapeFb(describeContext(r.location))}</span>
@@ -262,8 +262,8 @@ function renderMyReports() {
       ${r.reply ? `<div class="fb-report-reply"><strong>管理员回复：</strong>${escapeFb(r.reply.summary)}</div>` : ''}
       <div style="margin-top: 8px; display:flex; gap: 8px; flex-wrap:wrap;">
         ${r.sent === false && r.status !== 'resolved' ? `<button class="note-mini-btn" style="flex:0 0 auto;" onclick="resendReport('${escapeFb(r.id)}')">🔁 重新发送</button>` : ''}
-        <button class="note-mini-btn" style="flex:0 0 auto;" onclick="copyReportText('${escapeFb(r.id)}')">📋 复制</button>
-        <button class="note-mini-btn danger" style="flex:0 0 auto;" onclick="deleteReport('${escapeFb(r.id)}')">🗑️ 删除</button>
+        <button class="note-mini-btn" style="flex:0 0 auto;" onclick="copyReportText('${escapeFb(r.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-copy"></use></svg>复制</button>
+        <button class="note-mini-btn danger" style="flex:0 0 auto;" onclick="deleteReport('${escapeFb(r.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>删除</button>
       </div>
     </div>`).join('');
 }

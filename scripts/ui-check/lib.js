@@ -72,6 +72,10 @@ async function contrast(page, label, scope, R) {
       while (a && a !== document.documentElement) { const c = getComputedStyle(a); if (c.display === 'none' || c.visibility === 'hidden') { hid = true; break; } op *= parseFloat(c.opacity); a = a.parentElement; }
       if (hid || op < .05) continue;
       if (el.closest('.sr-only,.skip-link,[aria-hidden="true"]:not(.orbit-core)')) continue;
+      // 「只给读屏念」的文字：盒子被压成 1px 或整个被 clip 掉，画面上根本看不到。
+      // 文字节点的 range 矩形不受 clip 影响，所以要另外挡掉，否则会量到底下的背景色。
+      const eb = el.getBoundingClientRect(), ecs = getComputedStyle(el);
+      if (eb.width <= 2 || eb.height <= 2 || /^rect\(0px,? 0px,? 0px,? 0px\)$/.test(ecs.clip) || ecs.clipPath === 'inset(50%)') continue;
       const r = document.createRange(); r.selectNodeContents(t); const raw = [...r.getClientRects()].find(x => x.width > 2 && x.height > 2);
       if (!raw) continue;
       // 只取「真正看得到」的那一段：与视窗、以及每一层会裁切的祖先（overflow 不是 visible）取交集。

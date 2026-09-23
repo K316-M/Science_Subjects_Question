@@ -398,7 +398,8 @@
 
   function syncButton() {
     if (!state.btn) return;
-    state.btn.textContent = state.musicOn ? '🎵 音乐：开' : '🎼 音乐：关';
+    if (window.setBtnLabel) window.setBtnLabel(state.btn, state.musicOn ? 'music' : 'music-off', state.musicOn ? '音乐：开' : '音乐：关', state.musicOn);
+    else state.btn.textContent = state.musicOn ? '音乐：开' : '音乐：关';
     state.btn.setAttribute('aria-pressed', String(state.musicOn));
   }
 

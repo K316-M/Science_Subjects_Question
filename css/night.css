@@ -44,6 +44,16 @@
   --accent: #86c3e6;
   --success: #7fcf9f;
   --danger: #ee9a96;
+  /* 功能色在暗底上要反过来：白天用深色，夜里用亮色（深青在深纸面上只有 2.7:1） */
+  --fn-go: var(--primary);
+  --fn-go-soft: rgba(134, 207, 168, .14);
+  --fn-danger: #f2aaa6;
+  --fn-danger-soft: rgba(242, 170, 166, .14);
+  --fn-warn: #e9c682;
+  --fn-warn-soft: rgba(233, 198, 130, .14);
+  --fn-time: #86c3e6;
+  --fn-time-soft: rgba(134, 195, 230, .14);
+  --fn-quiet: var(--n-text-2);
   --hl-yellow: rgba(233, 198, 130, .24);
   --hl-green: rgba(134, 207, 168, .22);
   --hl-pink: rgba(240, 168, 200, .22);
@@ -146,6 +156,8 @@
 [data-theme="night"] .exam-cal .cal-ring { fill: #cfc6b2; }
 
 /* ---------- 章节卡、分页 ---------- */
+[data-theme="night"] #syncBtn { border-color: rgba(134, 195, 230, .4); }
+[data-theme="night"] .btn-danger { background: transparent; border-color: rgba(242, 170, 166, .4); }
 [data-theme="night"] .chapter-card { background: rgba(36, 34, 30, .72); border-color: var(--n-border); }
 [data-theme="night"] .chapter-card:hover { background: rgba(44, 41, 36, .92); border-color: rgba(134, 207, 168, .45); }
 [data-theme="night"] .chapter-card.active { background: var(--n-raised); border-color: var(--primary); }

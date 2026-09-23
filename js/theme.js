@@ -26,8 +26,9 @@
     const btn = document.getElementById('themeBtn');
     if (btn) {
       const txt = btn.querySelector('.theme-txt');
-      if (txt) txt.textContent = theme === 'night' ? ' 护眼：开' : ' 护眼：关';
+      if (txt) txt.textContent = theme === 'night' ? '护眼：开' : '护眼：关';
       btn.setAttribute('aria-pressed', String(theme === 'night'));
+      btn.classList.toggle('is-on', theme === 'night');
     }
   }
 

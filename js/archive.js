@@ -52,7 +52,7 @@ async function renderArchiveView() {
 
   if (withQuestions.length === 0) {
     area.innerHTML = `<div class="archive-empty">
-      <div style="font-size: 40px; margin-bottom: 10px;">📭</div>
+      <div style="margin-bottom: 10px;"><svg class="ic" aria-hidden="true"><use href="#i-inbox"></use></svg></div>
       该科目题库还没有题目可供下载。
     </div>`;
     updateArchiveCount();
