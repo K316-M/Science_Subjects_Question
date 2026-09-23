@@ -25,7 +25,7 @@ async function open({ width = 390, height = 844, mobile = false, reducedMotion, 
   await ctx.addInitScript((seed) => {
     if (sessionStorage.getItem('__seeded')) return;
     sessionStorage.setItem('__seeded', '1');
-    localStorage.setItem('UEC_ONBOARD_v1', JSON.stringify({ version: 1, ts: 1 }));
+    localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1 }));
     if (seed) Object.entries(seed).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
   }, seed || null);
   const page = await ctx.newPage();
@@ -155,6 +155,45 @@ async function run() {
     const total = bank.sections.reduce((n, s) => n + (s.mcqs || []).length, 0);
     check('统考时间表与题库覆盖', '做题页写明题库覆盖了考纲几章', cov === `依考纲共 ${bank.sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`, cov);
     check('统考时间表与题库覆盖', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
+  await section('画面导览', async () => {
+    // 不预设「看过」：模拟第一次来的学生
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+    const page = await ctx.newPage();
+    const errors = []; page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
+    await page.goto(URL_); await page.waitForTimeout(1800);
+    const tipTitle = () => page.evaluate(() => { const t = document.querySelector('.tour-tip .tour-title'); return t ? t.textContent : null; });
+    const next = () => page.evaluate(() => document.querySelector('.tour-tip .tour-btn.go').click());
+    const first = await tipTitle();
+    check('画面导览', '第一次打开：首页自动开始导览，第一步是欢迎', first === '欢迎来到独中理科', first);
+    const seenTitles = [];
+    for (let i = 0; i < 8 && await tipTitle(); i++) { seenTitles.push(await tipTitle()); await next(); await page.waitForTimeout(600); }
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('UEC_TOUR_v1') || '{}'));
+    check('画面导览', '走完五步就结束，记下首页看过', seenTitles.length === 5 && saved.home === 1, `${seenTitles.length} 步：${seenTitles.join(' → ')}`);
+    await page.reload(); await page.waitForTimeout(1800);
+    check('画面导览', '看过之後重新整理，不再自动出现', (await tipTitle()) === null);
+
+    await enter(page); await page.waitForTimeout(1800);
+    const study = await page.evaluate(() => {
+      const t = document.querySelector('.tour-tip .tour-title'), s = document.querySelector('.tour-spot');
+      const rail = document.getElementById('chapterRail').getBoundingClientRect(), r = s && s.getBoundingClientRect();
+      return { title: t && t.textContent, around: !!r && r.left <= rail.left && r.right >= rail.right - 1 && r.top <= rail.top && r.bottom >= rail.bottom };
+    });
+    check('画面导览', '第一次进做题页：换成做题页的导览，亮框圈住章节卡', study.title === '章节' && study.around, JSON.stringify(study));
+    await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+    const esc = await page.evaluate(() => ({ open: !!document.querySelector('.tour-tip'), seen: JSON.parse(localStorage.getItem('UEC_TOUR_v1')).study }));
+    check('画面导览', '按 Esc 跳过：关掉，也算看过', !esc.open && esc.seen === 1, JSON.stringify(esc));
+
+    await page.evaluate(() => openFeedbackView()); await page.waitForTimeout(1800);
+    await next(); await page.waitForTimeout(700);
+    const sprite = await page.evaluate(() => ({ title: document.querySelector('.tour-tip .tour-title').textContent,
+      shown: document.getElementById('spriteWrap').classList.contains('active') }));
+    await next(); await page.waitForTimeout(500);
+    const after = await page.evaluate(() => document.getElementById('spriteWrap').classList.contains('active'));
+    check('画面导览', '申诉页介绍小精灵：它会出现；导览结束後退场', sprite.title === '这是小精灵' && sprite.shown && !after, `${JSON.stringify(sprite)}，结束後 ${after}`);
+    check('画面导览', '没有 JS 错误', errors.length === 0, errors[0]);
     await ctx.close();
   });
 
@@ -314,7 +353,7 @@ async function run() {
     await page.waitForTimeout(500);
     const q2 = await page.evaluate(() => document.querySelector('.mcq-question').textContent);
     check('键盘', '快捷键：B 作答、→ 换题', answered && q1 !== q2);
-    for (const [btn, box] of [['#syncBtn', '.sync-box'], ['#guideBtn', '.ob-box']]) {
+    for (const [btn, box] of [['#syncBtn', '.sync-box'], ['#guideBtn', '.tour-tip']]) {
       await page.evaluate(() => window.navigateHome());
       await page.waitForTimeout(400);
       await page.focus(btn);
@@ -453,7 +492,7 @@ async function run() {
     // 装置是深色：一开就是护眼，而且在画面出来之前就定了（不会先闪白）
     const d = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
     await mark(d);
-    await d.addInitScript(() => { if (!sessionStorage.getItem('__s')) { sessionStorage.setItem('__s', 1); localStorage.setItem('UEC_ONBOARD_v1', JSON.stringify({ version: 1, ts: 1 })); } });
+    await d.addInitScript(() => { if (!sessionStorage.getItem('__s')) { sessionStorage.setItem('__s', 1); localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1 })); } });
     const dp = await d.newPage(); const derr = []; dp.on('pageerror', e => derr.push(String(e).slice(0, 200)));
     await dp.goto(URL_); await dp.waitForTimeout(800);
     const sys = await theme(dp);

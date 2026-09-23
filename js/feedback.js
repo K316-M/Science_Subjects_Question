@@ -336,6 +336,20 @@ function refreshSprite() {
   wrap.classList.add('active');
 }
 
+// 导览介绍小精灵时，没有真的通知也让它出现一下；结束後回到原本的状态
+function spriteDemo(on) {
+  const wrap = document.getElementById('spriteWrap');
+  if (!wrap) return;
+  if (on) {
+    const badge = document.getElementById('spriteBadge');
+    if (badge && !pendingSpriteReport()) badge.style.display = 'none';
+    wrap.classList.add('active');
+  } else {
+    refreshSprite();
+  }
+}
+window.spriteDemo = spriteDemo;
+
 function toggleSpritePanel() {
   if (!spriteReport) return;
   const panel = document.getElementById('spritePanel');

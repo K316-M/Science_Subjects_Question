@@ -199,7 +199,7 @@
 
     /* 统考时间表：一颗卡通日历，旁边伸出一个对话框写著最靠近的那一场。
        日期一律取自 js/exam-timetable.js，程序不自己编日期 */
-    .exam-next { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 12px; }
+    .exam-next { display: flex; align-items: center; gap: 8px; width: fit-content; margin: 12px auto 0; }
     .exam-cal { width: 48px; height: 48px; flex: 0 0 auto; transform: rotate(-6deg); overflow: visible; }
     .exam-cal .cal-paper { fill: var(--retro-cream); }
     .exam-cal .cal-head { fill: var(--retro-coral); }
@@ -1644,6 +1644,8 @@ function openSubject(subject, initialChapterIdx) {
     if (typeof rememberContentContext === 'function') {
       setTimeout(rememberContentContext, 0);
     }
+    // 画面导览（js/onboarding.js）听这个事件：第一次进到这个画面就开始介绍
+    window.dispatchEvent(new CustomEvent('uec:view', { detail: viewId }));
   }
 
   function renderChapterRail() {
