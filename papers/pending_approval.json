@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_d959a10b52",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap3",
-      "chapter_title": "第3章：细胞内物质和能量的转换",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.074719Z",
-      "q": "厌氧细胞进行呼吸作用时是以下列哪项作为氢原子接受者?",
-      "options": [
-        "A. 细胞色素",
-        "B. 乙酰辅酶A",
-        "C. 黄素腺嘌呤二核苷酸(FAD)",
-        "D. 烟酰胺腺嘌呤二核苷酸(NAD)"
-      ],
-      "answer": 3,
-      "explanation": "在无氧呼吸（厌氧呼吸）的糖酵解过程中，葡萄糖脱氢生成丙酮酸，脱下的氢由辅酶NAD+（烟酰胺腺嘌呤二核苷酸）接受生成NADH。随后在发酵阶段，NADH又将氢传给丙酮酸或乙醛，使NAD+再生。",
-      "review": {
-        "ai_answer": 3,
-        "reason": "在糖酵解（无氧呼吸的第一阶段）中，脱下的氢由辅酶NAD+（烟酰胺腺嘌呤二核苷酸）接受。"
-      }
-    },
-    {
       "id": "biology_2d265da373",
       "subject": "biology",
       "type": "mcq",
