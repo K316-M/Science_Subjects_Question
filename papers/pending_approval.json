@@ -1,0 +1,605 @@
+{
+  "items": [
+    {
+      "id": "biology_80d4f1ace4",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第3章：细胞内物质和能量的转换",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.060496Z",
+      "q": "若须消耗145分子的O2以氧化脂肪并产生102分子的CO2，则经此氧化作用产生的呼吸商",
+      "options": [
+        "A. 等於1",
+        "B. 大过1",
+        "C. 小过1",
+        "D. 等於0"
+      ],
+      "answer": 2,
+      "explanation": "呼吸商（RQ）是指生物体在同一时间内释放二氧化碳与吸收氧气的体积比（或分子数比）。此题中，RQ = 102 / 145 ≈ 0.7，小于1。富含氢的脂肪在氧化分解时需要消耗较多的氧气，因此其呼吸商通常小于1。",
+      "review": {
+        "ai_answer": 2,
+        "reason": "呼吸商为释放的二氧化碳与消耗的氧气的分子数之比，102/145小于1。"
+      }
+    },
+    {
+      "id": "biology_cdfdc3ec72",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第14章：遗传的物质基础",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.062909Z",
+      "q": "所有生物的遗传物质为",
+      "options": [
+        "A. 脱氧核糖核酸",
+        "B. 核糖核酸",
+        "C. 核苷酸",
+        "D. 核酸"
+      ],
+      "answer": 3,
+      "explanation": "生物的遗传物质是核酸。绝大多数生物（具细胞结构的生物及DNA病毒）的遗传物质是脱氧核糖核酸（DNA），部分病毒（如RNA病毒）的遗传物质是核糖核酸（RNA）。因此，统称所有生物的遗传物质为核酸。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "生物的遗传物质是核酸，其中细胞生物和部分病毒为DNA，部分病毒为RNA。"
+      }
+    },
+    {
+      "id": "biology_1c3dff8640",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第3章：细胞内物质和能量的转换",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.064057Z",
+      "q": "葡萄糖在细胞内氧化分解，所释放的能量的直接去向是\nI 用于合成ATP II 直接用于各种生理活动 III 转为热能 IV 用于合成DNA",
+      "options": [
+        "A. I，III",
+        "B. I，II",
+        "C. III，IV",
+        "D. II，IV"
+      ],
+      "answer": 0,
+      "explanation": "葡萄糖在细胞内氧化分解（细胞呼吸）释放的能量，一部分储存在合成的ATP中（约40%），另一部分以热能的形式散失（约60%）。因此直接去向是用于合成ATP（I）和转为热能（III）。",
+      "review": {
+        "ai_answer": 0,
+        "reason": "葡萄糖氧化分解释放的能量一部分用于合成ATP，另一部分以热能形式散失。"
+      }
+    },
+    {
+      "id": "biology_13bf052274",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第3章：细胞内物质和能量的转换",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.066856Z",
+      "q": "辅酶是一种",
+      "options": [
+        "A. 在催化过程中本身产生变化的物质",
+        "B. 金属离子，它必须存在于反应物中才能起催化反应",
+        "C. 蛋白质分子，它必须先与一种酶结合才能起催化反应",
+        "D. 非蛋白质有机物，它必须先与一种酶结合才能起催化反应"
+      ],
+      "answer": 3,
+      "explanation": "辅酶（coenzyme）是一类小分子的非蛋白质有机物，与酶蛋白结合形成结合酶，在催化反应中起传递电子、原子或化学基团的作用。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "辅酶是与酶蛋白结合以辅助催化作用的小分子非蛋白质有机物。"
+      }
+    },
+    {
+      "id": "biology_0bc0801b53",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第3章：细胞内物质和能量的转换",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.067702Z",
+      "q": "下列有关于辅酶的叙述何者正确？",
+      "options": [
+        "A. 它是一种分子较小的蛋白质",
+        "B. NADH为辅酶的一种，其分子内含有腺嘌呤",
+        "C. 辅酶与所结合酵素间有专一性",
+        "D. 光合作用过程中与呼吸作用过程中所需要的辅酶大致相同"
+      ],
+      "answer": 1,
+      "explanation": "NADH（还原型烟酰胺腺嘌呤二核苷酸）是一种辅酶，其结构中含有腺嘌呤。辅酶不是蛋白质（A错）；辅酶通常没有高度的专一性，一种辅酶可以辅助多种不同的酶（C错）；光合作用主要使用NADPH，而呼吸作用主要使用NADH和FADH2，两者不完全相同（D错）。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "NADH即还原型烟酰胺腺嘌呤二核苷酸，其分子结构中含有腺嘌呤。"
+      }
+    },
+    {
+      "id": "biology_d7bbbfa78a",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第1章：生物是由什么组成的",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.068897Z",
+      "q": "100个分子的甘油 and 200个脂肪酸化合时，可得多少个脂质并释出多少个水分子？",
+      "options": [
+        "A. 50个脂质、50个水分子",
+        "B. 66个脂质、198个水分子",
+        "C. 33个脂质，99个水分子",
+        "D. 99个脂质、200个水分子"
+      ],
+      "answer": 1,
+      "explanation": "1分子脂质（三酰甘油）由1分子甘油和3分子脂肪酸脱水缩合而成，并释放3分子水。200个脂肪酸最多只能合成66个脂质分子（剩余2个脂肪酸和34个甘油），共释放 66 × 3 = 198 个水分子。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "1分子甘油与3分子脂肪酸结合生成1分子脂质并释放3分子水，200个脂肪酸最多合成66个脂质并释放198个水分子。"
+      }
+    },
+    {
+      "id": "biology_799611a6df",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap5",
+      "chapter_title": "第5章：食物的消化与物质代谢",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.070884Z",
+      "q": "肥肉在人体内的消化终产物和代谢终产物分别是：",
+      "options": [
+        "A. CO2、H2O和甘油、脂肪酸",
+        "B. 甘油、脂肪酸和CO2、H2O",
+        "C. CO2、H2O、尿素和甘油、脂肪酸",
+        "D. 甘油、丙酮酸和CO2、H2O、尿素"
+      ],
+      "answer": 1,
+      "explanation": "肥肉的主要成分是脂肪。脂肪在消化道内的消化终产物是甘油和脂肪酸；而在细胞内进行氧化分解（代谢）的终产物是二氧化碳（CO2）和水（H2O）。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "脂肪在消化道内被消化为甘油和脂肪酸，在体内细胞中代谢的终产物是二氧化碳和水。"
+      }
+    },
+    {
+      "id": "biology_ac0d38a25d",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.072506Z",
+      "q": "下列哪几项是生物体呼吸表面的特征?\nI表面厚 II表面潮湿 III表面积大 Ⅳ它布满微血管 V它布满淋巴管",
+      "options": [
+        "A. I，II，III",
+        "B. I，IV, V",
+        "C. II，III，IV",
+        "D. I，II，III，Ⅳ"
+      ],
+      "answer": 2,
+      "explanation": "高效的气体交换要求呼吸表面必须非常薄（I错误）、保持潮湿以利于气体溶解（II正确）、具有巨大的表面积（III正确）以及布满微血管以利于物质运输（IV正确）。淋巴管不直接参与气体交换（V错误）。",
+      "review": {
+        "ai_answer": 2,
+        "reason": "高效的呼吸表面需具备薄、潮湿、表面积大以及布满微血管等特征。"
+      }
+    },
+    {
+      "id": "biology_d959a10b52",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第3章：细胞内物质和能量的转换",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.074719Z",
+      "q": "厌氧细胞进行呼吸作用时是以下列哪项作为氢原子接受者?",
+      "options": [
+        "A. 细胞色素",
+        "B. 乙酰辅酶A",
+        "C. 黄素腺嘌呤二核苷酸(FAD)",
+        "D. 烟酰胺腺嘌呤二核苷酸(NAD)"
+      ],
+      "answer": 3,
+      "explanation": "在无氧呼吸（厌氧呼吸）的糖酵解过程中，葡萄糖脱氢生成丙酮酸，脱下的氢由辅酶NAD+（烟酰胺腺嘌呤二核苷酸）接受生成NADH。随后在发酵阶段，NADH又将氢传给丙酮酸或乙醛，使NAD+再生。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "在糖酵解（无氧呼吸的第一阶段）中，脱下的氢由辅酶NAD+（烟酰胺腺嘌呤二核苷酸）接受。"
+      }
+    },
+    {
+      "id": "biology_2d265da373",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第3章：细胞内物质和能量的转换",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.076227Z",
+      "q": "下列哪项有关有氧及无氧呼吸的叙述是错误的?",
+      "options": [
+        "A. 两者都有辅酶的参与",
+        "B. 两者都有水和二氧化碳的产生",
+        "C. 两者都有能量的转移和ATP的生成",
+        "D. 两者都有从葡萄糖分解为丙酮酸的过程"
+      ],
+      "answer": 1,
+      "explanation": "无氧呼吸（如乳酸发酵）不产生水和二氧化碳，只产生乳酸；酒精发酵产生二氧化碳和酒精，但不产生水。有氧呼吸则产生水和二氧化碳。因此，并不是两者都有水和二氧化碳的产生。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "无氧呼吸（如乳酸发酵）不产生水，且不一定产生二氧化碳。"
+      }
+    },
+    {
+      "id": "biology_1715ecf432",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap10",
+      "chapter_title": "第10章：生态系统",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.077870Z",
+      "q": "腐生生物能分泌酶以便将腐物分解成什么物质?\nI糖 II蛋白质 III维生素 IV矿物盐",
+      "options": [
+        "A. I，II，III",
+        "B. I，II，Ⅳ",
+        "C. I，III，Ⅳ",
+        "D. II,III, IV"
+      ],
+      "answer": 2,
+      "explanation": "腐生生物（如真菌和细菌）作为分解者，能分泌胞外酶将复杂的有机物分解为简单的可吸收物质，如单糖（糖）、氨基酸、维生素和无机盐（矿物盐）等。蛋白质是大分子，腐生生物会将其分解为氨基酸再吸收，而不是直接分解成蛋白质（II错误）。",
+      "review": {
+        "ai_answer": 2,
+        "reason": "腐生生物分泌胞外酶将复杂的有机物分解为可吸收的简单有机物（如糖、维生素）和无机物（如矿物盐），而不产生复杂的蛋白质。"
+      }
+    },
+    {
+      "id": "biology_6e4797db0e",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第3章：细胞内物质和能量的转换",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.079858Z",
+      "q": "在糖酵解过程中，每分子葡萄糖消耗掉多少分子的氧气?",
+      "options": [
+        "A. 38",
+        "B. 16",
+        "C. 1",
+        "D. 0"
+      ],
+      "answer": 3,
+      "explanation": "糖酵解是细胞呼吸的第一阶段，在细胞质基质中进行，这一过程不需要氧气的参与，因此消耗的氧气分子数为0。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "糖酵解是无氧呼吸和有氧呼吸的第一阶段，在细胞质基质中进行，不需要消耗氧气。"
+      }
+    },
+    {
+      "id": "biology_b72bba561a",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap4",
+      "chapter_title": "第4章：细胞分化",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.081530Z",
+      "q": "下列何者所含不同类型的细胞最多?",
+      "options": [
+        "A. 血液",
+        "B. 胃",
+        "C. 心肌",
+        "D. 神经组织"
+      ],
+      "answer": 1,
+      "explanation": "胃是一个器官，由上皮组织、结缔组织、肌肉组织和神经组织等多种组织构成，因此包含的细胞类型最多。而血液（结缔组织）、心肌（肌肉组织）、神经组织都属于单一组织，所含细胞类型较少。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "胃是一个器官，由上皮、结缔、肌肉和神经四种基本组织构成，因此包含的不同类型细胞最多。"
+      }
+    },
+    {
+      "id": "biology_8a741e667c",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第3章：细胞内物质和能量的转换",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.082934Z",
+      "q": "下列哪一种植物属高光呼吸植物？",
+      "options": [
+        "A. 水稻",
+        "B. 玉蜀黍",
+        "C. 甘蔗",
+        "D. 高梁"
+      ],
+      "answer": 0,
+      "explanation": "C3植物（如水稻、小麦、大豆）具有高光呼吸特征；而C4植物（如玉蜀黍、甘蔗、高粱）的光呼吸非常微弱，通常被称为低光呼吸植物。",
+      "review": {
+        "ai_answer": 0,
+        "reason": "水稻属于C3植物，光呼吸作用强；而玉蜀黍、甘蔗和高粱属于C4植物，光呼吸极低。"
+      }
+    },
+    {
+      "id": "biology_117b931b6a",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第2章：细胞的结构与功能",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.084139Z",
+      "q": "细胞膜的基本构成物质是蛋白质和磷脂质，下列何者胞器无此构造：",
+      "options": [
+        "A. 粒线体",
+        "B. 核糖体",
+        "C. 内质网",
+        "D. 液泡"
+      ],
+      "answer": 1,
+      "explanation": "核糖体是没有膜结构的细胞器，不含有由蛋白质和磷脂双分子层构成的膜结构。粒线体（双层膜）、内质网（单层膜）和液泡（单层膜）都具有膜结构。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "核糖体是由RNA和蛋白质组成的无膜结构的细胞器。"
+      }
+    },
+    {
+      "id": "biology_72c1d63240",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap9",
+      "chapter_title": "第9章：健康与免疫",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.086061Z",
+      "q": "当人体受到病菌急性感染时, 数量会大增的是",
+      "options": [
+        "A. 嗜中性白血球",
+        "B. 嗜碱性白血球",
+        "C. 嗜酸性白血球",
+        "D. 以上皆是"
+      ],
+      "answer": 0,
+      "explanation": "嗜中性白血球（中性粒细胞）具有很强的吞噬功能，当人体受到细菌急性感染时，它们会迅速聚集到感染部位吞噬病原体，其数量也会急剧增加。",
+      "review": {
+        "ai_answer": 0,
+        "reason": "嗜中性白血球具有吞噬病菌的作用，在人体受到急性细菌感染时会迅速增加。"
+      }
+    },
+    {
+      "id": "biology_e31cd22182",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap8",
+      "chapter_title": "第8章：内环境的恒定和排泄系统",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.087563Z",
+      "q": "淡水鱼类没有缺水问题，故其排除的含氮废物主要是",
+      "options": [
+        "A. 尿酸",
+        "B. 尿素",
+        "C. 氨",
+        "D. 尿素和尿酸"
+      ],
+      "answer": 2,
+      "explanation": "氨是有毒物质，需要大量的水来稀释并排出体外。淡水鱼生活在水中，水源充足，因此可以直接将含氮废物以氨的形式排出。",
+      "review": {
+        "ai_answer": 2,
+        "reason": "淡水鱼类生活在水中，有充足的水分来稀释高毒性的氨，因此其主要的含氮排泄物是氨。"
+      }
+    },
+    {
+      "id": "biology_a99a0917d7",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.089261Z",
+      "q": "某人的心房收缩期为3/32秒，心室收缩期为9/32秒，心房舒张期为21/32秒，心室舒张期为15/32秒，这人的心率为",
+      "options": [
+        "A. 80次/分",
+        "B. 75次/分",
+        "C. 70次/分",
+        "D. 65次/分"
+      ],
+      "answer": 0,
+      "explanation": "一个完整的心动周期等于心房（或心室）收缩期与舒张期之和，即 3/32 + 21/32 = 24/32 = 0.75 秒。心率 = 60秒 / 0.75秒 = 80 次/分钟。",
+      "review": {
+        "ai_answer": 0,
+        "reason": "心动周期为心房收缩期与舒张期之和，即24/32秒（0.75秒），心率 = 60 / 0.75 = 80次/分。"
+      }
+    },
+    {
+      "id": "biology_3bc16cb269",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.091998Z",
+      "q": "有一个红血球位于左脚的一条小动脉内, 在到达左心室之前, 它会经过多少个微血管网?",
+      "options": [
+        "A. 1",
+        "B. 2",
+        "C. 3",
+        "D. 4"
+      ],
+      "answer": 1,
+      "explanation": "红血球从左脚小动脉出发，首先经过左脚的微血管网（第1个）进入静脉系统，回流至右心房、右心室；接着经肺动脉进入肺部微血管网（第2个）进行气体交换，最后经肺静脉回到左心房，再进入左心室。因此共经过2个微血管网。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "红细胞从左脚小动脉出发，需先经过左脚的微血管网进入静脉回心，再经肺循环通过肺部微血管网，最后回到左心房和左心室，共经过2个微血管网。"
+      }
+    },
+    {
+      "id": "biology_491b41c9a3",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.094247Z",
+      "q": "人体血液运输氧气时 , 血红素与氧气的结合会受到下列因素的影响,除了",
+      "options": [
+        "A. 氧气的浓度",
+        "B. 温度",
+        "C. 二氧化碳的浓度",
+        "D. 血液中的酶"
+      ],
+      "answer": 3,
+      "explanation": "血红蛋白（血红素）与氧气的结合和解离是一个物理化学平衡过程，受氧气分压（浓度）、二氧化碳分压（浓度）、温度以及pH值等物理化学因素的影响，而不需要酶的催化。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "血红蛋白与氧气的结合和解离是可逆的物理化学反应，受氧分压、二氧化碳分压、温度和pH值影响，不需要酶的催化。"
+      }
+    },
+    {
+      "id": "biology_6c38800421",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap8",
+      "chapter_title": "第8章：内环境的恒定和排泄系统",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.096359Z",
+      "q": "下列有关人体排泄的叙述，何者正确？",
+      "options": [
+        "A. 肾脏的功能受脑垂腺后叶和肾上腺分泌物的调节",
+        "B. 肾小球滤入鲍氏囊的滤液均为无用之废物",
+        "C. 肾元为肾之构造单位，由鲍氏囊、肾小管、肾小球及集尿管共同合成",
+        "D. 肾小管只有再吸收的功能"
+      ],
+      "answer": 0,
+      "explanation": "肾脏的排尿和保水功能受到抗利尿激素（由下丘脑合成、脑垂体后叶释放）和醛固酮（肾上腺皮质分泌）的调节（A正确）。原尿中含有葡萄糖、氨基酸等有用物质（B错）；肾元不包括集尿管（C错）；肾小管还具有分泌功能（D错）。",
+      "review": {
+        "ai_answer": 0,
+        "reason": "肾脏的重吸收和排泄功能受抗利尿激素（脑垂体后叶释放）和醛固酮（肾上腺皮质分泌）的调节。"
+      }
+    },
+    {
+      "id": "biology_7d8c15c5b4",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.097925Z",
+      "q": "冠状静脉直接将血液送往",
+      "options": [
+        "A. 右心室",
+        "B. 左心室",
+        "C. 右心房",
+        "D. 上腔静脉"
+      ],
+      "answer": 2,
+      "explanation": "冠状循环是负责心肌自身血液供应的循环。冠状静脉汇集心肌代谢后的静脉血，直接注入右心房。",
+      "review": {
+        "ai_answer": 2,
+        "reason": "心肌利用后的静脉血经由冠状静脉汇集至冠状窦，直接注入右心房。"
+      }
+    },
+    {
+      "id": "biology_707ca3f4ee",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap9",
+      "chapter_title": "第9章：健康与免疫",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.098882Z",
+      "q": "过敏若发生在呼吸道, 不会有下列何种症状?",
+      "options": [
+        "A. 气管内侧发生红疹",
+        "B. 气管平滑肌收缩",
+        "C. 气管粘液分泌增加",
+        "D. 气喘"
+      ],
+      "answer": 0,
+      "explanation": "呼吸道过敏反应（如哮喘）主要表现为支气管平滑肌痉挛收缩（B）、黏膜水肿及粘液分泌增加（C），导致呼吸困难和气喘（D）。红疹（荨麻疹）是皮肤过敏的典型症状，不会发生在气管内侧（A错）。",
+      "review": {
+        "ai_answer": 0,
+        "reason": "呼吸道过敏会导致平滑肌收缩、粘液分泌增加和气喘，但不会在气管内侧出现皮肤特有的红疹。"
+      }
+    },
+    {
+      "id": "biology_258c8f702b",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.100379Z",
+      "q": "心脏舒张时，容纳于动脉管内的血液仍能继续向前流动，你认为此叙述是：",
+      "options": [
+        "A. 不对的，因为心脏收缩时，才能压迫血液向前流动",
+        "B. 不对的，因为心脏舒张时，无血液自心脏输出",
+        "C. 对的，因为血液会扩散",
+        "D. 对的，因为动脉恢复原状而压迫血液"
+      ],
+      "answer": 3,
+      "explanation": "心脏收缩射血时，主动脉等大动脉管壁被动扩张，暂时储存了一部分能量；当心脏舒张时，大动脉管壁发生弹性回缩（恢复原状），压迫血液继续向前流动，从而维持了血液的连续流动。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "心室舒张时，主动脉等大动脉依靠管壁的弹性回缩压迫血液，使血液继续向前流动。"
+      }
+    },
+    {
+      "id": "biology_c31fd60b6b",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/eclass生物题.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-25T06:17:43.102577Z",
+      "q": "下列哪一组物质与血栓的形成有关?\nI钙 II血小板 III血红素 Ⅳ凝血酶原 V纤维蛋白原",
+      "options": [
+        "A. I，II，III，Ⅳ",
+        "B. I，II，III，V",
+        "C. I，II，Ⅳ，V",
+        "D. I，III，Ⅳ，V"
+      ],
+      "answer": 2,
+      "explanation": "血液凝固和血栓形成是一个复杂的级联反应。血小板（II）释放凝血因子，在钙离子（I）的参与下，促使凝血酶原（IV）激活为凝血酶，进而使可溶性的纤维蛋白原（V）转变为不溶性的纤维蛋白，形成血栓。血红素（III）主要负责运输氧气，不直接参与凝血过程。",
+      "review": {
+        "ai_answer": 2,
+        "reason": "血液凝固过程需要血小板、钙离子、凝血酶原和纤维蛋白原的共同参与，而血红素与凝血无关。"
+      }
+    }
+  ],
+  "generated_at": "2026-09-25T06:18:12.273685Z"
+}
