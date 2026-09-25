@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_ac0d38a25d",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap6",
-      "chapter_title": "第6章：营养成分的运输",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.072506Z",
-      "q": "下列哪几项是生物体呼吸表面的特征?\nI表面厚 II表面潮湿 III表面积大 Ⅳ它布满微血管 V它布满淋巴管",
-      "options": [
-        "A. I，II，III",
-        "B. I，IV, V",
-        "C. II，III，IV",
-        "D. I，II，III，Ⅳ"
-      ],
-      "answer": 2,
-      "explanation": "高效的气体交换要求呼吸表面必须非常薄（I错误）、保持潮湿以利于气体溶解（II正确）、具有巨大的表面积（III正确）以及布满微血管以利于物质运输（IV正确）。淋巴管不直接参与气体交换（V错误）。",
-      "review": {
-        "ai_answer": 2,
-        "reason": "高效的呼吸表面需具备薄、潮湿、表面积大以及布满微血管等特征。"
-      }
-    },
-    {
       "id": "biology_d959a10b52",
       "subject": "biology",
       "type": "mcq",
