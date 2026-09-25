@@ -25,30 +25,6 @@
       }
     },
     {
-      "id": "biology_6e4797db0e",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap3",
-      "chapter_title": "第3章：细胞内物质和能量的转换",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.079858Z",
-      "q": "在糖酵解过程中，每分子葡萄糖消耗掉多少分子的氧气?",
-      "options": [
-        "A. 38",
-        "B. 16",
-        "C. 1",
-        "D. 0"
-      ],
-      "answer": 3,
-      "explanation": "糖酵解是细胞呼吸的第一阶段，在细胞质基质中进行，这一过程不需要氧气的参与，因此消耗的氧气分子数为0。",
-      "review": {
-        "ai_answer": 3,
-        "reason": "糖酵解是无氧呼吸和有氧呼吸的第一阶段，在细胞质基质中进行，不需要消耗氧气。"
-      }
-    },
-    {
       "id": "biology_b72bba561a",
       "subject": "biology",
       "type": "mcq",
