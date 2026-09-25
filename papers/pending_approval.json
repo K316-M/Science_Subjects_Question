@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_d7bbbfa78a",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第1章：生物是由什么组成的",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.068897Z",
-      "q": "100个分子的甘油 and 200个脂肪酸化合时，可得多少个脂质并释出多少个水分子？",
-      "options": [
-        "A. 50个脂质、50个水分子",
-        "B. 66个脂质、198个水分子",
-        "C. 33个脂质，99个水分子",
-        "D. 99个脂质、200个水分子"
-      ],
-      "answer": 1,
-      "explanation": "1分子脂质（三酰甘油）由1分子甘油和3分子脂肪酸脱水缩合而成，并释放3分子水。200个脂肪酸最多只能合成66个脂质分子（剩余2个脂肪酸和34个甘油），共释放 66 × 3 = 198 个水分子。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "1分子甘油与3分子脂肪酸结合生成1分子脂质并释放3分子水，200个脂肪酸最多合成66个脂质并释放198个水分子。"
-      }
-    },
-    {
       "id": "biology_799611a6df",
       "subject": "biology",
       "type": "mcq",
