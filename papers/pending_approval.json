@@ -25,30 +25,6 @@
       }
     },
     {
-      "id": "biology_b72bba561a",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap4",
-      "chapter_title": "第4章：细胞分化",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.081530Z",
-      "q": "下列何者所含不同类型的细胞最多?",
-      "options": [
-        "A. 血液",
-        "B. 胃",
-        "C. 心肌",
-        "D. 神经组织"
-      ],
-      "answer": 1,
-      "explanation": "胃是一个器官，由上皮组织、结缔组织、肌肉组织和神经组织等多种组织构成，因此包含的细胞类型最多。而血液（结缔组织）、心肌（肌肉组织）、神经组织都属于单一组织，所含细胞类型较少。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "胃是一个器官，由上皮、结缔、肌肉和神经四种基本组织构成，因此包含的不同类型细胞最多。"
-      }
-    },
-    {
       "id": "biology_8a741e667c",
       "subject": "biology",
       "type": "mcq",
