@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_13bf052274",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap3",
-      "chapter_title": "第3章：细胞内物质和能量的转换",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.066856Z",
-      "q": "辅酶是一种",
-      "options": [
-        "A. 在催化过程中本身产生变化的物质",
-        "B. 金属离子，它必须存在于反应物中才能起催化反应",
-        "C. 蛋白质分子，它必须先与一种酶结合才能起催化反应",
-        "D. 非蛋白质有机物，它必须先与一种酶结合才能起催化反应"
-      ],
-      "answer": 3,
-      "explanation": "辅酶（coenzyme）是一类小分子的非蛋白质有机物，与酶蛋白结合形成结合酶，在催化反应中起传递电子、原子或化学基团的作用。",
-      "review": {
-        "ai_answer": 3,
-        "reason": "辅酶是与酶蛋白结合以辅助催化作用的小分子非蛋白质有机物。"
-      }
-    },
-    {
       "id": "biology_0bc0801b53",
       "subject": "biology",
       "type": "mcq",
