@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_2d265da373",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap3",
-      "chapter_title": "第3章：细胞内物质和能量的转换",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.076227Z",
-      "q": "下列哪项有关有氧及无氧呼吸的叙述是错误的?",
-      "options": [
-        "A. 两者都有辅酶的参与",
-        "B. 两者都有水和二氧化碳的产生",
-        "C. 两者都有能量的转移和ATP的生成",
-        "D. 两者都有从葡萄糖分解为丙酮酸的过程"
-      ],
-      "answer": 1,
-      "explanation": "无氧呼吸（如乳酸发酵）不产生水和二氧化碳，只产生乳酸；酒精发酵产生二氧化碳和酒精，但不产生水。有氧呼吸则产生水和二氧化碳。因此，并不是两者都有水和二氧化碳的产生。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "无氧呼吸（如乳酸发酵）不产生水，且不一定产生二氧化碳。"
-      }
-    },
-    {
       "id": "biology_1715ecf432",
       "subject": "biology",
       "type": "mcq",
