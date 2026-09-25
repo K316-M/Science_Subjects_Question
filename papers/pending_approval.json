@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_8a741e667c",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap3",
-      "chapter_title": "第3章：细胞内物质和能量的转换",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.082934Z",
-      "q": "下列哪一种植物属高光呼吸植物？",
-      "options": [
-        "A. 水稻",
-        "B. 玉蜀黍",
-        "C. 甘蔗",
-        "D. 高梁"
-      ],
-      "answer": 0,
-      "explanation": "C3植物（如水稻、小麦、大豆）具有高光呼吸特征；而C4植物（如玉蜀黍、甘蔗、高粱）的光呼吸非常微弱，通常被称为低光呼吸植物。",
-      "review": {
-        "ai_answer": 0,
-        "reason": "水稻属于C3植物，光呼吸作用强；而玉蜀黍、甘蔗和高粱属于C4植物，光呼吸极低。"
-      }
-    },
-    {
       "id": "biology_117b931b6a",
       "subject": "biology",
       "type": "mcq",
