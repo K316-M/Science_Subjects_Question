@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_cdfdc3ec72",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap14",
-      "chapter_title": "第14章：遗传的物质基础",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.062909Z",
-      "q": "所有生物的遗传物质为",
-      "options": [
-        "A. 脱氧核糖核酸",
-        "B. 核糖核酸",
-        "C. 核苷酸",
-        "D. 核酸"
-      ],
-      "answer": 3,
-      "explanation": "生物的遗传物质是核酸。绝大多数生物（具细胞结构的生物及DNA病毒）的遗传物质是脱氧核糖核酸（DNA），部分病毒（如RNA病毒）的遗传物质是核糖核酸（RNA）。因此，统称所有生物的遗传物质为核酸。",
-      "review": {
-        "ai_answer": 3,
-        "reason": "生物的遗传物质是核酸，其中细胞生物和部分病毒为DNA，部分病毒为RNA。"
-      }
-    },
-    {
       "id": "biology_1c3dff8640",
       "subject": "biology",
       "type": "mcq",
