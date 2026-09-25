@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_1715ecf432",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap10",
-      "chapter_title": "第10章：生态系统",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.077870Z",
-      "q": "腐生生物能分泌酶以便将腐物分解成什么物质?\nI糖 II蛋白质 III维生素 IV矿物盐",
-      "options": [
-        "A. I，II，III",
-        "B. I，II，Ⅳ",
-        "C. I，III，Ⅳ",
-        "D. II,III, IV"
-      ],
-      "answer": 2,
-      "explanation": "腐生生物（如真菌和细菌）作为分解者，能分泌胞外酶将复杂的有机物分解为简单的可吸收物质，如单糖（糖）、氨基酸、维生素和无机盐（矿物盐）等。蛋白质是大分子，腐生生物会将其分解为氨基酸再吸收，而不是直接分解成蛋白质（II错误）。",
-      "review": {
-        "ai_answer": 2,
-        "reason": "腐生生物分泌胞外酶将复杂的有机物分解为可吸收的简单有机物（如糖、维生素）和无机物（如矿物盐），而不产生复杂的蛋白质。"
-      }
-    },
-    {
       "id": "biology_8a741e667c",
       "subject": "biology",
       "type": "mcq",
