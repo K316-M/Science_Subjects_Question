@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_799611a6df",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap5",
-      "chapter_title": "第5章：食物的消化与物质代谢",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.070884Z",
-      "q": "肥肉在人体内的消化终产物和代谢终产物分别是：",
-      "options": [
-        "A. CO2、H2O和甘油、脂肪酸",
-        "B. 甘油、脂肪酸和CO2、H2O",
-        "C. CO2、H2O、尿素和甘油、脂肪酸",
-        "D. 甘油、丙酮酸和CO2、H2O、尿素"
-      ],
-      "answer": 1,
-      "explanation": "肥肉的主要成分是脂肪。脂肪在消化道内的消化终产物是甘油和脂肪酸；而在细胞内进行氧化分解（代谢）的终产物是二氧化碳（CO2）和水（H2O）。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "脂肪在消化道内被消化为甘油和脂肪酸，在体内细胞中代谢的终产物是二氧化碳和水。"
-      }
-    },
-    {
       "id": "biology_ac0d38a25d",
       "subject": "biology",
       "type": "mcq",
