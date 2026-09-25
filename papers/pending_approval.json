@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_1c3dff8640",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap3",
-      "chapter_title": "第3章：细胞内物质和能量的转换",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.064057Z",
-      "q": "葡萄糖在细胞内氧化分解，所释放的能量的直接去向是\nI 用于合成ATP II 直接用于各种生理活动 III 转为热能 IV 用于合成DNA",
-      "options": [
-        "A. I，III",
-        "B. I，II",
-        "C. III，IV",
-        "D. II，IV"
-      ],
-      "answer": 0,
-      "explanation": "葡萄糖在细胞内氧化分解（细胞呼吸）释放的能量，一部分储存在合成的ATP中（约40%），另一部分以热能的形式散失（约60%）。因此直接去向是用于合成ATP（I）和转为热能（III）。",
-      "review": {
-        "ai_answer": 0,
-        "reason": "葡萄糖氧化分解释放的能量一部分用于合成ATP，另一部分以热能形式散失。"
-      }
-    },
-    {
       "id": "biology_13bf052274",
       "subject": "biology",
       "type": "mcq",
