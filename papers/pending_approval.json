@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_80d4f1ace4",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap3",
-      "chapter_title": "第3章：细胞内物质和能量的转换",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.060496Z",
-      "q": "若须消耗145分子的O2以氧化脂肪并产生102分子的CO2，则经此氧化作用产生的呼吸商",
-      "options": [
-        "A. 等於1",
-        "B. 大过1",
-        "C. 小过1",
-        "D. 等於0"
-      ],
-      "answer": 2,
-      "explanation": "呼吸商（RQ）是指生物体在同一时间内释放二氧化碳与吸收氧气的体积比（或分子数比）。此题中，RQ = 102 / 145 ≈ 0.7，小于1。富含氢的脂肪在氧化分解时需要消耗较多的氧气，因此其呼吸商通常小于1。",
-      "review": {
-        "ai_answer": 2,
-        "reason": "呼吸商为释放的二氧化碳与消耗的氧气的分子数之比，102/145小于1。"
-      }
-    },
-    {
       "id": "biology_cdfdc3ec72",
       "subject": "biology",
       "type": "mcq",
