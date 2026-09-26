@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>独中理科自主学习系统 · 生物科</title>
+  <title>独中理科复习网</title>
   <meta name="description" content="董总华文独中高中统考理科题库与刷题平台，生物、化学、物理三科动态切换，支持做题记录、错题本与背诵闪卡。">
   <meta property="og:title" content="独中理科自主学习系统">
   <meta property="og:description" content="董总华文独中高中统考理科题库与刷题平台，生物、化学、物理三科动态切换。">
@@ -2071,6 +2071,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
     // 旧版本可能已经记下了零题科目；轨道载入题数之後会再叫一次这里
     const orbit = window.OrbitSubjects;
     if (orbit && orbit.hasQuestions && orbit.hasQuestions(last.subject) === false) { holder.innerHTML = ''; return; }
+    // 只是点进去看过、一题都还没做，没有「进度」可以继续
+    if (!hasDoneQuestions(last.subject)) { holder.innerHTML = ''; return; }
     const label = SUBJECT_LABELS[last.subject] || last.subject;
     holder.innerHTML = `
       <div class="resume-card" onclick="resumeLastVisit()" role="button" tabindex="0" aria-label="继续上次学习">
@@ -2078,6 +2080,13 @@ function openSubject(subject, initialChapterIdx, subMode) {
         <div class="resume-card-arrow"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-arrow-right"></use></svg></div>
       </div>
     `;
+  }
+
+  // 这一科做过题没有：选择题有作答纪录，或做答题写过答案
+  function hasDoneQuestions(subject) {
+    const mcq = loadProgressStore()[subject] || {};
+    if (Object.values(mcq).some(ch => ch && Object.keys(ch).length)) return true;
+    return Object.entries(loadAttempts()).some(([k, a]) => k.startsWith(subject + '__') && a && (a.text || a.result));
   }
 
   function resumeLastVisit() {
