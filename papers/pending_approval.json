@@ -25,30 +25,6 @@
       }
     },
     {
-      "id": "biology_258c8f702b",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap6",
-      "chapter_title": "第6章：营养成分的运输",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.100379Z",
-      "q": "心脏舒张时，容纳于动脉管内的血液仍能继续向前流动，你认为此叙述是：",
-      "options": [
-        "A. 不对的，因为心脏收缩时，才能压迫血液向前流动",
-        "B. 不对的，因为心脏舒张时，无血液自心脏输出",
-        "C. 对的，因为血液会扩散",
-        "D. 对的，因为动脉恢复原状而压迫血液"
-      ],
-      "answer": 3,
-      "explanation": "心脏收缩射血时，主动脉等大动脉管壁被动扩张，暂时储存了一部分能量；当心脏舒张时，大动脉管壁发生弹性回缩（恢复原状），压迫血液继续向前流动，从而维持了血液的连续流动。",
-      "review": {
-        "ai_answer": 3,
-        "reason": "心室舒张时，主动脉等大动脉依靠管壁的弹性回缩压迫血液，使血液继续向前流动。"
-      }
-    },
-    {
       "id": "biology_c31fd60b6b",
       "subject": "biology",
       "type": "mcq",
