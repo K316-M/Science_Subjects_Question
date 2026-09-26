@@ -319,7 +319,20 @@ let spriteReport = null;
 
 // 姿势图（assets/sprite/，由 scripts/sprite/build.py 产出）。第一次出现才载入，平常不占流量
 const SPRITE_POSES = ['idle', 'blink', 'wave', 'present', 'talk', 'portal', 'happy', 'sleep', 'write'];
-const SPRITE_SLEEP_MS = 30000;   // 没人理它这么久就打瞌睡
+// ======== 小精灵的时间（毫秒）：想让它动快一点、慢一点，改这里就好 ========
+const SPRITE_TIMING = {
+  sleepAfter: 30000,   // 没人理它这么久就打瞌睡
+  blinkEvery: 3000,    // 发呆时每隔 blinkEvery ~ blinkEvery+blinkJitter 眨一次眼
+  blinkJitter: 3000,
+  blinkLength: 140,    // 闭眼多久
+  waveOnArrive: 1600,  // 刚飞进来挥手多久
+  waveOnWake: 1200,    // 被叫醒挥手多久
+  happyOnSend: 2200,   // 送出新问题後开心多久
+  portalGo: 900,       // 带你去看时，传送门开多久
+  thanksStay: 3000,    // 说「谢谢！」之後停留多久才离开
+  leaveAnim: 560,      // 钻进传送门离开的动画长度（要和 CSS 的 spriteOut 一致）
+};
+// ======================================================================
 let spritePoseTimer = null;
 let spriteBlinkTimer = null;
 let spriteSleepTimer = null;
@@ -341,14 +354,14 @@ function ensureSpritePoses() {
   // 睡着时指过去或用键盘移到它身上就醒来挥手
   const char = document.getElementById('spriteChar');
   const wake = () => {
-    if (box.dataset.pose === 'sleep') setSpritePose('wave', 1200);
+    if (box.dataset.pose === 'sleep') setSpritePose('wave', SPRITE_TIMING.waveOnWake);
     armSpriteSleep();
   };
   char.addEventListener('pointerenter', wake);
   char.addEventListener('focus', wake);
 }
 
-// 重新计时：闲置 SPRITE_SLEEP_MS 之後，面板没开、正在发呆（idle/眨眼）才睡
+// 重新计时：闲置 SPRITE_TIMING.sleepAfter 之後，面板没开、正在发呆（idle/眨眼）才睡
 function armSpriteSleep() {
   clearTimeout(spriteSleepTimer);
   spriteSleepTimer = setTimeout(() => {
@@ -358,7 +371,7 @@ function armSpriteSleep() {
     if (!box || !wrap || !wrap.classList.contains('active')) return;
     if (panel && panel.classList.contains('open')) return;
     if (box.dataset.pose === 'idle' || box.dataset.pose === 'blink') setSpritePose('sleep');
-  }, SPRITE_SLEEP_MS);
+  }, SPRITE_TIMING.sleepAfter);
 }
 
 // 换成某个姿势；给 ms 就在那之後回到 idle。
@@ -388,9 +401,9 @@ function startSpriteBlink() {
     const box = document.getElementById('spritePoses');
     const wrap = document.getElementById('spriteWrap');
     if (!wrap || !wrap.classList.contains('active')) return;
-    if (box && box.dataset.pose === 'idle') setSpritePose('blink', 140);
+    if (box && box.dataset.pose === 'idle') setSpritePose('blink', SPRITE_TIMING.blinkLength);
     startSpriteBlink();
-  }, 3000 + Math.random() * 3000);
+  }, SPRITE_TIMING.blinkEvery + Math.random() * SPRITE_TIMING.blinkJitter);
 }
 
 function showSprite() {
@@ -405,7 +418,7 @@ function showSprite() {
   }
   wrap.classList.add('active');
   // 刚飞进来先挥挥手
-  if (!wasActive) setSpritePose('wave', 1600);
+  if (!wasActive) setSpritePose('wave', SPRITE_TIMING.waveOnArrive);
   startSpriteBlink();
   armSpriteSleep();
 }
@@ -469,7 +482,7 @@ function spriteGoLook() {
   document.getElementById('spritePanel').classList.remove('open');
   document.getElementById('spriteConnector').classList.add('hidden');
   // 打开传送门，带用户过去
-  setSpritePose('portal', 900);
+  setSpritePose('portal', SPRITE_TIMING.portalGo);
   navigateToTarget(target);
 }
 
@@ -516,8 +529,8 @@ function spriteConfirmFixed() {
       renderMyReports();
       // 可能还有别的已解决问题排队等着通知
       refreshSprite();
-    }, 560);
-  }, 3000);
+    }, SPRITE_TIMING.leaveAnim);
+  }, SPRITE_TIMING.thanksStay);
 }
 
 function toggleSpriteNewIssue(btn) {
@@ -571,7 +584,7 @@ async function submitSpriteNewIssue() {
   markReportSent(report.id, sent);
   if (typeof playSound === 'function') playSound(sent ? 'correct' : 'pop');
   // 送出成功开心一下（alert 会挡住画面，所以先换姿势再跳提示）
-  if (sent) setSpritePose('happy', 2200);
+  if (sent) setSpritePose('happy', SPRITE_TIMING.happyOnSend);
   alert(sent
     ? `已把新问题送给管理员（编号 ${report.id}），谢谢！`
     : `新问题已记录（编号 ${report.id}），但暂时没能送出。\n请到「网页问题申诉」页面点「重新发送」。`);
