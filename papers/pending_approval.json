@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_a99a0917d7",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap6",
-      "chapter_title": "第6章：营养成分的运输",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.089261Z",
-      "q": "某人的心房收缩期为3/32秒，心室收缩期为9/32秒，心房舒张期为21/32秒，心室舒张期为15/32秒，这人的心率为",
-      "options": [
-        "A. 80次/分",
-        "B. 75次/分",
-        "C. 70次/分",
-        "D. 65次/分"
-      ],
-      "answer": 0,
-      "explanation": "一个完整的心动周期等于心房（或心室）收缩期与舒张期之和，即 3/32 + 21/32 = 24/32 = 0.75 秒。心率 = 60秒 / 0.75秒 = 80 次/分钟。",
-      "review": {
-        "ai_answer": 0,
-        "reason": "心动周期为心房收缩期与舒张期之和，即24/32秒（0.75秒），心率 = 60 / 0.75 = 80次/分。"
-      }
-    },
-    {
       "id": "biology_3bc16cb269",
       "subject": "biology",
       "type": "mcq",
