@@ -42,12 +42,31 @@ jobs:
           git config --global user.email "bot@independent-school.edu"
           git add docs/INSPECTION_REPORT.md
           git commit -m "📋 [Report] 更新题库自检报告" || echo "报告无变动"
+          # 跑的这几十秒里 /dev 可能又采纳了一题：先接上最新的 main 再推（报告只有这里会改，不会冲突）
+          git pull --rebase --quiet origin main
           git push
 
-      - name: 若发现缺陷，自动在 GitHub 创建 Issue 提醒您
+      # 放题期间几乎每采纳一题就跑一次：只维护同一个 Issue，不要每次开新的
+      - name: 找还开着的巡检 Issue
+        id: open_issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh issue list --repo "${{ github.repository }}" --state open --limit 100 --json number,title \
+            --jq '[.[] | select(.title | startswith("🚨 题库巡检"))][0].number // empty')
+          echo "number=$n" >> "$GITHUB_OUTPUT"
+
+      - name: 有问题：更新那个 Issue（没有才开新的）
         if: steps.inspect.outputs.has_issues == 'true'
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: "🚨 题库巡检检讨报告（有待补充图片或确认答案）"
           content-filepath: docs/INSPECTION_REPORT.md
+          issue-number: ${{ steps.open_issue.outputs.number }}
           labels: "题库维护, 待修改"
+
+      - name: 全部正常：关掉还开着的巡检 Issue
+        if: steps.inspect.outputs.has_issues != 'true' && steps.open_issue.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue close "${{ steps.open_issue.outputs.number }}" --repo "${{ github.repository }}" --comment "巡检全部正常，自动关闭。"
