@@ -76,6 +76,17 @@
       { target: '.ai-explain-btn', title: '看不懂？问 AI',
         body: '按这里，AI 老师会照<strong>你选的那个答案</strong>讲为什么对、为什么错，最後给一个好记的小技巧。讲过的会存在这台装置，再选到同一个答案就直接显示。' },
     ],
+    // 同步面板（js/sync-ui.js）连上之後第一次打开时介绍
+    sync: [
+      { target: '.sync-code', title: '这串就是你的钥匙',
+        body: '在另一台装置<strong>扫 QR 码</strong>、打开复制的链结，或输入这串码，就会接上。任何人拿到它都能看到你的进度和笔记，<strong>只传给自己</strong>。' },
+      { target: '.sync-now', title: '立即同步',
+        body: '平常会<strong>自动同步</strong>：打开网站、切回这个分页时，还有做题後每分钟一次。刚在另一台装置做完题、想马上在这里看到，就按这个。' },
+      { target: '.sync-what', title: '同步之後',
+        body: '进度、错题本、今日复习、笔记、荧光笔、做答题的答案、申诉通知都会<strong>合并</strong>，不会互相覆盖。两台都改了同一则笔记，两份都会留下；在一台删掉的，另一台也会删掉。' },
+      { target: '.sync-off', title: '不想同步了',
+        body: '断开只是这台装置不再同步，本机的资料都还在；用过的码会记在面板下方，随时可以切回去。' },
+    ],
     mock: [
       { target: '.test-clock', title: '模拟统考',
         body: '照统考时间表的<strong>试卷一</strong>时间倒数。剩五分钟会变红；<strong>时间到自动交卷，没答的算错</strong>。' },
@@ -193,6 +204,8 @@
   function place() {
     rafId = 0;
     if (!tip) return;
+    // 目标被重画掉了（例如同步面板在同步中重画）：找新的那一颗
+    if (target && !target.isConnected) target = document.querySelector(steps[index].target);
     const vw = innerWidth, vh = innerHeight, pad = 8, gap = 14;
     const tw = tip.offsetWidth, th = tip.offsetHeight;
     tip.classList.remove('below', 'above', 'center');

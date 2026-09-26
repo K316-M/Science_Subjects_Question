@@ -1411,8 +1411,23 @@ function renderStorageGrid(grid) {
         icon('download'), el('span', { text: '导出' })),
         el('button', { class: 'btn btn-sm btn-danger', type: 'button', disabled: !data.exists,
           onclick: () => {
-            if (!window.confirm(`确定清除「${def.label}」？此操作无法恢复。`)) return;
-            localStorage.removeItem(def.key);
+            const synced = Boolean((readStorage('UEC_SYNC_v1').value || {}).code);
+            // 笔记与申诉有删除纪录，清掉之後同步也不会带回来；其他资料同步时会从云端合并回来
+            const tomb = def.key === 'UEC_NOTES_v1' || def.key === 'UEC_FEEDBACK_v1';
+            if (!window.confirm(`确定清除「${def.label}」？此操作无法恢复。`
+              + (synced && !tomb ? '\n\n这台装置连了同步码：下次同步时，云端的资料会合并回来。要真的清空，请先在学生网站的「同步」里断开。' : ''))) return;
+            if (def.key === 'UEC_NOTES_v1') {
+              const del = readStorage('UEC_NOTES_DELETED_v1').value || {};
+              Object.keys(data.value || {}).forEach(id => { del[id] = Date.now(); });
+              localStorage.setItem('UEC_NOTES_DELETED_v1', JSON.stringify(del));
+              localStorage.removeItem(def.key);
+            } else if (def.key === 'UEC_FEEDBACK_v1') {
+              const old = data.value || {};
+              const deleted = Object.assign({}, old.deleted, Object.fromEntries((old.reports || []).map(r => [r.id, Date.now()])));
+              localStorage.setItem(def.key, JSON.stringify({ reports: [], deleted }));
+            } else {
+              localStorage.removeItem(def.key);
+            }
             toast(`已清除${def.label}`, 'good');
             renderStorageGrid(grid);
           } },
@@ -1465,7 +1480,10 @@ function renderSpriteTester(body, onStorageChange) {
               const store = readStorage('UEC_FEEDBACK_v1').value;
               if (!store || !Array.isArray(store.reports)) return;
               const before = store.reports.length;
-              store.reports = store.reports.filter(r => !String(r.id).startsWith('fb_devtest'));
+              const gone = store.reports.filter(r => String(r.id).startsWith('fb_devtest')).map(r => r.id);
+              store.reports = store.reports.filter(r => !gone.includes(r.id));
+              // 留删除纪录：这台装置连了同步码的话，不留的话下次同步会从云端把它们带回来
+              store.deleted = Object.assign({}, store.deleted, Object.fromEntries(gone.map(id => [id, Date.now()])));
               localStorage.setItem('UEC_FEEDBACK_v1', JSON.stringify(store));
               onStorageChange();
               toast(`已清除 ${before - store.reports.length} 条测试通知`, 'good');
