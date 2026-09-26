@@ -228,7 +228,19 @@
     .exam-slot-subj { font-weight: 700; }
     .exam-slot-time { font-size: 13px; font-weight: 700; color: var(--retro-dark); font-variant-numeric: tabular-nums; }
     .exam-slot-note { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-    .exam-list-hint { font-size: 12px; color: var(--text-muted); margin: -4px 0 8px; }
+    .exam-list-hint { font-size: 12px; color: var(--text-muted); margin: -4px 0 8px; line-height: 1.5; }
+    .exam-parts { list-style: none; margin: 4px 0 2px; padding: 0; display: grid; gap: 2px; }
+    .exam-parts li { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "time label len"; column-gap: 8px; align-items: baseline; font-size: 12.5px; line-height: 1.45; padding: 1px 6px; margin: 0 -6px; border-radius: 6px; }
+    .exam-part-time { grid-area: time; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .exam-part-label { grid-area: label; min-width: 0; }
+    .exam-part-len { grid-area: len; font-size: 11.5px; color: var(--text-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    /* 手机上三栏太挤（「10:30–下午 1:00」会把名称挤成一字一行）：名称改放到时间下面 */
+    @media (max-width: 480px) {
+      .exam-parts li { grid-template-columns: auto 1fr; grid-template-areas: "time len" "label label"; padding-top: 3px; padding-bottom: 3px; }
+    }
+    .exam-parts li.is-now { background: rgba(225, 97, 76, .14); }
+    .exam-parts-subj { display: block; margin-top: 4px; font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); }
+    .exam-slot.is-past .exam-parts { opacity: .7; }
     .exam-slot-tag { flex: 0 0 auto; margin-left: auto; align-self: flex-start; margin-top: 4px; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 6px; }
     .exam-slot.is-next .exam-slot-tag { background: var(--retro-coral-deep); color: #fff; }
     .exam-slot.is-past { color: var(--text-muted); }
@@ -1828,6 +1840,22 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
   const WEEKDAY = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
+  // 试卷一／试卷二的时间分划：只列真正作答的格（名称以「试卷」开头）；填电脑卡、填积分表写在表头说明里
+  const minutesOf = hm => { const [h, m] = hm.split(':').map(Number); return h * 60 + m; };
+  const duration = (a, b) => {
+    const t = minutesOf(b) - minutesOf(a);
+    const h = Math.floor(t / 60), m = t % 60;
+    return h ? `${h} 小时${m ? ` ${m} 分` : ''}` : `${m} 分钟`;
+  };
+  function examPartsHtml(p, half, now) {
+    const rows = (p.parts || []).filter(([label]) => label.startsWith('试卷')).map(([label, a, b]) => {
+      const live = now >= new Date(`${p.date}T${a}:00`) && now < new Date(`${p.date}T${b}:00`);
+      return `<li${live ? ' class="is-now"' : ''}><span class="exam-part-time">${clock(a, half)}–${clock(b, half)}</span>`
+        + `<span class="exam-part-label">${label}</span><span class="exam-part-len">${duration(a, b)}</span></li>`;
+    });
+    return rows.length ? `<ol class="exam-parts">${rows.join('')}</ol>` : '';
+  }
+
   // 完整时间表：按日期、上下午排好；考过的划掉，下一场标出来
   function examListHtml(table, next, now) {
     const days = new Map();
@@ -1851,13 +1879,16 @@ function openSubject(subject, initialChapterIdx, subMode) {
           ? papers.map(p => p.subject).join('、')
           : papers.map(p => `${p.subject} ${p.start ? `${clock(p.start, half)}–${clock(p.end, half)}` : ''}`).join('、');
         const notes = papers.map(p => p.note).filter(Boolean);
+        // 同一时段分划一样（例如数学与高级数学Ⅱ）只列一次；不一样就在前面写科目名
+        const partSets = [...new Map(papers.map(p => [JSON.stringify(p.parts || []), p])).values()];
+        const parts = partSets.map(p => (partSets.length > 1 ? `<span class="exam-parts-subj">${p.subject}</span>` : '') + examPartsHtml(p, half, now)).join('');
         return `<div class="exam-slot${cls}"><span class="exam-slot-half">${half}</span>
-          <span class="exam-slot-main"><span class="exam-slot-subj">${subj}</span>${times.length === 1 && times[0] ? `<span class="exam-slot-time">${times[0]}</span>` : ''}${notes.length ? `<span class="exam-slot-note">${notes.join('；')}</span>` : ''}</span>${tag}</div>`;
+          <span class="exam-slot-main"><span class="exam-slot-subj">${subj}</span>${times.length === 1 && times[0] ? `<span class="exam-slot-time">${times[0]}</span>` : ''}${notes.length ? `<span class="exam-slot-note">${notes.join('；')}</span>` : ''}${parts}</span>${tag}</div>`;
       }).join('');
       return `<div class="exam-day"><div class="exam-day-date"><b>${d}/${m}</b><em>${wd}</em></div><div>${slotHtml}</div></div>`;
     }).join('');
     return `<div class="exam-list-title">${table.title} · 理科生可报考科目</div>
-      <div class="exam-list-hint">时间从填电脑卡算起，考生要在那之前进场</div>${rows}`;
+      <div class="exam-list-hint">时间从填电脑卡算起，考生要在那之前进场。${table.rules || ''}</div>${rows}`;
   }
 
   function renderExamNext() {
