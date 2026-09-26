@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_117b931b6a",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap2",
-      "chapter_title": "第2章：细胞的结构与功能",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.084139Z",
-      "q": "细胞膜的基本构成物质是蛋白质和磷脂质，下列何者胞器无此构造：",
-      "options": [
-        "A. 粒线体",
-        "B. 核糖体",
-        "C. 内质网",
-        "D. 液泡"
-      ],
-      "answer": 1,
-      "explanation": "核糖体是没有膜结构的细胞器，不含有由蛋白质和磷脂双分子层构成的膜结构。粒线体（双层膜）、内质网（单层膜）和液泡（单层膜）都具有膜结构。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "核糖体是由RNA和蛋白质组成的无膜结构的细胞器。"
-      }
-    },
-    {
       "id": "biology_72c1d63240",
       "subject": "biology",
       "type": "mcq",
