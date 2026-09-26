@@ -318,6 +318,8 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cc-meta { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; }
     .cc-meta.is-done { color: var(--primary); }
+    .cc-meta-short { display: none; }
+    @media (max-width: 480px) { .cc-meta-short { display: inline; } }
     .cc-caret { flex: 0 0 auto; width: 18px; height: 18px; color: var(--text-muted); transition: transform .2s ease; }
     .chapter-current[aria-expanded="true"] .cc-caret { transform: rotate(180deg); }
     .chapter-test-btn {
@@ -331,7 +333,9 @@
     .chapter-panel[hidden] { display: none; }
     @media (max-width: 480px) {
       .chapter-current { padding-left: 12px; gap: 8px; }
-      .cc-text { flex-direction: column; gap: 0; }
+      /* 直排时 baseline 会让章名维持原本的宽度、不会被截成「…」，要拉满才会省略 */
+      .cc-text { flex-direction: column; align-items: stretch; gap: 0; }
+      .cc-meta-long { display: none; }
       .cc-name { font-size: 14px; }
       .chapter-test-btn { padding: 0 12px; }
     }
@@ -1623,6 +1627,11 @@
   // 进度、错题、笔记都按「第几题」记，真的删掉的话後面每一题的纪录都会对到别题
   const isLive = q => Boolean(q) && !q.hidden;
   const liveCount = list => (list || []).filter(isLive).length;
+  // 章节卡、章节选单上的题数：「选择 5 · 做答 1」，没有的那一种不写
+  function countLabel(sec) {
+    const mcq = liveCount(sec.mcqs), subj = liveCount(sec.subjectives);
+    return [mcq ? `选择 ${mcq}` : '', subj ? `做答 ${subj}` : ''].filter(Boolean).join(' · ');
+  }
   // 从 from 开始往 dir 方向找第一个没下架的题；找不到回传 -1
   function liveIdx(list, from, dir) {
     for (let i = from; i >= 0 && i < (list || []).length; i += dir) if (isLive(list[i])) return i;
@@ -1930,7 +1939,6 @@ function openSubject(subject, initialChapterIdx, subMode) {
       card.setAttribute('role', 'tab');
       card.setAttribute('aria-selected', String(activeChapterIdx === idx));
       card.setAttribute('tabindex', activeChapterIdx === idx ? '0' : '-1');
-      card.setAttribute('aria-label', sec.title);
 
       const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
       const tagText = match ? match[0] : `第 ${idx + 1} 章`;
@@ -1939,9 +1947,10 @@ function openSubject(subject, initialChapterIdx, subMode) {
       const { mastered } = getChapterProgress(currentSubject, sec.id, total);
       const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
 
+      // 进度只算选择题（做答题没有对错纪录）；还没开始时列出两种题各几题
       let foot;
-      if (total === 0) foot = '整理中';
-      else if (mastered === 0) foot = `${total} 题`;
+      if (!countLabel(sec)) foot = '整理中';
+      else if (total === 0 || mastered === 0) foot = countLabel(sec);
       else if (mastered === total) foot = `<span class="chap-done"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.6l3.2 3.2L13 5"/></svg>已掌握</span>`;
       else foot = `<span class="num">${mastered}/${total}</span><span class="chap-bar"><i style="width:${pct}%"></i></span>`;
 
@@ -1950,6 +1959,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
         <div class="chap-name">${nameText}</div>
         <div class="chap-foot">${foot}</div>
       `;
+      // aria-label 会盖掉卡片里的字，题数与进度要一起念出来
+      card.setAttribute('aria-label', `${sec.title}，${card.querySelector('.chap-foot').textContent.trim()}`);
       rail.appendChild(card);
     });
 
@@ -1987,9 +1998,16 @@ function openSubject(subject, initialChapterIdx, subMode) {
     nameEl.textContent = sec.title.replace(/第.*[章节][：:]?/, '');
     const total = liveCount(sec.mcqs);
     const { mastered } = getChapterProgress(currentSubject, sec.id, total);
-    metaEl.textContent = total === 0 ? '整理中' : mastered === total ? '已掌握' : mastered ? `${mastered}/${total}` : `${total} 题`;
+    const counts = countLabel(sec);
+    const meta = !counts ? '整理中' : total === 0 || !mastered ? counts : mastered === total ? '已掌握' : `${mastered}/${total}`;
+    // 手机上这一行要先让章名放得下：只写总题数，分项在展开後的章节卡上
+    const short = total + liveCount(sec.subjectives);
+    metaEl.innerHTML = meta === counts
+      ? `<span class="cc-meta-long">${counts}</span><span class="cc-meta-short">${short} 题</span>`
+      : meta;
+    metaEl.dataset.label = meta;
     metaEl.classList.toggle('is-done', total > 0 && mastered === total);
-    toggle.setAttribute('aria-label', `章节：${sec.title}，${metaEl.textContent}。按一下${toggle.getAttribute('aria-expanded') === 'true' ? '收起' : '换章节'}`);
+    toggle.setAttribute('aria-label', `章节：${sec.title}，${metaEl.dataset.label}。按一下${toggle.getAttribute('aria-expanded') === 'true' ? '收起' : '换章节'}`);
     test.hidden = total === 0;
     test.title = `一次做完这一章 ${total} 题，交卷才看答案`;
   }
@@ -2733,6 +2751,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
     };
     const saved = loadExplains()[key];
     if (saved && saved.r) show(saved.r);
+    // 第一次看到这颗按钮时介绍它；等对错的音效和动画过去（1.5 秒）再出来，不抢作答的那一刻
+    else setTimeout(() => { if (btn.isConnected && window.UECOnboarding) window.UECOnboarding.once('explain'); }, 1500);
     btn.addEventListener('click', async () => {
       btn.disabled = true;
       setBtnLabel(btn, 'help', 'AI 老师正在想…约 5 秒');

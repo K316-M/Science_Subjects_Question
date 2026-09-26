@@ -71,6 +71,11 @@
       { target: '.review-list', title: '今天的清单',
         body: '可以照顺序做，也可以挑一题先做。逾期的会标出来，越久没看越容易忘。' },
     ],
+    // 不属於任何画面：第一次答完选择题、按钮出现 1.5 秒後才介绍（index.html 的 addExplainButton 呼叫 once）
+    explain: [
+      { target: '.ai-explain-btn', title: '看不懂？问 AI',
+        body: '按这里，AI 老师会照<strong>你选的那个答案</strong>讲为什么对、为什么错，最後给一个好记的小技巧。讲过的会存在这台装置，再选到同一个答案就直接显示。' },
+    ],
     mock: [
       { target: '.test-clock', title: '模拟统考',
         body: '照统考时间表的<strong>试卷一</strong>时间倒数。剩五分钟会变红；<strong>时间到自动交卷，没答的算错</strong>。' },
@@ -369,5 +374,8 @@
     setTimeout(() => startWhenReady(currentTourName(), forced), 900);   // 等首页的动画落定
   });
 
-  window.UECOnboarding = { start: name => start(name || currentTourName(), true), finish, KEY, TOURS };
+  // 没看过、而且现在没有别的导览在跑，才开始（给画面以外的时机用，例如按钮刚出现）
+  const once = name => { if (!tourName && !readSeen()[name]) start(name, false); };
+
+  window.UECOnboarding = { start: name => start(name || currentTourName(), true), once, finish, KEY, TOURS };
 })();
