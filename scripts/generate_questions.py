@@ -11,7 +11,7 @@ AI 依考纲出题脚本
   - generate_questions.py : 依考纲生成全新的练习题（来源是模型，必须人工核对）
 
 ⚠️ AI 写的理科题目可能科学性出错。本脚本产出的每一题都标记 needs_expert_check，
-   一律只进待审区，必须由人审核合并后才会上线。每题都另请 Gemini 不看答案重做一次
+   一律只进待审区，必须由人在 /dev 采纳后才会上线。每题都另请 Gemini 不看答案重做一次
    （qa.cross_check），答案对不上、文字有问题的才会被标出、在 /dev 展开要你逐题看。
 
 运行需要 GEMINI_API_KEY；未配置时直接跳过。
@@ -27,13 +27,13 @@ import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gemini_api
+import pending_queue
 import qa
 
 SUBJECTS = ["biology", "chemistry", "physics"]
 SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理"}
 PAPERS_DIR = "papers"
 SYLLABUS_DIR = "syllabus"
-PENDING_PATH = os.path.join(PAPERS_DIR, "pending_approval.json")
 REPORT_PATH = "GENERATION_REPORT.md"
 STATUS_FLAG_PATH = "has_new_generated.txt"
 
@@ -224,6 +224,10 @@ def process_subject(subject, report_rows):
         if not isinstance(parsed, list):
             report_rows.append((subject, title, "⚠️ 生成失败", "模型没有返回数组"))
             continue
+        # 首选模型额度用完或一直忙，会中途换成较弱的备用模型：每题标出来，/dev 审题时看得到
+        model = gemini_api.last_model
+        backup = (f"由备用模型 {model} 出题（首选 {gemini_api.first_choice} 额度用完或忙碌），科学正确性请多核对"
+                  if model != gemini_api.first_choice else None)
 
         kept = 0
         for entry in parsed:
@@ -249,7 +253,7 @@ def process_subject(subject, report_rows):
                 "origin": "ai_generated",
                 "answer_source": "generated",
                 "needs_expert_check": True,
-                "flags": [],
+                "flags": [backup] if backup else [],
                 "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "syllabus_used": bool(syllabus),
             }
@@ -258,7 +262,8 @@ def process_subject(subject, report_rows):
             kept += 1
 
         if kept:
-            report_rows.append((subject, title, "✅ 已生成", f"{kept} 题" + ("（依官方考纲）" if syllabus else "（仅依章节标题）")))
+            report_rows.append((subject, title, "✅ 已生成", f"{kept} 题" + ("（依官方考纲）" if syllabus else "（仅依章节标题）")
+                                + f" · 模型 {model}" + ("（备用）" if backup else "")))
 
     # 整科一次复核，比每章各打一次省呼叫次数
     notes = []
@@ -291,6 +296,15 @@ def main():
         print("⚠️ 未设置 GEMINI_API_KEY，跳过本次出题。", file=sys.stderr)
         return
 
+    # 每周自动跑的那次：上一批 AI 出的题还没审完就先不出（现在直接进待审区，不管的话会越堆越多，
+    # 而且挑章节只看正式题库，同几章会一直重复出）。手动跑不受影响
+    if os.environ.get("GITHUB_EVENT_NAME") == "schedule":
+        waiting = sum(1 for i in pending_queue.load_items() if i.get("origin") == "ai_generated")
+        if waiting:
+            generate_report([("—", "—", "⏭️ 这周不出", f"待审区还有 {waiting} 道 AI 出的题没审完，审完下周才会再出；急的话到 Actions 手动跑")], 0)
+            print(f"待审区还有 {waiting} 道 AI 出的题没审完，这周先不出新题。")
+            return
+
     targets = [ONLY_SUBJECT] if ONLY_SUBJECT in SUBJECTS else SUBJECTS
     rows = []
     all_new = []
@@ -306,21 +320,7 @@ def main():
             print("  （连一个章节都没轮到：这一科可能还没有章节框架）")
         return
 
-    pending = {"items": []}
-    if os.path.exists(PENDING_PATH):
-        with open(PENDING_PATH, encoding="utf-8") as f:
-            try:
-                pending = json.load(f)
-            except json.JSONDecodeError:
-                pending = {"items": []}
-    pending.setdefault("items", [])
-    pending["items"].extend(all_new)
-    pending["generated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
-
-    os.makedirs(PAPERS_DIR, exist_ok=True)
-    with open(PENDING_PATH, "w", encoding="utf-8") as f:
-        json.dump(pending, f, ensure_ascii=False, indent=2)
-        f.write("\n")
+    pending_queue.append(all_new)
 
     generate_report(rows, len(all_new))
     with open(STATUS_FLAG_PATH, "w") as f:

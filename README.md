@@ -35,7 +35,7 @@
    GitHub Actions：Gemini 转写 ─→ 自动审题（格式、重复、和原档逐字比对、AI 不看答案重做一次）
           │
           ▼
-   待审区 papers/pending_approval.json（开一个 PR，合并後进待审区）
+   待审区 papers/pending_approval.json（直接推进去，不开 PR；报告在 Actions 那次执行的摘要）
           │
           ▼
    /dev「AI 录题待审」：有问题的题展开给你改（文字、答案、配图）；没问题的勾选後一键采纳
