@@ -213,12 +213,12 @@
 [data-theme="night"] .card-note-btn.has-note { background: #9c4a3a; border-color: #9c4a3a; color: var(--n-btn-text); }
 
 /* 实心的主要按钮：深玉绿 × 米白字 */
-[data-theme="night"] .empty-btn.primary, [data-theme="night"] .test-entry-btn, [data-theme="night"] .wrong-item-jump,
+[data-theme="night"] .empty-btn.primary, [data-theme="night"] .chapter-test-btn, [data-theme="night"] .wrong-item-jump,
 [data-theme="night"] .test-submit, [data-theme="night"] .test-btn.primary, [data-theme="night"] .ob-btn:not(.ghost),
 [data-theme="night"] .sync-btn:not(.ghost), [data-theme="night"] .test-q.is-answered .test-q-no {
   background: var(--n-btn); border-color: var(--n-btn); color: var(--n-btn-text); box-shadow: 0 8px 18px -10px rgba(0, 0, 0, .7);
 }
-[data-theme="night"] .empty-btn.primary:hover, [data-theme="night"] .test-entry-btn:hover, [data-theme="night"] .wrong-item-jump:hover,
+[data-theme="night"] .empty-btn.primary:hover, [data-theme="night"] .chapter-test-btn:hover, [data-theme="night"] .wrong-item-jump:hover,
 [data-theme="night"] .test-submit:hover, [data-theme="night"] .test-btn.primary:hover { background: var(--n-btn-hover); }
 
 /* ---------- 做答题（闪卡）、划重点 ---------- */
@@ -233,7 +233,7 @@
 [data-theme="night"] .form-q-num { background: rgba(255, 255, 255, .08); color: var(--n-text-2); }
 [data-theme="night"] .subj-attempt { background: var(--n-sunken); border-color: var(--n-border-strong); }
 [data-theme="night"] .subj-attempt-label { color: var(--n-text-2); }
-[data-theme="night"] .subj-attempt-input { color: var(--n-text); background-image: repeating-linear-gradient(transparent 0 26px, rgba(255, 255, 255, .07) 26px 27px); }
+[data-theme="night"] .subj-attempt-input { color: var(--n-text); background-image: repeating-linear-gradient(transparent 0 27px, rgba(255, 255, 255, .07) 27px 28px); }
 [data-theme="night"] .subj-grade-result { background: var(--n-surface); border-color: var(--n-border); color: var(--n-text); }
 [data-theme="night"] .subj-grade-result.is-error { background: #3a2418; border-color: #6b3a22; color: #fdba74; }
 [data-theme="night"] .grade-meter { background: var(--n-raised); }
@@ -249,7 +249,7 @@
 /* ---------- 空状态、今日复习、错题本、整章测验入口 ---------- */
 [data-theme="night"] .empty-state { background: rgba(36, 34, 30, .88); border-color: var(--n-border); box-shadow: inset 0 1px 0 rgba(255, 244, 224, .04), var(--shadow-sm); }
 [data-theme="night"] .empty-glyph { background: var(--n-green-bg); border-color: rgba(134, 207, 168, .2); }
-[data-theme="night"] .empty-title, [data-theme="night"] .review-count, [data-theme="night"] .test-entry-text strong,
+[data-theme="night"] .empty-title, [data-theme="night"] .review-count, [data-theme="night"] .cc-name,
 [data-theme="night"] .wrong-group-title { color: var(--n-text); }
 [data-theme="night"] .empty-btn { background: var(--n-raised); color: var(--primary); border-color: rgba(134, 207, 168, .35); }
 [data-theme="night"] .review-bar { background: rgba(134, 207, 168, .14); }
@@ -264,7 +264,10 @@
 [data-theme="night"] .wrong-row:hover { background: rgba(226, 104, 98, .08); }
 [data-theme="night"] .wrong-row-meta em { color: var(--n-green); }
 [data-theme="night"] .wrong-group.is-stubborn { border-color: rgba(242, 170, 166, .35); box-shadow: 0 0 0 3px rgba(226, 104, 98, .08), var(--shadow-sm); }
-[data-theme="night"] .test-entry { background: rgba(36, 34, 30, .9); border-color: var(--n-border); box-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
+[data-theme="night"] .chapter-current { background: rgba(36, 34, 30, .9); border-color: var(--n-border); color: var(--n-text); box-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
+[data-theme="night"] .chapter-current:hover, [data-theme="night"] .chapter-current[aria-expanded="true"] { background: var(--n-raised); border-color: rgba(134, 207, 168, .45); }
+[data-theme="night"] .cc-index, [data-theme="night"] .cc-meta, [data-theme="night"] .cc-caret { color: var(--n-text-2); }
+[data-theme="night"] .cc-meta.is-done { color: var(--n-green); }
 [data-theme="night"] .achieve-toast { background: linear-gradient(135deg, #2b634b, #2a5a74); color: var(--n-btn-text); box-shadow: 0 14px 30px -8px rgba(0, 0, 0, .6); }
 
 /* ---------- 整章测验（样式在 js/chapter-test.js） ---------- */
@@ -322,7 +325,8 @@
 [data-theme="night"] .note-snapshot-tag { background: rgba(4, 120, 87, .14); color: #065f46; }
 [data-theme="night"] .note-text-area { border-top-color: var(--n-border); }
 [data-theme="night"] .note-text-area textarea { background: var(--n-sunken); border-color: var(--n-border-strong); color: var(--n-text); }
-[data-theme="night"] .btn-primary-retro { background: #9c4a3a; color: var(--n-btn-text); box-shadow: 0 4px 12px -2px rgba(0, 0, 0, .5); }
+[data-theme="night"] .btn-primary-retro, [data-theme="night"] .subj-grade-btn { background: var(--n-btn); color: var(--n-btn-text); box-shadow: 0 4px 12px -2px rgba(0, 0, 0, .5); }
+[data-theme="night"] .btn-primary-retro:hover, [data-theme="night"] .subj-grade-btn:hover { background: var(--n-btn-hover); }
 [data-theme="night"] .btn-ghost-retro { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
 
 /* ---------- 笔记、题目档、申诉页 ---------- */

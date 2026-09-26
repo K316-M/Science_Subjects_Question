@@ -408,12 +408,20 @@ function startSpriteBlink() {
 
 function showSprite() {
   const wrap = document.getElementById('spriteWrap');
-  const wasActive = wrap.classList.contains('active');
+  const wasActive = wrap.classList.contains('active') && !wrap.classList.contains('is-loading');
   ensureSpritePoses();
-  // 等第一张（idle）载好才飞进来：不然会先飞进一个空框，过一下角色才突然冒出来
+  // 第一张（idle）还没载好：先占好位置（导览才找得到它），但停在飞入动画的第一格、完全透明；
+  // 载好才飞进来。以前直接飞进来会先看到一个空框；後来改成整个不出现，导览又会以为它不在而跳过那一步
   const idle = document.querySelector('#spritePoses .sprite-pose[data-pose="idle"]');
   if (!wasActive && idle && !(idle.complete && idle.naturalWidth)) {
-    idle.addEventListener('load', showSprite, { once: true });
+    if (!wrap.classList.contains('is-loading')) {
+      wrap.classList.add('active', 'is-loading');
+      idle.addEventListener('load', () => {
+        const stillWanted = wrap.classList.contains('active');   // 载图期间被叫走（例如导览结束）就不出来了
+        wrap.classList.remove('active', 'is-loading');
+        if (stillWanted) showSprite();
+      }, { once: true });
+    }
     return;
   }
   wrap.classList.add('active');
