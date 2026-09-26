@@ -335,6 +335,8 @@ function ensureSpritePoses() {
     img.dataset.pose = name;
     img.decoding = 'async';
     box.appendChild(img);
+    // 先解码好，第一次换到这个姿势时才不会卡一下
+    if (img.decode) img.decode().catch(() => {});
   });
   // 睡着时指过去或用键盘移到它身上就醒来挥手
   const char = document.getElementById('spriteChar');
@@ -359,11 +361,21 @@ function armSpriteSleep() {
   }, SPRITE_SLEEP_MS);
 }
 
-// 换成某个姿势；给 ms 就在那之後回到 idle
+// 换成某个姿势；给 ms 就在那之後回到 idle。
+// 那张图还没载好就先维持目前的姿势，载好再换 —— 不然切过去会是空的，整只小精灵消失一下
 function setSpritePose(name, ms) {
   const box = document.getElementById('spritePoses');
   if (!box) return;
   clearTimeout(spritePoseTimer);
+  const target = box.querySelector(`.sprite-pose[data-pose="${name}"]`);
+  if (target && !(target.complete && target.naturalWidth)) {
+    box.dataset.waitFor = name;
+    target.addEventListener('load', () => {
+      if (box.dataset.waitFor === name) setSpritePose(name, ms);
+    }, { once: true });
+    return;
+  }
+  delete box.dataset.waitFor;
   box.querySelectorAll('.sprite-pose').forEach(img => img.classList.toggle('on', img.dataset.pose === name));
   box.dataset.pose = name;
   if (ms) spritePoseTimer = setTimeout(() => setSpritePose('idle'), ms);
@@ -385,6 +397,12 @@ function showSprite() {
   const wrap = document.getElementById('spriteWrap');
   const wasActive = wrap.classList.contains('active');
   ensureSpritePoses();
+  // 等第一张（idle）载好才飞进来：不然会先飞进一个空框，过一下角色才突然冒出来
+  const idle = document.querySelector('#spritePoses .sprite-pose[data-pose="idle"]');
+  if (!wasActive && idle && !(idle.complete && idle.naturalWidth)) {
+    idle.addEventListener('load', showSprite, { once: true });
+    return;
+  }
   wrap.classList.add('active');
   // 刚飞进来先挥挥手
   if (!wasActive) setSpritePose('wave', 1600);
