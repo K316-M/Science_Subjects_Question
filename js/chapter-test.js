@@ -52,7 +52,7 @@ legend.test-q-head { float: left; width: 100%; }
   display: grid; place-items: center; font-size: 13px; font-weight: 800;
   color: #065f46; background: rgba(4,120,87,.1); }
 .test-q.is-answered .test-q-no { color: #fff; background: var(--primary, #047857); }
-.test-q-text { flex: 1 1 auto; min-width: 0; }
+.test-q-text { flex: 1 1 auto; min-width: 0; white-space: pre-line; }
 .test-fig { margin: 0 0 14px; text-align: center; }
 .test-fig img { max-width: 100%; border-radius: 10px; cursor: zoom-in; }
 .test-fig-cap { margin-top: 6px; font-size: 12px; color: var(--text-muted, #475569); }
@@ -233,7 +233,8 @@ legend.test-q-head { float: left; width: 100%; }
     (document.getElementById('main') || document.body).appendChild(root);
 
     document.addEventListener('keydown', e => {
-      if (!state) return;
+      // 导览（js/onboarding.js）已经处理掉的键（按 Esc 关导览）不要再拿来退出测验
+      if (!state || e.defaultPrevented) return;
       if (!confirmEl.hidden) {
         if (e.key === 'Escape') { e.preventDefault(); hideConfirm(); }
         else if (e.key === 'Tab') {   // 两颗按钮之间来回
@@ -361,6 +362,19 @@ legend.test-q-head { float: left; width: 100%; }
   }
   function stopClock() {
     if (state && state.timer) { clearInterval(state.timer); state.timer = null; }
+  }
+  // 暂停／继续倒数：第一次进模拟统考、导览还开着时先不计时（js/onboarding.js 呼叫）
+  function hold(on) {
+    const s = state;
+    if (!s || !s.deadline) return false;
+    if (on && !s.heldAt) { s.heldAt = Date.now(); stopClock(); }
+    else if (!on && s.heldAt) {
+      const paused = Date.now() - s.heldAt;
+      s.deadline += paused; s.startedAt += paused; s.heldAt = 0;
+      tick();
+      if (s.deadline) s.timer = setInterval(tick, 1000);
+    }
+    return true;
   }
 
   function trySubmit() {
@@ -560,5 +574,5 @@ legend.test-q-head { float: left; width: 100%; }
     return true;
   }
 
-  window.UECTest = { start, isActive: () => Boolean(state), isTimed: () => Boolean(state && state.opts.timeLimitMs) };
+  window.UECTest = { start, hold, isActive: () => Boolean(state), isTimed: () => Boolean(state && state.opts.timeLimitMs) };
 })();
