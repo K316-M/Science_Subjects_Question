@@ -231,16 +231,16 @@
     .exam-slot-subj { font-weight: 700; }
     .exam-slot-time { font-size: 13px; font-weight: 700; color: var(--retro-dark); font-variant-numeric: tabular-nums; }
     .exam-slot-note { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-    .exam-list-hint { font-size: 12px; color: var(--text-muted); margin: -4px 0 8px; line-height: 1.5; }
+    .exam-list-hint { font-size: 12px; color: var(--text-muted); margin: -4px 0 8px; line-height: 1.6; }
     .exam-parts { list-style: none; margin: 4px 0 2px; padding: 0; display: grid; gap: 2px; }
-    .exam-parts li { display: grid; grid-template-columns: 8.6em 1fr auto; grid-template-areas: "time label len"; column-gap: 8px; align-items: baseline; font-size: 12.5px; line-height: 1.45; padding: 1px 6px; margin: 0 -6px; border-radius: 6px; }
+    .exam-parts li { display: grid; grid-template-columns: 8.6em 1fr auto; grid-template-areas: "time label len"; column-gap: 8px; align-items: baseline; font-size: 13px; line-height: 1.4; padding: 1px 6px; margin: 0 -6px; border-radius: 6px; }
     .exam-part-time { grid-area: time; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .exam-part-label { grid-area: label; min-width: 0; }
-    .exam-part-len { grid-area: len; font-size: 11.5px; color: var(--text-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .exam-part-len { grid-area: len; font-size: 12px; color: var(--text-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
     /* 时间表框不够宽时三栏太挤（「10:30–下午 1:00」会把名称挤成一字一行）：名称改放到时间下面。
        看的是时间表框本身的宽度，不是萤幕宽度 —— 电脑上框也可能是窄的 */
     @container (max-width: 459px) {
-      .exam-parts li { grid-template-columns: auto 1fr; grid-template-areas: "time len" "label label"; justify-items: start; padding-top: 3px; padding-bottom: 3px; }
+      .exam-parts li { grid-template-columns: auto 1fr; grid-template-areas: "time len" "label label"; justify-items: start; padding-top: 4px; padding-bottom: 4px; }
     }
     .exam-parts li.is-now { background: rgba(225, 97, 76, .14); }
     .exam-parts-subj { display: block; margin-top: 4px; font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); }
@@ -291,6 +291,46 @@
     .page-hint { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
     /* 水彩背景上这两行会落在深色的水彩上（实测 4.0–4.3:1）：压在水彩上的字一律用最深那档 */
     .has-scene .bank-coverage, .has-scene .page-hint { color: var(--text-main); }
+
+    /* 章节选单：一行，点开才列出全部章节 */
+    .chapter-picker { display: flex; align-items: stretch; gap: 8px; margin-bottom: 12px; }
+    .chapter-current {
+      flex: 1 1 auto; min-width: 0; min-height: 48px;
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px 8px 16px; border-radius: 14px; cursor: pointer; text-align: left;
+      font: inherit; color: var(--text-main);
+      background: rgba(255, 255, 255, 0.86); border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-sm); transition: border-color .2s, background .2s;
+    }
+    .chapter-current:hover { border-color: rgba(5, 150, 105, .5); background: #fff; }
+    .chapter-current[aria-expanded="true"] { border-color: var(--primary); background: #fff; }
+    .cc-text { flex: 1 1 auto; min-width: 0; display: flex; align-items: baseline; gap: 8px; }
+    .cc-index { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .cc-name { min-width: 0; font-family: var(--font-display); font-size: 16px; font-weight: 700; color: #1e293b;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cc-meta { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .cc-meta.is-done { color: var(--primary); }
+    .cc-caret { flex: 0 0 auto; width: 18px; height: 18px; color: var(--text-muted); transition: transform .2s ease; }
+    .chapter-current[aria-expanded="true"] .cc-caret { transform: rotate(180deg); }
+    .chapter-test-btn {
+      flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 16px;
+      border: 0; border-radius: 14px; cursor: pointer; font: inherit; font-size: 14px; font-weight: 700;
+      color: #fff; background: var(--fn-go); box-shadow: var(--shadow-sm);
+    }
+    .chapter-test-btn:hover { background: var(--primary-dark); }
+    .chapter-test-btn[hidden] { display: none; }
+    .chapter-panel { margin: -4px 0 8px; animation: softFadeIn .2s ease; }
+    .chapter-panel[hidden] { display: none; }
+    @media (max-width: 480px) {
+      .chapter-current { padding-left: 12px; gap: 8px; }
+      .cc-text { flex-direction: column; gap: 0; }
+      .cc-name { font-size: 14px; }
+      .chapter-test-btn { padding: 0 12px; }
+    }
+    @media (max-width: 360px) {
+      .chapter-test-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    }
+    @media (prefers-reduced-motion: reduce) { .cc-caret, .chapter-panel { transition: none; animation: none; } }
 
     /* PPT 章节大纲竖型书签轨道 */
     .chapter-bookmark-rail {
@@ -603,7 +643,7 @@
     .flip-answer-content.revealed { display: block; }
 
     /* 做答题：题号、作答框、AI 批改结果 */
-    .form-q-num { display: inline-flex; align-items: baseline; gap: 2px; margin-bottom: 10px; padding: 3px 10px; border-radius: 999px;
+    .form-q-num { display: inline-flex; align-items: baseline; gap: 2px; margin-bottom: 10px; padding: 4px 10px; border-radius: 999px;
       background: rgba(77, 129, 137, .12); color: var(--retro-teal-dark); font-size: 12px; font-weight: 800; letter-spacing: .02em; }
     .form-q-num span { font-weight: 600; opacity: .7; }
     .subj-attempt { margin: 0 0 16px; padding: 14px; border-radius: 14px; background: #fffdf7;
@@ -611,20 +651,20 @@
     .subj-attempt:focus-within { border-style: solid; border-color: var(--retro-teal-dark); }
     .subj-attempt-label { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--retro-teal-dark); margin-bottom: 8px; }
     .subj-attempt-input { width: 100%; min-height: 104px; resize: vertical; border: none; outline: none; background: transparent;
-      font: inherit; font-size: 15px; line-height: 1.8; color: #0f172a;
-      background-image: repeating-linear-gradient(transparent 0 26px, rgba(77, 129, 137, .16) 26px 27px); background-attachment: local; }
+      font: inherit; font-size: 16px; line-height: 1.75; color: #0f172a;
+      background-image: repeating-linear-gradient(transparent 0 27px, rgba(77, 129, 137, .16) 27px 28px); background-attachment: local; }
     .subj-attempt-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
     .subj-attempt-count { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
     .subj-grade-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border: none; border-radius: 12px;
-      background: var(--retro-coral-deep); color: #fff; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
-      box-shadow: 0 6px 14px -6px rgba(225, 97, 76, .7); transition: transform .15s, opacity .15s; }
+      background: var(--fn-go); color: #fff; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
+      box-shadow: 0 6px 14px -6px rgba(4, 120, 87, .6); transition: transform .15s, opacity .15s; }
     .subj-grade-btn:hover { transform: translateY(-1px); }
     .subj-grade-btn:disabled { opacity: .6; cursor: progress; transform: none; }
     .subj-grade-result { margin-top: 12px; padding: 14px; border-radius: 12px; background: #fff; border: 1px solid #e2e8f0; font-size: 14px; line-height: 1.6; animation: softFadeIn .2s ease; }
     .subj-grade-result.is-loading { color: var(--text-muted); }
     .subj-grade-result.is-error { color: #9a3412; background: #fff7ed; border-color: #fed7aa; }
     .grade-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .grade-score b { font-size: 30px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+    .grade-score b { font-size: 28px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
     .grade-score small { font-size: 14px; font-weight: 700; color: var(--text-muted); }
     .grade-verdict { padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; color: #fff; }
     .tone-good .grade-verdict, .tone-good .grade-meter i { background: #1f9d55; }
@@ -643,7 +683,7 @@
     .grade-comment { grid-column: 2 / -1; font-size: 13px; color: #475569; }
     .grade-feedback { margin: 12px 0 0; padding-top: 10px; border-top: 1px dashed #e2e8f0; color: #334155; }
     .grade-stale { margin-top: 8px; font-size: 12px; font-weight: 700; color: #b45309; }
-    .grade-note { margin: 8px 0 0; font-size: 11.5px; color: var(--text-muted); }
+    .grade-note { margin: 8px 0 0; font-size: 12px; color: var(--text-muted); }
 
     .hl-toolbar {
       display: flex;
@@ -839,20 +879,6 @@
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .wrong-row-go { flex: 0 0 auto; color: #b91c1c; font-weight: 700; }
 
-    .test-entry {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 14px; padding: 10px 10px 10px 16px; border-radius: 16px;
-      background: rgba(255,255,255,.72); border: 1px solid rgba(255,255,255,.85);
-      box-shadow: 0 1px 2px rgba(15,23,42,.04);
-    }
-    .test-entry-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-    .test-entry-text strong { font-size: 14px; color: #0f172a; }
-    .test-entry-text span { font-size: 12px; color: var(--text-muted); }
-    .test-entry-btn {
-      flex: 0 0 auto; min-height: 42px; padding: 8px 16px; border-radius: 12px; border: 0; cursor: pointer;
-      font-size: 14px; font-weight: 700; color: #fff; background: var(--primary);
-    }
-    .test-entry-btn:hover { background: var(--primary-dark); }
 
     /* 只在有实体键盘的装置提示快捷键；视窗太窄时会和右下角的笔记按钮叠在一起，也不显示 */
     .kbd-hint { display: none; }
@@ -917,6 +943,7 @@
   <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15l2.2 2.2L15.5 13"/></symbol>
   <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
   <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></symbol>
   <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l.8-4L15 5.8a2 2 0 0 1 2.8 0l.4.4a2 2 0 0 1 0 2.8L8 19.2z"/><path d="M13.5 7.5l3 3"/></symbol>
   <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2.5"/><rect x="9" y="2.5" width="6" height="4" rx="1.5"/><path d="M9 11.5h6M9 15.5h4"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7"/><path d="M6.5 7l.9 12a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L17.5 7"/><path d="M10.5 11v6M13.5 11v6"/></symbol>
@@ -966,7 +993,7 @@
 <main class="container" id="main" tabindex="-1">
   <div class="util-bar">
     <div class="breadcrumbs" id="breadcrumbNav" role="navigation" aria-label="目前位置">
-      <span class="breadcrumb-item active" aria-current="page">学科选择</span>
+      <span class="breadcrumb-item active" aria-current="page">主页</span>
     </div>
     <div class="util-actions">
       <button class="sound-toggle is-on" id="soundBtn" onclick="toggleSound()"><svg class="ic" aria-hidden="true"><use href="#i-sound-on"></use></svg><span class="btn-txt">音效：开</span></button>
@@ -999,11 +1026,23 @@
   <div id="viewStudy" class="view">
     <!-- 画面上已有面包屑与章节卡，这个标题只给读屏的「按标题浏览」用 -->
     <h2 class="sr-only" id="studyHeading"></h2>
-    <p class="bank-coverage" id="bankCoverage"></p>
-    <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
+    <!-- 章节选单：平常只占一行（现在这一章＋整章测验），点开才列出全部章节。
+         以前题库统计、整排章节卡、测验卡全部摊在题目上面，手机上题目要到画面一半才出现 -->
+    <div class="chapter-picker">
+      <button type="button" class="chapter-current" id="chapterToggle" aria-expanded="false" aria-controls="chapterPanel">
+        <span class="cc-text"><span class="cc-index" id="ccIndex"></span><span class="cc-name" id="ccName"></span></span>
+        <span class="cc-meta" id="ccMeta"></span>
+        <svg class="ic cc-caret" aria-hidden="true"><use href="#i-chevron-down"></use></svg>
+      </button>
+      <button type="button" class="chapter-test-btn" id="testStartBtn" onclick="startChapterTest()" hidden><svg class="ic" aria-hidden="true"><use href="#i-clipboard"></use></svg><span>整章测验</span></button>
+    </div>
+    <div class="chapter-panel" id="chapterPanel" hidden>
+      <p class="bank-coverage" id="bankCoverage"></p>
+      <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
+    </div>
     <div class="sub-bookmark-bar" role="tablist" aria-label="练习模式">
       <button class="sub-tab-btn active" id="subBtnMcq" role="tab" aria-selected="true" onclick="switchSubSection('mcq')"><svg class="ic" aria-hidden="true"><use href="#i-cards"></use></svg><span>选择题<span class="tab-long">练习</span></span></button>
-      <button class="sub-tab-btn" id="subBtnSubj" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('subj')"><svg class="ic" aria-hidden="true"><use href="#i-doc-lines"></use></svg><span>做答题<span class="tab-long">（背书闪卡）</span></span></button>
+      <button class="sub-tab-btn" id="subBtnSubj" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('subj')"><svg class="ic" aria-hidden="true"><use href="#i-doc-lines"></use></svg><span>做答题<span class="tab-long">练习</span></span></button>
       <button class="sub-tab-btn" id="subBtnWrong" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('wrong')"><svg class="ic" aria-hidden="true"><use href="#i-book-x"></use></svg><span>错题本</span><span id="wrongCountBadge"></span></button>
       <button class="sub-tab-btn" id="subBtnReview" role="tab" aria-selected="false" tabindex="-1" onclick="switchSubSection('review')"><svg class="ic" aria-hidden="true"><use href="#i-calendar-check"></use></svg><span>今日复习</span><span id="reviewCountBadge"></span></button>
     </div>
@@ -1052,7 +1091,7 @@
 
   <!-- 视图 6: 网页问题申诉 -->
   <div id="viewFeedback" class="view">
-    <h2 class="page-heading"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-flag"></use></svg> 网页问题申诉 ©</h2>
+    <h2 class="page-heading"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-flag"></use></svg> 网页问题申诉</h2>
     <p style="color: var(--text-muted); margin-top: 6px; font-size: 14px; line-height: 1.6;">
       网站哪里坏了、哪里怪怪的，都可以在这里告诉管理员。
       管理员修好之后，你下次打开网站会看到一个通知小精灵，点它就能直接跳回出问题的地方复查。
@@ -1656,7 +1695,7 @@
     renderResumeCard();
     renderExamNext();
     setActiveNav('navHomeBtn');
-    document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" aria-current="page">学科选择</span>`;
+    document.getElementById('breadcrumbNav').innerHTML = `<span class="breadcrumb-item active" aria-current="page">主页</span>`;
   }
 
   // 全局当前科目变量（放在脚本顶部与其他 let 变量同一处）
@@ -1729,12 +1768,13 @@ function openSubject(subject, initialChapterIdx, subMode) {
   activeSubMode = subMode && SUB_TAB_IDS[subMode] ? subMode : 'mcq';
   markSubTab(activeSubMode);
   cameFromReview = false;
+  if (window.setChapterPanel) setChapterPanel(false);
   showView('viewStudy');
   setActiveNav('navHomeBtn');
   applySubjectBackground(subject);
   if (musicEnabled) startAmbientMusic(subject);
   document.getElementById('breadcrumbNav').innerHTML = `
-    <button type="button" class="breadcrumb-item" onclick="navigateHome()">学科选择</button> &gt;
+    <button type="button" class="breadcrumb-item" onclick="navigateHome()">主页</button> &gt;
     <span class="breadcrumb-item active" aria-current="page">${SUBJECT_LABELS[subject] || subject}</span>
   `;
   // 动态载入对应题库并渲染（loadSubjectData 会在加载后调用 render）
@@ -1763,7 +1803,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
     sections.forEach((sec, idx) => {
       const card = document.createElement('div');
       card.className = `chapter-card ${activeChapterIdx === idx ? 'active' : ''}`;
-      card.onclick = () => selectChapter(idx);
+      // 真的用手点才收起选单；方向键切换也是走 click（detail 为 0），那时要保持展开
+      card.onclick = (e) => { selectChapter(idx); if (e.detail > 0) setChapterPanel(false); };
       card.setAttribute('role', 'tab');
       card.setAttribute('aria-selected', String(activeChapterIdx === idx));
       card.setAttribute('tabindex', activeChapterIdx === idx ? '0' : '-1');
@@ -1801,7 +1842,60 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const heading = document.getElementById('studyHeading');
     const cur = sections[activeChapterIdx];
     if (heading) heading.textContent = `${SUBJECT_LABELS[currentSubject] || ''}${cur ? ' · ' + cur.title : ''}`;
+    renderChapterPicker(cur);
   }
+
+  // 章节选单那一行：第几章、章名、掌握到哪；整章测验只在这一章有选择题时出现
+  function renderChapterPicker(sec) {
+    const toggle = document.getElementById('chapterToggle');
+    if (!toggle) return;
+    const idxEl = document.getElementById('ccIndex');
+    const nameEl = document.getElementById('ccName');
+    const metaEl = document.getElementById('ccMeta');
+    const test = document.getElementById('testStartBtn');
+    if (!sec) {
+      idxEl.textContent = '';
+      nameEl.textContent = '题库整理中';
+      metaEl.textContent = '';
+      test.hidden = true;
+      return;
+    }
+    const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
+    idxEl.textContent = match ? match[0] : `第 ${activeChapterIdx + 1} 章`;
+    nameEl.textContent = sec.title.replace(/第.*[章节][：:]?/, '');
+    const total = (sec.mcqs || []).length;
+    const { mastered } = getChapterProgress(currentSubject, sec.id, total);
+    metaEl.textContent = total === 0 ? '整理中' : mastered === total ? '已掌握' : mastered ? `${mastered}/${total}` : `${total} 题`;
+    metaEl.classList.toggle('is-done', total > 0 && mastered === total);
+    toggle.setAttribute('aria-label', `章节：${sec.title}，${metaEl.textContent}。按一下${toggle.getAttribute('aria-expanded') === 'true' ? '收起' : '换章节'}`);
+    test.hidden = total === 0;
+    test.title = `一次做完这一章 ${total} 题，交卷才看答案`;
+  }
+
+  function setChapterPanel(open) {
+    const panel = document.getElementById('chapterPanel');
+    const toggle = document.getElementById('chapterToggle');
+    if (!panel || !toggle) return;
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    renderChapterPicker((fullDatabase.sections || [])[activeChapterIdx]);
+    if (open) {
+      // 选中的那一章卷到正中间：以前手机上常常只露出半张
+      const active = panel.querySelector('.chapter-card.active');
+      if (active) active.scrollIntoView({ block: 'nearest', inline: 'center' });
+    }
+  }
+  window.setChapterPanel = setChapterPanel;
+
+  document.getElementById('chapterToggle').addEventListener('click', () => {
+    playSound('pop');
+    setChapterPanel(document.getElementById('chapterPanel').hidden);
+  });
+  document.getElementById('chapterPanel').addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    setChapterPanel(false);
+    document.getElementById('chapterToggle').focus();
+  });
 
   function selectChapter(idx) {
     cameFromReview = false;
@@ -2161,12 +2255,6 @@ function openSubject(subject, initialChapterIdx, subMode) {
         return;
       }
       const item = sec.mcqs[currentMcqIdx];
-      const testEntry = `
-        <div class="test-entry">
-          <div class="test-entry-text"><strong>整章测验</strong><span>一次做完这一章 ${sec.mcqs.length} 题，交卷才看答案</span></div>
-          <button type="button" class="test-entry-btn" id="testStartBtn" onclick="startChapterTest()">开始测验</button>
-        </div>`;
-
       let figureHtml = '';
       if (item.image) {
         figureHtml = `
@@ -2182,7 +2270,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
           </div>`;
       }
 
-      area.innerHTML = testEntry + `
+      area.innerHTML = `
         <div class="flashcard">
           <div class="mcq-question">${item.q}</div>
           ${figureHtml}

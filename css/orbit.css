@@ -81,6 +81,11 @@
 .orbit-stage.has-selection .orbit-node:not(.is-selected) .node-disc,
 .orbit-stage.has-selection .orbit-node:not(.is-selected) .node-deco { opacity: .3; }
 .orbit-node[aria-disabled="true"] { cursor: default; }
+/* 还没有题的科目：球与装饰淡一点，还是点得到（点开会说明整理中）。有题的科目自然成为第一眼 */
+.orbit-node.is-empty:not(.is-selected) .node-disc { opacity: .62; }
+.orbit-node.is-empty:not(.is-selected) .node-deco { opacity: .4; }
+.orbit-node.is-empty:not(.is-selected):hover .node-disc,
+.orbit-node.is-empty:not(.is-selected):focus-visible .node-disc { opacity: 1; }
 
 .node-disc {
   position: relative;

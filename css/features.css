@@ -198,7 +198,7 @@
   background: #fffbea; border: 1.5px solid #f3d27a; animation: softFadeIn 0.2s ease;
 }
 .note-inline-head { font-size: 12px; font-weight: 800; color: #a16207; margin-bottom: 6px; }
-.note-inline-text { font-size: 14px; line-height: 1.7; color: #3f3f46; white-space: pre-wrap; word-break: break-word; }
+.note-inline-text { font-size: 14px; line-height: 1.75; color: #3f3f46; white-space: pre-wrap; word-break: break-word; }
 .note-inline-ink { display: block; max-width: 100%; margin-top: 8px; border-radius: 10px; background: #fff; border: 1px solid #f1e3b3; }
 .flashcard, .form-question-card { position: relative; }
 .flashcard { padding-bottom: 56px; }
@@ -258,9 +258,6 @@
 .btn-danger:hover, .note-mini-btn.danger:hover {
   background: var(--fn-danger-soft); border-color: var(--fn-danger); color: var(--fn-danger);
 }
-/* 存下来、送出去这类「确认」动作一律绿色。原本是珊瑚红，那是身份色，
-   放在按钮上会被读成「危险／会出事」，跟它实际做的事相反 */
-.btn-primary-retro { background: var(--fn-go); box-shadow: 0 4px 12px -2px rgba(4, 120, 87, .45); }
 /* 跟资料、时间有关的次要动作用青色 */
 .note-mini-btn.is-time { color: var(--fn-time); border-color: rgba(14, 116, 144, .4); }
 .note-pen-colors { display: flex; gap: 6px; align-items: center; }
@@ -315,10 +312,12 @@
   padding: 14px 16px; background: #f8fafc; border-top: 1px solid #e2e8f0; flex-wrap: wrap;
 }
 .note-save-hint { font-size: 12px; color: var(--text-muted); }
+/* 存下来、送出去这类「确认」动作一律绿色。珊瑚红是身份色，放在按钮上会被读成「危险／会出事」，
+   跟它实际做的事相反。（以前绿色写在前面一条、这里又写回珊瑚红，後写的赢，所以一直是红的） */
 .btn-primary-retro {
-  background: var(--retro-coral-deep); border: none; color: #fff;
+  background: var(--fn-go); border: none; color: #fff;
   padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;
-  box-shadow: 0 4px 12px -2px rgba(225, 97, 76, 0.5); transition: all 0.2s;
+  box-shadow: 0 4px 12px -2px rgba(4, 120, 87, .45); transition: all 0.2s;
 }
 .btn-primary-retro:hover { filter: brightness(1.06); transform: translateY(-1px); }
 .btn-ghost-retro {
@@ -469,6 +468,8 @@
   gap: 0;
 }
 .sprite-wrap.active { display: flex; animation: spriteIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+/* 图还没载好：位置先占好（导览找得到），但看不见、点不到，飞入动画停在第一格 */
+.sprite-wrap.active.is-loading { opacity: 0; pointer-events: none; animation-play-state: paused; }
 .sprite-wrap.leaving { animation: spriteOut 0.55s ease forwards; }
 @keyframes spriteIn {
   from { opacity: 0; transform: translateY(24px) scale(0.85); }
@@ -555,7 +556,7 @@
 .sprite-badge {
   position: absolute; top: 2px; right: 6px;
   min-width: 20px; height: 20px; border-radius: 10px;
-  background: var(--danger); color: #fff;
+  background: #dc2626; color: #fff;   /* --danger（#ef4444）配白字只有 3.8:1，小字要 4.5:1 */
   font-size: 12px; font-weight: 800;
   display: flex; align-items: center; justify-content: center;
   border: 2px solid #fff;

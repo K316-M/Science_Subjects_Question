@@ -17,8 +17,8 @@
 
   const SUBJECTS = [
     { key: 'biology',   name: '生物',     en: 'Biology',     accent: '#059669', deco: 'dna',       glyph: 'leaf',     enabled: true,  note: '光合呼吸 · 神经调节 · 遗传育种' },
-    { key: 'chemistry', name: '化学',     en: 'Chemistry',   accent: '#7c3aed', deco: 'atom',      glyph: 'flask',    enabled: true,  note: '题库整理中' },
-    { key: 'physics',   name: '物理',     en: 'Physics',     accent: '#0284c7', deco: 'pendulum',  glyph: 'wave',     enabled: true,  note: '题库整理中' },
+    { key: 'chemistry', name: '化学',     en: 'Chemistry',   accent: '#7c3aed', deco: 'atom',      glyph: 'flask',    enabled: true,  note: '化学键 · 化学平衡 · 有机化学' },
+    { key: 'physics',   name: '物理',     en: 'Physics',     accent: '#0284c7', deco: 'pendulum',  glyph: 'wave',     enabled: true,  note: '力学 · 电磁学 · 光学' },
     { key: 'math',      name: '高级数学', en: 'Adv. Maths',  accent: '#d97706', deco: 'geometry',  glyph: 'graph',    enabled: false, note: '尚未开放' },
   ];
   /* ======================================== */
@@ -98,7 +98,7 @@
         `</svg>` +
         `<span class="node-glyph" aria-hidden="true">${svgGlyph(subject.glyph)}</span>` +
       `</span>` +
-      `<span class="node-label">${subject.name}<em>${subject.en}</em></span>`;
+      `<span class="node-label">${subject.name}<em class="node-sub">${subject.en}</em></span>`;
     return btn;
   }
 
@@ -183,11 +183,24 @@
     return { total, done, pct: total ? Math.round(done / total * 100) : 0 };
   }
 
+  // 球底下那行：题数载入後，英文名换成这一科的状态。还没点之前就看得出哪一科有题
+  function statusFor(s) {
+    if (!s.enabled) return '尚未开放';
+    if (s.any === undefined) return null;
+    return s.any === 0 ? '整理中' : `${s.total} 题`;
+  }
+
   function refresh() {
     SUBJECTS.forEach((s, i) => {
       const { pct } = statsFor(i);
       const arc = nodes[i].querySelector('.arc-fg');
       if (arc) arc.style.strokeDashoffset = ARC_LENGTH * (1 - pct / 100);
+      const status = statusFor(s);
+      if (status) {
+        nodes[i].querySelector('.node-sub').textContent = status;
+        nodes[i].setAttribute('aria-label', `${s.name} ${s.en}，${status}`);
+      }
+      nodes[i].classList.toggle('is-empty', !s.enabled || s.any === 0);
     });
     if (selected !== null) fillPanel(selected);
   }
@@ -197,7 +210,7 @@
     const { total, done, pct } = statsFor(i);
     stage.style.setProperty('--accent-color', s.accent);
     panelTitle.textContent = `${s.name} (${s.en})`;
-    panelSub.textContent = s.note;
+    panelSub.textContent = s.enabled && s.any === 0 ? '题库整理中，题目陆续上架' : s.note;
     panelBar.style.width = `${pct}%`;
     panelStat.innerHTML = total
       ? `已掌握 <strong>${pct}%</strong> · ${done} / ${total} 题`

@@ -369,6 +369,9 @@ async function run() {
       if (await page.evaluate(() => document.activeElement.classList.contains('option-btn'))) break;
     }
     check('键盘', '经跳转链接到第一个选项 ≤ 10 下 Tab', n + 1 <= 10, `${n + 1} 下`);
+    // 章节列平常收在选单里：先点开，再用方向键
+    await page.evaluate(() => document.getElementById('chapterToggle').click());
+    await page.waitForTimeout(300);
     await page.evaluate(() => document.querySelector('#chapterRail [tabindex="0"]').focus());
     const ch0 = await page.evaluate(() => document.querySelector('#chapterRail [aria-selected="true"]').getAttribute('aria-label'));
     await page.keyboard.press('ArrowRight');
@@ -376,6 +379,11 @@ async function run() {
     const ch = await page.evaluate(() => ({ now: document.querySelector('#chapterRail [aria-selected="true"]').getAttribute('aria-label'),
       focused: document.activeElement.getAttribute('aria-selected') === 'true' }));
     check('键盘', '章节列用方向键切换，焦点跟著走', ch.now !== ch0 && ch.focused);
+    const stillOpen = await page.evaluate(() => !document.getElementById('chapterPanel').hidden);
+    check('键盘', '用方向键换章时选单保持展开（只有真的点一下才收起）', stillOpen);
+    await page.keyboard.press('Escape');
+    const esc2 = await page.evaluate(() => ({ closed: document.getElementById('chapterPanel').hidden, focus: document.activeElement.id }));
+    check('键盘', '按 Esc 收起章节选单，焦点回到选单按钮', esc2.closed && esc2.focus === 'chapterToggle', JSON.stringify(esc2));
     await page.evaluate(() => { window.openSubject('biology'); });
     await page.waitForTimeout(1100);
     await page.evaluate(() => document.body.focus());
