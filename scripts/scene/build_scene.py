@@ -5,13 +5,13 @@
   pip install -r scripts/scene/requirements.txt
 
   # 1. 分析：找出画面上每一个独立的元素，输出一张标了编号的检查图
-  python scripts/scene/build_scene.py analyze scripts/scene/refs/biology.png /tmp/bio
+  python scripts/scene/build_scene.py analyze source/scene/biology.png /tmp/bio
 
   # 2. 看 /tmp/bio/components.png，决定哪些编号要组成哪个图层、怎么动，写进设定档
-  #    （参考 scripts/scene/biology.json）
+  #    （参考 source/scene/biology.json）
 
   # 3. 产出：底图、各图层、scene.json（连护眼模式的夜色底图一起）
-  python scripts/scene/build_scene.py build scripts/scene/biology.json /tmp/bio assets/visual/biology
+  python scripts/scene/build_scene.py build source/scene/biology.json /tmp/bio assets/visual/biology
 
   # 只重做夜色底图（调 NIGHT_PAPER / NIGHT_K 之後）
   python scripts/scene/build_scene.py night assets/visual/biology

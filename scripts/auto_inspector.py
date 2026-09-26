@@ -4,7 +4,7 @@ import json
 SUBJECTS = ["biology", "chemistry", "physics"]
 SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理"}
 PENDING_PATH = "papers/pending_approval.json"
-REPORT_PATH = "INSPECTION_REPORT.md"
+REPORT_PATH = "docs/INSPECTION_REPORT.md"
 
 FIG_KEYWORDS = ["图", "曲线", "装置", "示意图", "如下"]
 

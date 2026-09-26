@@ -93,13 +93,13 @@
 
 | 想做什么 | 放在哪里 | 说明 |
 |---|---|---|
-| 加题目（照片、Word、PPT、PDF） | `drafts/<biology\|chemistry\|physics>/` | [drafts/README.md](drafts/README.md) |
+| 加题目（照片、Word、PPT、PDF） | `drafts/<biology\|chemistry\|physics>/` | [drafts/README.md](../drafts/README.md) |
 | 改已上线的题、换配图 | 网站 `/dev` →「题目修改」 | 不用碰 JSON，见 [OPERATIONS 一·4](OPERATIONS.md#4-修改已上线的题) |
 | 改章节名称或顺序 | `papers/<科目>_question_bank.json` 的 `sections[].title` | 🔴 不要改 `id`，学生的进度、笔记、划线都靠它对应 |
-| 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](syllabus/README.md) |
-| 换背景图、背景音乐 | `assets/visual/<科目>/`、`assets/audio/<科目>/` | [assets/README.md](assets/README.md) |
+| 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](../syllabus/README.md) |
+| 换背景图、背景音乐 | `assets/visual/<科目>/`、`assets/audio/<科目>/` | [assets/README.md](../assets/README.md) |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |
-| 小精灵的姿势图 | `scripts/sprite/refs/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
+| 小精灵的姿势图 | `source/sprite/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
 | 申诉处理结果 | 网站 `/dev` →「申诉处理」 | 不必手改 `data/resolved_issues.json` |
 
 ---
@@ -118,10 +118,11 @@ Vercel 与 GitHub 的环境变数、金钥放哪里，见 [OPERATIONS 四](OPERA
 
 | 档案 | 给谁看 |
 |---|---|
-| `CUSTOMIZE.md`（这份） | 你：想改东西先查这里 |
-| `OPERATIONS.md` | 你：日常操作（录题、审题、申诉）、设定、排错的完整步骤 |
+| `README.md`（根目录） | 第一次打开仓库的人：这是什么、怎么运作、东西放在哪 |
+| `docs/CUSTOMIZE.md`（这份） | 你：想改东西先查这里 |
+| `docs/OPERATIONS.md` | 你：日常操作（录题、审题、申诉）、设定、排错的完整步骤；附录 B 是完整档案地图 |
 | `drafts/README.md`、`syllabus/README.md`、`assets/README.md` | 你：各自那个资料夹怎么放东西 |
-| `DESIGN.md` | 设计每一轮做了什么、为什么，给下一轮改版参考 |
-| `All_chapter.md` | 三科官方章节清单的原始抄本（题库的章节框架由它而来） |
-| `INSPECTION_REPORT.md` | 自动产生的题库体检报告，不用手改 |
-| `CLAUDE.md` | 给 Claude 的工作守则 |
+| `docs/DESIGN.md` | 设计每一轮做了什么、为什么，给下一轮改版参考 |
+| `docs/All_chapter.md` | 三科官方章节清单的原始抄本（题库的章节框架由它而来） |
+| `docs/INSPECTION_REPORT.md` | 自动产生的题库体检报告，不用手改 |
+| `CLAUDE.md`、`.claude/` | 给 Claude 的工作守则与技能（Claude 只在这个位置找，不能搬） |

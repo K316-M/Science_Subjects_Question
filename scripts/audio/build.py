@@ -1,4 +1,4 @@
-"""背景音乐：scripts/audio/src/<场景>/<档名>.* → assets/audio/<场景>/<档名>.mp3
+"""背景音乐：source/audio/<场景>/<档名>.* → assets/audio/<场景>/<档名>.mp3
 
   1. 剪掉头尾静音：原档结尾常有好几秒安静，网页循环播放时就会断一截
   2. 做成无缝循环：把结尾最後几秒和开头交叉淡接，放到尾巴；
@@ -6,7 +6,8 @@
   3. 音量统一到 -20 LUFS（所有页面一样大声，换页不会突然变响）
   4. 编成 96kbps mp3（背景音乐够用；原档更低就照原档）
 
-原档放 scripts/（.vercelignore 排除，不会部署），网站只拿处理过的。
+原档放 source/audio/（.vercelignore 排除，不会部署），网站只拿处理过的。
+source/audio/candidates/ 是还没决定要不要用的候选曲，这支脚本不会处理。
 网页只认 ambient / background 这两个档名（js/scene-assets.js）。
 
 用法：python3 scripts/audio/build.py            # 全部
@@ -20,7 +21,7 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, 'src')
+SRC = os.path.join(HERE, '..', '..', 'source', 'audio')
 OUT = os.path.join(HERE, '..', '..', 'assets', 'audio')
 LUFS = -20
 XFADE = 3.0          # 交叉淡接秒数；曲子太短时会自动缩短
@@ -96,9 +97,10 @@ def build(src):
 def main():
     only = sys.argv[1] if len(sys.argv) > 1 else None
     files = sorted(glob.glob(os.path.join(SRC, '*', '*.*')))
+    files = [f for f in files if os.path.basename(os.path.dirname(f)) != 'candidates']
     files = [f for f in files if not only or os.path.basename(os.path.dirname(f)) == only]
     if not files:
-        print('scripts/audio/src/ 里没有档案')
+        print('source/audio/ 里没有档案')
     for f in files:
         build(f)
 

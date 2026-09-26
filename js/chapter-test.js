@@ -32,7 +32,7 @@ body.in-test .top-nav, body.in-test .util-bar, body.in-test #spriteWrap { displa
 .test-q {
   min-width: 0;   /* fieldset 预设 min-width: min-content，长题干会把卡片撑出画面 */
   border: 1px solid rgba(255,255,255,.9); border-radius: 20px; margin: 0 0 14px; padding: 20px 20px 16px;
-  /* 一整页十几张卡，不用毛玻璃：手机上背景会动，玻璃每帧都要重算（见 DESIGN.md 原则 3） */
+  /* 一整页十几张卡，不用毛玻璃：手机上背景会动，玻璃每帧都要重算（见 docs/DESIGN.md 原则 3） */
   background: rgba(255,255,255,.9);
   box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 10px 24px -14px rgba(15,23,42,.18);
   transition: border-color .2s ease, box-shadow .2s ease;

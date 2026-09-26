@@ -1,4 +1,4 @@
-"""小精灵姿势图：refs/*.png → assets/sprite/*.webp
+"""小精灵姿势图：source/sprite/*.png → assets/sprite/*.webp
 
   1. 去光晕：把半透明的柔光外圈切掉，边缘像素的颜色换成内侧实色，避免白边/灰边
   2. 色调与饱和度对齐 idle：拿每张都有、而且一模一样的滑板量色偏，R/G/B 各自拉回 idle 的颜色（最多 ±20%）；
@@ -18,7 +18,7 @@ import numpy as np
 from PIL import Image, ImageEnhance
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REFS = os.path.join(HERE, 'refs')
+REFS = os.path.join(HERE, '..', '..', 'source', 'sprite')
 OUT = os.path.join(HERE, '..', '..', 'assets', 'sprite')
 SIZE = 256
 KEEP_SAT = {'portal'}        # 不做色调与饱和度对齐
