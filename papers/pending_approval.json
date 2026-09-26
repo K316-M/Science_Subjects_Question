@@ -23,30 +23,6 @@
         "ai_answer": 0,
         "reason": "呼吸道过敏会导致平滑肌收缩、粘液分泌增加和气喘，但不会在气管内侧出现皮肤特有的红疹。"
       }
-    },
-    {
-      "id": "biology_c31fd60b6b",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap6",
-      "chapter_title": "第6章：营养成分的运输",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.102577Z",
-      "q": "下列哪一组物质与血栓的形成有关?\nI钙 II血小板 III血红素 Ⅳ凝血酶原 V纤维蛋白原",
-      "options": [
-        "A. I，II，III，Ⅳ",
-        "B. I，II，III，V",
-        "C. I，II，Ⅳ，V",
-        "D. I，III，Ⅳ，V"
-      ],
-      "answer": 2,
-      "explanation": "血液凝固和血栓形成是一个复杂的级联反应。血小板（II）释放凝血因子，在钙离子（I）的参与下，促使凝血酶原（IV）激活为凝血酶，进而使可溶性的纤维蛋白原（V）转变为不溶性的纤维蛋白，形成血栓。血红素（III）主要负责运输氧气，不直接参与凝血过程。",
-      "review": {
-        "ai_answer": 2,
-        "reason": "血液凝固过程需要血小板、钙离子、凝血酶原和纤维蛋白原的共同参与，而血红素与凝血无关。"
-      }
     }
   ],
   "generated_at": "2026-09-25T06:18:12.273685Z"
