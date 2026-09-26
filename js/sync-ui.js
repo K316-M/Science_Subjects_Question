@@ -27,6 +27,8 @@
 .sync-input{width:100%;margin-top: 10px;padding: 12px 12px;border-radius:12px;border:1px solid #cbd5e1;
   font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;letter-spacing:1.2px;text-transform:uppercase;}
 .sync-note{margin-top: 12px;font-size:12px;line-height:1.75;color:var(--text-muted,#64748b);}
+.sync-past{align-items:center;margin-top: 6px;}
+.sync-past-code{flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;letter-spacing:.04em;color:var(--text-main,#0f172a);}
 .sync-qr{width:176px;height:176px;margin: 14px auto 4px;padding: 8px;border-radius:14px;background:#fff;
   border:1px solid #e2e8f0;display:grid;place-items:center;}
 .sync-qr svg{width:100%;height:100%;display:block;}
@@ -118,7 +120,7 @@
       const row2 = el('div', 'sync-row');
       const join = el('button', 'sync-btn', '连接');
       join.onclick = () => {
-        const r = window.UECSync.connect(input.value);
+        const r = window.UECSync.connect(input.value);   // 换码时原本那串会被记下来（见 js/sync.js remember）
         if (!r.ok) return say(r.message, false);
         render(); say('已连接，正在同步…', true); doSync();
       };
@@ -168,6 +170,24 @@
       const done = el('button', 'sync-btn ghost', '关闭'); done.onclick = close;
       row2.append(off, done);
       box.appendChild(row2);
+    }
+
+    // 用过的同步码：换码或断开时自动记下来。云端的资料还在，只是这台装置不再连它
+    const past = (s.history || []).filter(h => h.code !== s.code);
+    if (past.length) {
+      box.appendChild(el('div', 'sync-note', '这台装置用过的同步码（那边的资料还在，可以切回去）：'));
+      past.forEach(h => {
+        const row = el('div', 'sync-row sync-past');
+        row.appendChild(el('span', 'sync-past-code', window.UECSync.pretty(h.code)));
+        const back = el('button', 'sync-btn ghost', '切回这串');
+        back.onclick = () => {
+          if (s.connected && !confirm(`改接 ${window.UECSync.pretty(h.code)}？这台装置的资料会合并过去；现在这串也会记在这里。`)) return;
+          const r = window.UECSync.connect(h.code);
+          if (r.ok) { render(); say('已切换，正在同步…', true); doSync(); }
+        };
+        row.appendChild(back);
+        box.appendChild(row);
+      });
     }
 
     msgEl = el('div', 'sync-msg');

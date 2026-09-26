@@ -31,6 +31,15 @@ function getNote(ctx) {
   return loadNotesStore()[noteIdFor(ctx)] || null;
 }
 
+// 删除要留纪录：不然另一台装置还有这则笔记，同步一次它就回来了（js/sync.js 会看这份纪录）
+function markNoteDeleted(id) {
+  try {
+    const del = JSON.parse(localStorage.getItem('UEC_NOTES_DELETED_v1')) || {};
+    del[id] = Date.now();
+    localStorage.setItem('UEC_NOTES_DELETED_v1', JSON.stringify(del));
+  } catch (e) { /* 存不了就算了，最坏是笔记被同步回来 */ }
+}
+
 /* ---------- 画布绘图引擎 ---------- */
 const noteDraw = {
   canvas: null,
@@ -234,6 +243,7 @@ function saveCurrentNote() {
     if (store[id]) {
       delete store[id];
       saveNotesStore(store);
+      markNoteDeleted(id);
     }
     noteDirty = false;
     closeNoteEditor(true);
@@ -544,6 +554,7 @@ function deleteNoteById(id) {
   const store = loadNotesStore();
   delete store[id];
   saveNotesStore(store);
+  markNoteDeleted(id);
   if (typeof playSound === 'function') playSound('wrong');
   renderNotesView();
 }
