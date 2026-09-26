@@ -19,19 +19,21 @@ const CH1 = bank.sections[0];
 
 let URL_, browser;
 
-async function open({ width = 390, height = 844, mobile = false, reducedMotion, seed } = {}) {
+async function open({ width = 390, height = 844, mobile = false, reducedMotion, seed, clock = false } = {}) {
   const ctx = await browser.newContext({ viewport: { width, height }, hasTouch: mobile, isMobile: mobile, reducedMotion });
   // sessionStorage 标记：只在第一次载入时塞资料，重新整理不会把测试中的状态洗掉
   await ctx.addInitScript((seed) => {
     if (sessionStorage.getItem('__seeded')) return;
     sessionStorage.setItem('__seeded', '1');
-    localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1 }));
+    // explain 也要算看过：答完第一题 1.5 秒後它会自己跳出来，淡入到一半被对比度取样到就误报
+    localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1, explain: 1 }));
     if (seed) Object.entries(seed).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
   }, seed || null);
   const page = await ctx.newPage();
   const errors = [], requests = [];
   page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
   page.on('request', r => requests.push(new URL(r.url()).pathname));
+  if (clock) await page.clock.install();
   await page.goto(URL_);
   await page.waitForTimeout(1000);
   return { ctx, page, errors, requests };
@@ -182,6 +184,7 @@ async function run() {
     const next = () => page.evaluate(() => document.querySelector('.tour-tip .tour-btn.go').click());
     const first = await tipTitle();
     check('画面导览', '第一次打开：首页自动开始导览，第一步是欢迎', first === '欢迎来到独中理科', first);
+    await contrast(page, 'desktop 导览', '.tour-tip', R);
     const seenTitles = [];
     for (let i = 0; i < 8 && await tipTitle(); i++) { seenTitles.push(await tipTitle()); await next(); await page.waitForTimeout(600); }
     const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('UEC_TOUR_v1') || '{}'));
@@ -534,7 +537,7 @@ async function run() {
     // 装置是深色：一开就是护眼，而且在画面出来之前就定了（不会先闪白）
     const d = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
     await mark(d);
-    await d.addInitScript(() => { if (!sessionStorage.getItem('__s')) { sessionStorage.setItem('__s', 1); localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1 })); } });
+    await d.addInitScript(() => { if (!sessionStorage.getItem('__s')) { sessionStorage.setItem('__s', 1); localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1, explain: 1 })); } });
     const dp = await d.newPage(); const derr = []; dp.on('pageerror', e => derr.push(String(e).slice(0, 200)));
     await dp.goto(URL_); await dp.waitForTimeout(800);
     const sys = await theme(dp);
@@ -555,6 +558,11 @@ async function run() {
     await dp.evaluate(() => window.switchSubSection('wrong'));
     await dp.waitForTimeout(400);
     await contrast(dp, 'night desktop 错题本', null, R);
+    // 其他测验把 explain 预设成看过（免得它半途跳出来），导览框改在这里固定叫出来、淡入完再量
+    await dp.evaluate(() => { window.switchSubSection('mcq'); window.UECOnboarding.start('explain'); });
+    await dp.waitForTimeout(600);
+    await contrast(dp, 'night desktop 导览', '.tour-tip', R);
+    await dp.keyboard.press('Escape');
     await dp.evaluate(() => { window.switchSubSection('mcq'); document.getElementById('testStartBtn').click(); });
     await dp.waitForTimeout(500);
     await dp.evaluate(() => document.querySelectorAll('#viewTest fieldset.test-q').forEach(f => f.querySelector('input').click()));
@@ -681,6 +689,32 @@ async function run() {
       await ctx.close();
     });
   }
+
+  await section('模拟统考', async () => {
+    // 开了模拟统考放著不管、时间到自动交卷：没答的算错，但不能写进错题本与复习排程（曾经整份 40 题都被记成错题）
+    const { ctx, page, errors } = await open({ width: 1440, height: 900, clock: true });
+    await enter(page);
+    await page.evaluate(() => document.getElementById('mockExamBtn').click());
+    await page.waitForTimeout(500);
+    const minutes = Number(await page.evaluate(() => document.getElementById('mockExamLabel').textContent.match(/(\d+) 分钟/)[1]));
+    await page.evaluate(() => document.querySelector('#viewTest fieldset.test-q input').click());
+    await page.clock.fastForward(minutes * 60e3 + 2000);
+    await page.waitForTimeout(700);
+    const r = await page.evaluate(() => ({ done: !!document.querySelector('.test-result'),
+      review: Object.keys(JSON.parse(localStorage.getItem('UEC_REVIEW_v1') || '{}')).length,
+      progress: Object.values(JSON.parse(localStorage.getItem('UEC_PROGRESS_v1') || '{}')).reduce((n, s) => n + Object.values(s).reduce((m, ch) => m + Object.keys(ch).length, 0), 0) }));
+    check('模拟统考', '时间到自动交卷', r.done);
+    check('模拟统考', '只答了一题：错题本与复习排程只多一笔', r.review === 1 && r.progress === 1, `复习 ${r.review} 笔、进度 ${r.progress} 笔`);
+    const rec1 = await page.evaluate(() => localStorage.getItem('UEC_REVIEW_v1'));
+    await page.evaluate(() => [...document.querySelectorAll('.test-actions .test-btn')].find(x => x.textContent.startsWith('重做')).click());
+    await page.waitForTimeout(400);
+    await page.evaluate(() => document.querySelectorAll('#viewTest fieldset.test-q').forEach(f => f.querySelector('input').click()));
+    await page.evaluate(() => document.querySelector('.test-submit').click());
+    await page.waitForTimeout(600);
+    check('模拟统考', '看过解析再重做没答的题，也不写进复习排程', await page.evaluate(() => localStorage.getItem('UEC_REVIEW_v1')) === rec1);
+    check('模拟统考', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
 
   // 对比度汇总：同一个元素同一种颜色只算一次，取最差的那个样本
   const uniq = {};

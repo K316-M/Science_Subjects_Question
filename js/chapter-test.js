@@ -1,7 +1,7 @@
 /* 整章测验：一次做完一章的全部选择题，全部答完才能交卷，交卷才看答案。
  * 进入後隐藏导航，只能交卷或按「退出测验」离开 —— 这是自我检测，不是练习。
  *
- * 计时模式（模拟统考）：opts.timeLimitMs 有值时倒数；时间到自动交卷，没答的算错；
+ * 计时模式（模拟统考）：opts.timeLimitMs 有值时倒数；时间到自动交卷，没答的算错（只算分数，不写进错题本与复习排程）；
  * 可以提早交卷，还有题没答时第一次按会先提醒，再按一次才交。
  *
  * 只计第一次交卷：SM-2 对同一天重复作答没有防护，看过答案马上重做一定全对，
@@ -398,7 +398,8 @@ legend.test-q-head { float: left; width: 100%; }
       if (s.recorded.has(r.item.idx)) return;
       s.recorded.add(r.item.idx);
       fresh += 1;
-      s.opts.onRecord(r.item.idx, r.correct);
+      // 没作答只在分数上算错，不写进错题本与复习排程：没答不等於不会（模拟统考放著不管，整份卷会变成错题）
+      if (r.chosen !== undefined) s.opts.onRecord(r.item.idx, r.correct);
     });
     const right = results.filter(r => r.correct).length;
     if (s.opts.playSound) { try { s.opts.playSound(right === results.length ? 'achieve' : 'flip'); } catch (e) {} }
@@ -428,9 +429,10 @@ legend.test-q-head { float: left; width: 100%; }
     card.append(score, el('div', 'test-score-pct', `答对 ${pct}%`), el('p', 'test-score-msg', msg));
     if (s.usedMs) {
       const blank = results.filter(r => r.chosen === undefined).length;
+      const blankNote = blank ? `；没答的 ${blank} 题算错，但不收进错题本` : '';
       card.appendChild(el('p', 'test-time-note', s.timedOut
-        ? `时间到，自动交卷${blank ? `；没答的 ${blank} 题算错` : ''}。`
-        : `用时 ${mmss(s.usedMs)}（限时 ${mmss(s.opts.timeLimitMs)}）`));
+        ? `时间到，自动交卷${blankNote}。`
+        : `用时 ${mmss(s.usedMs)}（限时 ${mmss(s.opts.timeLimitMs)}）${blankNote}`));
       s.usedMs = 0;
     }
 
