@@ -25,7 +25,8 @@ async function open({ width = 390, height = 844, mobile = false, reducedMotion, 
   await ctx.addInitScript((seed) => {
     if (sessionStorage.getItem('__seeded')) return;
     sessionStorage.setItem('__seeded', '1');
-    localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1 }));
+    // explain 也要算看过：答完第一题 1.5 秒後它会自己跳出来，淡入到一半被对比度取样到就误报
+    localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1, explain: 1 }));
     if (seed) Object.entries(seed).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
   }, seed || null);
   const page = await ctx.newPage();
@@ -183,6 +184,7 @@ async function run() {
     const next = () => page.evaluate(() => document.querySelector('.tour-tip .tour-btn.go').click());
     const first = await tipTitle();
     check('画面导览', '第一次打开：首页自动开始导览，第一步是欢迎', first === '欢迎来到独中理科', first);
+    await contrast(page, 'desktop 导览', '.tour-tip', R);
     const seenTitles = [];
     for (let i = 0; i < 8 && await tipTitle(); i++) { seenTitles.push(await tipTitle()); await next(); await page.waitForTimeout(600); }
     const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('UEC_TOUR_v1') || '{}'));
@@ -535,7 +537,7 @@ async function run() {
     // 装置是深色：一开就是护眼，而且在画面出来之前就定了（不会先闪白）
     const d = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
     await mark(d);
-    await d.addInitScript(() => { if (!sessionStorage.getItem('__s')) { sessionStorage.setItem('__s', 1); localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1 })); } });
+    await d.addInitScript(() => { if (!sessionStorage.getItem('__s')) { sessionStorage.setItem('__s', 1); localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1, explain: 1 })); } });
     const dp = await d.newPage(); const derr = []; dp.on('pageerror', e => derr.push(String(e).slice(0, 200)));
     await dp.goto(URL_); await dp.waitForTimeout(800);
     const sys = await theme(dp);
@@ -556,6 +558,11 @@ async function run() {
     await dp.evaluate(() => window.switchSubSection('wrong'));
     await dp.waitForTimeout(400);
     await contrast(dp, 'night desktop 错题本', null, R);
+    // 其他测验把 explain 预设成看过（免得它半途跳出来），导览框改在这里固定叫出来、淡入完再量
+    await dp.evaluate(() => { window.switchSubSection('mcq'); window.UECOnboarding.start('explain'); });
+    await dp.waitForTimeout(600);
+    await contrast(dp, 'night desktop 导览', '.tour-tip', R);
+    await dp.keyboard.press('Escape');
     await dp.evaluate(() => { window.switchSubSection('mcq'); document.getElementById('testStartBtn').click(); });
     await dp.waitForTimeout(500);
     await dp.evaluate(() => document.querySelectorAll('#viewTest fieldset.test-q').forEach(f => f.querySelector('input').click()));
