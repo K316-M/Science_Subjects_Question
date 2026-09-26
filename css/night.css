@@ -206,6 +206,10 @@
 [data-theme="night"] .kbd-hint kbd { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
 [data-theme="night"] .card-note-btn { box-shadow: 0 3px 8px rgba(0, 0, 0, .35); }
 [data-theme="night"] .card-note-btn:hover { background: var(--retro-teal); color: var(--n-text); }
+[data-theme="night"] .note-inline-toggle { box-shadow: 0 3px 8px rgba(0, 0, 0, .35); }
+[data-theme="night"] .note-inline { background: #2e2a1c; border-color: #6b5a2a; }
+[data-theme="night"] .note-inline-head { color: #e8c97a; }
+[data-theme="night"] .note-inline-text { color: var(--n-text); }
 [data-theme="night"] .card-note-btn.has-note { background: #9c4a3a; border-color: #9c4a3a; color: var(--n-btn-text); }
 
 /* 实心的主要按钮：深玉绿 × 米白字 */

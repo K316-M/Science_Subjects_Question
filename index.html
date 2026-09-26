@@ -850,9 +850,9 @@
     }
     .test-entry-btn:hover { background: var(--primary-dark); }
 
-    /* 只在有实体键盘的装置提示快捷键 */
+    /* 只在有实体键盘的装置提示快捷键；视窗太窄时会和右下角的笔记按钮叠在一起，也不显示 */
     .kbd-hint { display: none; }
-    @media (hover: hover) and (pointer: fine) {
+    @media (hover: hover) and (pointer: fine) and (min-width: 600px) {
       .kbd-hint {
         display: block; position: absolute; left: 20px; bottom: 17px;
         font-size: 12px; color: var(--text-muted);
