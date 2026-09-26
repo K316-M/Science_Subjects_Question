@@ -181,6 +181,8 @@
   };
 
   let block, spot, tip, tourName = null, steps = [], index = 0, returnTo = null, target = null, rafId = 0, holding = false;
+  // 导览开始前的捲动位置（整页，加上每一步捲动到的外层捲动区）：结束时捲回去，不停在最後一步
+  let scrolled = null;
 
   function currentTourName() {
     const test = document.getElementById('viewTest');
@@ -264,7 +266,15 @@
     foot.appendChild(next);
     tip.append(title, body, foot);
 
-    if (target) target.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
+    if (target) {
+      // 这一步要捲动的每一层：第一次捲到之前先记下原本的位置
+      for (let p = target.parentElement; p && p !== document.body; p = p.parentElement) {
+        if (!scrolled.has(p) && (p.scrollHeight > p.clientHeight || p.scrollWidth > p.clientWidth)) {
+          scrolled.set(p, { left: p.scrollLeft, top: p.scrollTop });
+        }
+      }
+      target.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
+    }
     // 等捲动落定再定位，否则亮框会对到捲动前的位置
     setTimeout(() => { place(); tip.classList.add('is-shown'); next.focus({ preventScroll: true }); }, target && !reduced() ? 360 : 30);
   }
@@ -297,19 +307,28 @@
     if (!name || !TOURS[name] || tourName) return;
     if (!force && readSeen()[name]) return;
     steps = TOURS[name];
+    // 要在第一步的 before 之前记：它可能展开东西、改变页面高度与捲动位置
+    const origin = { left: scrollX, top: scrollY };
     const first = resolveStep(0, 1);
     if (first === -1) return;
     tourName = name; index = first;
     // 模拟统考的导览开着时先不计时，读完才开始倒数（测验中工具列藏起来，按不到「引导」，不会被拿来暂停考试）
     holding = name === 'mock' && Boolean(window.UECTest && window.UECTest.hold(true));
     returnTo = document.activeElement;
+    scrolled = new Map([[window, origin]]);
     build();
     render();
   }
 
-  function finish() {
+  // keepScroll：换画面而结束的导览不捲回（新画面有自己的位置）
+  function finish(keepScroll) {
     const cur = steps[index];
     if (cur && cur.after) cur.after();
+    if (keepScroll !== true && scrolled) {
+      const behavior = reduced() ? 'auto' : 'smooth';
+      scrolled.forEach((pos, node) => node.scrollTo({ left: pos.left, top: pos.top, behavior }));
+    }
+    scrolled = null;
     if (tourName) markSeen(tourName);
     if (holding) { holding = false; window.UECTest.hold(false); }
     tourName = null;
@@ -374,7 +393,7 @@
 
     // 换画面时（index.html 的 showView 会发出 uec:view）
     addEventListener('uec:view', e => {
-      if (tourName) finish();
+      if (tourName) finish(true);
       setTimeout(() => startWhenReady(currentTourName(), false), 700);
     });
     // 做题页切换练法：第一次切到错题本、今日复习、做答题时介绍那一种
