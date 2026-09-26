@@ -1,10 +1,12 @@
 // 做答题 AI 批改：学生打好答案，照题库里的参考答案（得分点）依统考改法批改。
-// 金钥只在服务器：Vercel 环境变数 GEMINI_API_KEY。网站是公开的，每个 IP 每小时限 20 次，免得额度被刷光。
+// 金钥只在服务器：Vercel 环境变数 GEMINI_API_KEY。每台装置每小时限 20 次、同一个网络合计 200 次，免得额度被刷光。
 // 题目与参考答案由服务器自己从题库读，不收浏览器送来的 —— 不然有人能自己编一份「参考答案」。
 const { sendJson, readJsonBody, sameOrigin } = require('./_lib/devauth');
-const { SUBJECTS, overLimit, htmlToText, findQuestion, callGemini } = require('./_lib/ai');
+const { SUBJECTS, useQuota, htmlToText, findQuestion, callGemini } = require('./_lib/ai');
 
 const LIMIT_PER_HOUR = 20;
+// 同一个网络（例如全校共用的 Wi-Fi）每小时合计上限，挡有人一直换装置码刷额度
+const NETWORK_LIMIT_PER_HOUR = 200;
 const MAX_ANSWER = 3000;
 // 得分比例到多少算「可接受」「部分正确」；其余是「还不行」
 const PASS_RATIO = 0.8;
@@ -76,17 +78,23 @@ module.exports = async (req, res) => {
   }
   if (!item || !item.answer) return sendJson(res, 404, { ok: false, error: 'not_found', message: '找不到这一题，请重新整理页面。' });
 
-  if (await overLimit(req, 'grade', LIMIT_PER_HOUR)) {
-    return sendJson(res, 429, { ok: false, error: 'rate_limited', message: `这一小时批改了 ${LIMIT_PER_HOUR} 次，休息一下，一小时後再试。` });
+  const q = await useQuota(req, 'grade', LIMIT_PER_HOUR, NETWORK_LIMIT_PER_HOUR);
+  const quota = { left: q.left, limit: LIMIT_PER_HOUR, resetMin: q.resetMin };
+  if (q.over) {
+    return sendJson(res, 429, { ok: false, error: 'rate_limited', quota, message: q.shared
+      ? `你们这个网络这一小时已经批改很多次了，${q.resetMin} 分钟後再试，或换用手机网络。`
+      : `这一小时的 ${LIMIT_PER_HOUR} 次批改用完了，${q.resetMin} 分钟後会重置。` });
   }
 
   try {
     const { model, json } = await callGemini(key, buildPrompt(SUBJECTS[subject], htmlToText(item.question), htmlToText(item.answer), answer));
     const result = tidy(json);
     if (!result.points.length) throw new Error('empty');
-    return sendJson(res, 200, { ok: true, result, model });
+    return sendJson(res, 200, { ok: true, result, model, quota });
   } catch (e) {
     console.error('grade failed:', e && e.message);
-    return sendJson(res, 502, { ok: false, error: 'ai_error', message: 'AI 暂时批改不了，请稍後再试。' });
+    await q.refund();
+    quota.left += 1;
+    return sendJson(res, 502, { ok: false, error: 'ai_error', quota, message: 'AI 暂时批改不了，请稍後再试（这次不扣次数）。' });
   }
 };

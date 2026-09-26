@@ -75,10 +75,13 @@
 | 每次自动出题照顾几章、每章几题 | `.github/workflows/generate_questions.yml` | `chapters_per_run`、`questions_per_chapter` 的 `default` | 3 章 × 4 题 | 🟢 手动跑时也可以当场填 |
 | 新题和旧题多像就当成重复丢掉 | `scripts/generate_questions.py` | `SIMILARITY_LIMIT` | `0.82`（0～1） | 🟡 调低会丢掉更多题 |
 | 固定用某个 Gemini 模型（不自动挑） | GitHub → Settings → Actions 变数 | `GEMINI_MODEL` | 不设＝自动挑最高级 | 🟡 |
-| AI 批改：每个 IP 每小时几次 | `api/grade.js` | `LIMIT_PER_HOUR` | `20` | 🟡 越高越可能被刷额度 |
+| AI 批改：每台装置每小时几次 | `api/grade.js` | `LIMIT_PER_HOUR` | `20` | 🟡 越高越可能被刷额度；学生在做答题下方看得到剩几次 |
+| AI 批改：同一个网络（例如全校 Wi-Fi）每小时合计几次 | `api/grade.js` | `NETWORK_LIMIT_PER_HOUR` | `200` | 🟡 全校一起用时不够就调高 |
 | AI 批改：答案最长几字 | `api/grade.js` | `MAX_ANSWER` | `3000` | 🟢 |
 | AI 批改：几成分数算「可接受」「部分正确」 | `api/grade.js` | `PASS_RATIO`、`PARTIAL_RATIO` | `0.8`、`0.4` | 🟢 |
-| AI 讲解（选择题「讲给我听」）：每个 IP 每小时几次 | `api/explain.js` | `LIMIT_PER_HOUR` | `30` | 🟡 和批改分开计 |
+| AI 讲解（选择题「讲给我听」）：每台装置每小时几次 | `api/explain.js` | `LIMIT_PER_HOUR` | `30` | 🟡 和批改分开计 |
+| AI 讲解：同一个网络每小时合计几次 | `api/explain.js` | `NETWORK_LIMIT_PER_HOUR` | `300` | 🟡 |
+| AI 讲解在装置上最多存几则 | `index.html` | `EXPLAIN_KEEP` | `300` | 🟢 超过就丢最旧的 |
 | **AI 讲解的讲法**（多长、先讲什么） | `api/explain.js` | `buildPrompt` 里的「要求」1～4 | | 🔴 第 4 条（不可推翻正确答案）不要删 |
 | 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS` | `40` | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |

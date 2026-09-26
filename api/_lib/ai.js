@@ -9,23 +9,45 @@ const SUBJECTS = { biology: '生物', chemistry: '化学', physics: '物理' };
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 // ---------- 限流：有 Upstash 就跨实例计数，没有就退回单一实例的记忆体 ----------
+// 每台装置各算各的（浏览器送来的随机装置码）：同一所学校连同一个 Wi-Fi，对外是同一个 IP，
+// 只按 IP 算的话全校共用一份额度。装置码可以伪造，所以同一个 IP 另有一个较高的总上限兜底。
 const memHits = new Map();
-async function overLimit(req, bucket, limitPerHour) {
-  const ip = String(req.headers['x-vercel-forwarded-for']
-    || String(req.headers['x-forwarded-for'] || '').split(',')[0] || 'unknown').trim();
-  const hour = Math.floor(Date.now() / 3600000);
-  const key = `uec:${bucket}:${crypto.createHash('sha256').update(ip).digest('hex').slice(0, 24)}:${hour}`;
+const hash = s => crypto.createHash('sha256').update(String(s)).digest('hex').slice(0, 24);
+async function bump(key, by) {
   if (store.config().ready) {
     try {
-      const n = await store.command(['INCR', key]);
+      const n = await store.command([by > 0 ? 'INCR' : 'DECR', key]);
       if (n === 1) await store.command(['EXPIRE', key, '3700']);
-      return n > limitPerHour;
+      return n;
     } catch (e) { /* Upstash 挂了就用记忆体顶着 */ }
   }
   if (memHits.size > 5000) memHits.clear();
-  const n = (memHits.get(key) || 0) + 1;
+  const n = (memHits.get(key) || 0) + by;
   memHits.set(key, n);
-  return n > limitPerHour;
+  return n;
+}
+
+// 回传 { over, shared, left, resetMin, refund }。over 时 shared 表示是同一个网络的总上限到了。
+// refund()：AI 这次没答出来，把这一次还给学生
+async function useQuota(req, bucket, perDevice, perNetwork) {
+  const ip = String(req.headers['x-vercel-forwarded-for']
+    || String(req.headers['x-forwarded-for'] || '').split(',')[0] || 'unknown').trim();
+  const device = String(req.headers['x-uec-device'] || '');
+  const now = Date.now();
+  const hour = Math.floor(now / 3600000);
+  const resetMin = Math.max(1, Math.ceil((3600000 - (now % 3600000)) / 60000));
+  const devKey = `uec:${bucket}:d:${hash(/^[A-Za-z0-9_-]{16,64}$/.test(device) ? device : 'ip:' + ip)}:${hour}`;
+  const netKey = `uec:${bucket}:ip:${hash(ip)}:${hour}`;
+  const n = await bump(devKey, 1);
+  if (n > perDevice) return { over: true, shared: false, left: 0, resetMin };
+  if (await bump(netKey, 1) > perNetwork) {
+    await bump(devKey, -1);
+    return { over: true, shared: true, left: perDevice - n + 1, resetMin };
+  }
+  return {
+    over: false, shared: false, left: perDevice - n, resetMin,
+    refund: async () => { await bump(devKey, -1); await bump(netKey, -1); },
+  };
 }
 
 // ---------- 题目 ----------
@@ -99,4 +121,4 @@ async function callGemini(key, prompt) {
   throw last || new Error('no model');
 }
 
-module.exports = { SUBJECTS, overLimit, htmlToText, findQuestion, callGemini };
+module.exports = { SUBJECTS, useQuota, htmlToText, findQuestion, callGemini };
