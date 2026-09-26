@@ -251,6 +251,22 @@ async function run() {
     }
   });
 
+  await section('继续上次学习', async () => {
+    // 只是点进一科看过、一题都没做：回首页不该出现「继续上次学习进度」；答了一题才出现
+    const { ctx, page, errors } = await open();
+    await enter(page);
+    await page.evaluate(() => navHome()); await page.waitForTimeout(600);
+    const before = await page.evaluate(() => !!document.querySelector('#resumeCard .resume-card'));
+    await enter(page);
+    await page.evaluate(() => document.querySelector('#optContainer .option-btn').click()); await page.waitForTimeout(300);
+    await page.evaluate(() => navHome()); await page.waitForTimeout(600);
+    const after = await page.evaluate(() => !!document.querySelector('#resumeCard .resume-card'));
+    check('继续上次学习', '没做过题：首页不显示', !before);
+    check('继续上次学习', '答过一题：首页出现', after);
+    check('继续上次学习', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('答错结算', async () => {
     const { ctx, page, errors } = await open();
     await enter(page);

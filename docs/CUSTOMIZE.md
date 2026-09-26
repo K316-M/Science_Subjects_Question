@@ -37,7 +37,7 @@
 | 想改什么 | 档案 | 搜这个名字 | |
 |---|---|---|---|
 | 首页大标题「独中理科」 | `index.html` | `retro-hero-title` | 🟢 |
-| 首页标题下的缎带「自主学习 · 统考题库」 | `index.html` | `retro-ribbon` | 🟢 |
+| 首页标题下的缎带「备考题库 · 复习系统」 | `index.html` | `retro-ribbon` | 🟢 |
 | 浏览器分页上的网站名称 | `index.html` | `<title>` | 🟢 |
 | 「选择学习学科」与下面的提示 | `index.html` | `page-heading`、`page-hint` | 🟢 |
 | 各科名称、英文名、轨道上的小字说明 | `js/orbit-subjects.js` | `SUBJECTS` 的 `name` `en` `note` | 🟢 |
