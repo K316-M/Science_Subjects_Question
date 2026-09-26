@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_491b41c9a3",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap6",
-      "chapter_title": "第6章：营养成分的运输",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.094247Z",
-      "q": "人体血液运输氧气时 , 血红素与氧气的结合会受到下列因素的影响,除了",
-      "options": [
-        "A. 氧气的浓度",
-        "B. 温度",
-        "C. 二氧化碳的浓度",
-        "D. 血液中的酶"
-      ],
-      "answer": 3,
-      "explanation": "血红蛋白（血红素）与氧气的结合和解离是一个物理化学平衡过程，受氧气分压（浓度）、二氧化碳分压（浓度）、温度以及pH值等物理化学因素的影响，而不需要酶的催化。",
-      "review": {
-        "ai_answer": 3,
-        "reason": "血红蛋白与氧气的结合和解离是可逆的物理化学反应，受氧分压、二氧化碳分压、温度和pH值影响，不需要酶的催化。"
-      }
-    },
-    {
       "id": "biology_6c38800421",
       "subject": "biology",
       "type": "mcq",
