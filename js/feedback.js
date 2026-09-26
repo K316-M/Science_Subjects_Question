@@ -478,7 +478,8 @@ function spriteDemo(on) {
 window.spriteDemo = spriteDemo;
 
 function toggleSpritePanel() {
-  if (!spriteReport) return;
+  // 已经说谢谢、准备飞走了：不能再打开面板（不然会再按一次「没问题了」）
+  if (!spriteReport || document.getElementById('spriteWrap').classList.contains('is-done')) return;
   const panel = document.getElementById('spritePanel');
   const connector = document.getElementById('spriteConnector');
   const open = panel.classList.toggle('open');
@@ -530,6 +531,10 @@ function spriteConfirmFixed() {
 
   document.getElementById('spritePanel').classList.remove('open');
   document.getElementById('spriteConnector').classList.add('hidden');
+  // 从道谢到飞走这几秒不给点：滑鼠、触控靠 CSS 的 pointer-events，键盘靠 toggleSpritePanel 的检查
+  const doneWrap = document.getElementById('spriteWrap');
+  doneWrap.classList.add('is-done');
+  if (doneWrap.contains(document.activeElement)) document.activeElement.blur();
 
   const bubble = document.getElementById('spriteBubble');
   bubble.textContent = '谢谢！';
@@ -544,7 +549,7 @@ function spriteConfirmFixed() {
     setSpritePose('portal');
     wrap.classList.add('leaving');
     setTimeout(() => {
-      wrap.classList.remove('active', 'leaving');
+      wrap.classList.remove('active', 'leaving', 'is-done');
       bubble.classList.remove('show');
       spriteReport = null;
       renderMyReports();

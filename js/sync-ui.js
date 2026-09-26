@@ -264,7 +264,7 @@
 
   // 合并之后画面上的数字要跟着更新，否则要重整才看得到另一台装置的进度
   window.refreshAfterSync = function () {
-    [['updateWrongCountBadge'], ['renderResumeCard'], ['renderActiveContent']].forEach(([fn]) => {
+    [['updateWrongCountBadge'], ['renderResumeCard'], ['renderActiveContent'], ['refreshNotesAfterSync']].forEach(([fn]) => {
       if (typeof window[fn] === 'function') { try { window[fn](); } catch (e) {} }
     });
     if (window.OrbitSubjects && window.OrbitSubjects.refresh) window.OrbitSubjects.refresh();

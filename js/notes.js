@@ -151,6 +151,8 @@ function attachDrawHandlers(canvas) {
 /* ---------- 笔记编辑器 ---------- */
 let activeNoteCtx = null;
 let noteDirty = false;
+// 打开编辑器时那则笔记的 updatedAt：存档时若储存里的比它新，代表编辑中途另一台装置的版本同步进来了
+let noteOpenedAt = 0;
 
 function markNoteDirty() {
   noteDirty = true;
@@ -184,6 +186,7 @@ function openNoteEditor(ctx) {
   noteDirty = false;
 
   const existing = getNote(ctx);
+  noteOpenedAt = existing ? existing.updatedAt || 0 : 0;
   const modal = document.getElementById('noteModal');
   const snapshot = document.getElementById('noteSnapshot');
   const stage = document.getElementById('noteStage');
@@ -236,9 +239,20 @@ function saveCurrentNote() {
   if (!activeNoteCtx) return;
   const store = loadNotesStore();
   const id = noteIdFor(activeNoteCtx);
-  const textNote = document.getElementById('noteTextInput').value.trim();
+  let textNote = document.getElementById('noteTextInput').value.trim();
+  let strokes = noteDraw.strokes;
+  const cur = store[id];
+  const arrived = cur && (cur.updatedAt || 0) > noteOpenedAt;
+  if (arrived) {
+    // 编辑时另一台装置的版本同步进来了：两份都留，不要拿编辑器里的旧底稿把它盖掉
+    const seen = new Set(strokes.map(s => JSON.stringify(s.pts)));
+    strokes = strokes.concat((cur.strokes || []).filter(s => !seen.has(JSON.stringify(s.pts))));
+    const other = (cur.textNote || '').trim();
+    if (other.includes(textNote)) textNote = other;
+    else if (other && !textNote.includes(other)) textNote = `${textNote}\n\n——（另一台装置的版本）——\n${other}`;
+  }
 
-  if (noteDraw.strokes.length === 0 && !textNote) {
+  if (strokes.length === 0 && !textNote) {
     // 空笔记等同于删除，避免列表里堆一堆空卡片
     if (store[id]) {
       delete store[id];
@@ -263,7 +277,7 @@ function saveCurrentNote() {
     qIndex: activeNoteCtx.qIndex,
     questionText: activeNoteCtx.questionText,
     options: activeNoteCtx.options || [],
-    strokes: noteDraw.strokes,
+    strokes,
     baseWidth: noteDraw.stageWidth,
     textNote,
     createdAt: (store[id] && store[id].createdAt) || Date.now(),
@@ -277,6 +291,27 @@ function saveCurrentNote() {
     refreshNoteButtons();
     setTimeout(() => closeNoteEditor(true), 420);
   }
+}
+
+// 同步带回别台装置的笔记之後（js/sync-ui.js 的 refreshAfterSync 呼叫）
+function refreshNotesAfterSync() {
+  const view = document.getElementById('viewNotes');
+  if (view && view.classList.contains('active')) renderNotesView();
+  if (!activeNoteCtx) return;
+  const note = getNote(activeNoteCtx);
+  if (!note || (note.updatedAt || 0) <= noteOpenedAt) return;
+  const hint = document.getElementById('noteSaveHint');
+  if (noteDirty) {
+    // 正在写：不打断，存档时 saveCurrentNote 会把两份合在一起
+    if (hint) hint.textContent = '另一台装置也改了这则笔记，保存时两份都会保留';
+    return;
+  }
+  // 还没动过：直接换成同步进来的最新版本
+  document.getElementById('noteTextInput').value = note.textNote || '';
+  noteDraw.strokes = Array.isArray(note.strokes) ? JSON.parse(JSON.stringify(note.strokes)) : [];
+  if (noteDraw.ctx) redrawNoteCanvas();
+  noteOpenedAt = note.updatedAt || 0;
+  if (hint) hint.textContent = '已载入另一台装置的更新';
 }
 
 /* ---------- 工具栏操作 ---------- */
