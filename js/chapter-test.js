@@ -52,7 +52,7 @@ legend.test-q-head { float: left; width: 100%; }
   display: grid; place-items: center; font-size: 13px; font-weight: 800;
   color: #065f46; background: rgba(4,120,87,.1); }
 .test-q.is-answered .test-q-no { color: #fff; background: var(--primary, #047857); }
-.test-q-text { flex: 1 1 auto; min-width: 0; }
+.test-q-text { flex: 1 1 auto; min-width: 0; white-space: pre-line; }
 .test-fig { margin: 0 0 14px; text-align: center; }
 .test-fig img { max-width: 100%; border-radius: 10px; cursor: zoom-in; }
 .test-fig-cap { margin-top: 6px; font-size: 12px; color: var(--text-muted, #475569); }

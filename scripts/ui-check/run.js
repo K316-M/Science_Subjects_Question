@@ -641,8 +641,10 @@ async function run() {
         n: document.querySelectorAll('#viewTest fieldset.test-q').length,
         legendInside: (() => { const f = document.querySelector('#viewTest fieldset.test-q'); return f.querySelector('legend').getBoundingClientRect().top >= f.getBoundingClientRect().top + 4; })(),
         overflow: document.documentElement.scrollWidth - innerWidth,
+        ws: getComputedStyle(document.querySelector('#viewTest .test-q-text')).whiteSpace,
       }));
       check(G, '进入後隐藏导航，一次列出整章', s.nav === 'none' && s.n === CH1.mcqs.length, `${s.n} 题`);
+      check(G, '题干照题库换行（罗马数字叙述 I、II…各占一行）', s.ws === 'pre-line', s.ws);
       check(G, '题号与题干在卡片里、无横向溢出', s.legendInside && s.overflow === 0);
       if (vp.tag === 'mobile') { await contrast(page, 'mobile 测验作答', null, R); await shot(page, 'mobile-test-form'); }
       await page.evaluate(() => document.querySelector('.test-submit').click());

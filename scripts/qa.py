@@ -26,6 +26,8 @@ CJK = re.compile(r"[一-鿿]")
 ENGLISH_FILLER = re.compile(r"(?<![A-Za-z])(and|or|the|of|is|are|not|which|with|what)(?![A-Za-z])", re.I)
 LEFTOVER_MARK = re.compile(r"\[/?标记[^\]]*\]|\[图\d+\]")
 LEADING_NUMBER = re.compile(r"^\s*(\d{1,3}|[（(]\d{1,3}[)）])\s*[.．、)]")
+# 同一行里先有「I 叙述」再有「II」：罗马数字叙述没有各占一行（物理的电流 I 不会接著出现 II）
+ROMAN_ONE_LINE = re.compile(r"(?<![A-Za-z])I\s+\S.*?\sII(?![A-Za-z])")
 
 
 def extract_json_array(text):
@@ -58,6 +60,8 @@ def text_problems(record):
             out.append(f"{label}残留转写标记「{LEFTOVER_MARK.search(text).group(0)}」")
     if LEADING_NUMBER.match(_stem(record)):
         out.append("题干开头的题号没去掉")
+    if any(ROMAN_ONE_LINE.search(line) for line in _stem(record).splitlines()):
+        out.append("题干的罗马数字叙述（I、II…）挤在同一行，请每项换行")
     return out
 
 
