@@ -32,6 +32,8 @@ const state = {
   overviewView: 'chart',
   inspectorSubject: 'all',
   inspectorLevel: 'all',
+  editorQuery: '',
+  editorSubject: 'all',
   parsedReport: null,
 };
 
@@ -39,7 +41,8 @@ const ROUTES = {
   overview: { label: '总览', icon: 'grid', title: '总览', desc: '题库规模、巡检结果与待办事项一览。', render: renderOverview },
   issues: { label: '申诉处理', icon: 'inbox', title: '申诉处理', desc: '学生的申诉会寄到你的 Formspree 邮箱。把邮件里的「开发者处理码」贴进来，写好处理说明后发布，学生下次开站就会看到通知小精灵。', render: renderIssues },
   inspector: { label: '题库巡检', icon: 'shield', title: '题库巡检', desc: '自动检查三科题库里的格式问题：选项数量、答案序号、缺少配图与解析、重复题目、图片死链。', render: renderInspector },
-  pending: { label: 'AI 录题待审', icon: 'sparkles', title: 'AI 录题待审', desc: '等待你审核的题目，来自拍题录入与 AI 依考纲出题。核对无误按「采纳」即可直接进正式题库并自动部署。', render: renderPending },
+  pending: { label: 'AI 录题待审', icon: 'sparkles', title: 'AI 录题待审', desc: '被自动检查标出问题的题逐题展开，可以直接改文字、换配图再采纳；没问题的收成一张清单，扫过一遍一键采纳。', render: renderPending },
+  editor: { label: '题目修改', icon: 'edit', title: '题目修改', desc: '搜寻已上线的题目，直接改题干、选项、答案、解析或换配图。存档後约一分钟自动部署，学生就看得到。', render: renderEditor },
   local: { label: '本机调试', icon: 'terminal', title: '本机调试', desc: '查看、导出或清除这台设备上学生站留下的本地数据，并能生成测试通知来预览小精灵。', render: renderLocal },
 };
 
@@ -120,13 +123,24 @@ async function fetchJson(url) {
   }
 }
 
+const canPublish = () => Boolean(state.session.publishing && state.session.publishing.enabled);
+
 async function loadData() {
-  const [bio, chem, phys, pending] = await Promise.all([
-    fetchJson('/papers/biology_question_bank.json'),
-    fetchJson('/papers/chemistry_question_bank.json'),
-    fetchJson('/papers/physics_question_bank.json'),
-    fetchJson('/papers/pending_approval.json'),
-  ]);
+  // 能发布就直接读 GitHub 上最新的：网站上的 /papers 要等部署完才更新，刚存的修改会「消失」一下
+  let fresh = null;
+  if (canPublish()) {
+    const { ok, status, data } = await api('/api/dev-edit');
+    if (handleUnauthenticated(status)) return;
+    if (ok) fresh = data;
+  }
+  const [bio, chem, phys, pending] = fresh
+    ? [fresh.banks.biology, fresh.banks.chemistry, fresh.banks.physics, fresh.pending]
+    : await Promise.all([
+      fetchJson('/papers/biology_question_bank.json'),
+      fetchJson('/papers/chemistry_question_bank.json'),
+      fetchJson('/papers/physics_question_bank.json'),
+      fetchJson('/papers/pending_approval.json'),
+    ]);
   state.banks = {
     biology: (bio && bio.sections) || [],
     chemistry: (chem && chem.sections) || [],
@@ -191,6 +205,27 @@ function navigate() {
    ========================================================================== */
 const FIGURE_WORDS = /如图|下图|图中|图示|示意图|曲线图|装置图|见图|右图|左图/;
 
+// 与 scripts/qa.py 的 text_problems 同一套规则、同样的字句（待审区靠字句去重），
+// 已上线的题与还没跑过新检查的待审题也能被抓出来
+const ENGLISH_FILLER = /(^|[^A-Za-z])(and|or|the|of|is|are|not|which|with|what)(?![A-Za-z])/i;
+const LEFTOVER_MARK = /\[\/?标记[^\]]*\]|\[图\d+\]/;
+const LEADING_NUMBER = /^\s*(\d{1,3}|[（(]\d{1,3}[)）])\s*[.．、)]/;
+
+function textLint(item) {
+  const out = [];
+  const stem = String(item.q || item.question || '');
+  const pieces = [['题干', stem], ...(item.options || []).map((o, i) => [`选项${'ABCD'[i]}`, o])];
+  pieces.forEach(([label, raw]) => {
+    const text = String(raw || '');
+    const en = /[\u4e00-\u9fff]/.test(text) && text.match(ENGLISH_FILLER);
+    if (en) out.push(`${label}夹了英文「${en[2]}」，疑似转写错误`);
+    const mark = text.match(LEFTOVER_MARK);
+    if (mark) out.push(`${label}残留转写标记「${mark[0]}」`);
+  });
+  if (LEADING_NUMBER.test(stem)) out.push('题干开头的题号没去掉');
+  return out;
+}
+
 function inspectBanks() {
   const issues = [];
   SUBJECTS.forEach(subject => {
@@ -209,6 +244,7 @@ function inspectBanks() {
           issues.push({ ...at, level: 'serious', label: '题干提到图，但没有配图' });
         }
         if (!String(item.explanation || '').trim()) issues.push({ ...at, level: 'warning', label: '缺少解析' });
+        textLint(item).forEach(label => issues.push({ ...at, level: 'serious', label }));
         const key = String(item.q || '').replace(/\s+/g, '');
         if (key) {
           if (seen.has(key)) issues.push({ ...at, level: 'warning', label: `与 ${seen.get(key)} 重复` });
@@ -222,6 +258,7 @@ function inspectBanks() {
         if (FIGURE_WORDS.test(item.question || '') && !item.image && !item.figure) {
           issues.push({ ...at, level: 'serious', label: '题干提到图，但没有配图' });
         }
+        textLint(item).forEach(label => issues.push({ ...at, level: 'serious', label }));
       });
     });
   });
@@ -287,7 +324,7 @@ function renderOverview(body) {
     statTile({ label: '题目总数', iconName: 'book', value: (t.mcq + t.subj).toLocaleString('zh-CN'), unit: '题', foot: `选择题 ${t.mcq} · 做答题 ${t.subj}` }),
     statTile({ label: '章节覆盖', iconName: 'layers', value: t.covered, unit: `/ ${t.chapters} 章`, meter: t.chapters ? t.covered / t.chapters : 0, foot: '至少有一题的章节' }),
     statTile({ label: '巡检发现', iconName: 'shield', value: allIssues.length, unit: '项', foot: issueFoot }),
-    statTile({ label: 'AI 录题待审', iconName: 'sparkles', value: state.pending.length, unit: '题', foot: state.pending.length ? '到 GitHub 合并 PR 后上线' : '目前没有待审批次' }),
+    statTile({ label: 'AI 录题待审', iconName: 'sparkles', value: state.pending.length, unit: '题', foot: state.pending.length ? '到「AI 录题待审」采纳后上线' : '目前没有待审批次' }),
     statTile({ label: '已发布处理', iconName: 'inbox', value: state.resolutions.length, unit: '条', foot: pub.enabled ? '一键发布：已连接 GitHub' : '一键发布：未配置' })));
 
   // 筛选放在图表卡片上方（整页只有这一个维度）
@@ -704,7 +741,7 @@ function renderResolutionsTable(slot) {
 /* ==========================================================================
    题库巡检
    ========================================================================== */
-function questionPreview(item, type) {
+function questionPreview(item, type, compact) {
   const box = el('div', { class: 'q-preview' });
   box.appendChild(el('div', { class: 'q', text: type === 'mcq' ? item.q : item.question }));
   if (typeof item.figure === 'string' && item.figure.trim().startsWith('<svg')) {
@@ -717,8 +754,8 @@ function questionPreview(item, type) {
   }
   if (type === 'mcq') {
     (item.options || []).forEach((opt, i) => box.appendChild(el('div', { class: `q-opt${i === item.answer ? ' correct' : ''}`, text: opt })));
-    if (item.explanation) box.appendChild(el('div', { class: 'q-exp', text: item.explanation }));
-  } else if (item.answer) {
+    if (item.explanation && !compact) box.appendChild(el('div', { class: 'q-exp', text: item.explanation }));
+  } else if (item.answer && !compact) {
     const tmp = document.createElement('div');
     tmp.innerHTML = item.answer;
     box.appendChild(el('div', { class: 'q-exp', text: tmp.textContent.trim() }));
@@ -740,14 +777,15 @@ function issueRow(issue) {
       if (open && !preview.firstChild) preview.appendChild(questionPreview(issue.item, issue.type));
     },
   });
+  const [editBtn, editPanel] = editToggle(issue.subject, issue.chapterIdx, issue.type, issue.qIndex);
   return el('div', { class: 'issue' },
     el('div', { class: 'issue-top' },
       el('span', { class: `status ${lvl.cls}` }, icon(lvl.icon), el('span', { text: `${lvl.label}：${issue.label}` })),
       el('span', { class: 'pill', text: `${SUBJECT_LABEL[issue.subject]} · ${issue.chapterTitle}` }),
       el('span', { class: 'pill', text: `${issue.type === 'mcq' ? '选择题' : '做答题'} 第 ${issue.qIndex + 1} 题` }),
-      el('span', { style: 'margin-left:auto' }, toggle)),
+      el('span', { style: 'margin-left:auto' }, toggle, editBtn)),
     el('div', { class: 'issue-text', text: String(text || '（空）').replace(/\s+/g, ' ').slice(0, 120) }),
-    preview);
+    preview, editPanel);
 }
 
 function renderInspector(body, actions) {
@@ -797,8 +835,369 @@ function renderInspector(body, actions) {
 }
 
 /* ==========================================================================
+   编辑器（待审题与已上线的题共用）
+   ========================================================================== */
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+
+// 手机拍的原图动辄好几 MB：先在浏览器缩到长边 1600px、转 WebP（不支援就 JPG），再上传
+async function shrinkImage(file) {
+  const url = await new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => reject(new Error('读不了这个档案'));
+    r.readAsDataURL(file);
+  });
+  const img = await new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = () => reject(new Error('这个浏览器看不懂这张图的格式（iPhone 的 HEIC 请先转成 JPG）'));
+    i.src = url;
+  });
+  const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.naturalWidth * scale);
+  canvas.height = Math.round(img.naturalHeight * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff';           // 透明底的 PNG 转成 JPG 时不要变黑底
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  let out = canvas.toDataURL('image/webp', 0.85);
+  if (!out.startsWith('data:image/webp')) out = canvas.toDataURL('image/jpeg', 0.88);
+  if ((out.length - out.indexOf(',') - 1) * 0.75 > MAX_IMAGE_BYTES) throw new Error('图片压缩後仍超过 2MB，请先裁小一点');
+  return out;
+}
+
+// 回传 { node, patch(), image() }：patch 只含改过的栏位，image 是新上传的图（data URL）或 null
+function questionEditor(item, isSubj) {
+  const box = el('div', { class: 'editor' });
+  const area = (value, rows) => el('textarea', { class: 'textarea', value: value || '', rows });
+  const field = (label, control) => el('div', { class: 'field' }, el('span', { class: 'field-label', text: label }), control);
+  const changed = values => Object.fromEntries(Object.entries(values)
+    .filter(([k, v]) => v !== String(item[k] == null ? '' : item[k]).trim()));
+
+  if (isSubj) {
+    const q = area(item.question, 5);
+    const a = area(item.answer, 6);
+    appendChildren(box, [field('题干', q), field('参考答案（学生站照 HTML 显示，<br> 是换行）', a)]);
+    return { node: box, image: () => null, patch: () => changed({ question: q.value.trim(), answer: a.value.trim() }) };
+  }
+
+  const q = area(item.q, 3);
+  const name = `ans-${Math.random().toString(36).slice(2)}`;
+  const opts = [0, 1, 2, 3].map(i => el('input', { class: 'input', value: (item.options || [])[i] || '' }));
+  const radios = opts.map((_, i) => el('input', { type: 'radio', name, checked: item.answer === i, attrs: { 'aria-label': `正确答案是 ${'ABCD'[i]}` } }));
+  const exp = area(item.explanation, 3);
+
+  let newImage = null;
+  let removeImage = false;
+  const preview = el('div', { class: 'ed-image' });
+  const showPreview = () => {
+    clear(preview);
+    const src = newImage || (!removeImage && item.image ? '/' + String(item.image).replace(/^\.?\//, '') : null);
+    if (src) preview.appendChild(el('img', { src, alt: '配图预览' }));
+    else preview.appendChild(el('span', { class: 'field-hint', text: item.figure && !removeImage ? '目前是手绘 SVG 配图；上传图片後学生站会改显示图片' : '没有配图' }));
+  };
+  const file = el('input', { type: 'file', hidden: true, attrs: { accept: 'image/*' } });
+  const drop = el('button', {
+    class: 'btn btn-ghost btn-sm', type: 'button', hidden: !item.image,
+    onclick: () => { newImage = null; removeImage = true; drop.hidden = true; showPreview(); },
+  }, el('span', { text: '移除配图' }));
+  const pick = el('button', { class: 'btn btn-sm', type: 'button', onclick: () => file.click() },
+    icon('image'), el('span', { text: item.image ? '换一张图' : '上传配图' }));
+  file.addEventListener('change', async () => {
+    const f = file.files[0];
+    file.value = '';
+    if (!f) return;
+    try {
+      newImage = await shrinkImage(f);
+      removeImage = false;
+      drop.hidden = false;
+      showPreview();
+    } catch (e) {
+      toast(e.message, 'bad');
+    }
+  });
+  showPreview();
+
+  appendChildren(box, [
+    field('题干', q),
+    field('选项（圈选的是正确答案）', el('div', { class: 'stack', style: 'gap:6px' },
+      opts.map((o, i) => el('div', { class: 'ed-opt' }, radios[i], o)))),
+    field('考点解析', exp),
+    field('配图', el('div', { class: 'stack', style: 'gap:8px' }, preview, el('div', { class: 'row' }, pick, drop, file))),
+  ]);
+  return {
+    node: box,
+    image: () => newImage,
+    patch: () => {
+      const p = changed({ q: q.value.trim(), explanation: exp.value.trim() });
+      const options = opts.map(o => o.value.trim());
+      if (options.some((o, i) => o !== String((item.options || [])[i] || '').trim())) p.options = options;
+      const answer = radios.findIndex(r => r.checked);
+      if (answer >= 0 && answer !== item.answer) p.answer = answer;
+      if (removeImage && !newImage && item.image) p.image = '';
+      return p;
+    },
+  };
+}
+
+// 按钮转圈、呼叫接口、处理错误；成功回传 data，失败回传 null
+async function busy(btn, call) {
+  const kids = [...btn.childNodes];
+  btn.disabled = true;
+  btn.textContent = '处理中…';
+  const { ok, status, data } = await call();
+  btn.disabled = false;
+  btn.replaceChildren(...kids);
+  if (handleUnauthenticated(status)) return null;
+  if (!ok) {
+    toast(data.message || '处理失败', 'bad');
+    return null;
+  }
+  return data;
+}
+
+// 重画目前页面但留在原本捲动的位置
+function rerender() {
+  const y = window.scrollY;
+  navigate();
+  window.scrollTo(0, y);
+}
+
+const NO_PUBLISH_HINT = '尚未配置 GITHUB_TOKEN：可以看，但不能存档或采纳。';
+
+// 已上线题目的「编辑」按钮与展开的编辑面板
+function editToggle(subject, chapterIdx, type, qIndex) {
+  const panel = el('div', { hidden: true });
+  const btn = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', attrs: { 'aria-expanded': 'false' } }, icon('edit'), el('span', { text: '编辑' }));
+  btn.addEventListener('click', () => {
+    const open = panel.hidden;
+    panel.hidden = !open;
+    btn.setAttribute('aria-expanded', String(open));
+    if (open && !panel.firstChild) panel.appendChild(bankEditPanel(subject, chapterIdx, type, qIndex));
+  });
+  return [btn, panel];
+}
+
+function bankEditPanel(subject, chapterIdx, type, qIndex) {
+  const sec = state.banks[subject][chapterIdx];
+  const list = type === 'mcq' ? sec.mcqs : sec.subjectives;
+  const item = list[qIndex];
+  const ed = questionEditor(item, type !== 'mcq');
+  const save = el('button', { class: 'btn btn-primary btn-sm', type: 'button', disabled: !canPublish() }, icon('check'), el('span', { text: '存档并上线' }));
+  save.addEventListener('click', async () => {
+    const patch = ed.patch();
+    const image = ed.image();
+    if (!Object.keys(patch).length && !image) return toast('没有改动', 'bad');
+    const data = await busy(save, () => api('/api/dev-edit', {
+      method: 'POST',
+      body: { target: 'bank', subject, chapterId: sec.id, type: type === 'mcq' ? 'mcq' : 'subjective', index: qIndex, expect: item.q || item.question, patch, image },
+    }));
+    if (!data) return;
+    list[qIndex] = data.item;
+    state.issues = inspectBanks();
+    updateNavCounts();
+    toast('已存档，约一分钟後学生就看得到', 'good');
+    rerender();
+  });
+  return el('div', { class: 'ed-panel' }, ed.node,
+    el('div', { class: 'row' }, save, canPublish() ? null : el('span', { class: 'field-hint', text: NO_PUBLISH_HINT })));
+}
+
+/* ==========================================================================
+   题目修改（搜寻已上线的题）
+   ========================================================================== */
+function searchBank(query, subject) {
+  const q = query.replace(/\s+/g, '').toLowerCase();
+  const hits = [];
+  if (!q) return hits;
+  SUBJECTS.filter(s => subject === 'all' || s === subject).forEach(s => {
+    state.banks[s].forEach((sec, chapterIdx) => {
+      [['mcq', sec.mcqs || []], ['subj', sec.subjectives || []]].forEach(([type, list]) => {
+        list.forEach((item, qIndex) => {
+          const hay = [item.q, item.question, ...(item.options || [])].join(' ').replace(/\s+/g, '').toLowerCase();
+          if (hay.includes(q)) hits.push({ subject: s, chapterIdx, chapterTitle: sec.title, type, qIndex, item });
+        });
+      });
+    });
+  });
+  return hits;
+}
+
+function renderEditor(body) {
+  if (!canPublish()) body.appendChild(el('div', { class: 'card field-hint', text: NO_PUBLISH_HINT }));
+
+  const seg = el('div', { class: 'segmented', attrs: { role: 'group', 'aria-label': '科目' } });
+  [['all', '全部'], ...SUBJECTS.map(s => [s, SUBJECT_LABEL[s]])].forEach(([v, label]) => seg.appendChild(el('button', {
+    type: 'button', text: label, attrs: { 'aria-pressed': String(state.editorSubject === v) },
+    onclick: () => { state.editorSubject = v; navigate(); },
+  })));
+  const input = el('input', {
+    class: 'input', type: 'search', value: state.editorQuery,
+    placeholder: '输入题干或选项里的几个字，例如「甘油」', attrs: { 'aria-label': '搜寻题目' },
+  });
+  body.appendChild(el('div', { class: 'row' }, el('div', { style: 'flex:1; min-width:220px' }, input), seg));
+
+  const results = el('div', { class: 'card list-card' });
+  body.appendChild(results);
+  const draw = () => {
+    clear(results);
+    const hits = searchBank(state.editorQuery, state.editorSubject);
+    if (!state.editorQuery.trim() || !hits.length) {
+      results.appendChild(el('div', { class: 'empty' }, icon('search'),
+        el('div', { text: state.editorQuery.trim() ? '找不到含这几个字的题目。' : '输入关键字开始搜寻。' })));
+      return;
+    }
+    hits.slice(0, 30).forEach(h => {
+      const [editBtn, panel] = editToggle(h.subject, h.chapterIdx, h.type, h.qIndex);
+      const text = h.type === 'mcq' ? h.item.q : h.item.question;
+      results.appendChild(el('div', { class: 'issue' },
+        el('div', { class: 'issue-top' },
+          el('span', { class: 'pill', text: `${SUBJECT_LABEL[h.subject]} · ${h.chapterTitle}` }),
+          el('span', { class: 'pill', text: `${h.type === 'mcq' ? '选择题' : '做答题'} 第 ${h.qIndex + 1} 题` }),
+          el('span', { style: 'margin-left:auto' }, editBtn)),
+        el('div', { class: 'issue-text', text: String(text || '（空）').replace(/\s+/g, ' ').slice(0, 160) }),
+        panel));
+    });
+    if (hits.length > 30) results.appendChild(el('div', { class: 'issue field-hint', text: `还有 ${hits.length - 30} 题没列出，多打几个字缩小范围。` }));
+  };
+  input.addEventListener('input', () => { state.editorQuery = input.value; draw(); });
+  draw();
+  if (state.editorQuery) input.focus();
+}
+
+/* ==========================================================================
    AI 录题待审
    ========================================================================== */
+// 要逐题看的理由：流水线标的 flags、文字检查（已跑过的会重复，去掉）、章节没判断出来
+function pendingProblems(item) {
+  const reasons = [...(item.flags || []), ...textLint(item)];
+  if (!(state.banks[item.subject] || []).some(sec => sec.id === item.chapter_id)) reasons.push('AI 没能判断章节，请指定');
+  return [...new Set(reasons)];
+}
+
+// 章节下拉：AI 归类不一定准，采纳当下顺手改掉比事後回头改容易
+function chapterPicker(item) {
+  const sections = state.banks[item.subject] || [];
+  const picker = el('select', { class: 'select select-inline', attrs: { 'aria-label': '归入章节' } });
+  if (!sections.length) {
+    picker.appendChild(el('option', { text: '（这一科还没有章节框架）', attrs: { value: '' } }));
+    picker.disabled = true;
+    return picker;
+  }
+  sections.forEach(sec => {
+    const opt = el('option', { text: sec.title || sec.id, attrs: { value: sec.id } });
+    if (sec.id === item.chapter_id) opt.selected = true;
+    picker.appendChild(opt);
+  });
+  if (!sections.some(sec => sec.id === item.chapter_id)) {
+    const hint = el('option', { text: '⚠️ 未分类 —— 请指定章节', attrs: { value: '' } });
+    hint.selected = true;
+    picker.insertBefore(hint, picker.firstChild);
+  }
+  return picker;
+}
+
+function originPills(item) {
+  return [
+    el('span', { class: 'pill', text: SUBJECT_LABEL[item.subject] || item.subject || '未知科目' }),
+    el('span', { class: 'pill', text: item.type === 'subjective' ? '做答题' : '选择题' }),
+    el('span', { class: 'pill', text: item.origin === 'ai_generated' ? '🤖 AI 出题' : '📄 档案录入' }),
+    item.type !== 'subjective' && item.answer_source === 'marked' ? el('span', { class: 'pill', text: '答案：原档标的' }) : null,
+    item.type !== 'subjective' && item.answer_source === 'ai' ? el('span', { class: 'pill', text: '答案：AI 作答' }) : null,
+  ];
+}
+
+function rejectButton(item) {
+  const reject = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', disabled: !canPublish() }, el('span', { text: '退回' }));
+  reject.addEventListener('click', async () => {
+    if (!confirm('退回之後这一题会从待审区移除，且不会进题库。确定吗？')) return;
+    await sendApproval(reject, { action: 'reject', ids: [item.id] });
+  });
+  return reject;
+}
+
+function problemCard(item, reasons) {
+  const ed = questionEditor(item, item.type === 'subjective');
+  const picker = chapterPicker(item);
+  const adopt = el('button', { class: 'btn btn-primary btn-sm', type: 'button', disabled: !canPublish() }, icon('check'), el('span', { text: '采纳（连同修改）' }));
+  const save = el('button', { class: 'btn btn-sm', type: 'button', disabled: !canPublish() }, el('span', { text: '只存修改' }));
+
+  adopt.addEventListener('click', async () => {
+    if (!picker.value) return toast('请先指定章节', 'bad');
+    await sendApproval(adopt, { action: 'adopt', items: [{ id: item.id, chapterId: picker.value, patch: ed.patch(), image: ed.image() }] });
+  });
+  save.addEventListener('click', async () => {
+    const patch = ed.patch();
+    const image = ed.image();
+    if (!Object.keys(patch).length && !image) return toast('没有改动', 'bad');
+    const data = await busy(save, () => api('/api/dev-edit', { method: 'POST', body: { target: 'pending', id: item.id, patch, image } }));
+    if (!data) return;
+    toast('已存到待审区，还没上线', 'good');
+    await loadData();
+    rerender();
+  });
+
+  return el('div', { class: 'issue' },
+    el('div', { class: 'issue-top' }, originPills(item)),
+    el('div', { class: 'stack', style: 'gap:4px' },
+      reasons.map(f => el('span', { class: 'status status-serious' }, icon('warning'), el('span', { text: f })))),
+    ed.node,
+    el('div', { class: 'row' }, el('span', { class: 'field-hint', text: '归入章节：' }), picker, adopt, save, rejectButton(item)),
+    el('div', { class: 'field-hint mono', text: `${item.source_draft || item.id} · ${item.ingested_at || item.generated_at || '—'}` }));
+}
+
+function cleanList(items) {
+  const rows = items.map(item => {
+    const check = el('input', { type: 'checkbox', checked: true, attrs: { 'aria-label': '勾选采纳' } });
+    const picker = chapterPicker(item);
+    const panel = el('div', { class: 'ed-panel', hidden: true });
+    const row = { item, check, picker, ed: null };
+    const toggle = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', attrs: { 'aria-expanded': 'false' } }, icon('edit'), el('span', { text: '编辑' }));
+    toggle.addEventListener('click', () => {
+      if (!row.ed) {
+        row.ed = questionEditor(item, item.type === 'subjective');
+        appendChildren(panel, [row.ed.node, el('div', { class: 'row' },
+          el('span', { class: 'field-hint', text: '改好後照样勾选、一起采纳；不要这题就' }), rejectButton(item))]);
+      }
+      panel.hidden = !panel.hidden;
+      toggle.setAttribute('aria-expanded', String(!panel.hidden));
+    });
+    row.node = el('div', { class: 'issue' },
+      el('div', { class: 'clean-row' }, check,
+        el('div', { class: 'clean-main' }, questionPreview(item, item.type === 'subjective' ? 'subj' : 'mcq', true)),
+        toggle),
+      el('div', { class: 'row' }, originPills(item), picker),
+      panel);
+    return row;
+  });
+
+  const go = el('button', { class: 'btn btn-primary btn-sm', type: 'button', disabled: !canPublish() }, icon('check'), el('span', {}));
+  const label = () => { go.lastChild.textContent = `采纳勾选的 ${rows.filter(r => r.check.checked).length} 题`; };
+  rows.forEach(r => r.check.addEventListener('change', label));
+  label();
+  go.addEventListener('click', async () => {
+    const picked = rows.filter(r => r.check.checked);
+    if (!picked.length) return toast('没有勾选任何题', 'bad');
+    if (picked.some(r => !r.picker.value)) return toast('有勾选的题还没指定章节', 'bad');
+    if (!confirm(`把 ${picked.length} 题采纳进正式题库？学生马上就看得到。`)) return;
+    await sendApproval(go, {
+      action: 'adopt',
+      items: picked.map(r => ({
+        id: r.item.id, chapterId: r.picker.value,
+        patch: r.ed ? r.ed.patch() : undefined, image: r.ed ? r.ed.image() : undefined,
+      })),
+    });
+  });
+
+  return el('div', { class: 'card list-card' },
+    el('div', { class: 'issue' },
+      el('div', { class: 'card-title', text: `没被标出问题的 ${items.length} 题` }),
+      el('div', { class: 'card-sub', text: 'AI 自动检查（格式、和原档逐字比对、不看答案重做一次）都通过。检查抓不到所有错误 —— 请扫过题干与绿色答案，有疑问的取消勾选或按「编辑」。' }),
+      el('div', { class: 'row', style: 'margin-top:8px' }, go)),
+    rows.map(r => r.node));
+}
+
 function renderPending(body, actions) {
   actions.appendChild(el('a', { class: 'btn btn-sm', attrs: { href: `${REPO_URL}/pulls`, target: '_blank', rel: 'noopener' } },
     icon('github'), el('span', { text: '到 GitHub 审核 PR' })));
@@ -810,64 +1209,30 @@ function renderPending(body, actions) {
     return;
   }
 
+  const problems = [];
+  const clean = [];
+  state.pending.forEach(item => {
+    const reasons = pendingProblems(item);
+    if (reasons.length) problems.push({ item, reasons });
+    else clean.push(item);
+  });
+  // 答案有疑、和原档不一致（⚠️ 开头）的排最前面，先处理最可能出错的
+  const doubtful = r => r.reasons.some(f => f.startsWith('⚠️'));
+  problems.sort((a, b) => doubtful(b) - doubtful(a));
+
   body.appendChild(el('div', { class: 'card' },
     el('div', { class: 'field-hint' },
-      el('strong', { text: `待审 ${state.pending.length} 题。` }),
-      ' 采纳会把题目直接写进正式题库并自动部署，学生马上看得到；退回只是从待审区移除。',
-      el('div', { style: 'margin-top:6px' }, '⚠️ AI 生成的题目请先自己核对科学正确性与答案，章节归错了可以在下拉选单改。'))));
+      el('strong', { text: `待审 ${state.pending.length} 题：` }),
+      `${problems.length} 题被标出问题要逐题看，${clean.length} 题没问题可一键采纳。`,
+      canPublish() ? ' 采纳会把题目直接写进正式题库并自动部署；退回只是从待审区移除。' : ` ${NO_PUBLISH_HINT}`)));
 
-  const card = el('div', { class: 'card list-card' });
-  // 答案有疑（AI 复核和原档标的不一样）的排最前面，先处理最可能出错的
-  const doubtful = item => (item.flags || []).some(f => f.startsWith('⚠️'));
-  [...state.pending].sort((a, b) => doubtful(b) - doubtful(a)).forEach(item => {
-    const flags = (item.flags || []).map(f => el('span', { class: 'status status-serious' }, icon('warning'), el('span', { text: f })));
-    const sections = state.banks[item.subject] || [];
-
-    // 章节下拉：AI 归类不一定准，采纳当下顺手改掉比事後回头改容易
-    const picker = el('select', { class: 'input', style: 'max-width:280px' });
-    if (!sections.length) {
-      picker.appendChild(el('option', { text: '（这一科还没有章节框架）', attrs: { value: '' } }));
-      picker.disabled = true;
-    } else {
-      sections.forEach(sec => {
-        const opt = el('option', { text: sec.title || sec.id, attrs: { value: sec.id } });
-        if (sec.id === item.chapter_id) opt.selected = true;
-        picker.appendChild(opt);
-      });
-      if (!sections.some(sec => sec.id === item.chapter_id)) {
-        const hint = el('option', { text: '⚠️ 未分类 —— 请指定章节', attrs: { value: '' } });
-        hint.selected = true;
-        picker.insertBefore(hint, picker.firstChild);
-      }
-    }
-
-    const adopt = el('button', { class: 'btn btn-primary btn-sm', type: 'button' }, icon('check'), el('span', { text: '采纳' }));
-    const reject = el('button', { class: 'btn btn-ghost btn-sm', type: 'button' }, el('span', { text: '退回' }));
-
-    adopt.addEventListener('click', async () => {
-      const chapterId = picker.value;
-      if (!chapterId) return toast('请先指定章节', 'bad');
-      await sendApproval(adopt, { action: 'adopt', items: [{ id: item.id, chapterId }] });
-    });
-    reject.addEventListener('click', async () => {
-      if (!confirm('退回之後这一题会从待审区移除，且不会进题库。确定吗？')) return;
-      await sendApproval(reject, { action: 'reject', ids: [item.id] });
-    });
-
-    card.appendChild(el('div', { class: 'issue' },
-      el('div', { class: 'issue-top' },
-        el('span', { class: 'pill', text: SUBJECT_LABEL[item.subject] || item.subject || '未知科目' }),
-        el('span', { class: 'pill', text: item.type === 'subjective' ? '做答题' : '选择题' }),
-        item.origin === 'ai_generated' ? el('span', { class: 'pill', text: '🤖 AI 出题' }) : el('span', { class: 'pill', text: '📄 档案录入' }),
-        item.type !== 'subjective' && item.answer_source
-          ? el('span', { class: 'pill', text: item.answer_source === 'marked' ? '答案：原档标的' : '答案：AI 作答' }) : null),
-      flags.length ? el('div', { class: 'stack', style: 'gap:4px' }, flags) : null,
-      questionPreview(item, item.type === 'subjective' ? 'subj' : 'mcq'),
-      el('div', { class: 'row', style: 'gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px' },
-        el('span', { class: 'field-hint', text: '归入章节：' }), picker, adopt, reject),
-      el('div', { class: 'field-hint mono', text: `${item.source_draft || item.id} · ${item.ingested_at || item.generated_at || '—'}` })));
-  });
-  body.appendChild(card);
+  if (problems.length) {
+    body.appendChild(el('div', { class: 'card list-card' },
+      el('div', { class: 'issue' }, el('div', { class: 'card-title', text: `要处理的 ${problems.length} 题` }),
+        el('div', { class: 'card-sub', text: '直接在下面改文字、换配图，改好按「采纳」一次写进题库。' })),
+      problems.map(p => problemCard(p.item, p.reasons))));
+  }
+  if (clean.length) body.appendChild(cleanList(clean));
 }
 
 async function sendApproval(btn, payload) {

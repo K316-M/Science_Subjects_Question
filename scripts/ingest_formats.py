@@ -38,6 +38,10 @@ NS = {
 W = "{%s}" % NS["w"]
 
 
+# 文字类来源的开头；录题脚本认这个字串，知道这份有原文可以逐字比对
+SOURCE_HEADER = "【原档内容】\n"
+
+
 class Unsupported(Exception):
     """这个档案读不了；讯息会原样写进报告，告诉管理员怎么处理。"""
 
@@ -110,30 +114,99 @@ def _run_marks(rpr):
     return marks
 
 
-def _docx_paragraph(p, rels, figs):
-    pieces = []          # (marks tuple, text)
-    for node in p.iter():
-        tag = node.tag
+MC_FALLBACK = "{http://schemas.openxmlformats.org/markup-compatibility/2006}Fallback"
+M = "{%s}" % NS["m"]
+SUP = str.maketrans("0123456789+-−=()n", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁻⁼⁽⁾ⁿ")
+SUB = str.maketrans("0123456789+-=()", "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎")
+
+
+def _script(text, table, mark):
+    """上下标：能换成 Unicode 上下标字就换（3×10⁸、H₂O），换不了才写成 ^(…)/_(…)。
+    以前直接压平，3×10⁸ 会变成 3×108，物理化学题整题就错了"""
+    if not text:
+        return ""
+    out = text.translate(table)
+    return out if all(ord(c) > 127 or c.isspace() for c in out) else f"{mark}({text})"
+
+
+def _omml(node):
+    """Word 公式转成看得懂的文字：分数 a/b、上下标、根号。以前把字接在一起，3/32 会变成 332"""
+    tag = node.tag
+    kids = lambda name: node.find(M + name)
+    text = lambda n: _omml(n) if n is not None else ""
+    if tag == M + "t":
+        return node.text or ""
+    if tag == M + "f":
+        num, den = text(kids("num")), text(kids("den"))
+        wrap = lambda t: t if len(t) <= 1 or t.isalnum() else f"({t})"
+        return f"{wrap(num)}/{wrap(den)}"
+    if tag == M + "sSup":
+        return text(kids("e")) + _script(text(kids("sup")), SUP, "^")
+    if tag == M + "sSub":
+        return text(kids("e")) + _script(text(kids("sub")), SUB, "_")
+    if tag == M + "sSubSup":
+        return text(kids("e")) + _script(text(kids("sub")), SUB, "_") + _script(text(kids("sup")), SUP, "^")
+    if tag == M + "rad":
+        deg = text(kids("deg"))
+        return (_script(deg, SUP, "^") if deg else "") + f"√({text(kids('e'))})"
+    if tag == M + "d":
+        pr = node.find(M + "dPr")
+        beg = pr.find(M + "begChr") if pr is not None else None
+        end = pr.find(M + "endChr") if pr is not None else None
+        inner = "".join(text(e) for e in node.findall(M + "e"))
+        return (beg.get(M + "val") if beg is not None else "(") + inner + (end.get(M + "val") if end is not None else ")")
+    if tag.endswith("Pr"):
+        return ""
+    return "".join(_omml(c) for c in node)
+
+
+def _blips(node):
+    """这个 run 自己的图（不含文字框里别的 run 的图、不含 Fallback 那份重复的）"""
+    for child in node:
+        if child.tag in (MC_FALLBACK, W + "txbxContent"):
+            continue
+        if child.tag == "{%s}blip" % NS["a"]:
+            yield child
+        yield from _blips(child)
+
+
+def _docx_walk(node, pieces, rels, figs):
+    for child in node:
+        tag = child.tag
+        if tag == MC_FALLBACK:
+            continue             # 文字框在 Choice 与 Fallback 各存一份，只读一份，不然每句都重复
         if tag == W + "r":
-            marks = tuple(_run_marks(node.find("w:rPr", NS)))
+            rpr = child.find("w:rPr", NS)
+            marks = tuple(_run_marks(rpr))
+            va = rpr.find("w:vertAlign", NS) if rpr is not None else None
+            va = va.get(W + "val") if va is not None else ""
             buf = ""
-            for child in node:
-                if child.tag == W + "t":
-                    buf += child.text or ""
-                elif child.tag == W + "tab":
+            for sub in child:
+                if sub.tag == W + "t":
+                    t = sub.text or ""
+                    buf += _script(t, SUP, "^") if va == "superscript" else _script(t, SUB, "_") if va == "subscript" else t
+                elif sub.tag == W + "tab":
                     buf += "\t"
-                elif child.tag in (W + "br", W + "cr"):
+                elif sub.tag in (W + "br", W + "cr"):
                     buf += "\n"
-            for blip in node.iter("{%s}blip" % NS["a"]):
+            for blip in _blips(child):
                 rid = blip.get("{%s}embed" % NS["r"])
                 if rid in rels:
                     buf += figs.ref(rels[rid])
             if buf:
                 pieces.append((marks, buf))
-        elif tag == "{%s}oMath" % NS["m"]:
-            math = "".join(t.text or "" for t in node.iter("{%s}t" % NS["m"]))
+            _docx_walk(child, pieces, rels, figs)   # 文字框里的段落
+        elif tag in (M + "oMath",):
+            math = _omml(child)
             if math:
                 pieces.append(((), math))
+        elif tag not in (W + "t", W + "rPr", W + "pPr"):
+            _docx_walk(child, pieces, rels, figs)
+
+
+def _docx_paragraph(p, rels, figs):
+    pieces = []          # (marks tuple, text)
+    _docx_walk(p, pieces, rels, figs)
     # 相邻、标记相同的片段合并，标记只包一次
     out, cur_marks, cur = [], None, ""
     for marks, text in pieces + [(None, "")]:
@@ -232,11 +305,11 @@ def to_parts(path):
             text = f.read()
         if not text.strip():
             raise Unsupported("文字档是空的")
-        return [{"text": "【原档内容】\n" + text}], notes, {}
+        return [{"text": SOURCE_HEADER + text}], notes, {}
 
     if ext in (".docx", ".pptx"):
         text, figs = (read_docx if ext == ".docx" else read_pptx)(path, notes)
-        parts = [{"text": "【原档内容】\n" + text}] + figs.parts(notes)
+        parts = [{"text": SOURCE_HEADER + text}] + figs.parts(notes)
         return parts, notes, figs.media()
 
     if ext in OLD_OFFICE:

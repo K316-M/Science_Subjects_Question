@@ -138,7 +138,7 @@ def inspect_pending(issues):
         issues.append({
             "source": "待审区", "chapter": "—", "type": "🤖 待人工核对",
             "snippet": f"{awaiting_expert} 题 AI 生成题",
-            "action": "这些题的科学正确性尚未验证，请在对应的 Pull Request 里逐题核对后再合并",
+            "action": "这些题的科学正确性尚未验证，请到 /dev「AI 录题待审」核对后再采纳",
         })
 
 

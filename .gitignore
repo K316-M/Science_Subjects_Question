@@ -13,3 +13,6 @@ GENERATION_REPORT.md
 # 一键 UI 检查：依赖与截图输出不进仓库
 scripts/ui-check/node_modules/
 scripts/ui-check/out/
+
+# 录题报告：每次跑流水线重新产生，只拿来当 PR 内文
+INGEST_REPORT.md

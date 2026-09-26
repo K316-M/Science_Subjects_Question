@@ -422,6 +422,18 @@ table.data td.wrap { white-space: normal; min-width: 220px; }
 .q-preview svg { max-width: 100%; height: auto; background: #f8fafc; border-radius: 8px; }
 .list-card { padding: 0; overflow: hidden; }
 
+/* 题目编辑器 */
+.editor { display: flex; flex-direction: column; gap: 12px; }
+.ed-panel { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
+.ed-opt { display: flex; align-items: center; gap: 8px; }
+.ed-opt input[type="radio"], .clean-row input[type="checkbox"] { width: 18px; height: 18px; flex: 0 0 auto; accent-color: var(--good); }
+.ed-image { background: var(--plane); border: 1px dashed var(--border-strong); border-radius: 10px; padding: 10px; }
+.ed-image img { display: block; max-width: 100%; max-height: 240px; border-radius: 8px; background: #fff; }
+.select-inline { width: auto; max-width: 280px; height: 32px; padding-top: 0; padding-bottom: 0; }
+.clean-row { display: flex; gap: 10px; align-items: flex-start; }
+.clean-row input[type="checkbox"] { margin-top: 12px; accent-color: var(--accent); }
+.clean-main { flex: 1; min-width: 0; }
+
 .json-view {
   font-family: var(--mono); font-size: 12px; line-height: 1.6; color: var(--ink-2);
   background: var(--plane); border: 1px solid var(--border); border-radius: 10px;

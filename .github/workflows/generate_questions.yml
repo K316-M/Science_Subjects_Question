@@ -30,6 +30,12 @@ on:
         required: false
         default: '4'
 
+# 连推好几次时排队一个一个跑，免得同时改待审区开出互相冲突的 PR。
+# 录题与出题各自一组：GitHub 同一组只留一个排队的，共用一组会把排队中的另一个取消掉
+concurrency:
+  group: generate
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
