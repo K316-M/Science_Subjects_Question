@@ -1,29 +1,4 @@
 {
-  "items": [
-    {
-      "id": "biology_707ca3f4ee",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第9章：健康与免疫",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.098882Z",
-      "q": "过敏若发生在呼吸道, 不会有下列何种症状?",
-      "options": [
-        "A. 气管内侧发生红疹",
-        "B. 气管平滑肌收缩",
-        "C. 气管粘液分泌增加",
-        "D. 气喘"
-      ],
-      "answer": 0,
-      "explanation": "呼吸道过敏反应（如哮喘）主要表现为支气管平滑肌痉挛收缩（B）、黏膜水肿及粘液分泌增加（C），导致呼吸困难和气喘（D）。红疹（荨麻疹）是皮肤过敏的典型症状，不会发生在气管内侧（A错）。",
-      "review": {
-        "ai_answer": 0,
-        "reason": "呼吸道过敏会导致平滑肌收缩、粘液分泌增加和气喘，但不会在气管内侧出现皮肤特有的红疹。"
-      }
-    }
-  ],
+  "items": [],
   "generated_at": "2026-09-25T06:18:12.273685Z"
 }
