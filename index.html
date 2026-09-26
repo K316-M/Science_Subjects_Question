@@ -351,6 +351,17 @@
       -webkit-overflow-scrolling: touch;
     }
     .chapter-bookmark-rail::-webkit-scrollbar { display: none; }
+    .chapter-bookmark-rail.is-draggable { cursor: grab; }
+    .chapter-bookmark-rail.is-dragging { cursor: grabbing; user-select: none; }
+    .chapter-bookmark-rail.is-dragging .chapter-card { pointer-events: none; }
+    /* 捲动条：底线是整条轨道，深色那段是目前看得到的范围 */
+    .rail-track { position: relative; height: 6px; margin: -8px 20px 16px; border-radius: 6px; cursor: pointer;
+      background: rgba(15, 23, 42, .1); touch-action: none; }
+    .rail-track::before { content: ''; position: absolute; inset: -10px 0; }   /* 手指好按：点击范围比看到的粗 */
+    .rail-track[hidden] { display: none; }
+    .rail-thumb { position: absolute; top: 0; left: 0; height: 100%; min-width: 24px; border-radius: 6px;
+      background: var(--primary); opacity: .55; transition: opacity .2s; }
+    .rail-track:hover .rail-thumb, .rail-track.is-dragging .rail-thumb { opacity: .9; }
 
     .chapter-card {
       flex: 0 0 152px;
@@ -1066,6 +1077,8 @@
         <button type="button" class="mock-exam-btn" id="mockExamBtn" onclick="startMockExam()" hidden><svg class="ic" aria-hidden="true"><use href="#i-timer"></use></svg><span id="mockExamLabel">模拟统考</span></button>
       </div>
       <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
+      <!-- 章节卡横向排不下时的捲动条：手机看得出可以滑，电脑可以拖它（卡片本身也能用滑鼠拖） -->
+      <div class="rail-track" id="chapterRailTrack" aria-hidden="true" hidden><div class="rail-thumb" id="chapterRailThumb"></div></div>
     </div>
     <div class="sub-bookmark-bar" role="tablist" aria-label="练习模式">
       <button class="sub-tab-btn active" id="subBtnMcq" role="tab" aria-selected="true" onclick="switchSubSection('mcq')"><svg class="ic" aria-hidden="true"><use href="#i-cards"></use></svg><span>选择题<span class="tab-long">练习</span></span></button>
@@ -1822,7 +1835,78 @@ function openSubject(subject, initialChapterIdx, subMode) {
     window.dispatchEvent(new CustomEvent('uec:view', { detail: viewId }));
   }
 
+  // ---- 章节轨道：捲动条＋滑鼠拖曳 ----
+  // 触控本来就能滑；滑鼠没有横向滚轮，所以让卡片区可以按住拖，下面的捲动条也可以拖或点
+  let railScrollReady = false;
+  function setupRailScroll() {
+    if (railScrollReady) return;
+    const rail = document.getElementById('chapterRail');
+    const track = document.getElementById('chapterRailTrack');
+    const thumb = document.getElementById('chapterRailThumb');
+    if (!rail || !track || !thumb) return;
+    railScrollReady = true;
+
+    const update = () => {
+      const max = rail.scrollWidth - rail.clientWidth;
+      const overflow = max > 2;
+      track.hidden = !overflow;
+      rail.classList.toggle('is-draggable', overflow);
+      if (!overflow) return;
+      const tw = track.clientWidth;
+      const w = Math.max(24, tw * rail.clientWidth / rail.scrollWidth);
+      thumb.style.width = `${w}px`;
+      thumb.style.transform = `translateX(${(tw - w) * (rail.scrollLeft / max)}px)`;
+    };
+    rail.addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    new ResizeObserver(update).observe(rail);
+    new MutationObserver(update).observe(rail, { childList: true });
+
+    // 拖卡片区（只处理滑鼠；触控交给浏览器原生捲动）。移动超过 6px 才算拖，不然就是点卡片
+    let drag = null;
+    rail.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0 || !rail.classList.contains('is-draggable')) return;
+      drag = { x: e.clientX, left: rail.scrollLeft, moved: false };
+    });
+    addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) < 6) return;
+      drag.moved = true;
+      rail.classList.add('is-dragging');
+      rail.scrollLeft = drag.left - dx;
+    });
+    addEventListener('pointerup', () => {
+      if (!drag) return;
+      const moved = drag.moved;
+      drag = null;
+      rail.classList.remove('is-dragging');
+      // 拖完放开时浏览器会补一个 click，别让它当成选了那一章
+      if (moved) rail.addEventListener('click', ev => { ev.stopPropagation(); ev.preventDefault(); }, { capture: true, once: true });
+    });
+
+    // 捲动条：点哪里跳到哪里，按住拖动（滑鼠、触控都可以）
+    const seek = clientX => {
+      const r = track.getBoundingClientRect();
+      const w = thumb.offsetWidth;
+      const ratio = Math.min(1, Math.max(0, (clientX - r.left - w / 2) / (r.width - w)));
+      rail.scrollLeft = ratio * (rail.scrollWidth - rail.clientWidth);
+    };
+    track.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      track.setPointerCapture(e.pointerId);
+      track.classList.add('is-dragging');
+      seek(e.clientX);
+    });
+    track.addEventListener('pointermove', e => { if (track.hasPointerCapture(e.pointerId)) seek(e.clientX); });
+    const release = () => track.classList.remove('is-dragging');
+    track.addEventListener('pointerup', release);
+    track.addEventListener('pointercancel', release);
+    update();
+  }
+
   function renderChapterRail() {
+    setupRailScroll();
     const rail = document.getElementById('chapterRail');
     rail.innerHTML = '';
     const sections = fullDatabase.sections || [];
@@ -2181,6 +2265,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
   const SUB_TAB_IDS = { mcq: 'subBtnMcq', subj: 'subBtnSubj', wrong: 'subBtnWrong', review: 'subBtnReview' };
   function markSubTab(mode) {
+    // 画面导览（js/onboarding.js）听这个：第一次切到某一种练法就介绍它
+    window.dispatchEvent(new CustomEvent('uec:submode', { detail: mode }));
     Object.entries(SUB_TAB_IDS).forEach(([m, id]) => {
       const b = document.getElementById(id);
       const on = m === mode;

@@ -8,6 +8,8 @@
  *   - 找不到目标的步骤自动略过（例如还没有笔记时，就不介绍笔记卡上的按钮）。
  *   - 不用 backdrop-filter：背景是会动的水彩，模糊每帧都要重算（设计原则 3）。
  *   - 网址带 ?guide=1 会强制重看当前画面，方便自己检查。
+ *   - 做题页的四种练法（选择题／做答题／错题本／今日复习）各有自己的导览，第一次切过去才介绍；
+ *     模拟统考和整章测验共用测验画面，但规则不同，所以分开两份。
  */
 (function () {
   'use strict';
@@ -17,6 +19,9 @@
     viewSubjects: 'home', viewStudy: 'study', viewTest: 'test',
     viewNotes: 'notes', viewArchive: 'archive', viewFeedback: 'feedback',
   };
+  // 做题页现在是哪一种练法（index.html 的 markSubTab 发出 uec:submode）
+  const SUB_TO_TOUR = { mcq: 'study', subj: 'subj', wrong: 'wrong', review: 'review' };
+  let subMode = 'mcq';
 
   /* ---------- 每个画面的导览内容 ---------- */
   const TOURS = {
@@ -41,10 +46,38 @@
         body: '<strong>选择题</strong>、<strong>做答题</strong>（自己写答案，交给 AI 依得分点批改）、<strong>错题本</strong>（答错会自动收进来，要在不同的两天都答对才移出）、<strong>今日复习</strong>（系统算好今天该看的题）。' },
       { target: '#optContainer', title: '作答',
         body: '点一个选项作答，立刻看到对错和解析。有键盘的话，A–D 作答、←/→ 换题。' },
-      { target: '#testStartBtn', title: '整章测验',
-        body: '想模拟考试就用这个：一次列出整章，全部答完才能交卷，交卷才看答案。' },
+      { target: '#testStartBtn', title: '整章测验与模拟统考',
+        body: '「整章测验」一次列出整章，全部答完才能交卷。想练时间感，点开上面的章节选单，有<strong>「模拟统考」</strong>：全科抽题、照真的试卷一时间倒数。' },
       { target: '.card-note-btn', title: '做笔记',
         body: '把这一题导入成自己的笔记，可以手写、画图、打字。之後在上方「笔记」里都找得到。' },
+    ],
+    subj: [
+      { target: '.subj-attempt', title: '先自己写',
+        body: '在横线上写你的答案，按<strong>「交给 AI 批改」</strong>，AI 会依参考答案的得分点逐点给分。旁边写著这小时还能批改几次。' },
+      { target: '.answer-flip-panel', title: '参考答案',
+        body: '平常是遮住的，方便默背；点一下就翻开。在题干和参考答案上可以用荧光笔划重点。' },
+    ],
+    wrong: [
+      { target: '.wrong-book-head, #activeStudyArea .empty-state', title: '错题本',
+        body: '答错的题会<strong>自动</strong>收进来。要在<strong>不同的两天</strong>都答对才会移出——同一天连对两次不算，因为那可能只是刚看过答案。' },
+      { target: '.wrong-group.is-stubborn', title: '顽固题',
+        body: '错了三次以上的题排在最上面。这些最值得打开解析、做一则笔记。' },
+      { target: '.wrong-row', title: '点一下就去重做',
+        body: '会跳回那一题；答完可以按「回到错题本」。' },
+    ],
+    review: [
+      { target: '.review-head, #activeStudyArea .empty-state', title: '今日复习',
+        body: '系统依你的作答记录，算出<strong>今天该再看一次</strong>的题。答对了，下次间隔拉长；答错，明天再来。每天做完这一份就好。' },
+      { target: '.review-list', title: '今天的清单',
+        body: '可以照顺序做，也可以挑一题先做。逾期的会标出来，越久没看越容易忘。' },
+    ],
+    mock: [
+      { target: '.test-clock', title: '模拟统考',
+        body: '照统考时间表的<strong>试卷一</strong>时间倒数。剩五分钟会变红；<strong>时间到自动交卷，没答的算错</strong>。' },
+      { target: '.test-submit', title: '可以提早交卷',
+        body: '还有题没答时，第一次按会先提醒你，再按一次才交。成绩会算进复习排程和错题本。' },
+      { target: '.test-exit', title: '中途离开',
+        body: '退出就不计分；计时不会暂停。' },
     ],
     test: [
       { target: '.test-q', title: '整章测验',
@@ -135,8 +168,9 @@
 
   function currentTourName() {
     const test = document.getElementById('viewTest');
-    if (test && test.classList.contains('active')) return 'test';
+    if (test && test.classList.contains('active')) return window.UECTest && window.UECTest.isTimed() ? 'mock' : 'test';
     const v = document.querySelector('.view.active');
+    if (v && v.id === 'viewStudy') return SUB_TO_TOUR[subMode] || 'study';
     return v ? VIEW_TO_TOUR[v.id] : null;
   }
 
@@ -320,8 +354,15 @@
     // 换画面时（index.html 的 showView 会发出 uec:view）
     addEventListener('uec:view', e => {
       if (tourName) finish();
-      const name = VIEW_TO_TOUR[e.detail];
-      setTimeout(() => startWhenReady(name, false), 700);
+      setTimeout(() => startWhenReady(currentTourName(), false), 700);
+    });
+    // 做题页切换练法：第一次切到错题本、今日复习、做答题时介绍那一种
+    addEventListener('uec:submode', e => {
+      subMode = e.detail;
+      const study = document.getElementById('viewStudy');
+      if (!study || !study.classList.contains('active')) return;   // 还在别的画面，等 uec:view 再说
+      if (tourName) return;
+      setTimeout(() => startWhenReady(currentTourName(), false), 400);
     });
 
     const forced = new URLSearchParams(location.search).get('guide') === '1';

@@ -172,6 +172,8 @@
 [data-theme="night"] .btn-danger { background: transparent; border-color: rgba(242, 170, 166, .4); }
 [data-theme="night"] .chapter-card { background: rgba(36, 34, 30, .72); border-color: var(--n-border); }
 [data-theme="night"] .chapter-card:hover { background: rgba(44, 41, 36, .92); border-color: rgba(134, 207, 168, .45); }
+[data-theme="night"] .rail-track { background: rgba(240, 228, 206, .14); }
+[data-theme="night"] .rail-thumb { background: #86cfa8; }
 [data-theme="night"] .chapter-card.active { background: var(--n-raised); border-color: var(--primary); }
 [data-theme="night"] .chapter-card::before { background: radial-gradient(160px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 244, 224, .07), rgba(255, 244, 224, 0) 62%); }
 [data-theme="night"] .chap-name { color: var(--n-text); }
