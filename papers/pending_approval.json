@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_3bc16cb269",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap6",
-      "chapter_title": "第6章：营养成分的运输",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.091998Z",
-      "q": "有一个红血球位于左脚的一条小动脉内, 在到达左心室之前, 它会经过多少个微血管网?",
-      "options": [
-        "A. 1",
-        "B. 2",
-        "C. 3",
-        "D. 4"
-      ],
-      "answer": 1,
-      "explanation": "红血球从左脚小动脉出发，首先经过左脚的微血管网（第1个）进入静脉系统，回流至右心房、右心室；接着经肺动脉进入肺部微血管网（第2个）进行气体交换，最后经肺静脉回到左心房，再进入左心室。因此共经过2个微血管网。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "红细胞从左脚小动脉出发，需先经过左脚的微血管网进入静脉回心，再经肺循环通过肺部微血管网，最后回到左心房和左心室，共经过2个微血管网。"
-      }
-    },
-    {
       "id": "biology_491b41c9a3",
       "subject": "biology",
       "type": "mcq",
