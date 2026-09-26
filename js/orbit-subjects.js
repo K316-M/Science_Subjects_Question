@@ -145,9 +145,12 @@
   function masteredCount(key) {
     let store = {};
     try { store = JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; } catch (e) { store = {}; }
+    const hidden = (SUBJECTS.find(x => x.key === key) || {}).hidden || {};
     let n = 0;
-    Object.values(store[key] || {}).forEach(chapter => {
-      Object.values(chapter || {}).forEach(v => { if (v === 'mastered') n++; });
+    Object.entries(store[key] || {}).forEach(([chapterId, chapter]) => {
+      Object.entries(chapter || {}).forEach(([i, v]) => {
+        if (v === 'mastered' && !(hidden[chapterId] && hidden[chapterId].has(Number(i)))) n++;
+      });
     });
     return n;
   }
@@ -161,8 +164,16 @@
         if (!res.ok) return;
         const data = await res.json();
         const sections = data.sections || data.mcq_sections || [];
-        s.total = sections.reduce((n, sec) => n + ((sec.mcqs && sec.mcqs.length) || 0), 0);
-        s.any = s.total + sections.reduce((n, sec) => n + ((sec.subjectives && sec.subjectives.length) || 0), 0);
+        // 在 /dev 下架的题（hidden）不算
+        const live = list => (list || []).filter(q => !q.hidden).length;
+        s.total = sections.reduce((n, sec) => n + live(sec.mcqs), 0);
+        s.any = s.total + sections.reduce((n, sec) => n + live(sec.subjectives), 0);
+        // 下架的选择题答对过也不算进掌握数
+        s.hidden = {};
+        sections.forEach(sec => {
+          const idx = (sec.mcqs || []).map((q, i) => (q.hidden ? i : -1)).filter(i => i >= 0);
+          if (idx.length) s.hidden[sec.id] = new Set(idx);
+        });
       } catch (e) { /* 题库还没上线就当 0 题 */ }
     }));
     refresh();

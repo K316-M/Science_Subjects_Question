@@ -1619,6 +1619,15 @@
   };
 
   let fullDatabase = { sections: [] };
+  // 在 /dev 下架的题（hidden: true）留在题库原位、只是不给学生看：
+  // 进度、错题、笔记都按「第几题」记，真的删掉的话後面每一题的纪录都会对到别题
+  const isLive = q => Boolean(q) && !q.hidden;
+  const liveCount = list => (list || []).filter(isLive).length;
+  // 从 from 开始往 dir 方向找第一个没下架的题；找不到回传 -1
+  function liveIdx(list, from, dir) {
+    for (let i = from; i >= 0 && i < (list || []).length; i += dir) if (isLive(list[i])) return i;
+    return -1;
+  }
   let activeChapterIdx = 0;
   let activeSubMode = 'mcq';
   let currentMcqIdx = 0;
@@ -1661,8 +1670,10 @@
   function getChapterProgress(subject, chapterId, totalMcqs) {
     const store = loadProgressStore();
     const chapData = (store[subject] && store[subject][chapterId]) || {};
+    // 下架的题答对过也不算进掌握数，不然会出现「6/5」
+    const sec = subject === currentSubject && (fullDatabase.sections || []).find(x => x.id === chapterId);
     let mastered = 0;
-    Object.values(chapData).forEach(v => { if (v === 'mastered') mastered++; });
+    Object.entries(chapData).forEach(([i, v]) => { if (v === 'mastered' && (!sec || isLive((sec.mcqs || [])[i]))) mastered++; });
     return { mastered, total: totalMcqs };
   }
   // 错题本 = 还没掌握的题：答错就收（以前答对过也一样），要在不同的两天都答对才移出。
@@ -1676,7 +1687,7 @@
     sections.forEach((sec, chapterIdx) => {
       const chapData = subjData[sec.id] || {};
       (sec.mcqs || []).forEach((item, mcqIdx) => {
-        if (chapData[mcqIdx] === 'wrong' && !(R && R.hasRecord(subject, sec.id, mcqIdx))) {
+        if (isLive(item) && chapData[mcqIdx] === 'wrong' && !(R && R.hasRecord(subject, sec.id, mcqIdx))) {
           list.push({ chapterIdx, mcqIdx, chapterTitle: sec.title, question: item.q, lapses: 1, okDays: 0, stubborn: false });
         }
       });
@@ -1924,7 +1935,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
       const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
       const tagText = match ? match[0] : `第 ${idx + 1} 章`;
       const nameText = sec.title.replace(/第.*[章节][：:]?/, '');
-      const total = sec.mcqs ? sec.mcqs.length : 0;
+      const total = liveCount(sec.mcqs);
       const { mastered } = getChapterProgress(currentSubject, sec.id, total);
       const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
 
@@ -1974,7 +1985,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
     idxEl.textContent = match ? match[0] : `第 ${activeChapterIdx + 1} 章`;
     nameEl.textContent = sec.title.replace(/第.*[章节][：:]?/, '');
-    const total = (sec.mcqs || []).length;
+    const total = liveCount(sec.mcqs);
     const { mastered } = getChapterProgress(currentSubject, sec.id, total);
     metaEl.textContent = total === 0 ? '整理中' : mastered === total ? '已掌握' : mastered ? `${mastered}/${total}` : `${total} 题`;
     metaEl.classList.toggle('is-done', total > 0 && mastered === total);
@@ -2025,7 +2036,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const sec = (fullDatabase.sections || [])[chapterIdx];
     if (!sec) return;
     // 首页最显眼的横幅不能把学生送进一个没有题目的章节
-    if ((sec.mcqs || []).length + (sec.subjectives || []).length === 0) return;
+    if (liveCount(sec.mcqs) + liveCount(sec.subjectives) === 0) return;
     try {
       localStorage.setItem(LAST_VISIT_KEY, JSON.stringify({
         subject, chapterIdx, chapterTitle: sec.title, ts: Date.now()
@@ -2198,8 +2209,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const el = document.getElementById('bankCoverage');
     if (!el) return;
     const sections = fullDatabase.sections || [];
-    const withQ = sections.filter(sec => (sec.mcqs || []).length + (sec.subjectives || []).length > 0).length;
-    const total = sections.reduce((n, sec) => n + (sec.mcqs || []).length, 0);
+    const withQ = sections.filter(sec => liveCount(sec.mcqs) + liveCount(sec.subjectives) > 0).length;
+    const total = sections.reduce((n, sec) => n + liveCount(sec.mcqs), 0);
     el.textContent = sections.length
       ? `依考纲共 ${sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`
       : '';
@@ -2221,7 +2232,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const part = paper && paper.parts.find(pt => pt[0].startsWith('试卷一'));
     const pool = [];
     (fullDatabase.sections || []).forEach(sec => (sec.mcqs || []).forEach((m, idx) => {
-      if (Array.isArray(m.options) && m.options.length) pool.push({ sec, m, idx });
+      if (isLive(m) && Array.isArray(m.options) && m.options.length) pool.push({ sec, m, idx });
     }));
     if (!part || !pool.length) return null;
     const [h1, m1] = part[1].split(':').map(Number);
@@ -2310,7 +2321,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
   function subjectQuestionCount() {
     return (fullDatabase.sections || []).reduce(
-      (n, sec) => n + (sec.mcqs || []).length + (sec.subjectives || []).length, 0);
+      (n, sec) => n + liveCount(sec.mcqs) + liveCount(sec.subjectives), 0);
   }
 
   // 今日复习的「今天总共几题」：把今天出现过的到期题记下来，做掉的就从到期清单消失，
@@ -2420,12 +2431,18 @@ function openSubject(subject, initialChapterIdx, subMode) {
     }
 
     if (activeSubMode === 'mcq') {
-      if (!sec.mcqs || sec.mcqs.length === 0) {
+      if (!liveCount(sec.mcqs)) {
         area.innerHTML = emptyState('cards', '这一章还没有选择题',
           '换一个章节看看，或到「做答题」试试。题目正在陆续补上。');
         return;
       }
+      // 停在一题刚被下架的题上（例如上次看到这里）：往後找，没有就往前
+      if (!isLive(sec.mcqs[currentMcqIdx])) {
+        const next = liveIdx(sec.mcqs, currentMcqIdx, 1);
+        currentMcqIdx = next >= 0 ? next : liveIdx(sec.mcqs, Math.min(currentMcqIdx, sec.mcqs.length - 1), -1);
+      }
       const item = sec.mcqs[currentMcqIdx];
+      const livePos = sec.mcqs.slice(0, currentMcqIdx + 1).filter(isLive).length;
       let figureHtml = '';
       if (item.image) {
         figureHtml = `
@@ -2450,7 +2467,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
           <div class="explanation" id="expContainer">${item.explanation}</div>
           <div class="card-footer">
             <button class="btn-nav" onclick="navMcq(-1)"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"></use></svg>上一题</button>
-            <span style="font-size:12px; color:var(--text-muted); font-weight:600;">第 ${currentMcqIdx + 1} / ${sec.mcqs.length} 题</span>
+            <span style="font-size:12px; color:var(--text-muted); font-weight:600;">第 ${livePos} / ${liveCount(sec.mcqs)} 题</span>
             <button class="btn-nav" onclick="navMcq(1)">下一题<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></button>
           </div>
           <button class="card-note-btn" onclick="openMcqNote()"
@@ -2491,9 +2508,9 @@ function openSubject(subject, initialChapterIdx, subMode) {
         if (!correct) btns[chosenIdx].classList.add('wrong');
 
         playSound(correct ? 'correct' : 'wrong');
-        const beforeStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
+        const beforeStats = getChapterProgress(currentSubject, sec.id, liveCount(sec.mcqs));
         recordMcqResult(currentSubject, sec.id, currentMcqIdx, correct);
-        const afterStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
+        const afterStats = getChapterProgress(currentSubject, sec.id, liveCount(sec.mcqs));
         renderChapterRail();
         updateWrongCountBadge();
         updateSceneGlow();
@@ -2562,18 +2579,22 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
     } else {
       const subjs = sec.subjectives || [];
-      if (subjs.length === 0) {
+      const subjTotal = liveCount(subjs);
+      if (subjTotal === 0) {
         area.innerHTML = emptyState('doc-lines', '这一章还没有做答题', '可以先到「选择题练习」，那边的题目比较多。');
         return;
       }
       let cardsHtml = '';
 
+      let subjPos = 0;
       subjs.forEach((q, qIndex) => {
+        if (!isLive(q)) return;
+        subjPos += 1;
         cardsHtml += `
-          <div class="form-question-card">
+          <div class="form-question-card" data-idx="${qIndex}">
             <div class="form-card-top-bar"></div>
             <div class="form-card-body">
-              <div class="form-q-num">做答题 ${qIndex + 1}<span>／${subjs.length}</span></div>
+              <div class="form-q-num">做答题 ${subjPos}<span>／${subjTotal}</span></div>
               <div class="form-question-text">${q.question}</div>
               ${q.image ? `
               <div class="figure-container" onclick="openImageModal('${q.image}')">
@@ -2625,7 +2646,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
   }
 
   // ---- 选择题：作答後可以请 AI 依「你选的那个」讲解 ----
-  // 同一题同一个选项讲过就存起来（只到这次开网页为止），再按不重复花额度
+  // 同一题同一个选项讲过就存在这台装置（见下面的 saveExplain），再选到不重复花额度
   // ---- AI（批改、讲解）共用：装置码与剩余次数 ----
   // 额度按装置算：全校连同一个 Wi-Fi 对外是同一个 IP，只按 IP 算会变成全校共用
   function aiHeaders() {
@@ -2847,7 +2868,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
   function ensureSubjNoteButtons(sec) {
     const container = document.getElementById('subjFormContainer');
     if (!container) return;
-    container.querySelectorAll('.form-question-card').forEach((card, i) => {
+    container.querySelectorAll('.form-question-card').forEach(card => {
+      const i = Number(card.dataset.idx);   // 题库里的位置；中间有下架的题时，和画面上的第几张卡不同
       if (card.querySelector('.card-note-btn')) return;
       const body = card.querySelector('.form-card-body');
       if (!body) return;
@@ -2866,19 +2888,19 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
   function startChapterTest() {
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
-    if (!sec || !(sec.mcqs || []).length || !window.UECTest) return;
+    if (!sec || !liveCount(sec.mcqs) || !window.UECTest) return;
     const subject = currentSubject;
     // 跟练习一样：这一次交卷让整章从「还没全对」变成「全对」，背景闪一下金光
-    let wasComplete = getChapterProgress(subject, sec.id, sec.mcqs.length).mastered === sec.mcqs.length;
+    let wasComplete = getChapterProgress(subject, sec.id, liveCount(sec.mcqs)).mastered === liveCount(sec.mcqs);
     window.UECTest.start({
       subjectLabel: SUBJECT_LABELS[subject] || '',
       chapterTitle: sec.title,
-      questions: sec.mcqs.map((m, idx) => Object.assign({}, m, { idx })),
+      questions: sec.mcqs.map((m, idx) => Object.assign({}, m, { idx })).filter(isLive),
       showView,
       playSound,
       onRecord: (idx, correct) => {
         recordMcqResult(subject, sec.id, idx, correct);
-        const now = getChapterProgress(subject, sec.id, sec.mcqs.length);
+        const now = getChapterProgress(subject, sec.id, liveCount(sec.mcqs));
         const complete = now.mastered === now.total;
         if (complete && !wasComplete) SceneAssets.shine(document.getElementById('customPhotoLayer'));
         wasComplete = complete;
@@ -2898,8 +2920,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
   function navMcq(delta) {
     cameFromReview = false;
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
-    const newIdx = currentMcqIdx + delta;
-    if (newIdx >= 0 && newIdx < sec.mcqs.length) {
+    const newIdx = liveIdx(sec.mcqs, currentMcqIdx + delta, delta < 0 ? -1 : 1);
+    if (newIdx >= 0) {
       playSound('flip');
       lastNavDir = delta < 0 ? -1 : 1;
       currentMcqIdx = newIdx;

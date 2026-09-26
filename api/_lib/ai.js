@@ -61,7 +61,8 @@ function findQuestion(subject, chapterId, index, type = 'subjective') {
   const file = path.join(process.cwd(), 'papers', `${subject}_question_bank.json`);
   const bank = JSON.parse(fs.readFileSync(file, 'utf8'));
   const sec = (bank.sections || []).find(s => s.id === chapterId);
-  return sec && (type === 'mcq' ? sec.mcqs || [] : sec.subjectives || [])[index];
+  const item = sec && (type === 'mcq' ? sec.mcqs || [] : sec.subjectives || [])[index];
+  return item && !item.hidden ? item : undefined;   // 在 /dev 下架的题不批改、不讲解
 }
 
 // ---------- 模型：批改要等得起，所以新版本的 flash 优先（录题那边才是 pro 优先） ----------

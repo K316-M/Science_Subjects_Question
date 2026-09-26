@@ -101,7 +101,7 @@
 | 想做什么 | 放在哪里 | 说明 |
 |---|---|---|
 | 加题目（照片、Word、PPT、PDF） | `drafts/<biology\|chemistry\|physics>/` | [drafts/README.md](../drafts/README.md) |
-| 改已上线的题、换配图 | 网站 `/dev` →「题目修改」 | 不用碰 JSON，见 [OPERATIONS 一·4](OPERATIONS.md#4-修改已上线的题) |
+| 改已上线的题、换配图、下架不要的题 | 网站 `/dev` →「题目修改」 | 不用碰 JSON，见 [OPERATIONS 一·4](OPERATIONS.md#4-修改已上线的题) |
 | 改章节名称或顺序 | `papers/<科目>_question_bank.json` 的 `sections[].title` | 🔴 不要改 `id`，学生的进度、笔记、划线都靠它对应 |
 | 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](../syllabus/README.md) |
 | 换背景图、背景音乐 | `assets/visual/<科目>/`、`assets/audio/<科目>/` | [assets/README.md](../assets/README.md) |

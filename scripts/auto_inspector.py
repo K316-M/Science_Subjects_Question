@@ -86,12 +86,14 @@ def inspect_bank(subject, issues):
 
     for sec_idx, sec in enumerate(sections):
         sec_title = sec.get("title", f"第 {sec_idx + 1} 章")
+        # 在 /dev 下架的题（hidden）学生看不到，不用巡检
         for q in sec.get("mcqs", []) or []:
-            check_mcq(q, source, sec_title, issues)
+            if not q.get("hidden"):
+                check_mcq(q, source, sec_title, issues)
 
         # 主观题：必须有参考得分点
         for sq in sec.get("subjectives", []) or []:
-            if not sq.get("answer"):
+            if not sq.get("hidden") and not sq.get("answer"):
                 issues.append({
                     "source": source, "chapter": sec_title, "type": "📝 缺少答案",
                     "snippet": snippet_of(sq.get("question", "")),
