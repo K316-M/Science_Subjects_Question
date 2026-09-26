@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_6c38800421",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap8",
-      "chapter_title": "第8章：内环境的恒定和排泄系统",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.096359Z",
-      "q": "下列有关人体排泄的叙述，何者正确？",
-      "options": [
-        "A. 肾脏的功能受脑垂腺后叶和肾上腺分泌物的调节",
-        "B. 肾小球滤入鲍氏囊的滤液均为无用之废物",
-        "C. 肾元为肾之构造单位，由鲍氏囊、肾小管、肾小球及集尿管共同合成",
-        "D. 肾小管只有再吸收的功能"
-      ],
-      "answer": 0,
-      "explanation": "肾脏的排尿和保水功能受到抗利尿激素（由下丘脑合成、脑垂体后叶释放）和醛固酮（肾上腺皮质分泌）的调节（A正确）。原尿中含有葡萄糖、氨基酸等有用物质（B错）；肾元不包括集尿管（C错）；肾小管还具有分泌功能（D错）。",
-      "review": {
-        "ai_answer": 0,
-        "reason": "肾脏的重吸收和排泄功能受抗利尿激素（脑垂体后叶释放）和醛固酮（肾上腺皮质分泌）的调节。"
-      }
-    },
-    {
       "id": "biology_7d8c15c5b4",
       "subject": "biology",
       "type": "mcq",
