@@ -471,9 +471,11 @@
 /* 图还没载好：位置先占好（导览找得到），但看不见、点不到，飞入动画停在第一格 */
 .sprite-wrap.active.is-loading { opacity: 0; pointer-events: none; animation-play-state: paused; }
 .sprite-wrap.leaving { animation: spriteOut 0.55s ease forwards; }
+/* 从右下方沿弧线飞进来，机头先压低、到位时微微冲过头再回正 */
 @keyframes spriteIn {
-  from { opacity: 0; transform: translateY(24px) scale(0.85); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  0% { opacity: 0; transform: translate(60px, 40px) rotate(8deg) scale(0.8); }
+  60% { opacity: 1; transform: translate(-6px, -8px) rotate(-4deg) scale(1.02); }
+  100% { opacity: 1; transform: none; }
 }
 @keyframes spriteOut {
   0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
@@ -529,26 +531,58 @@
 .sprite-char {
   width: 128px; height: 128px; flex: 0 0 auto;
   cursor: pointer; position: relative;
-  filter: drop-shadow(0 6px 8px rgba(15, 23, 42, 0.28));
-  animation: spriteBob 2.6s ease-in-out infinite;
+}
+/* 地上的影子：飞器升高时变小变淡，看得出它是浮在空中，不是一张贴纸在上下移 */
+.sprite-char::before {
+  content: ''; position: absolute; left: 24%; right: 24%; bottom: -8px; height: 10px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(15, 23, 42, .3), rgba(15, 23, 42, 0));
+  animation: spriteShadow 2.6s ease-in-out infinite;
 }
 .sprite-char:focus-visible { outline: 2px solid var(--retro-teal-dark); outline-offset: 4px; border-radius: 12px; }
-.sprite-poses { position: absolute; inset: 0; }
+.sprite-poses {
+  position: absolute; inset: 0;
+  filter: drop-shadow(0 4px 5px rgba(15, 23, 42, 0.2));
+  animation: spriteHover 2.6s ease-in-out infinite;
+}
 .sprite-pose {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  opacity: 0;
+  opacity: 0; transform-origin: 50% 85%;
   pointer-events: none; user-select: none; -webkit-user-drag: none;
 }
 .sprite-pose.on { opacity: 1; }
-@keyframes spriteBob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+/* 换姿势时轻轻弹一下（眨眼、回到发呆不弹，不然每几秒就抖一次）；开心时跳起来 */
+.sprite-pose.on:is([data-pose="wave"], [data-pose="present"], [data-pose="talk"], [data-pose="write"]) {
+  animation: spritePop .32s cubic-bezier(.34, 1.56, .64, 1);
 }
-.sprite-char:hover { animation-play-state: paused; }
+.sprite-pose.on[data-pose="happy"] { animation: spriteHop .7s cubic-bezier(.3, .7, .4, 1); }
+/* 悬浮：上下之外带一点前後倾，像飞器在空中稳住平衡。translate / rotate 分开写，才不会盖掉姿势的 scale */
+@keyframes spriteHover {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  30% { rotate: -1.5deg; }
+  50% { translate: 0 -7px; }
+  75% { rotate: 1deg; }
+}
+@keyframes spriteShadow {
+  0%, 100% { transform: scaleX(1); opacity: 1; }
+  50% { transform: scaleX(.82); opacity: .6; }
+}
+@keyframes spritePop {
+  0% { scale: .94; }
+  60% { scale: 1.03; }
+  100% { scale: 1; }
+}
+@keyframes spriteHop {
+  0% { translate: 0 0; scale: 1 1; }
+  15% { translate: 0 0; scale: 1.04 .94; }
+  45% { translate: 0 -16px; scale: .97 1.04; }
+  75% { translate: 0 0; scale: 1.03 .96; }
+  100% { translate: 0 0; scale: 1 1; }
+}
+.sprite-char:hover .sprite-poses, .sprite-char:hover::before { animation-play-state: paused; }
 
 /* 尊重系统的「减少动态效果」设定；持续跳动的元素对前庭敏感的人不友好，也更难点中 */
 @media (prefers-reduced-motion: reduce) {
-  .sprite-char { animation: none; }
+  .sprite-char::before, .sprite-poses, .sprite-pose.on { animation: none !important; }
   .sprite-wrap.active { animation: none; }
   .sprite-wrap.leaving { animation: spriteOut 0.3s ease forwards; }
   .blob { animation: none; }
