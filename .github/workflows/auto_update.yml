@@ -40,7 +40,7 @@ jobs:
         run: |
           git config --global user.name "Inspector-Bot"
           git config --global user.email "bot@independent-school.edu"
-          git add INSPECTION_REPORT.md
+          git add docs/INSPECTION_REPORT.md
           git commit -m "📋 [Report] 更新题库自检报告" || echo "报告无变动"
           git push
 
@@ -49,5 +49,5 @@ jobs:
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: "🚨 题库巡检检讨报告（有待补充图片或确认答案）"
-          content-filepath: INSPECTION_REPORT.md
+          content-filepath: docs/INSPECTION_REPORT.md
           labels: "题库维护, 待修改"

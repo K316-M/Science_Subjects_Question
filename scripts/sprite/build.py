@@ -1,9 +1,12 @@
-"""小精灵姿势图：refs/*.png → assets/sprite/*.webp
+"""小精灵姿势图：source/sprite/*.png → assets/sprite/*.webp
 
   1. 去光晕：把半透明的柔光外圈切掉，边缘像素的颜色换成内侧实色，避免白边/灰边
-  2. 饱和度对齐 idle（portal 例外：它多出来的饱和度是传送门特效本身）
+  2. 色调与饱和度对齐 idle：拿每张都有、而且一模一样的滑板量色偏，R/G/B 各自拉回 idle 的颜色（最多 ±20%）；
+     饱和度再整体对齐（portal 例外：它多出来的饱和度是传送门特效本身）
   3. 以底下的滑板为基准，把每张的大小和位置对齐 idle，换姿势时角色不会跳
   4. 统一裁切，输出 256px WebP
+  原图必须是真正透明的 PNG。没有透明通道的（例如背景是画进像素里的棋盘格）会直接停下来，
+  不然换到那个姿势时角色背後会冒出一块白底
 
 用法：python3 scripts/sprite/build.py
 """
@@ -15,14 +18,19 @@ import numpy as np
 from PIL import Image, ImageEnhance
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REFS = os.path.join(HERE, 'refs')
+REFS = os.path.join(HERE, '..', '..', 'source', 'sprite')
 OUT = os.path.join(HERE, '..', '..', 'assets', 'sprite')
 SIZE = 256
-KEEP_SAT = {'portal'}        # 不做饱和度对齐
+KEEP_SAT = {'portal'}        # 不做色调与饱和度对齐
 
 
 def load(name):
-    return np.asarray(Image.open(os.path.join(REFS, name + '.png')).convert('RGBA')).astype(np.float32)
+    img = Image.open(os.path.join(REFS, name + '.png'))
+    # AI 生图的「透明背景」常常是画进像素里的棋盘格，看起来透明、其实是白灰方块。
+    # 这种图没办法可靠地自动去背（棋盘格大小、灰阶都不一致，还会挖到滑板的白色），直接停下来说清楚
+    if img.mode not in ('RGBA', 'LA', 'P') or img.convert('RGBA').getchannel('A').getextrema()[0] == 255:
+        raise SystemExit(f'{name}.png 没有透明背景（可能是画进去的棋盘格）。请上传真正透明的 PNG 再跑一次。')
+    return np.asarray(img.convert('RGBA')).astype(np.float32)
 
 
 def dehalo(a):
@@ -60,6 +68,20 @@ def match_sat(img, ref):
         k *= ref / mean_sat(out)
         out = ImageEnhance.Color(img).enhance(k)
     return out
+
+
+def board_color(a):
+    """对齐後滑板（下方 35% 的实心像素）的平均 R/G/B"""
+    m = board_mask(a) > 0
+    return a[..., :3][m].mean(0)
+
+
+def match_tone(a, ref_rgb):
+    """滑板颜色拉回 idle 的：每个颜色通道乘一个倍率（最多 ±20%），修掉整张偏暖／偏冷"""
+    gain = np.clip(ref_rgb / np.maximum(board_color(a), 1e-3), 0.8, 1.2)
+    out = a.copy()
+    out[..., :3] = np.clip(out[..., :3] * gain, 0, 255)
+    return out, gain
 
 
 def board_mask(a):
@@ -110,7 +132,8 @@ def main():
     ref_sat = mean_sat(Image.fromarray(idle.astype(np.uint8)))
 
     frames = {}
-    for n in names:
+    ref_rgb = None
+    for n in ['idle'] + [x for x in names if x != 'idle']:   # idle 先做完，别张才有标准色可比
         a = dehalo(load(n), )
         if n != 'idle':
             a, (score, s, tx, ty) = align(a, ref_mask)
@@ -118,6 +141,13 @@ def main():
         img = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), 'RGBA')
         if n not in KEEP_SAT:
             img = match_sat(img, ref_sat)
+        # 色调放最後：饱和度对齐会把颜色推走，先校色调的话会被推回去
+        if n == 'idle':
+            ref_rgb = board_color(np.asarray(img).astype(np.float32))
+        elif n not in KEEP_SAT:        # portal 的滑板被传送门的蓝光照到，那是特效，不校正
+            t, gain = match_tone(np.asarray(img).astype(np.float32), ref_rgb)
+            img = Image.fromarray(t.astype(np.uint8), 'RGBA')
+            print(f'{n:8} tone  R×{gain[0]:.3f} G×{gain[1]:.3f} B×{gain[2]:.3f}')
         frames[n] = img
 
     # 所有姿势用同一个正方形裁切：包住全部的并集，贴底

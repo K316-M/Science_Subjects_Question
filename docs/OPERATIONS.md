@@ -2,8 +2,9 @@
 
 这份是「**你自己动手**」的总览。素材（背景图、音乐）与考纲另有专门说明，不在这里重复：
 
-- 换背景与音乐、新页面怎么接素材 → [assets/README.md](assets/README.md)
-- 官方考纲怎么放进来 → [syllabus/README.md](syllabus/README.md)
+- 换背景与音乐、新页面怎么接素材 → [assets/README.md](../assets/README.md)
+- 官方考纲怎么放进来 → [syllabus/README.md](../syllabus/README.md)
+- **想改颜色、文字、时间、额度？先查 → [CUSTOMIZE.md](CUSTOMIZE.md)**（所有可调的地方都列在那里）
 
 ---
 
@@ -295,7 +296,7 @@ GitHub → Actions → 「BioQuestion Auto Pipeline & Health Check」→ Run wor
 ```
 
 - 扫**三科题库 + 待审区**
-- 结果写进 `INSPECTION_REPORT.md`（每周自动更新并提交，随时可以打开看）
+- 结果写进 `docs/INSPECTION_REPORT.md`（每周自动更新并提交，随时可以打开看）
 - **只有真的发现缺陷才会开 Issue 提醒你**，题库正常的那几周不会打扰
 - 检查项目：缺配图、图片死链、选项不是 4 个、答案序号异常、简答题缺答案、题库为空或档案损坏、待审区缺解析
 
@@ -366,14 +367,14 @@ ffmpeg -i 新歌.mp3 -af loudnorm=I=-20:TP=-1.5:LRA=11 -c:a libmp3lame -b:a 128k
 
 **换一张参考图（或做新科目）**：
 
-1. 用 ChatGPT 或 Gemini 生成一张参考图（四科的提示词在下面），跟它对话修到满意，放进 `scripts/scene/refs/<科目>.png`
+1. 用 ChatGPT 或 Gemini 生成一张参考图（四科的提示词在下面），跟它对话修到满意，放进 `source/scene/<科目>.png`
 2. 跟我说一声——拆图层、设定动作、手机版摆位、量帧数、跑一键检查都是我来做
 
-每科的拆法写在 `scripts/scene/<科目>.json`：用框（`rect`）圈出每个元素，框里连淡淡的轨道线、光线都会一起动。
+每科的拆法写在 `source/scene/<科目>.json`：用框（`rect`）圈出每个元素，框里连淡淡的轨道线、光线都会一起动。
 
 你也可以自己跑拆图管线（`scripts/scene/build_scene.py`，用法写在档案开头），但决定「哪些元素组成一个图层、怎么动」需要看图判断，交给我比较快。
 
-**让四科画风一致**：生成时把生物科那张图（`scripts/scene/refs/biology.png`）一起上传，提示词开头加一句「请沿用附图的画风、笔触、留白比例和元素密度，只换主题和颜色。」
+**让四科画风一致**：生成时把生物科那张图（`source/scene/biology.png`）一起上传，提示词开头加一句「请沿用附图的画风、笔触、留白比例和元素密度，只换主题和颜色。」
 
 化学科：
 
@@ -450,7 +451,7 @@ ffmpeg -i 新歌.mp3 -af loudnorm=I=-20:TP=-1.5:LRA=11 -c:a libmp3lame -b:a 128k
 
 ### 小精灵的动作图（给 ChatGPT 的提示词）
 
-参考图在 `scripts/sprite/refs/sprite-ref.png`：Q 版小精灵，骑著 Σ 形悬浮滑板，身後一面圆形铜框镜子，头顶一只长嫩芽的小史莱姆，手拿原子模型，腰间挂试管——四科都在它身上（生物的嫩芽、化学的试管、物理的原子与镜子、数学的 Σ）。
+参考图在 `source/sprite/sprite-ref.png`：Q 版小精灵，骑著 Σ 形悬浮滑板，身後一面圆形铜框镜子，头顶一只长嫩芽的小史莱姆，手拿原子模型，腰间挂试管——四科都在它身上（生物的嫩芽、化学的试管、物理的原子与镜子、数学的 Σ）。
 
 **做法：画「姿势」，不画「每一帧」。** 生图工具很难让一整排连续帧长得一样，所以只请它画 8 张静止的姿势；飞进来、上下浮动、弹跳、缩小消失这些「动」，由我用 CSS 做。张数少、比较一致，动起来也比较顺。
 
@@ -505,7 +506,7 @@ ffmpeg -i 新歌.mp3 -af loudnorm=I=-20:TP=-1.5:LRA=11 -c:a libmp3lame -b:a 128k
 | 眨眼／说话那张其他地方也变了 | 除了眼睛（或嘴巴），其他每一条线都要和附图一模一样，请重画。 |
 | 多了文字 | 去掉画面上所有文字，其他不变。 |
 
-**生好之後**：把档案放进 `scripts/sprite/refs/`，照上表命名，告诉我。我会去掉白边、把 8 张对齐到同一条滑板底线、缩成 256×256 的 WebP（每张约 20 KB），然後接上动画：
+**生好之後**：把档案放进 `source/sprite/`，照上表命名，告诉我。我会去掉白边、把 8 张对齐到同一条滑板底线、缩成 256×256 的 WebP（每张约 20 KB），然後接上动画：
 
 | 什么时候 | 怎么动 |
 |---|---|
@@ -554,9 +555,10 @@ python scripts/scene/build_scene.py night assets/visual/biology   # 四科各跑
 
 ---
 
-### 统考倒数与题库覆盖
+### 统考时间表与题库覆盖
 
-- **倒数**：首页横幅下面那一行。日期是**每个学生自己设**的，存在他自己的浏览器（`UEC_EXAM_v1`），不写在程序里——每个人考的年份不一样。没设就只显示一句邀请。
+- **统考时间表**：首页横幅下面的卡通日历。写著最靠近的那一科，点开是全部场次与试卷一／试卷二的时间。
+  资料在 `js/exam-timetable.js`（董总公布的时间表），换年份时照档案开头的格式改 `papers` 就好。
 - **题库覆盖**：做题页章节卡上面那一行，直接从题库算出来（`依考纲共 N 章 · 目前 M 章有题目，合计 K 道选择题`），不必手动维护；题库加了题目，这行自己会变。
 
 ---
@@ -689,7 +691,7 @@ node run.js
 - 但**网站本身仍然是公开的** —— 任何人都能打开 `science-subjects-question.vercel.app`
   看到题目
 - ⚠️ **Vercel 预设会把整个仓库当网站部署**。仓库私有，不代表里面的档案不能用网址读到。
-  所以根目录有一份 `.vercelignore`，列出**不部署**的档案：这份手册、DESIGN.md、
+  所以根目录有一份 `.vercelignore`，列出**不部署**的档案：`docs/`（这份手册等文件）、`source/`（原始素材）、
   `drafts/`（试卷照片）、`syllabus/`（考纲）、`scripts/`、`.github/` 等
 - 以後新增「只给自己看」的档案或资料夹，记得加进 `.vercelignore`。
   检查方法：浏览器打开 `https://science-subjects-question.vercel.app/档案路径`，应该是 404
@@ -726,30 +728,45 @@ localStorage.clear();                          // 全部清空，回到新用户
 ## 附录 B：档案地图
 
 ```
+── 网站本体（会部署；位置不能动，互相用绝对路径引用）──
 index.html              学生网站（单页，所有视图都在里面）
 css/features.css        导航、笔记、题目档、申诉、小精灵
 css/orbit.css           轨道式学科选择器
+css/night.css           护眼模式
 js/orbit-subjects.js    轨道选择器逻辑（加科目、改转速在这）
 js/scene-assets.js      背景与音乐的装载器（路径规则在这）
+js/exam-timetable.js    统考时间表资料
 js/notes.js             笔记画布
 js/archive.js           题目档与 PDF 下载
 js/feedback.js          申诉与通知小精灵
 js/review.js            复习排程与错题本规则
 js/chapter-test.js      整章测验
-
+assets/visual|audio/    背景图与音乐（处理好、网站正在用的）
+assets/sprite/          小精灵姿势图（处理好、网站正在用的）
+images/<科目>/          题目配图
 papers/*.json           三科正式题库
 papers/pending_approval.json   待审区（AI 产物先进这里）
-images/<科目>/          题目配图
-drafts/<科目>/          你拍的照片丢这里
-syllabus/               官方考纲
-assets/visual|audio/    背景图与音乐
-
-api/                    Vercel 无伺服器接口（登录、会话、一键发布）
-dev/                    开发者工作台（独立的深色网站）
-scripts/                录题、出题、巡检三支 Python 脚本
-scripts/ui-check/       一键 UI 检查（node run.js）
-scripts/scene/          把参考图拆成会动的分层背景
-.vercelignore           不部署到网站的档案清单
-.github/workflows/      三条自动化流水线
 data/resolved_issues.json      申诉处理结果（由工作台写入）
+api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改、同步）
+dev/                    开发者工作台（独立的深色网站）
+
+── 你放东西的地方（不部署）──
+drafts/<科目>/          要录的题目档（照片、Word、PPT、PDF）
+syllabus/               官方考纲
+source/sprite/          小精灵原图（真正透明的 PNG）
+source/scene/           背景参考图与分层设定（<科目>.png / <科目>.json）
+source/audio/<场景>/    背景音乐原档
+source/audio/candidates/  还没决定要不要用的候选曲
+
+── 工具（不部署）──
+scripts/                录题、出题、审题、巡检（Python）
+scripts/sprite|scene|audio/  把 source/ 的原始素材做成 assets/ 的成品
+scripts/ui-check/       一键 UI 检查（node run.js）
+.github/workflows/      三条自动化流水线
+
+── 文件（不部署）──
+README.md               专案介绍（GitHub 首页）
+docs/                   操作手册、可调整项目、设计纪录、章节清单、体检报告
+CLAUDE.md、.claude/     给 Claude 的守则与技能（位置固定，不能搬）
+.vercelignore           不部署到网站的档案清单
 ```

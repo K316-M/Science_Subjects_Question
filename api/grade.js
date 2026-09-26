@@ -11,6 +11,9 @@ const SUBJECTS = { biology: '生物', chemistry: '化学', physics: '物理' };
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 const LIMIT_PER_HOUR = 20;
 const MAX_ANSWER = 3000;
+// 得分比例到多少算「可接受」「部分正确」；其余是「还不行」
+const PASS_RATIO = 0.8;
+const PARTIAL_RATIO = 0.4;
 
 // ---------- 限流：有 Upstash 就跨实例计数，没有就退回单一实例的记忆体 ----------
 const memHits = new Map();
@@ -142,7 +145,7 @@ function tidy(raw) {
   const ratio = total ? score / total : 0;
   return {
     points, score, total,
-    verdict: ratio >= 0.8 ? '可接受' : ratio >= 0.4 ? '部分正确' : '还不行',
+    verdict: ratio >= PASS_RATIO ? '可接受' : ratio >= PARTIAL_RATIO ? '部分正确' : '还不行',
     feedback: String(raw.feedback || '').slice(0, 400),
   };
 }

@@ -36,6 +36,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E5%AD%A6&display=swap" rel="stylesheet">
   <style>
     :root {
+      /* 电脑版白天模式的背景压暗程度：0 = 不压暗，0.1 = 暗 10%，0.25 = 暗 25%。护眼模式与手机不受影响 */
+      --desktop-dim: 0.10;
       --primary: #047857;
       --primary-dark: #065f46;
       --primary-light: #ecfdf5;
@@ -211,7 +213,8 @@
     .exam-caret { width: 8px; height: 8px; margin-left: 2px; border-right: 2px solid var(--retro-teal-dark); border-bottom: 2px solid var(--retro-teal-dark); transform: rotate(45deg) translateY(-2px); transition: transform .2s ease; }
     .exam-toggle[aria-expanded="true"] .exam-caret { transform: rotate(-135deg) translate(-2px, 0); }
     .exam-list {
-      width: min(360px, calc(100vw - 32px));
+      width: min(520px, calc(100vw - 32px));
+      container-type: inline-size;
       background: var(--retro-cream); border: 2px solid var(--retro-teal-dark); border-radius: 14px;
       padding: 12px 16px; text-align: left; animation: softFadeIn .2s ease;
     }
@@ -224,19 +227,20 @@
     .exam-day-date em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--retro-teal-dark); }
     .exam-slot { display: flex; align-items: baseline; gap: 8px; font-size: 14px; line-height: 1.6; color: var(--retro-dark); }
     .exam-slot-half { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); }
-    .exam-slot-main { display: flex; flex-direction: column; min-width: 0; }
+    .exam-slot-main { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
     .exam-slot-subj { font-weight: 700; }
     .exam-slot-time { font-size: 13px; font-weight: 700; color: var(--retro-dark); font-variant-numeric: tabular-nums; }
     .exam-slot-note { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
     .exam-list-hint { font-size: 12px; color: var(--text-muted); margin: -4px 0 8px; line-height: 1.5; }
     .exam-parts { list-style: none; margin: 4px 0 2px; padding: 0; display: grid; gap: 2px; }
-    .exam-parts li { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "time label len"; column-gap: 8px; align-items: baseline; font-size: 12.5px; line-height: 1.45; padding: 1px 6px; margin: 0 -6px; border-radius: 6px; }
+    .exam-parts li { display: grid; grid-template-columns: 8.6em 1fr auto; grid-template-areas: "time label len"; column-gap: 8px; align-items: baseline; font-size: 12.5px; line-height: 1.45; padding: 1px 6px; margin: 0 -6px; border-radius: 6px; }
     .exam-part-time { grid-area: time; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .exam-part-label { grid-area: label; min-width: 0; }
     .exam-part-len { grid-area: len; font-size: 11.5px; color: var(--text-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
-    /* 手机上三栏太挤（「10:30–下午 1:00」会把名称挤成一字一行）：名称改放到时间下面 */
-    @media (max-width: 480px) {
-      .exam-parts li { grid-template-columns: auto 1fr; grid-template-areas: "time len" "label label"; padding-top: 3px; padding-bottom: 3px; }
+    /* 时间表框不够宽时三栏太挤（「10:30–下午 1:00」会把名称挤成一字一行）：名称改放到时间下面。
+       看的是时间表框本身的宽度，不是萤幕宽度 —— 电脑上框也可能是窄的 */
+    @container (max-width: 459px) {
+      .exam-parts li { grid-template-columns: auto 1fr; grid-template-areas: "time len" "label label"; justify-items: start; padding-top: 3px; padding-bottom: 3px; }
     }
     .exam-parts li.is-now { background: rgba(225, 97, 76, .14); }
     .exam-parts-subj { display: block; margin-top: 4px; font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); }
@@ -870,6 +874,13 @@
     .empty-hint { margin-top: 8px; font-size: 13px; line-height: 1.75; color: var(--text-muted); }
 
     .container, header { position: relative; z-index: 1; }
+    /* 背景压暗蒙板：盖在所有背景层（水彩、光团、插画）上面、内容底下；数值改上面的 --desktop-dim */
+    @media (min-width: 900px) {
+      html:not([data-theme="night"]) body::after {
+        content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        background: rgb(28 32 40 / var(--desktop-dim));
+      }
+    }
     .view { z-index: 1; }
 
     /* 成就达成提示条 */

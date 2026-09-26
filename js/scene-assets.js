@@ -108,7 +108,7 @@
   const svgCache = new Map();
 
   /* ---------- 分层场景（scene.json） ---------- */
-  // 只用 transform 做动画：每个元素是独立的合成层，GPU 直接搬，不重绘（DESIGN.md 原则 4）
+  // 只用 transform 做动画：每个元素是独立的合成层，GPU 直接搬，不重绘（docs/DESIGN.md 原则 4）
   const SCENE_CSS = `
 .scene{position:absolute;inset:0;overflow:hidden;container-type:size;}
 .scene img{position:absolute;display:block;max-width:none;user-select:none;-webkit-user-drag:none;}
