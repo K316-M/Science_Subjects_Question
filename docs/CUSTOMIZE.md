@@ -78,11 +78,15 @@
 | AI 批改：每个 IP 每小时几次 | `api/grade.js` | `LIMIT_PER_HOUR` | `20` | 🟡 越高越可能被刷额度 |
 | AI 批改：答案最长几字 | `api/grade.js` | `MAX_ANSWER` | `3000` | 🟢 |
 | AI 批改：几成分数算「可接受」「部分正确」 | `api/grade.js` | `PASS_RATIO`、`PARTIAL_RATIO` | `0.8`、`0.4` | 🟢 |
+| AI 讲解（选择题「讲给我听」）：每个 IP 每小时几次 | `api/explain.js` | `LIMIT_PER_HOUR` | `30` | 🟡 和批改分开计 |
+| **AI 讲解的讲法**（多长、先讲什么） | `api/explain.js` | `buildPrompt` 里的「要求」1～4 | | 🔴 第 4 条（不可推翻正确答案）不要删 |
+| 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS` | `40` | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |
 | **AI 录题的规则**（只取什么、高光怎么认） | `scripts/ingest_drafts.py` | `build_prompt` 里的 0～6 条 | | 🔴 JSON 栏位名称不要改，程式靠它读 |
 | 复习排程（多久後再复习一次） | `js/review.js` | `EASE_START` `EASE_MIN` `EASE_MAX` `EASE_UP` `EASE_DOWN` | | 🔴 会影响每个学生已排好的复习 |
 | 复习间隔最长几天 | `js/review.js` | `MAX_INTERVAL_DAYS` | `60` | 🟢 |
 | 错题要在几个不同的日子答对才移出错题本 | `js/review.js` | `WEAK_EXIT_DAYS` | `2` | 🟢 |
+| 删掉的笔记要记住多久（防止另一台装置同步回来） | `js/sync.js` | `NOTE_TOMBSTONE_DAYS` | `365` | 🟢 |
 | 错几次标成「顽固」 | `js/review.js` | `STUBBORN_LAPSES` | `3` | 🟢 |
 | 申诉要寄到哪个信箱 | `js/feedback.js` | `FEEDBACK_ENDPOINT` | Formspree 表单 | 🟡 换成你自己的 Formspree 网址 |
 | 开放「高级数学」一科 | `js/orbit-subjects.js` | `SUBJECTS` 里 `math` 的 `enabled` | `false` | 🔴 要先建 `papers/math_question_bank.json` 的章节 |
@@ -109,7 +113,7 @@
 Vercel 与 GitHub 的环境变数、金钥放哪里，见 [OPERATIONS 四](OPERATIONS.md#四设定环境变数两个地方别放错)。
 这几轮新增、需要你设的：
 
-- **Vercel `GEMINI_API_KEY`**：做答题「交给 AI 批改」要用；没设就显示「AI 批改还没开启」。
+- **Vercel `GEMINI_API_KEY`**：做答题「交给 AI 批改」与选择题「AI 讲给我听」都要用；没设就显示「还没开启」。
 - **Vercel `GITHUB_TOKEN`**：/dev 的采纳、改题、上传配图要用（Contents: Read and write）。
 
 ---

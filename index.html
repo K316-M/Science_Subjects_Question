@@ -291,6 +291,14 @@
     .page-hint { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
     /* 水彩背景上这两行会落在深色的水彩上（实测 4.0–4.3:1）：压在水彩上的字一律用最深那档 */
     .has-scene .bank-coverage, .has-scene .page-hint { color: var(--text-main); }
+    .bank-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 0 4px 8px; }
+    .bank-row .bank-coverage { margin: 0; }
+    /* 模拟统考：计时的东西用「时间」青色（见 DESIGN 功能色） */
+    .mock-exam-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 12px;
+      border: 1.5px solid rgba(14, 116, 144, .45); background: #fff; color: var(--fn-time);
+      font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .mock-exam-btn:hover { border-color: var(--fn-time); background: var(--fn-time-soft); }
+    .mock-exam-btn[hidden] { display: none; }
 
     /* 章节选单：一行，点开才列出全部章节 */
     .chapter-picker { display: flex; align-items: stretch; gap: 8px; margin-bottom: 12px; }
@@ -685,6 +693,20 @@
     .grade-stale { margin-top: 8px; font-size: 12px; font-weight: 700; color: #b45309; }
     .grade-note { margin: 8px 0 0; font-size: 12px; color: var(--text-muted); }
 
+    /* 选择题的 AI 讲解：接在解析下面，按了才出现 */
+    .ai-explain { margin-top: 12px; }
+    .ai-explain-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border-radius: 999px;
+      border: 1.5px solid rgba(14, 116, 144, .45); background: #fff; color: var(--fn-time); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .ai-explain-btn:hover { background: var(--fn-time-soft); }
+    .ai-explain-btn:disabled { opacity: .6; cursor: progress; }
+    .ai-explain-out { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: #fff; border: 1px solid #cfe8ee;
+      color: #1e293b; font-size: 14px; line-height: 1.75; animation: softFadeIn .2s ease; }
+    .ai-explain-out p { margin: 0; }
+    .ai-explain-out p + p { margin-top: 8px; }
+    .ai-explain-concept b, .ai-explain-tip b { color: var(--fn-time); }
+    .ai-explain-note { font-size: 12px; color: var(--text-muted); }
+    .ai-explain-out.is-error { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+
     .hl-toolbar {
       display: flex;
       align-items: center;
@@ -945,6 +967,7 @@
   <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
   <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></symbol>
   <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l.8-4L15 5.8a2 2 0 0 1 2.8 0l.4.4a2 2 0 0 1 0 2.8L8 19.2z"/><path d="M13.5 7.5l3 3"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 2M9.5 3h5"/></symbol>
   <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2.5"/><rect x="9" y="2.5" width="6" height="4" rx="1.5"/><path d="M9 11.5h6M9 15.5h4"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7"/><path d="M6.5 7l.9 12a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L17.5 7"/><path d="M10.5 11v6M13.5 11v6"/></symbol>
   <symbol id="i-save" viewBox="0 0 24 24"><path d="M5.5 4.5h10L19 8v11.5a1.5 1.5 0 0 1-1.5 1.5h-12A1.5 1.5 0 0 1 4 19.5V6a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M8 4.5v5h7"/><rect x="8" y="13" width="8" height="5.5" rx="1"/></symbol>
@@ -1037,7 +1060,10 @@
       <button type="button" class="chapter-test-btn" id="testStartBtn" onclick="startChapterTest()" hidden><svg class="ic" aria-hidden="true"><use href="#i-clipboard"></use></svg><span>整章测验</span></button>
     </div>
     <div class="chapter-panel" id="chapterPanel" hidden>
-      <p class="bank-coverage" id="bankCoverage"></p>
+      <div class="bank-row">
+        <p class="bank-coverage" id="bankCoverage"></p>
+        <button type="button" class="mock-exam-btn" id="mockExamBtn" onclick="startMockExam()" hidden><svg class="ic" aria-hidden="true"><use href="#i-timer"></use></svg><span id="mockExamLabel">模拟统考</span></button>
+      </div>
       <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
     </div>
     <div class="sub-bookmark-bar" role="tablist" aria-label="练习模式">
@@ -2092,6 +2118,64 @@ function openSubject(subject, initialChapterIdx, subMode) {
     el.textContent = sections.length
       ? `依考纲共 ${sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`
       : '';
+    const mock = mockExamPlan();
+    const btn = document.getElementById('mockExamBtn');
+    if (btn) {
+      btn.hidden = !mock;
+      if (mock) document.getElementById('mockExamLabel').textContent = `模拟统考 · 试卷一 ${mock.minutes} 分钟`;
+    }
+  }
+
+  // ---- 模拟统考：从全科选择题随机抽题，照统考时间表的试卷一时间计时 ----
+  // 真卷的题数没有写在时间表上，这里假设一份试卷一是 MOCK_QUESTIONS 题；题库不够就按比例缩短时间
+  const MOCK_QUESTIONS = 40;
+  const EXAM_SUBJECT = { biology: '生物', chemistry: '化学', physics: '物理' };
+  function mockExamPlan() {
+    const table = window.UEC_EXAM;
+    const paper = table && (table.papers || []).find(p => p.subject === EXAM_SUBJECT[currentSubject]);
+    const part = paper && paper.parts.find(pt => pt[0].startsWith('试卷一'));
+    const pool = [];
+    (fullDatabase.sections || []).forEach(sec => (sec.mcqs || []).forEach((m, idx) => {
+      if (Array.isArray(m.options) && m.options.length) pool.push({ sec, m, idx });
+    }));
+    if (!part || !pool.length) return null;
+    const [h1, m1] = part[1].split(':').map(Number);
+    const [h2, m2] = part[2].split(':').map(Number);
+    const paperMinutes = (h2 * 60 + m2) - (h1 * 60 + m1);
+    const count = Math.min(MOCK_QUESTIONS, pool.length);
+    const minutes = Math.max(1, Math.round(paperMinutes * count / MOCK_QUESTIONS));
+    return { pool, count, minutes, paperMinutes };
+  }
+
+  function startMockExam() {
+    const plan = mockExamPlan();
+    if (!plan || !window.UECTest) return;
+    const subject = currentSubject;
+    const pool = plan.pool.slice();
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const picked = pool.slice(0, plan.count);
+    window.UECTest.start({
+      subjectLabel: SUBJECT_LABELS[subject] || '',
+      chapterTitle: `试卷一 · ${plan.count} 题`,
+      label: '模拟统考',
+      timeLimitMs: plan.minutes * 60 * 1000,
+      questions: picked.map((p, n) => Object.assign({}, p.m, { idx: n })),
+      showView,
+      playSound,
+      onRecord: (n, correct) => recordMcqResult(subject, picked[n].sec.id, picked[n].idx, correct),
+      onClose: () => {
+        showView('viewStudy');
+        renderChapterRail();
+        updateWrongCountBadge();
+        renderActiveContent();
+        updateSceneGlow();
+        const btn = document.getElementById('chapterToggle');
+        if (btn) btn.focus({ preventScroll: true });
+      },
+    });
   }
 
   const SUB_TAB_IDS = { mcq: 'subBtnMcq', subj: 'subBtnSubj', wrong: 'subBtnWrong', review: 'subBtnReview' };
@@ -2328,6 +2412,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
         updateSceneGlow();
 
         expBox.style.display = 'block';
+        addExplainButton(expBox, sec, currentMcqIdx, chosenIdx);
         const box = document.getElementById('mcqVerdict');
         if (box) {
           // lastReviewInterval 由 recordMcqResult 写入，所以这一段必须排在它後面
@@ -2450,6 +2535,69 @@ function openSubject(subject, initialChapterIdx, subMode) {
       ensureSubjNoteButtons(sec);
       setupSubjAttempts(sec);
     }
+  }
+
+  // ---- 选择题：作答後可以请 AI 依「你选的那个」讲解 ----
+  // 同一题同一个选项讲过就存起来（只到这次开网页为止），再按不重复花额度
+  const explainCache = new Map();
+  function addExplainButton(expBox, sec, idx, chosen) {
+    const subject = currentSubject;
+    const key = `${subject}__${sec.id}__${idx}__${chosen}`;
+    const wrap = document.createElement('div');
+    wrap.className = 'ai-explain';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ai-explain-btn';
+    setBtnLabel(btn, 'help', '不太懂？AI 讲给我听');
+    const out = document.createElement('div');
+    out.className = 'ai-explain-out';
+    out.setAttribute('aria-live', 'polite');
+    out.hidden = true;
+    wrap.append(btn, out);
+    expBox.appendChild(wrap);
+
+    const show = r => {
+      out.hidden = false;
+      out.className = 'ai-explain-out';
+      out.replaceChildren();
+      const add = (cls, label, text) => {
+        if (!text) return;
+        const p = document.createElement('p');
+        p.className = cls;
+        if (label) { const b = document.createElement('b'); b.textContent = label; p.appendChild(b); }
+        p.appendChild(document.createTextNode(text));
+        out.appendChild(p);
+      };
+      add('ai-explain-concept', '考点：', r.concept);
+      add('ai-explain-why', '', r.why);
+      add('ai-explain-tip', '小技巧：', r.tip);
+      add('ai-explain-note', '', 'AI 依题库的答案讲解，仅供参考。');
+      btn.hidden = true;
+    };
+    btn.addEventListener('click', async () => {
+      if (explainCache.has(key)) return show(explainCache.get(key));
+      btn.disabled = true;
+      setBtnLabel(btn, 'help', 'AI 老师正在想…约 5 秒');
+      let status = 0, data = {};
+      try {
+        const res = await fetch('/api/explain', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ subject, chapterId: sec.id, index: idx, chosen }),
+        });
+        status = res.status;
+        data = await res.json().catch(() => ({}));
+      } catch (e) { /* 离线 */ }
+      btn.disabled = false;
+      if (status === 200 && data.ok) {
+        explainCache.set(key, data.result);
+        playSound('pop');
+        return show(data.result);
+      }
+      setBtnLabel(btn, 'help', '再试一次');
+      out.hidden = false;
+      out.className = 'ai-explain-out is-error';
+      out.textContent = status === 0 ? '连不上网，先看上面的解析吧。' : (data.message || 'AI 暂时讲解不了，请稍後再试。');
+    });
   }
 
   // ---- 做答题：自己写 → AI 依参考答案的得分点批改 ----

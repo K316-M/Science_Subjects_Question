@@ -20,8 +20,11 @@
     'UEC_LAST_VISIT_v1',
     'UEC_REVIEW_v1',
     'UEC_SUBJ_ATTEMPTS_v1',
+    'UEC_NOTES_DELETED_v1',          // 删掉的笔记：{笔记id: 删除时间}，不然另一台装置会把它同步回来
+    'UEC_TOUR_v1',                   // 哪些画面的导览看过了：任何一台看过就算看过
     'UEC_BIO_HL_STORE_OFFICIAL_19',
   ];
+  const NOTE_TOMBSTONE_DAYS = 365;   // 删除纪录留一年，够所有装置同步到
 
   /* ---------- 本机状态 ---------- */
   const readJson = (k, fallback) => {
@@ -30,7 +33,10 @@
   };
   const writeJson = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } };
 
-  const loadState = () => readJson(STATE_KEY, { code: '', baseVer: 0, lastSyncAt: 0, snapshot: {} });
+  // notesBase：上次同步完每则笔记的 updatedAt，用来分辨「只有一边改过」还是「两边都改过」
+  // history：这台装置用过的同步码（换码或断开时记下来），面板里可以切回去
+  const loadState = () => Object.assign({ code: '', baseVer: 0, lastSyncAt: 0, snapshot: {}, notesBase: {}, history: [] },
+    readJson(STATE_KEY, {}));
   const saveState = (s) => writeJson(STATE_KEY, s);
 
   function makeCode() {
@@ -73,14 +79,65 @@
     return out;
   }
 
-  function mergeNotes(a, b) {
-    // {笔记id: {strokes, textNote, createdAt, updatedAt}}；同一则取较新的那份
-    const out = Object.assign({}, a || {});
-    Object.entries(b || {}).forEach(([id, note]) => {
-      const mine = out[id];
-      if (!mine || (note && (note.updatedAt || 0) > (mine.updatedAt || 0))) out[id] = note;
+  // 两边都改过同一则笔记：两份的笔迹都留（重复的只留一笔），文字不一样就两段都留。宁可多，不要丢
+  function combineNotes(x, y) {
+    const [newer, older] = (x.updatedAt || 0) >= (y.updatedAt || 0) ? [x, y] : [y, x];
+    const seen = new Set();
+    const strokes = [...(newer.strokes || []), ...(older.strokes || [])].filter(st => {
+      const k = JSON.stringify(st.pts);
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+    const a = (newer.textNote || '').trim(), b = (older.textNote || '').trim();
+    const textNote = !b || a.includes(b) ? a : !a || b.includes(a) ? b : `${a}\n\n——（另一台装置的版本）——\n${b}`;
+    return Object.assign({}, newer, { strokes, textNote, updatedAt: Math.max(x.updatedAt || 0, y.updatedAt || 0) });
+  }
+
+  function mergeNotes(a, b, base, deleted) {
+    // {笔记id: {strokes, textNote, createdAt, updatedAt}}
+    // 只有一边改过 → 用改过的那份；两边都改过 → 合并两份（以前一律取较新的，较旧那边的内容就不见了）
+    const out = {};
+    const ids = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);
+    ids.forEach(id => {
+      const l = (a || {})[id], r = (b || {})[id];
+      let note;
+      if (!l || !r) note = l || r;
+      else if ((l.updatedAt || 0) === (r.updatedAt || 0)) note = l;
+      else if (base[id] !== undefined && l.updatedAt === base[id]) note = r;
+      else if (base[id] !== undefined && r.updatedAt === base[id]) note = l;
+      else note = combineNotes(l, r);
+      // 删除之後没有再编辑过的，就是真的删了
+      if (note && !(deleted[id] >= (note.updatedAt || 0))) out[id] = note;
     });
     return out;
+  }
+
+  function mergeDeleted(a, b) {
+    const out = Object.assign({}, a || {});
+    Object.entries(b || {}).forEach(([id, t]) => { out[id] = Math.max(out[id] || 0, t || 0); });
+    const cutoff = Date.now() - NOTE_TOMBSTONE_DAYS * 86400000;
+    Object.keys(out).forEach(id => { if (out[id] < cutoff) delete out[id]; });
+    return out;
+  }
+
+  function mergeTour(a, b) {
+    const out = Object.assign({}, a || {});
+    Object.entries(b || {}).forEach(([k, v]) => { if (v) out[k] = v; });
+    return out;
+  }
+
+  // 荧光笔：{科目__章节: 划线快照}。每一章分开合并；同一章两边都有才取较新的那份
+  function parseHl(raw) {
+    if (!raw) return {};
+    try { const v = JSON.parse(raw); if (v && typeof v === 'object' && !Array.isArray(v)) return v; } catch (e) { /* 旧格式 */ }
+    return { __legacy: raw };
+  }
+  function mergeHighlights(local, remote) {
+    const l = parseHl(local.value), r = parseHl(remote.value);
+    const remoteNewer = (remote.ts || 0) > (local.ts || 0);
+    const out = Object.assign({}, remoteNewer ? l : r, remoteNewer ? r : l);
+    return JSON.stringify(out);
   }
 
   function mergeFeedback(a, b) {
@@ -116,14 +173,21 @@
     return out;
   }
 
-  function mergeEntry(key, local, remote) {
+  function mergeEntry(key, local, remote, ctx) {
     // local / remote 形如 {ts, value}；都没有就回传 null
+    if (key === 'UEC_NOTES_v1' && (local || remote)) {
+      // 就算只有一边有，也要套用删除纪录（另一台装置删掉的笔记，这台也要删）
+      const ts = Math.max((local || {}).ts || 0, (remote || {}).ts || 0);
+      return { ts, value: mergeNotes((local || {}).value, (remote || {}).value, ctx.notesBase, ctx.deleted) };
+    }
     if (!local && !remote) return null;
     if (!local) return remote;
     if (!remote) return local;
     const ts = Math.max(local.ts || 0, remote.ts || 0);
     if (key === 'UEC_PROGRESS_v1') return { ts, value: mergeProgress(local.value, remote.value) };
-    if (key === 'UEC_NOTES_v1') return { ts, value: mergeNotes(local.value, remote.value) };
+    if (key === 'UEC_NOTES_DELETED_v1') return { ts, value: mergeDeleted(local.value, remote.value) };
+    if (key === 'UEC_TOUR_v1') return { ts, value: mergeTour(local.value, remote.value) };
+    if (key === 'UEC_BIO_HL_STORE_OFFICIAL_19') return { ts, value: mergeHighlights(local, remote) };
     if (key === 'UEC_FEEDBACK_v1') return { ts, value: mergeFeedback(local.value, remote.value) };
     if (key === 'UEC_REVIEW_v1') return { ts, value: mergeReview(local.value, remote.value) };
     if (key === 'UEC_SUBJ_ATTEMPTS_v1') return { ts, value: mergeAttempts(local.value, remote.value) };
@@ -131,7 +195,6 @@
       const lv = local.value || {}, rv = remote.value || {};
       return { ts, value: (rv.ts || 0) > (lv.ts || 0) ? rv : lv };
     }
-    // 划重点是一整段 HTML，没办法合并，只能取比较新的那一份
     return (remote.ts || 0) > (local.ts || 0) ? remote : local;
   }
 
@@ -183,8 +246,12 @@
         const mine = localPayload(state);
 
         const merged = {};
+        const rp = remote.payload || {};
+        // 删除纪录先合并，合并笔记时才知道哪些是真的被删了
+        const del = mergeEntry('UEC_NOTES_DELETED_v1', mine.UEC_NOTES_DELETED_v1, rp.UEC_NOTES_DELETED_v1, {});
+        const ctx = { notesBase: state.notesBase || {}, deleted: (del && del.value) || {} };
         KEYS.forEach(key => {
-          const entry = mergeEntry(key, mine[key], (remote.payload || {})[key]);
+          const entry = key === 'UEC_NOTES_DELETED_v1' ? del : mergeEntry(key, mine[key], rp[key], ctx);
           if (entry) merged[key] = entry;
         });
 
@@ -200,6 +267,8 @@
           state.baseVer = pushed.data.doc.ver;
           state.lastSyncAt = Date.now();
           state.snapshot = snapshotOf(merged);
+          state.notesBase = {};
+          Object.entries((merged.UEC_NOTES_v1 || {}).value || {}).forEach(([id, n]) => { state.notesBase[id] = n.updatedAt || 0; });
           saveState(state);
           // 背景同步平常不动画面；但另一台装置真的带来了新资料，数字就要跟著更新
           const changed = KEYS.some(key => merged[key] &&
@@ -221,23 +290,35 @@
 
   function status() {
     const s = loadState();
-    return { connected: Boolean(s.code), code: s.code, lastSyncAt: s.lastSyncAt, syncing };
+    return { connected: Boolean(s.code), code: s.code, lastSyncAt: s.lastSyncAt, syncing, history: s.history || [] };
+  }
+
+  // 换码或断开时，把原本那串记下来。云端那份资料还在（半年没动才过期），
+  // 但同步码只存在装置上，忘了就再也找不回来 —— 所以要替学生记著
+  function remember(s, code) {
+    if (!code) return;
+    s.history = [{ code, at: Date.now() }, ...(s.history || []).filter(h => h.code !== code)].slice(0, 5);
   }
 
   function connect(rawCode) {
     const code = normalize(rawCode);
     if (code.length !== CODE_LEN) return { ok: false, message: `同步码应该是 ${CODE_LEN} 个字元` };
     const s = loadState();
-    s.code = code; s.baseVer = 0; s.snapshot = {};    // 换了码就当全新的一份，重新合并
+    if (s.code && s.code !== code) remember(s, s.code);
+    s.history = (s.history || []).filter(h => h.code !== code);
+    s.code = code; s.baseVer = 0; s.snapshot = {}; s.notesBase = {};   // 换了码就当全新的一份，重新合并
     saveState(s); notify();
     return { ok: true };
   }
 
   function disconnect() {
     const s = loadState();
-    s.code = ''; s.baseVer = 0; s.snapshot = {}; s.lastSyncAt = 0;
+    remember(s, s.code);
+    s.code = ''; s.baseVer = 0; s.snapshot = {}; s.notesBase = {}; s.lastSyncAt = 0;
     saveState(s); notify();
   }
+
+  const pastCodes = () => (loadState().history || []).slice();
 
   function hasLocalChanges() {
     const s = loadState();
@@ -260,14 +341,15 @@
     const cur = loadState().code;
     if (cur === code) return { linked: false, already: true };
     const ask = cur
-      ? '这台装置已经连著另一串同步码。要改接这个链结的同步码吗？两边的进度会合并在一起。'
+      ? `这台装置已经连著另一串同步码（${pretty(cur)}）。要改接这个链结的同步码吗？\n两边的进度会合并在一起；原本那串会记在同步面板里，之後可以切回去。`
       : '要把这台装置接上这个同步链结吗？两边的做题进度、错题本和笔记会合并在一起。';
     if (!confirm(ask)) return { linked: false };
     return { linked: connect(code).ok };
   }
 
   window.UECSync = {
-    makeCode, pretty, normalize, connect, disconnect, sync, status, takeLink,
+    makeCode, pretty, normalize, connect, disconnect, sync, status, takeLink, pastCodes,
+    _merge: { mergeNotes, mergeDeleted, mergeHighlights, mergeTour },   // 给测试用
     onChange: fn => { listeners.add(fn); return () => listeners.delete(fn); },
     hasLocalChanges,
   };

@@ -1,6 +1,9 @@
 /* 整章测验：一次做完一章的全部选择题，全部答完才能交卷，交卷才看答案。
  * 进入後隐藏导航，只能交卷或按「退出测验」离开 —— 这是自我检测，不是练习。
  *
+ * 计时模式（模拟统考）：opts.timeLimitMs 有值时倒数；时间到自动交卷，没答的算错；
+ * 可以提早交卷，还有题没答时第一次按会先提醒，再按一次才交。
+ *
  * 只计第一次交卷：SM-2 对同一天重复作答没有防护，看过答案马上重做一定全对，
  * 如果也计进去，复习间隔会被灌到好几天後。所以重做只当练习，不写记录。
  */
@@ -21,6 +24,8 @@ body.in-test .top-nav, body.in-test .util-bar, body.in-test #spriteWrap { displa
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; outline: none; }
 .test-progress { margin-top: 2px; font-size: 12px; color: var(--text-muted, #475569); }
 .test-progress strong { color: var(--primary, #047857); }
+.test-clock { margin-left: 8px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--fn-time, #0f766e); }
+.test-clock.is-low { color: #b91c1c; }
 .test-meter { position: absolute; left: 18px; right: 18px; bottom: 0; height: 3px; border-radius: 3px; overflow: hidden; }
 .test-meter > div { height: 100%; width: 0; background: var(--primary, #047857); transition: width .3s ease; }
 .test-exit {
@@ -93,6 +98,8 @@ legend.test-q-head { float: left; width: 100%; }
 }
 .test-btn.primary { background: var(--primary, #047857); color: #fff; border-color: var(--primary, #047857); }
 .test-btn:hover { border-color: var(--primary, #047857); }
+.test-time-note { margin-top: 6px; font-size: 13px; color: var(--text-muted, #475569); }
+.test-unanswered { margin-top: 10px; font-size: 13px; font-weight: 700; color: #92400e; }
 .test-retake-note { margin-top: 14px; font-size: 12px; color: var(--text-muted, #475569); }
 
 .test-review-title { margin: 20px 4px 10px; font-size: 13px; font-weight: 700; color: var(--text-main, #0f172a); }
@@ -304,21 +311,66 @@ legend.test-q-head { float: left; width: 100%; }
     const done = s.answers.size;
     const left = total - done;
     progressEl.innerHTML = `已答 <strong>${done}</strong> / ${total}`;
+    if (s.deadline) progressEl.appendChild(s.clockEl);
     meterEl.style.width = `${total ? Math.round(done / total * 100) : 0}%`;
     // 不用 disabled：disabled 的按钮不能聚焦、读屏也不会念，学生不知道为什么按不了
-    s.submitBtn.setAttribute('aria-disabled', String(left > 0));
+    s.submitBtn.setAttribute('aria-disabled', String(left > 0 && !s.deadline));
     s.submitBtn.textContent = left > 0 ? `交卷（还差 ${left} 题）` : '交卷';
     s.noteEl.classList.remove('is-warn');
-    s.noteEl.textContent = left > 0 ? '全部答完才能交卷。交卷前可以随时改答案。' : '全部答完了。交卷後会显示分数和每一题的解析。';
+    s.warnedMissing = false;
+    s.noteEl.textContent = s.deadline
+      ? (left > 0 ? '时间到会自动交卷，没答的算错。可以提早交卷。' : '全部答完了。可以再检查一次，或现在交卷。')
+      : (left > 0 ? '全部答完才能交卷。交卷前可以随时改答案。' : '全部答完了。交卷後会显示分数和每一题的解析。');
+  }
+
+  /* ---------- 计时 ---------- */
+  const mmss = ms => {
+    const t = Math.max(0, Math.ceil(ms / 1000));
+    return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+  };
+  function startClock() {
+    const s = state;
+    stopClock();
+    s.deadline = Date.now() + s.opts.timeLimitMs;
+    s.startedAt = Date.now();
+    s.clockEl = el('span', 'test-clock');
+    // 每秒更新的数字不放进 aria-live，否则读屏会一直念；只在剩 5 分钟、1 分钟时各报一次
+    s.clockEl.setAttribute('aria-hidden', 'true');
+    s.announced = new Set();
+    tick();
+    s.timer = setInterval(tick, 1000);
+  }
+  function tick() {
+    const s = state;
+    if (!s || !s.deadline) return;
+    const left = s.deadline - Date.now();
+    s.clockEl.textContent = `剩 ${mmss(left)}`;
+    s.clockEl.classList.toggle('is-low', left <= 5 * 60 * 1000);
+    [5, 1].forEach(min => {
+      if (left <= min * 60 * 1000 && left > 0 && !s.announced.has(min) && s.opts.timeLimitMs > min * 60 * 1000) {
+        s.announced.add(min);
+        s.noteEl.textContent = `只剩 ${min} 分钟。`;
+        s.noteEl.classList.add('is-warn');
+      }
+    });
+    if (left <= 0) {
+      s.timedOut = true;
+      confirmEl.hidden = true;
+      grade();
+    }
+  }
+  function stopClock() {
+    if (state && state.timer) { clearInterval(state.timer); state.timer = null; }
   }
 
   function trySubmit() {
     const s = state;
     const missing = s.items.map((_, n) => n).filter(n => !s.answers.has(n));
-    if (missing.length) {
+    if (missing.length && !(s.deadline && s.warnedMissing)) {
+      if (s.deadline) s.warnedMissing = true;
       missing.forEach(n => document.getElementById('tq-' + n).classList.add('is-missing'));
       const list = missing.slice(0, 8).map(n => n + 1).join('、') + (missing.length > 8 ? ' …' : '');
-      s.noteEl.textContent = `还有 ${missing.length} 题没答：第 ${list} 题`;
+      s.noteEl.textContent = `还有 ${missing.length} 题没答：第 ${list} 题` + (s.deadline ? '。再按一次交卷，没答的算错。' : '');
       s.noteEl.classList.add('is-warn');
       const first = document.getElementById('tq-' + missing[0]);
       first.scrollIntoView({ block: 'center', behavior: still() ? 'auto' : 'smooth' });
@@ -333,6 +385,9 @@ legend.test-q-head { float: left; width: 100%; }
   function grade() {
     const s = state;
     s.submitted = true;
+    if (s.deadline) s.usedMs = Math.min(Date.now() - s.startedAt, s.opts.timeLimitMs);
+    stopClock();
+    s.deadline = 0;
     unguard();
     const results = s.items.map((item, n) => {
       const chosen = s.answers.get(n);
@@ -364,12 +419,20 @@ legend.test-q-head { float: left; width: 100%; }
     score.tabIndex = -1;
     score.innerHTML = `<strong>${right}</strong>/ ${total}`;
     score.setAttribute('aria-label', `答对 ${right} 题，共 ${total} 题`);
+    const scope = s.opts.timeLimitMs ? '这份卷' : '这一章';
     const msg = wrong.length === 0
-      ? '全对。这一章可以放心了，之後会按复习排程再问你。'
+      ? `全对。${scope}可以放心了，之後会按复习排程再问你。`
       : pct >= 60
         ? `还有 ${wrong.length} 题要回头看。答错的已经收进错题本，明天会再问你。`
-        : `这一章还不熟。先把下面的解析看一遍，再重做答错的 ${wrong.length} 题。`;
+        : `${scope}还不熟。先把下面的解析看一遍，再重做答错的 ${wrong.length} 题。`;
     card.append(score, el('div', 'test-score-pct', `答对 ${pct}%`), el('p', 'test-score-msg', msg));
+    if (s.usedMs) {
+      const blank = results.filter(r => r.chosen === undefined).length;
+      card.appendChild(el('p', 'test-time-note', s.timedOut
+        ? `时间到，自动交卷${blank ? `；没答的 ${blank} 题算错` : ''}。`
+        : `用时 ${mmss(s.usedMs)}（限时 ${mmss(s.opts.timeLimitMs)}）`));
+      s.usedMs = 0;
+    }
 
     const actions = el('div', 'test-actions');
     if (wrong.length) {
@@ -378,9 +441,9 @@ legend.test-q-head { float: left; width: 100%; }
       redo.addEventListener('click', () => restart(wrong.map(r => r.item), '重做答错的题'));
       actions.appendChild(redo);
     }
-    const again = el('button', 'test-btn' + (wrong.length ? '' : ' primary'), '整章再测一次');
+    const again = el('button', 'test-btn' + (wrong.length ? '' : ' primary'), s.opts.timeLimitMs ? '同一份卷再考一次' : '整章再测一次');
     again.type = 'button';
-    again.addEventListener('click', () => restart(s.all, ''));
+    again.addEventListener('click', () => restart(s.all, '', true));
     const back = el('button', 'test-btn', '返回练习');
     back.type = 'button';
     back.addEventListener('click', close);
@@ -415,6 +478,7 @@ legend.test-q-head { float: left; width: 100%; }
         list.appendChild(row);
       });
       fs.appendChild(list);
+      if (r.chosen === undefined) fs.appendChild(el('p', 'test-unanswered', '这题没作答，算错。'));
       if (r.item.explanation) fs.appendChild(htmlNode('div', 'test-exp', r.item.explanation));
       bodyEl.appendChild(fs);
     });
@@ -423,10 +487,13 @@ legend.test-q-head { float: left; width: 100%; }
     score.focus({ preventScroll: true });
   }
 
-  function restart(items, suffix) {
+  // 计时模式下，只有整份再考才重新计时；重做答错的题是订正，不限时
+  function restart(items, suffix, timed) {
     state.items = items;
+    state.timedOut = false;
     titleEl.textContent = state.baseTitle + (suffix ? ` · ${suffix}` : '');
     renderForm();
+    if (timed && state.opts.timeLimitMs) { startClock(); updateProgress(); }
     window.scrollTo({ top: 0, behavior: still() ? 'auto' : 'smooth' });
     titleEl.focus({ preventScroll: true });
   }
@@ -440,8 +507,9 @@ legend.test-q-head { float: left; width: 100%; }
   function requestExit() {
     const s = state;
     if (!s) return;
-    if (s.submitted || s.answers.size === 0) { close(); return; }
-    confirmBody.textContent = `已答 ${s.answers.size} / ${s.items.length} 题。退出後这次作答不会保存，也不会计分。`;
+    if (s.submitted || (s.answers.size === 0 && !s.deadline)) { close(); return; }
+    confirmBody.textContent = `已答 ${s.answers.size} / ${s.items.length} 题。退出後这次作答不会保存，也不会计分。`
+      + (s.deadline ? '计时不会暂停。' : '');
     confirmEl.hidden = false;
     keepBtn.focus();   // 预设停在「继续作答」：误按 Esc 或退出时，最安全的选择
   }
@@ -452,6 +520,7 @@ legend.test-q-head { float: left; width: 100%; }
 
   function close() {
     if (!state) return;
+    stopClock();
     unguard();
     const opts = state.opts;
     state = null;
@@ -462,7 +531,8 @@ legend.test-q-head { float: left; width: 100%; }
 
   /* ---------- 对外 ---------- */
   // opts: { subjectLabel, chapterTitle, questions: [{ q, options, answer, explanation, image, figure, caption, idx }],
-  //         showView(id), onRecord(idx, correct), onClose(), playSound? }
+  //         showView(id), onRecord(idx, correct), onClose(), playSound?,
+  //         timeLimitMs?（有值就是计时模式）, label?（标题後缀，预设「测验」） }
   function start(opts) {
     if (!root) build();
     const items = (opts.questions || []).filter(q => Array.isArray(q.options) && q.options.length);
@@ -470,12 +540,19 @@ legend.test-q-head { float: left; width: 100%; }
     state = {
       opts, items, all: items, answers: new Map(), submitted: false, guarded: false,
       recorded: new Set(),
-      baseTitle: `${opts.subjectLabel ? opts.subjectLabel + ' · ' : ''}${opts.chapterTitle} 测验`,
+      baseTitle: `${opts.subjectLabel ? opts.subjectLabel + ' · ' : ''}${opts.chapterTitle} ${opts.label || '测验'}`,
     };
     titleEl.textContent = state.baseTitle;
     document.body.classList.add('in-test');
     opts.showView('viewTest');
     renderForm();
+    if (opts.timeLimitMs) {
+      startClock();
+      updateProgress();
+      // 计时一开始就算作答中：误关分页要先问
+      state.guarded = true;
+      window.addEventListener('beforeunload', guard);
+    }
     window.scrollTo(0, 0);
     titleEl.focus({ preventScroll: true });
     return true;
