@@ -3,9 +3,11 @@
 // REST 打得通、也不必管连线池。免费额度：每月 50 万次命令、256 MB。
 const crypto = require('crypto');
 
+// 从 Vercel 後台 Storage 建的 Upstash，自动填的变数名是 KV_REST_API_*；自己到 upstash.com 建的是 UPSTASH_REDIS_REST_*。两种都认
 function config() {
-  const url = (process.env.UPSTASH_REDIS_REST_URL || '').trim().replace(/\/+$/, '');
-  const token = (process.env.UPSTASH_REDIS_REST_TOKEN || '').trim();
+  const env = process.env;
+  const url = (env.UPSTASH_REDIS_REST_URL || env.KV_REST_API_URL || '').trim().replace(/\/+$/, '');
+  const token = (env.UPSTASH_REDIS_REST_TOKEN || env.KV_REST_API_TOKEN || '').trim();
   return { url, token, ready: Boolean(url && token) };
 }
 

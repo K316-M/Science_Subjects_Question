@@ -245,13 +245,21 @@ GitHub Actions is not permitted to create or approve pull requests.
 
 ### 设定跨装置同步（选做，免费）
 
-没设的话，网站一切照常，只是「☁️ 同步」按钮会说尚未启用。要开启：
+没设的话，网站一切照常，只是「☁️ 同步」按钮会说尚未启用，AI 批改／讲解的次数也只能各台服务器各算。两种开法择一：
 
-1. 到 <https://upstash.com> 注册（免费方案不用绑卡），建立一个 **Redis** 资料库
-   - 免费额度：每月 50 万次命令、256 MB 储存、10 GB 流量。以你的规模够用非常久
-   - 地区挑离马来西亚近的（例如 `ap-southeast-1`）
+**A. 在 Vercel 後台建（最省事）**
+1. Vercel 专案 → **Storage** → **Create Database** → 选 **Upstash**（Redis）→ 免费方案 → 地区挑新加坡（`ap-southeast-1`）
+2. 建好後按 **Connect Project**，选这个专案，环境至少勾 Production
+3. Vercel 会自动加上 `KV_REST_API_URL`、`KV_REST_API_TOKEN` 等变数（程式两种名字都认，不用改名）
+4. **Deployments → 最新一个 → Redeploy**，变数才会生效
+
+**B. 自己到 upstash.com 建**
+1. 到 <https://upstash.com> 注册（免费方案不用绑卡），建立一个 **Redis** 资料库，地区挑 `ap-southeast-1`
 2. 在该资料库页面找到 **REST API** 区块，复制 `UPSTASH_REDIS_REST_URL` 与 `UPSTASH_REDIS_REST_TOKEN`
 3. 两个都加进 Vercel 的 Environment Variables（勾 Production）→ Redeploy
+
+免费额度：每月 50 万次命令、256 MB 储存。以你的规模够用非常久。
+**确认有没有成功**：打开网站按「同步 → 产生我的同步码」，出现 20 码的同步码就是通了；还说「尚未启用」就是变数没进去或没 Redeploy。
 
 **设计上刻意不做帐号**：使用者是中学生，收 email／密码在个资法下有义务，自己实作密码储存也多一层风险。改用「同步码」——20 码随机字串就是钥匙，不含任何个人资料。资料库里存的是同步码的杂凑值，就算资料外流也反推不出任何人的码。
 
