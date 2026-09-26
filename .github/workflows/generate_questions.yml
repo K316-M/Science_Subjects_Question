@@ -1,7 +1,9 @@
 name: AI 依考纲出题 (Generate Questions)
 
 # 每周自动挑出题目最少的章节，请 Gemini 依考纲撰写原创练习题，
-# 通过自动检查的才写入待审区，并开一个 Pull Request 等你逐题审核。
+# 通过自动检查的直接推进 main 的待审区（不开 PR），到 /dev「AI 录题待审」逐题审核。
+# 每周自动跑的那次：待审区还有上一批 AI 出的题没审完就先不出（手动跑不受影响）。
+# 出题报告在这次执行的摘要（Actions → 点这次执行）。
 #
 # 与「AI 自动录题」的分工：
 #   ingest_paper.yml      → 把你拍的真题照片转写成题目
@@ -30,7 +32,7 @@ on:
         required: false
         default: '4'
 
-# 连推好几次时排队一个一个跑，免得同时改待审区开出互相冲突的 PR。
+# 连推好几次时排队一个一个跑（推送时遇到 main 刚被改动会自己重取再接，不会冲突）。
 # 录题与出题各自一组：GitHub 同一组只留一个排队的，共用一组会把排队中的另一个取消掉
 concurrency:
   group: generate
@@ -38,7 +40,6 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   generate:
@@ -70,14 +71,10 @@ jobs:
             echo "has_new=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: 创建待审核 Pull Request
+      - name: 新题推进待审区（直接推到 main）
         if: steps.generate.outputs.has_new == 'true'
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: generate/auto-${{ github.run_number }}
-          add-paths: papers/pending_approval.json
-          commit-message: "🤖 AI 依考纲出题：待审批次 #${{ github.run_number }}"
-          title: "🤖 AI 依考纲出题待审 · 批次 #${{ github.run_number }}"
-          body-path: GENERATION_REPORT.md
-          labels: "待审核, AI出题"
+        run: bash scripts/push_pending.sh "🤖 AI 依考纲出题进待审区 · 批次 #${{ github.run_number }}"
+
+      - name: 出题报告放进这次执行的摘要
+        if: always()
+        run: if [ -f GENERATION_REPORT.md ]; then cat GENERATION_REPORT.md >> "$GITHUB_STEP_SUMMARY"; fi

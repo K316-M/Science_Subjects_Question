@@ -1287,8 +1287,8 @@ function cleanList(items) {
 }
 
 function renderPending(body, actions) {
-  actions.appendChild(el('a', { class: 'btn btn-sm', attrs: { href: `${REPO_URL}/pulls`, target: '_blank', rel: 'noopener' } },
-    icon('github'), el('span', { text: '到 GitHub 审核 PR' })));
+  actions.appendChild(el('a', { class: 'btn btn-sm', attrs: { href: `${REPO_URL}/actions`, target: '_blank', rel: 'noopener' } },
+    icon('github'), el('span', { text: '录题／出题报告' })));
 
   if (!state.pending.length) {
     body.appendChild(el('div', { class: 'card' }, el('div', { class: 'empty' }, icon('sparkles'),

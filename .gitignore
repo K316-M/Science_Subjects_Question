@@ -14,5 +14,7 @@ GENERATION_REPORT.md
 scripts/ui-check/node_modules/
 scripts/ui-check/out/
 
-# 录题报告：每次跑流水线重新产生，只拿来当 PR 内文
+# 录题报告：每次跑流水线重新产生，放进 Actions 执行摘要
 INGEST_REPORT.md
+# 这批新题：scripts/push_pending.sh 推送前接进待审区用
+new_pending_items.json

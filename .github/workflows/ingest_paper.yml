@@ -2,8 +2,9 @@ name: AI 自动录题流水线 (Ingest Drafts)
 
 # 管理员把题目档（照片、PDF、Word .docx、PowerPoint .pptx、纯文字）丢进
 # drafts/<biology|chemistry|physics>/ 并推送，本工作流调用 Gemini 转写题目、
-# 自动审题（格式、重复、答案复核），写进待审区并开一个 Pull Request。
-# 没录到题但有档案失败（例如旧版 .doc）时改开 Issue，不会再静默结束。
+# 自动审题（格式、重复、答案复核），直接推进 main 的待审区（不开 PR：每批都改同一个待审区档案，
+# 两批同时开着就一定冲突）。之後到 /dev「AI 录题待审」采纳才会上线。
+# 录题报告在这次执行的摘要（Actions → 点这次执行）；有档案处理失败（例如旧版 .doc）另开 Issue。
 #
 # 使用前请先在仓库 Settings -> Secrets and variables -> Actions 中添加：
 #   GEMINI_API_KEY  你的 Gemini API Key
@@ -15,7 +16,7 @@ on:
       - 'drafts/**'
   workflow_dispatch:
 
-# 连推好几次时排队一个一个跑，免得同时改待审区开出互相冲突的 PR。
+# 连推好几次时排队一个一个跑（推送时遇到 main 刚被改动会自己重取再接，不会冲突）。
 # 录题与出题各自一组：GitHub 同一组只留一个排队的，共用一组会把排队中的另一个取消掉
 concurrency:
   group: ingest
@@ -23,7 +24,6 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
 
 jobs:
@@ -32,6 +32,10 @@ jobs:
     steps:
       - name: 检出仓库代码
         uses: actions/checkout@v4
+        with:
+          # 取开跑当下最新的 main，不是触发这次的那个 commit：连推两次时，第二次排队等第一次跑完，
+          # 要看得到第一次已经删掉的原档与放进待审区的题，才不会把同一批再录一遍
+          ref: main
 
       - name: 设置 Python
         uses: actions/setup-python@v5
@@ -57,19 +61,16 @@ jobs:
           fi
           rm -f has_new_ingest.txt has_ingest_problems.txt
 
-      - name: 创建待审核 Pull Request
+      - name: 新题推进待审区（直接推到 main，连同删掉的原档与裁好的配图）
         if: steps.ingest.outputs.has_new == 'true'
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ingest/auto-${{ github.run_number }}
-          commit-message: "🧪 AI 自动录题：待审核批次 #${{ github.run_number }}"
-          title: "🧪 AI 自动录题待审核 · 批次 #${{ github.run_number }}"
-          body-path: INGEST_REPORT.md
-          labels: "待审核, AI录题"
+        run: bash scripts/push_pending.sh "🧪 AI 录题进待审区 · 批次 #${{ github.run_number }}" drafts images
 
-      - name: 没录到题但有档案失败：开 Issue 提醒
-        if: steps.ingest.outputs.has_new != 'true' && steps.ingest.outputs.has_problems == 'true'
+      - name: 录题报告放进这次执行的摘要
+        if: always()
+        run: if [ -f INGEST_REPORT.md ]; then cat INGEST_REPORT.md >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - name: 有档案没处理成功：开 Issue 提醒
+        if: steps.ingest.outputs.has_problems == 'true'
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: "⚠️ AI 录题：有档案没处理成功"

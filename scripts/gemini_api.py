@@ -45,6 +45,8 @@ def rank_models(names):
 _resolved = None
 _available = None
 _tried = []
+first_choice = None   # 这次执行一开始挑中的模型
+last_model = None     # 最近一次真的回应的模型：和 first_choice 不同，就是中途换成了备用的（报告要写出来）
 
 
 class GeminiError(Exception):
@@ -101,7 +103,7 @@ def _suggested_model(message):
 
 def resolve_model(api_key):
     """GEMINI_MODEL 有指定就用指定的；否则问 Google 现在有什么，挑最高级的。"""
-    global _resolved
+    global _resolved, first_choice
     if _resolved:
         return _resolved
 
@@ -109,6 +111,7 @@ def resolve_model(api_key):
     _resolved = forced or _next_candidate(api_key)
     if not _resolved:
         raise GeminiError("找不到任何可用的模型。")
+    first_choice = first_choice or _resolved
     print(f"🤖 使用模型：{_resolved}", file=sys.stderr)
     return _resolved
 
@@ -130,7 +133,7 @@ def generate(api_key, parts, temperature=0.4, timeout=300):
     从最高级的模型开始：下架、额度用完、一直忙，就往下一级换。
     Google 的错误讯息若写了建议替代就照它的，否则按 rank_models 的顺序走。
     """
-    global _resolved
+    global _resolved, last_model
     last = None
 
     for _ in range(8):                       # 最多换 8 个模型（pro 额度用完、尖峰时段常常连着好几个都不行）
@@ -141,7 +144,9 @@ def generate(api_key, parts, temperature=0.4, timeout=300):
                 print(f"⏳ {model} 忙碌中，{wait} 秒后重试（第 {attempt} 次）", file=sys.stderr)
                 time.sleep(wait)
             try:
-                return _post(api_key, model, parts, temperature, timeout)
+                text = _post(api_key, model, parts, temperature, timeout)
+                last_model = model
+                return text
             except GeminiError as e:
                 last = e
                 low = str(e).lower()

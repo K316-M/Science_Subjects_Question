@@ -30,6 +30,7 @@ import uuid
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gemini_api
 import ingest_formats
+import pending_queue
 import qa
 from qa import extract_json_array
 from generate_questions import normalize, too_similar
@@ -41,8 +42,8 @@ PAPERS_DIR = "papers"
 IMAGES_DIR = "images"
 PENDING_PATH = os.path.join(PAPERS_DIR, "pending_approval.json")
 REPORT_PATH = "INGEST_REPORT.md"
-STATUS_FLAG_PATH = "has_new_ingest.txt"      # true：有新题，开 PR
-PROBLEM_FLAG_PATH = "has_ingest_problems.txt"  # true：没有新题但有档案失败，开 Issue
+STATUS_FLAG_PATH = "has_new_ingest.txt"      # true：有新题，工作流把这批推进待审区
+PROBLEM_FLAG_PATH = "has_ingest_problems.txt"  # true：有档案失败，或一题都没录到，开 Issue
 SKIP_NAMES = {".gitkeep", "README.md"}
 FIGURE_WORDS = ["如图", "下图", "上图", "图中", "图示", "曲线", "装置图", "示意图", "下表", "如下表"]
 LETTERS = "ABCD"
@@ -165,6 +166,10 @@ def process_file(path, subject, ctx, report):
         report["files"].append({"subject": subject, "source": fname, "status": "⚠️ 转写失败",
                                 "detail": f"{str(e)[:120]}（档案留在原处，下次推送会再试）"})
         return None
+    # 首选模型额度用完或一直忙，会中途换成较弱的备用模型：每题标出来，/dev 审题时看得到
+    model = gemini_api.last_model
+    backup = (f"由备用模型 {model} 转写（首选 {gemini_api.first_choice} 额度用完或忙碌），请多留意错字、漏字"
+              if model != gemini_api.first_choice else None)
 
     accepted, rejected = [], []
     for entry in entries:
@@ -180,7 +185,7 @@ def process_file(path, subject, ctx, report):
             "chapter_title": ctx["chapter_title"].get(chapter_id, "未分类（请人工归类）"),
             "source_draft": rel,
             "answer_source": "marked" if entry.get("answer_source") == "marked" else "ai",
-            "flags": list(notes),
+            "flags": list(notes) + ([backup] if backup else []),
             "ingested_at": now_iso(),
         }
         if qtype == "subjective":
@@ -236,7 +241,8 @@ def process_file(path, subject, ctx, report):
 
     qa.cross_check(API_KEY, subject, accepted, report["notes"])
     report["files"].append({"subject": subject, "source": fname, "status": "✅ 已录入",
-                            "detail": f"录入 {len(accepted)} 题" + (f"，退回 {len(rejected)} 题" if rejected else "")})
+                            "detail": f"录入 {len(accepted)} 题" + (f"，退回 {len(rejected)} 题" if rejected else "")
+                                      + f" · 模型 {model}" + ("（备用）" if backup else "")})
     report["accepted"].extend(accepted)
     report["rejected"].extend((subject, fname, r, why) for r, why in rejected)
     return accepted
@@ -283,7 +289,7 @@ def generate_report(report):
              + (f"：**{len(flagged)}** 题被标出问题要逐题看，{len(acc) - len(flagged)} 题没问题可一键采纳" if acc else "")
              + (f"；退回 **{len(rej)}** 题" if rej else "") + "。"]
     if acc:
-        lines.append("> 合并这个 PR 只是把题目放进待审区；之後到 /dev「AI 录题待审」处理，按「采纳」才会进正式题库。")
+        lines.append("> 题目已经放进待审区，学生还看不到；到 /dev「AI 录题待审」处理，按「采纳」才会进正式题库。")
     else:
         lines.append("> 这次一题都没录到，原因看下面「档案」那一栏。转写失败的档案留在原处，下次推送或手动重跑工作流会再试。")
     lines.append("")
@@ -335,19 +341,16 @@ def main():
 
     generate_report(report)
     if new_items:
-        pending["items"].extend(new_items)
-        pending["generated_at"] = now_iso()
-        with open(PENDING_PATH, "w", encoding="utf-8") as f:
-            json.dump(pending, f, ensure_ascii=False, indent=2)
-            f.write("\n")
+        pending_queue.append(new_items)
         with open(STATUS_FLAG_PATH, "w") as f:
             f.write("true")
         print(f"✅ 录入 {len(new_items)} 题进待审区，报告：{REPORT_PATH}")
     else:
-        # 没有新题但有档案失败：以前这种情况什么都不说，现在开 Issue 提醒
+        print(f"⚠️ 没有录到题目，原因写在 {REPORT_PATH}")
+    # 报告只在 Actions 执行摘要里（不再开 PR）：有档案失败、或一题都没录到，另开 Issue 才看得到
+    if not new_items or any(not f["status"].startswith("✅") for f in report["files"]):
         with open(PROBLEM_FLAG_PATH, "w") as f:
             f.write("true")
-        print(f"⚠️ 没有录到题目，原因写在 {REPORT_PATH}")
 
 
 if __name__ == "__main__":

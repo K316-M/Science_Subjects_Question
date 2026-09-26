@@ -15,8 +15,8 @@
 ```
 把照片丢进 drafts/biology/  或 drafts/chemistry/  或 drafts/physics/
   ↓ commit + push（用 GitHub 手机 App 上传也行）
-自动跑「AI 自动录题流水线」→ 开一个待审 PR
-  ↓ 看过报告就合并（只是放进待审区，学生还看不到）
+自动跑「AI 自动录题流水线」→ 题目直接进待审区（学生还看不到；不开 PR）
+  ↓
 到 /dev「AI 录题待审」采纳（见下面第 3 节）
 ```
 
@@ -24,7 +24,8 @@
 - 录完的原档会**直接删掉**，不留在仓库里（git 历史里找得回来）；读不了的留在原处
 - Word、PPT、文字档会和原档**逐字比对**，AI 改字、加字、漏字（例如漏掉「不」）都会标出来；照片与 PDF 没有原文可比，只靠答案复核
 - 转写结果进 `papers/pending_approval.json`（**待审区**），不会直接上线
-- PR 内文就是转写报告，哪几题需要人工裁图、哪几题疑似漏了配图都会标出来
+- 转写报告在 **Actions → 那次执行的摘要**，哪几题需要人工裁图、哪几题疑似漏了配图都会标出来；有档案处理失败会另开 Issue
+- 连续放好几批、边放边在 /dev 采纳都可以：每批推送前都会接在待审区最新版後面，推送时刚好被抢先就自动重来，不会冲突
 
 ### 2. AI 依考纲出题（原创练习题）
 
@@ -43,6 +44,8 @@ GitHub → Actions → 「AI 依考纲出题 (Generate Questions)」→ Run work
 | `questions_per_chapter` | 每章出几题 | 预设 4，试水可以填 2 |
 
 - 它会**自动挑题目最少的章节**优先，所以每周轮到的章节不一样
+- 题目直接进待审区（不开 PR），报告在 Actions 那次执行的摘要
+- **每周自动跑的那次，待审区还有上一批 AI 出的题没审完就先不出**，免得越堆越多、同几章重复出；手动跑不受影响
 - 放了考纲，出题依官方考点；没放就只依章节标题（质量差很多）
 - ⚠️ **AI 写的理科题可能科学性出错**。每题都会请 AI 不看答案重做一次，对不上的才标出来；复核用的是同一家的模型，两次都错的题它抓不到，一键采纳前请扫一眼
 
@@ -51,6 +54,7 @@ GitHub → Actions → 「AI 依考纲出题 (Generate Questions)」→ Run work
 两条流水线都从 **最高级的模型** 开始：版本新的优先（3.8 不行才到 3.7…），同一版本里 pro → flash → flash-lite。
 每次从 Google 的模型清单现排，新模型上架自动用上，不必改程式。某个模型额度用完（pro 的免费额度最少）、下架或一直忙，就自动换下一个；
 一旦找到能用的，这次后面的呼叫都用它，不会每题都回头试 pro。
+中途换成备用模型的那批题，每题都会标「由备用模型 xxx 转写」（/dev 会展开要你逐题看），报告的档案表也会写出用了哪个模型。
 想固定用某一个：在 Actions 的环境变数设 `GEMINI_MODEL`。
 
 ### 3. 审题：把题目送上线
@@ -88,8 +92,6 @@ https://science-subjects-question.vercel.app/dev/#pending
 > 下架的题留在原位，後面的题位置不变，就不会有这个问题。也请不要自己到 JSON 里删题，理由相同。
 
 配图在浏览器里会先缩到长边 1600px 再上传（手机原图也不用自己压）；iPhone 的 HEIC 照片请先转成 JPG。
-
-> 也可以照旧到 GitHub 合并 PR——那只是把题目搬进待审区，**合并 PR 不等於上线**，最後还是要在这里按采纳。
 
 ---
 
@@ -235,21 +237,13 @@ https://science-subjects-question.vercel.app/dev/#pending
 | `GEMINI_MODEL` | 选填 | **通常不用填**。脚本会自己问 Google 有哪些模型可用再挑一个；若被回「这个模型对新用户已关闭」，会自动读取 Google 建议的替代型号再试。只有想锁定特定模型时才填 |
 
 
-### ⚠️ 还有一个一次性开关（不开的话两条流水线都会卡在最后一步）
+### 流水线直接推到 main（不开 PR）
 
-```
-GitHub → 仓库 → Settings → Actions → General → Workflow permissions
-  ↳ 勾选「Allow GitHub Actions to create and approve pull requests」→ Save
-```
+两条流水线把新题直接推进 main 的待审区，用的是工作流自带的推送权限（巡检报告一直都是这样推的），不需要另外设定。
+以前要勾的「Allow GitHub Actions to create and approve pull requests」现在用不到了，勾着也没关系。
 
-没勾的话，题目会正常生成、分支也会推上去，但最后开 PR 那步会失败并显示：
-
-```
-GitHub Actions is not permitted to create or approve pull requests.
-```
-
-**这种情况下产出不会遗失** —— 分支已经在 `generate/auto-<编号>`（或 `ingest/auto-<编号>`）上，
-到 GitHub 的 Pull requests 页面手动按 New pull request、选那个分支就能开出来。
+> ⚠️ 之後如果替 `main` 加上分支保护（例如「合并前必须经过 PR」），要把 GitHub Actions 列为可以直接推送，
+> 否则录题、出题会在「新题推进待审区」那步推不上去（原档留在 drafts/，放行後重跑就好）。
 
 
 ### 设定跨装置同步（选做，免费）
@@ -295,7 +289,7 @@ GitHub Actions is not permitted to create or approve pull requests.
 | 总览 | 三科题量、待审题数、各科进度图表 |
 | 申诉处理 | 贴开发者代码 → 发布／撤回处理结果 |
 | 题库巡检 | 即时扫出缺配图、答案异常、选项不足的题 |
-| AI 录题待审 | 列出待审区的题目（合并 PR 仍要去 GitHub 做） |
+| AI 录题待审 | 列出待审区的题目，逐题采纳或退回 |
 | 本机调试 | 看／清 localStorage，产生测试用的小精灵通知 |
 
 - 登录状态保存 12 小时
@@ -664,9 +658,9 @@ node run.js
 - 截图放在 `scripts/ui-check/out/`，至少看一眼——有些问题只有眼睛看得出来
 - 大约跑 2–3 分钟
 
-### 流水线跑完了，却没有开 PR
+### 流水线跑完了，待审区却没有新题
 
-「创建待审核 Pull Request」那步显示 ⊘（跳过）＋整个 job 只花几秒 ＝ **一题都没产出**。
+「新题推进待审区」那步显示 ⊘（跳过）＋整个 job 只花几秒 ＝ **一题都没产出**。
 点进「依考纲生成原创题并自动检查」那一步看日志，最后会列出每个章节失败的原因，例如：
 
 ```
@@ -680,7 +674,7 @@ node run.js
 |---|---|---|
 | `no longer available to new users` | 该模型对新用户关闭了 | 自动读 Google 建议的替代型号，换一个再试 |
 | `high demand` / `503` | Google 那边当下忙碌 | 等 4／10／25 秒重试；还是忙就换一个模型 |
-| `exceeded your current quota` | 额度用完了 | 立刻停手（重试也没用），等额度重置再跑 |
+| `exceeded your current quota` | 这个模型的额度用完了 | 换下一个模型继续（通常是 flash）；那批题会标「由备用模型…」。连最後一个都用完才停手，等额度重置再跑 |
 | 某一科完全没有章节 | 该科还没有章节框架 | 会写在报告里 |
 
 最后一种以外，**重跑一次通常就好**。
