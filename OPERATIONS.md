@@ -203,11 +203,15 @@ https://science-subjects-question.vercel.app/dev/#pending
 | `DEV_USERNAME` | ✅ | 开发者工作台的登录账号 |
 | `DEV_PASSWORD` | ✅ | 登录密码（建议 16 位以上随机） |
 | `DEV_SESSION_SECRET` | ✅ | **至少 16 个字符**的随机字串，用来签登录凭证。不用记、不用输入 |
-| `GITHUB_TOKEN` | 选填 | 申诉处理的一键发布要用。fine-grained token，只授权这个仓库的 Contents: Read and write |
+| `GITHUB_TOKEN` | 选填 | 申诉处理、/dev 采纳与改题要用。fine-grained token，只授权这个仓库的 Contents: Read and write |
 | `GITHUB_REPO` | 选填 | 预设 `K316-M/Science_Subjects_Question` |
 | `GITHUB_BRANCH` | 选填 | 预设 `main` |
 | `UPSTASH_REDIS_REST_URL` | 选填 | 跨装置同步要用，见下方 |
 | `UPSTASH_REDIS_REST_TOKEN` | 选填 | 同上 |
+| `GEMINI_API_KEY` | 选填 | 做答题的「交给 AI 批改」要用（和 GitHub Actions 那把可以是同一把）。没设就显示「AI 批改还没开启」，学生照样能写、能翻答案 |
+
+> **AI 批改的额度**：网站是公开的，每个 IP 每小时最多批改 20 次（有设 Upstash 就跨服务器计数，没设只能各台各算）。
+> 批改用最新版本的 **flash**，几秒内出结果；pro 要等几十秒，不适合学生按了等。
 
 > 三个 `DEV_` 只要缺一个、或密钥不足 16 字符，登录页就会显示「尚未启用」并**列出到底缺哪一项**。照着补就行。
 

@@ -598,6 +598,49 @@
     }
     .flip-answer-content.revealed { display: block; }
 
+    /* 做答题：题号、作答框、AI 批改结果 */
+    .form-q-num { display: inline-flex; align-items: baseline; gap: 2px; margin-bottom: 10px; padding: 3px 10px; border-radius: 999px;
+      background: rgba(77, 129, 137, .12); color: var(--retro-teal-dark); font-size: 12px; font-weight: 800; letter-spacing: .02em; }
+    .form-q-num span { font-weight: 600; opacity: .7; }
+    .subj-attempt { margin: 0 0 16px; padding: 14px; border-radius: 14px; background: #fffdf7;
+      border: 1.5px dashed rgba(77, 129, 137, .45); }
+    .subj-attempt:focus-within { border-style: solid; border-color: var(--retro-teal-dark); }
+    .subj-attempt-label { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--retro-teal-dark); margin-bottom: 8px; }
+    .subj-attempt-input { width: 100%; min-height: 104px; resize: vertical; border: none; outline: none; background: transparent;
+      font: inherit; font-size: 15px; line-height: 1.8; color: #0f172a;
+      background-image: repeating-linear-gradient(transparent 0 26px, rgba(77, 129, 137, .16) 26px 27px); background-attachment: local; }
+    .subj-attempt-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+    .subj-attempt-count { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .subj-grade-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border: none; border-radius: 12px;
+      background: var(--retro-coral-deep); color: #fff; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
+      box-shadow: 0 6px 14px -6px rgba(225, 97, 76, .7); transition: transform .15s, opacity .15s; }
+    .subj-grade-btn:hover { transform: translateY(-1px); }
+    .subj-grade-btn:disabled { opacity: .6; cursor: progress; transform: none; }
+    .subj-grade-result { margin-top: 12px; padding: 14px; border-radius: 12px; background: #fff; border: 1px solid #e2e8f0; font-size: 14px; line-height: 1.6; animation: softFadeIn .2s ease; }
+    .subj-grade-result.is-loading { color: var(--text-muted); }
+    .subj-grade-result.is-error { color: #9a3412; background: #fff7ed; border-color: #fed7aa; }
+    .grade-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .grade-score b { font-size: 30px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; }
+    .grade-score small { font-size: 14px; font-weight: 700; color: var(--text-muted); }
+    .grade-verdict { padding: 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; color: #fff; }
+    .tone-good .grade-verdict, .tone-good .grade-meter i { background: #1f9d55; }
+    .tone-mid .grade-verdict, .tone-mid .grade-meter i { background: #d97706; }
+    .tone-low .grade-verdict, .tone-low .grade-meter i { background: #dc2626; }
+    .grade-meter { height: 6px; margin: 10px 0 12px; border-radius: 3px; background: #eef2f6; overflow: hidden; }
+    .grade-meter i { display: block; height: 100%; border-radius: 3px; transition: width .5s ease; }
+    .grade-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .grade-points li { display: grid; grid-template-columns: 22px 1fr auto; column-gap: 8px; align-items: baseline; }
+    .grade-mark { font-weight: 900; text-align: center; }
+    .grade-points .hit .grade-mark { color: #1f9d55; }
+    .grade-points .part .grade-mark { color: #d97706; }
+    .grade-points .miss .grade-mark { color: #dc2626; }
+    .grade-point { font-weight: 700; color: #0f172a; }
+    .grade-got { font-size: 12px; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .grade-comment { grid-column: 2 / -1; font-size: 13px; color: #475569; }
+    .grade-feedback { margin: 12px 0 0; padding-top: 10px; border-top: 1px dashed #e2e8f0; color: #334155; }
+    .grade-stale { margin-top: 8px; font-size: 12px; font-weight: 700; color: #b45309; }
+    .grade-note { margin: 8px 0 0; font-size: 11.5px; color: var(--text-muted); }
+
     .hl-toolbar {
       display: flex;
       align-items: center;
@@ -2259,12 +2302,23 @@ function openSubject(subject, initialChapterIdx, subMode) {
           <div class="form-question-card">
             <div class="form-card-top-bar"></div>
             <div class="form-card-body">
+              <div class="form-q-num">做答题 ${qIndex + 1}<span>／${subjs.length}</span></div>
               <div class="form-question-text">${q.question}</div>
               ${q.image ? `
               <div class="figure-container" onclick="openImageModal('${q.image}')">
                 <img src="${q.image}" alt="题目配图">
                 <div class="figure-caption"><svg class="ic" aria-hidden="true"><use href="#i-search"></use></svg> 点击查看高清大图</div>
               </div>` : q.figure ? `<div class="figure-container">${q.figure}</div>` : ''}
+              <div class="subj-attempt" data-idx="${qIndex}">
+                <label class="subj-attempt-label" for="subjAns_${qIndex}"><svg class="ic" aria-hidden="true"><use href="#i-pencil"></use></svg>你的答案</label>
+                <textarea class="subj-attempt-input" id="subjAns_${qIndex}" rows="4" maxlength="3000"
+                  placeholder="先自己写，写完交给 AI 批改，或翻开下面的参考答案对照"></textarea>
+                <div class="subj-attempt-bar">
+                  <span class="subj-attempt-count">0 字</span>
+                  <button type="button" class="subj-grade-btn"><svg class="ic" aria-hidden="true"><use href="#i-send"></use></svg><span>交给 AI 批改</span></button>
+                </div>
+                <div class="subj-grade-result" hidden aria-live="polite"></div>
+              </div>
               <div class="answer-flip-panel">
                 <div class="flip-toggle-header" onclick="toggleAnswerFlip(this)" role="button" tabindex="0">
                   <span class="flip-toggle-title"><svg class="ic" aria-hidden="true"><use href="#i-book-open"></use></svg> 参考标准答案与要点</span>
@@ -2295,7 +2349,110 @@ function openSubject(subject, initialChapterIdx, subMode) {
       `;
       loadAllHighlights();
       ensureSubjNoteButtons(sec);
+      setupSubjAttempts(sec);
     }
+  }
+
+  // ---- 做答题：自己写 → AI 依参考答案的得分点批改 ----
+  // 草稿与批改结果存在这台装置（也会跟著同步码同步），换题、重新整理都还在
+  const ATTEMPT_KEY = 'UEC_SUBJ_ATTEMPTS_v1';
+  function loadAttempts() {
+    try { return JSON.parse(localStorage.getItem(ATTEMPT_KEY)) || {}; } catch (e) { return {}; }
+  }
+  function saveAttempt(key, patch) {
+    const all = loadAttempts();
+    all[key] = { ...(all[key] || {}), ...patch, at: Date.now() };
+    try { localStorage.setItem(ATTEMPT_KEY, JSON.stringify(all)); } catch (e) {}
+  }
+
+  function setupSubjAttempts(sec) {
+    const container = document.getElementById('subjFormContainer');
+    if (!container) return;
+    const all = loadAttempts();
+    container.querySelectorAll('.subj-attempt').forEach(box => {
+      const idx = Number(box.dataset.idx);
+      const key = `${currentSubject}__${sec.id}__${idx}`;
+      const input = box.querySelector('.subj-attempt-input');
+      const count = box.querySelector('.subj-attempt-count');
+      const btn = box.querySelector('.subj-grade-btn');
+      const out = box.querySelector('.subj-grade-result');
+      const saved = all[key] || {};
+      const showCount = () => { count.textContent = `${input.value.trim().length} 字`; };
+      input.value = saved.text || '';
+      showCount();
+      if (saved.result) renderGradeResult(out, saved.result, saved.gradedText !== input.value);
+      let timer = null;
+      input.addEventListener('input', () => {
+        showCount();
+        clearTimeout(timer);
+        timer = setTimeout(() => saveAttempt(key, { text: input.value }), 400);
+        const stale = out.querySelector('.grade-stale');
+        if (stale) stale.hidden = false;
+      });
+      btn.addEventListener('click', () => gradeSubjAnswer({ sec, idx, key, input, btn, out }));
+    });
+  }
+
+  async function gradeSubjAnswer({ sec, idx, key, input, btn, out }) {
+    const answer = input.value.trim();
+    if (answer.length < 2) { input.focus(); return; }
+    const label = btn.querySelector('span');
+    btn.disabled = true;
+    label.textContent = '批改中…约 10 秒';
+    out.hidden = false;
+    out.className = 'subj-grade-result is-loading';
+    out.textContent = 'AI 老师正在对照得分点…';
+    let status = 0, data = {};
+    try {
+      const res = await fetch('/api/grade', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject: currentSubject, chapterId: sec.id, index: idx, answer }),
+      });
+      status = res.status;
+      data = await res.json().catch(() => ({}));
+    } catch (e) { /* 离线 */ }
+    btn.disabled = false;
+    label.textContent = '再批改一次';
+    if (status === 200 && data.ok) {
+      saveAttempt(key, { text: input.value, result: data.result, gradedText: input.value });
+      renderGradeResult(out, data.result, false);
+      playSound(data.result.verdict === '可接受' ? 'correct' : 'pop');
+      return;
+    }
+    out.className = 'subj-grade-result is-error';
+    out.textContent = status === 0 ? '连不上网，先翻开参考答案自己对照吧。'
+      : (data.message || 'AI 暂时批改不了，请稍後再试。') + (status === 501 ? ' 先翻开参考答案自己对照吧。' : '');
+  }
+
+  // 批改结果：分数、每个得分点有没有答到、评语。全部用 textContent 放字，不信任模型回来的内容
+  function renderGradeResult(out, r, stale) {
+    const tone = r.verdict === '可接受' ? 'good' : r.verdict === '部分正确' ? 'mid' : 'low';
+    const node = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+    out.hidden = false;
+    out.className = `subj-grade-result tone-${tone}`;
+    out.replaceChildren();
+    const head = node('div', 'grade-head');
+    const score = node('div', 'grade-score');
+    score.append(node('b', null, String(r.score)), node('small', null, ` / ${r.total} 分`));
+    head.append(score, node('span', 'grade-verdict', r.verdict));
+    const meter = node('div', 'grade-meter');
+    const fill = node('i');
+    fill.style.width = `${r.total ? Math.round((r.score / r.total) * 100) : 0}%`;
+    meter.append(fill);
+    const list = node('ul', 'grade-points');
+    (r.points || []).forEach(p => {
+      const li = node('li', p.got >= p.marks ? 'hit' : p.got > 0 ? 'part' : 'miss');
+      li.append(node('span', 'grade-mark', p.got >= p.marks ? '✓' : p.got > 0 ? '½' : '✗'),
+        node('span', 'grade-point', p.point),
+        node('span', 'grade-got', `${p.got}/${p.marks}`),
+        node('span', 'grade-comment', p.comment));
+      list.append(li);
+    });
+    const stal = node('div', 'grade-stale', '答案改过了，按「再批改一次」看新的分数');
+    stal.hidden = !stale;
+    out.append(head, meter, list);
+    if (r.feedback) out.append(node('p', 'grade-feedback', r.feedback));
+    out.append(stal, node('p', 'grade-note', 'AI 依参考答案的得分点批改，仅供参考；和参考答案对照最准。'));
   }
 
   // 荧光高亮是整段还原 HTML 的，还原后可能把笔记按钮冲掉，这里补回来
@@ -2378,28 +2535,76 @@ function openSubject(subject, initialChapterIdx, subMode) {
     el.classList.add('selected');
   }
 
+  // 荧光笔：每一章各存一份，只存题干与参考答案这两块（以前整区 HTML 只存一份，
+  // 换到别章会被上一章的内容盖掉，作答框与笔记按钮也会被冲掉）。
+  // 存的格式：{ "biology__chap5": [{ t: 题干纯文字, q: 题干 HTML, a: 答案 HTML }, …] }
+  const HL_PARTS = '.form-question-text, .flip-answer-content';
+  function hlStore() {
+    const raw = localStorage.getItem(HL_STORAGE_KEY);
+    try {
+      const v = JSON.parse(raw);
+      if (v && typeof v === 'object' && !Array.isArray(v)) return v;
+    } catch (e) { /* 旧格式是整区 HTML */ }
+    return raw ? { __legacy: raw } : {};
+  }
+  function hlChapterKey() {
+    const sec = (fullDatabase.sections || [])[activeChapterIdx];
+    return `${currentSubject}__${sec ? sec.id : activeChapterIdx}`;
+  }
+  const hlSnapshot = root => [...root.querySelectorAll('.form-question-card')].map(card => {
+    const q = card.querySelector('.form-question-text');
+    const a = card.querySelector('.flip-answer-content');
+    return { t: q ? q.textContent.trim() : '', q: q ? q.innerHTML : '', a: a ? a.innerHTML : '' };
+  });
+
+  function saveAllHighlights() {
+    const container = document.getElementById('subjFormContainer');
+    if (!container) return;
+    const store = hlStore();
+    store[hlChapterKey()] = hlSnapshot(container);
+    try { localStorage.setItem(HL_STORAGE_KEY, JSON.stringify(store)); } catch (e) {}
+  }
+
   function applyHighlight() {
     const selection = window.getSelection();
     if (!selection.rangeCount || selection.isCollapsed) return;
     const range = selection.getRangeAt(0);
     const container = document.getElementById('subjFormContainer');
-    if (!container.contains(range.commonAncestorContainer)) return;
+    const anchor = range.commonAncestorContainer;
+    const part = (anchor.nodeType === 1 ? anchor : anchor.parentElement).closest(HL_PARTS);
+    if (!container.contains(anchor) || !part) return;
     const span = document.createElement('span');
     span.className = `hl-mark-${currentColor}`;
     try {
       range.surroundContents(span);
       playSound('pop');
-      localStorage.setItem(HL_STORAGE_KEY, container.innerHTML);
+      saveAllHighlights();
     } catch (e) {
       alert("请选取同一段落中的文字划线。");
     }
     selection.removeAllRanges();
   }
 
+  // 按题干文字对回去：题目增删、换了顺序也不会套到别题上
   function loadAllHighlights() {
-    const saved = localStorage.getItem(HL_STORAGE_KEY);
     const container = document.getElementById('subjFormContainer');
-    if (saved && container) container.innerHTML = saved;
+    if (!container) return;
+    const store = hlStore();
+    let saved = store[hlChapterKey()];
+    if (!saved && store.__legacy) {
+      // 旧资料不知道是哪一章的：解析出来按题干比对，对得上的才用
+      saved = hlSnapshot(new DOMParser().parseFromString(store.__legacy, 'text/html'));
+    }
+    if (!saved) return;
+    const byText = new Map(saved.map(s => [s.t, s]));
+    container.querySelectorAll('.form-question-card').forEach(card => {
+      const q = card.querySelector('.form-question-text');
+      const a = card.querySelector('.flip-answer-content');
+      const s = q && byText.get(q.textContent.trim());
+      if (!s) return;
+      q.innerHTML = s.q;
+      if (a && s.a) a.innerHTML = s.a;
+    });
   }
 
   function clearHighlights() {
@@ -2411,7 +2616,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
       while (m.firstChild) parent.insertBefore(m.firstChild, m);
       parent.removeChild(m);
     });
-    localStorage.setItem(HL_STORAGE_KEY, container.innerHTML);
+    saveAllHighlights();
   }
 
   function openImageModal(src) {
