@@ -11,7 +11,8 @@
   纯文字 .txt/.md              → 直接读
   其他（.doc .ppt .xls .pages…）→ 丢 Unsupported，报告里写清楚要另存成什么
 
-只用标准库，GitHub Actions 上不必另外装东西。
+照片与 PDF 的配图：请 Gemini 回报图在第几页、哪个位置，再用 crop_figure 裁出来。
+这一步要 Pillow（照片）与 pypdfium2（PDF 转图），工作流会装；本机没装就退回旧做法（照片存整张、PDF 请人工补图）。
 """
 
 import base64
@@ -160,12 +161,16 @@ def _omml(node):
     return "".join(_omml(c) for c in node)
 
 
+VML_IMAGE = "{urn:schemas-microsoft-com:vml}imagedata"
+
+
 def _blips(node):
-    """这个 run 自己的图（不含文字框里别的 run 的图、不含 Fallback 那份重复的）"""
+    """这个 run 自己的图（不含文字框里别的 run 的图、不含 Fallback 那份重复的）。
+    旧版 .doc 另存的 .docx 图片常是 VML 的 v:imagedata，不是 a:blip，两种都要收"""
     for child in node:
         if child.tag in (MC_FALLBACK, W + "txbxContent"):
             continue
-        if child.tag == "{%s}blip" % NS["a"]:
+        if child.tag in ("{%s}blip" % NS["a"], VML_IMAGE):
             yield child
         yield from _blips(child)
 
@@ -190,7 +195,7 @@ def _docx_walk(node, pieces, rels, figs):
                 elif sub.tag in (W + "br", W + "cr"):
                     buf += "\n"
             for blip in _blips(child):
-                rid = blip.get("{%s}embed" % NS["r"])
+                rid = blip.get("{%s}embed" % NS["r"]) or blip.get("{%s}id" % NS["r"])
                 if rid in rels:
                     buf += figs.ref(rels[rid])
             if buf:
@@ -207,7 +212,11 @@ def _docx_walk(node, pieces, rels, figs):
 def _docx_paragraph(p, rels, figs):
     pieces = []          # (marks tuple, text)
     _docx_walk(p, pieces, rels, figs)
-    # 相邻、标记相同的片段合并，标记只包一次
+    return _join_marked(pieces)
+
+
+def _join_marked(pieces):
+    """(标记, 文字) 片段接起来：相邻、标记相同的合并，标记只包一次"""
     out, cur_marks, cur = [], None, ""
     for marks, text in pieces + [(None, "")]:
         if marks == cur_marks:
@@ -251,6 +260,38 @@ def read_docx(path, notes):
 
 # ---------- PowerPoint ----------
 
+def _pptx_marks(rpr):
+    """PPT 里老师标答案：萤光、底线、指定颜色的字（跟随主题色的不算，整页都是那个颜色）"""
+    marks = []
+    if rpr is None:
+        return marks
+    if rpr.find("a:highlight", NS) is not None:
+        marks.append("萤光")
+    if rpr.get("u", "none") != "none":
+        marks.append("底线")
+    color = rpr.find("a:solidFill/a:srgbClr", NS)
+    if color is not None and color.get("val", "").upper() not in ("000000", "FFFFFF"):
+        marks.append("彩色字")
+    return marks
+
+
+def _pptx_paragraph(para):
+    pieces = []
+    for run in para:
+        if run.tag not in ("{%s}r" % NS["a"], "{%s}fld" % NS["a"]):
+            continue
+        rpr = run.find("a:rPr", NS)
+        t = "".join(x.text or "" for x in run.findall("a:t", NS))
+        base = int(rpr.get("baseline", "0")) if rpr is not None else 0
+        if base > 0:
+            t = _script(t, SUP, "^")
+        elif base < 0:
+            t = _script(t, SUB, "_")
+        if t:
+            pieces.append((tuple(_pptx_marks(rpr)), t))
+    return _join_marked(pieces)
+
+
 def read_pptx(path, notes):
     try:
         z = zipfile.ZipFile(path)
@@ -265,7 +306,7 @@ def read_pptx(path, notes):
         root = ET.fromstring(z.read(name))
         paras = []
         for para in root.iter("{%s}p" % NS["a"]):
-            t = "".join(x.text or "" for x in para.iter("{%s}t" % NS["a"]))
+            t = _pptx_paragraph(para)
             if t.strip():
                 paras.append(t)
         for blip in root.iter("{%s}blip" % NS["a"]):
@@ -279,6 +320,55 @@ def read_pptx(path, notes):
     return "\n\n".join(blocks), figs
 
 
+# ---------- 照片与 PDF 的配图裁切 ----------
+
+def _upright_photo(path):
+    """手机照片常只在 EXIF 里记「要转 90 度」。先真的转正、缩到长边 3000px 再用，
+    Gemini 看到的方向与裁图时的方向才一致。没装 Pillow 或读不了（例如 HEIC）就回 None"""
+    try:
+        import io
+        from PIL import Image, ImageOps
+        img = ImageOps.exif_transpose(Image.open(path)).convert("RGB")
+    except Exception:
+        return None
+    img.thumbnail((3000, 3000))
+    buf = io.BytesIO()
+    img.save(buf, "JPEG", quality=90)
+    return buf.getvalue()
+
+
+def crop_figure(path, page, box, photo=None):
+    """box 是 Gemini 回报的 [ymin, xmin, ymax, xmax]（0–1000 的相对座标）。
+    照片直接裁（photo 是 to_parts 转正後的图）；PDF 先把那一页转成图再裁。
+    回传 (副档名, bytes)；缺套件、座标不合理、裁出来太小都回 None，交给人工"""
+    try:
+        import io
+        from PIL import Image
+        y0, x0, y1, x1 = [float(v) / 1000 for v in box]
+    except Exception:
+        return None
+    if not (0 <= y0 < y1 <= 1 and 0 <= x0 < x1 <= 1) or (y1 - y0) * (x1 - x0) < 0.01:
+        return None
+    try:
+        if photo is not None:
+            img = Image.open(io.BytesIO(photo))
+        else:
+            import pypdfium2
+            doc = pypdfium2.PdfDocument(path)
+            if not 1 <= int(page) <= len(doc):
+                return None
+            img = doc[int(page) - 1].render(scale=2.5).to_pil()
+    except Exception:
+        return None
+    w, h = img.size
+    pad = 0.02                      # 四周多留一点，免得切到图边的标号
+    crop = img.convert("RGB").crop((int(max(0, x0 - pad) * w), int(max(0, y0 - pad) * h),
+                                    int(min(1, x1 + pad) * w), int(min(1, y1 + pad) * h)))
+    buf = io.BytesIO()
+    crop.save(buf, "PNG", optimize=True)
+    return ".png", buf.getvalue()
+
+
 # ---------- 入口 ----------
 
 def to_parts(path):
@@ -289,6 +379,10 @@ def to_parts(path):
     notes = []
 
     if ext in IMAGE_EXT:
+        upright = _upright_photo(path)
+        if upright:
+            # 送给 Gemini 与之後裁图用的是同一张转正的图，框出来的位置才对得上
+            return [_inline("image/jpeg", upright)], notes, {0: (".jpg", upright)}
         with open(path, "rb") as f:
             data = f.read()
         return [_inline(IMAGE_EXT[ext], data)], notes, {0: (ext, data)}

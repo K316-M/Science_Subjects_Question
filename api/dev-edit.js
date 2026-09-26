@@ -51,7 +51,6 @@ module.exports = async (req, res) => {
     function edit(item, subject, imageName) {
       const edited = applyPatch(item, body.patch);
       if (body.image) {
-        if (item.type === 'subjective') throw new InputError('做答题目前不支援配图。');
         const image = decodeImage(subject, imageName, body.image);
         edited.image = image.ref;
         writes.push({ path: image.path, base64: image.base64 });

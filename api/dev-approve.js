@@ -249,7 +249,7 @@ module.exports = async (req, res) => {
           try {
             // 编辑器里的修改与新配图，先套上去再验证
             const edited = applyPatch(item, ask.patch);
-            if (ask.image && item.type !== 'subjective') {
+            if (ask.image) {
               image = decodeImage(subject, item.id, ask.image);
               edited.image = image.ref;
             }

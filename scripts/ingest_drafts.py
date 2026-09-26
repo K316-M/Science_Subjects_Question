@@ -73,16 +73,25 @@ def build_prompt(subject, chapters):
     return f"""你是马来西亚华文独立中学（董总 UEC 高中统考）{SUBJECT_LABEL.get(subject, subject)}科的资深命题老师兼录入编辑。
 下面是一份题目资料（可能是照片、PDF，或从 Word/PowerPoint 抽出的文字），请把其中【每一道题】转写为规范化 JSON，严格遵守：
 
+0. 只取两样东西：题目的文字（题干、选项、原档附的答案）与题目要看的图。
+   页首页尾、页码、学校名、「(0 分数)」这类分数或作答系统的字样、说明文字都不要。
+   题干与选项照原文一字不改（包括化学式、单位、上下标），不要翻译、不要润饰。
 1. 题干去掉原始题号（如 "1." "(3)"），保留题干文字；题干里的罗马数字叙述（I、II、III…）要保留。
 2. 选择题：options 恰好 4 个字符串，以 "A. " "B. " "C. " "D. " 开头；answer 是正确选项下标（0=A…3=D）；
    explanation 写一段简明、符合统考评分标准的考点解析。
 3. 非选择题（简答/计算/论述）：输出 question 与含得分点的参考答案 answer_text。
-4. 答案来源 answer_source：
-   - 原档有标答案就照原档，填 "marked"。文字里的「[标记:萤光]…[/标记]」「[标记:底线]…」「[标记:彩色字]…」
-     是原档的萤光笔/底线/彩色字，老师常用来标正确选项；文末若有答案表也算。
-   - 原档完全没标，才由你自己作答，填 "ai"。
-5. figure_needed：题目要看图/图表/装置图才能作答就填 true。
-   原档文字里有「[图N]」时，把这题用到的图编号填进 figure_refs（例如 [1]），没有就填 []。
+4. 答案来源 answer_source —— 老师常用「高光」标正确答案：
+   - Word/PPT 抽出的文字里，「[标记:萤光]…[/标记]」「[标记:底色]…」「[标记:底线]…」「[标记:彩色字]…」
+     是原档的萤光笔、底色、底线、彩色字。标在某个选项（或选项字母）上，那个选项就是答案。
+   - 照片与 PDF 请直接看：萤光笔涂过、圈起来、打勾、写上的字母、颜色不同的选项，都是标出来的答案。
+   - 文末或另页的答案表也算。
+   - 标记只落在题干里的几个字上（例如强调「不」「错误」），那是提醒，不是答案。
+   - 看得出原档标了答案就照原档，填 "marked"；原档完全没标，才由你自己作答，填 "ai"。
+5. figure_needed：题目要看图/图表/装置图才能作答（例如看泌尿系统图回答部位名称）就填 true。
+   - Word/PPT：原档文字里有「[图N]」时，把这题用到的图编号填进 figure_refs（例如 [1]），没有就填 []。
+   - 照片/PDF：填 figure_box = {{"page": 第几页（照片填 1）, "box": [ymin, xmin, ymax, xmax]}}，
+     座标是 0–1000 的相对位置，只框图本身（含图上的标号与图说），不要框进题干与选项文字。
+     几题共用同一张图就各自填同一个框。
 6. 依下列官方章节框架判断所属章节，填 chapter_id；真的判断不了填 "unclassified"：
 {chapter_lines}
 
@@ -92,6 +101,7 @@ def build_prompt(subject, chapters):
   "chapter_id": "章节id 或 unclassified",
   "figure_needed": true/false,
   "figure_refs": [],
+  "figure_box": null,
   "answer_source": "marked 或 ai",
   "q": "题干（mcq）",
   "question": "题干（subjective）",
@@ -197,14 +207,22 @@ def process_file(path, subject, ctx, report):
             continue
         ctx["known"].append(normalize(stem))
 
-        # 配图：Word/PPT 用它指到的内嵌图；照片来源存整张原图；PDF 没办法自动裁，请人工补
+        # 配图：Word/PPT 用它指到的内嵌图；照片、PDF 照 Gemini 回报的位置裁；都不行才退回整张原图或请人工补
         if entry.get("figure_needed"):
             refs = [n for n in (entry.get("figure_refs") or []) if isinstance(n, int) and n in media]
+            fbox = entry.get("figure_box") if isinstance(entry.get("figure_box"), dict) else {}
+            cropped = None
+            if not refs and fbox.get("box") and (0 in media or path.lower().endswith(".pdf")):
+                cropped = ingest_formats.crop_figure(path, fbox.get("page", 1), fbox["box"],
+                                                     photo=media[0][1] if 0 in media else None)
             if refs:
                 ext, data = media[refs[0]]
                 record["image"] = save_image(subject, record["id"], ext, data)
                 if len(refs) > 1:
                     record["flags"].append(f"这题用到 {len(refs)} 张图，只自动放了第一张")
+            elif cropped:
+                record["image"] = save_image(subject, record["id"], *cropped)
+                record["flags"].append("配图是 AI 从原档自动裁的，请确认有没有裁到整张图")
             elif 0 in media:
                 ext, data = media[0]
                 record["image"] = save_image(subject, record["id"], ext, data)

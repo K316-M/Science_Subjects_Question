@@ -30,10 +30,17 @@ function toBankEntry(item) {
       throw new InputError('主观题没有答案，不能采纳。');
     }
 
-    return {
+    const entry = {
       question,
       answer,
     };
+
+    // 做答题也常要看图（例如标出泌尿系统各部位），配图要跟着进题库
+    if (item.image) {
+      entry.image = String(item.image);
+    }
+
+    return entry;
   }
 
   // =========================
@@ -96,6 +103,13 @@ function applyPatch(item, patch) {
   const p = patch && typeof patch === 'object' ? patch : {};
   const text = v => String(v == null ? '' : v).trim();
 
+  if ('image' in p) {
+    const img = text(p.image);
+    if (!img) delete out.image;
+    else if (IMAGE_PATH.test(img)) out.image = img;
+    else throw new InputError('配图路径不对。');
+  }
+
   if (item.type === 'subjective') {
     if ('question' in p) out.question = text(p.question);
     if ('answer' in p) out.answer = text(p.answer);
@@ -109,12 +123,6 @@ function applyPatch(item, patch) {
     out.options = p.options.map(text);
   }
   if ('answer' in p) out.answer = Number(p.answer);
-  if ('image' in p) {
-    const img = text(p.image);
-    if (!img) delete out.image;
-    else if (IMAGE_PATH.test(img)) out.image = img;
-    else throw new InputError('配图路径不对。');
-  }
   return out;
 }
 

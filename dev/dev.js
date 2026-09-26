@@ -868,26 +868,8 @@ async function shrinkImage(file) {
 }
 
 // 回传 { node, patch(), image() }：patch 只含改过的栏位，image 是新上传的图（data URL）或 null
-function questionEditor(item, isSubj) {
-  const box = el('div', { class: 'editor' });
-  const area = (value, rows) => el('textarea', { class: 'textarea', value: value || '', rows });
-  const field = (label, control) => el('div', { class: 'field' }, el('span', { class: 'field-label', text: label }), control);
-  const changed = values => Object.fromEntries(Object.entries(values)
-    .filter(([k, v]) => v !== String(item[k] == null ? '' : item[k]).trim()));
-
-  if (isSubj) {
-    const q = area(item.question, 5);
-    const a = area(item.answer, 6);
-    appendChildren(box, [field('题干', q), field('参考答案（学生站照 HTML 显示，<br> 是换行）', a)]);
-    return { node: box, image: () => null, patch: () => changed({ question: q.value.trim(), answer: a.value.trim() }) };
-  }
-
-  const q = area(item.q, 3);
-  const name = `ans-${Math.random().toString(36).slice(2)}`;
-  const opts = [0, 1, 2, 3].map(i => el('input', { class: 'input', value: (item.options || [])[i] || '' }));
-  const radios = opts.map((_, i) => el('input', { type: 'radio', name, checked: item.answer === i, attrs: { 'aria-label': `正确答案是 ${'ABCD'[i]}` } }));
-  const exp = area(item.explanation, 3);
-
+// 配图栏：预览、上传（先缩小）、移除。选择题与做答题共用
+function imagePicker(item) {
   let newImage = null;
   let removeImage = false;
   const preview = el('div', { class: 'ed-image' });
@@ -918,24 +900,61 @@ function questionEditor(item, isSubj) {
     }
   });
   showPreview();
+  return {
+    node: el('div', { class: 'stack', style: 'gap:8px' }, preview, el('div', { class: 'row' }, pick, drop, file)),
+    image: () => newImage,
+    // 按了「移除」而且没有换新图：送 image: '' 把题库里的配图拿掉
+    removed: () => removeImage && !newImage && Boolean(item.image),
+  };
+}
+
+// 回传 { node, patch(), image() }：patch 只含改过的栏位，image 是新上传的图（data URL）或 null
+function questionEditor(item, isSubj) {
+  const box = el('div', { class: 'editor' });
+  const area = (value, rows) => el('textarea', { class: 'textarea', value: value || '', rows });
+  const field = (label, control) => el('div', { class: 'field' }, el('span', { class: 'field-label', text: label }), control);
+  const changed = values => Object.fromEntries(Object.entries(values)
+    .filter(([k, v]) => v !== String(item[k] == null ? '' : item[k]).trim()));
+  const img = imagePicker(item);
+
+  if (isSubj) {
+    const q = area(item.question, 5);
+    const a = area(item.answer, 6);
+    appendChildren(box, [field('题干', q), field('配图', img.node), field('参考答案（学生站照 HTML 显示，<br> 是换行）', a)]);
+    return {
+      node: box,
+      image: img.image,
+      patch: () => {
+        const p = changed({ question: q.value.trim(), answer: a.value.trim() });
+        if (img.removed()) p.image = '';
+        return p;
+      },
+    };
+  }
+
+  const q = area(item.q, 3);
+  const name = `ans-${Math.random().toString(36).slice(2)}`;
+  const opts = [0, 1, 2, 3].map(i => el('input', { class: 'input', value: (item.options || [])[i] || '' }));
+  const radios = opts.map((_, i) => el('input', { type: 'radio', name, checked: item.answer === i, attrs: { 'aria-label': `正确答案是 ${'ABCD'[i]}` } }));
+  const exp = area(item.explanation, 3);
 
   appendChildren(box, [
     field('题干', q),
+    field('配图', img.node),
     field('选项（圈选的是正确答案）', el('div', { class: 'stack', style: 'gap:6px' },
       opts.map((o, i) => el('div', { class: 'ed-opt' }, radios[i], o)))),
     field('考点解析', exp),
-    field('配图', el('div', { class: 'stack', style: 'gap:8px' }, preview, el('div', { class: 'row' }, pick, drop, file))),
   ]);
   return {
     node: box,
-    image: () => newImage,
+    image: img.image,
     patch: () => {
       const p = changed({ q: q.value.trim(), explanation: exp.value.trim() });
       const options = opts.map(o => o.value.trim());
       if (options.some((o, i) => o !== String((item.options || [])[i] || '').trim())) p.options = options;
       const answer = radios.findIndex(r => r.checked);
       if (answer >= 0 && answer !== item.answer) p.answer = answer;
-      if (removeImage && !newImage && item.image) p.image = '';
+      if (img.removed()) p.image = '';
       return p;
     },
   };

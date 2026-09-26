@@ -2260,6 +2260,11 @@ function openSubject(subject, initialChapterIdx, subMode) {
             <div class="form-card-top-bar"></div>
             <div class="form-card-body">
               <div class="form-question-text">${q.question}</div>
+              ${q.image ? `
+              <div class="figure-container" onclick="openImageModal('${q.image}')">
+                <img src="${q.image}" alt="题目配图">
+                <div class="figure-caption"><svg class="ic" aria-hidden="true"><use href="#i-search"></use></svg> 点击查看高清大图</div>
+              </div>` : q.figure ? `<div class="figure-container">${q.figure}</div>` : ''}
               <div class="answer-flip-panel">
                 <div class="flip-toggle-header" onclick="toggleAnswerFlip(this)" role="button" tabindex="0">
                   <span class="flip-toggle-title"><svg class="ic" aria-hidden="true"><use href="#i-book-open"></use></svg> 参考标准答案与要点</span>
