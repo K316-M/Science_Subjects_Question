@@ -239,6 +239,17 @@
 [data-theme="night"] .grade-meter { background: var(--n-raised); }
 [data-theme="night"] .grade-point, [data-theme="night"] .grade-feedback { color: var(--n-text); }
 [data-theme="night"] .grade-comment { color: var(--n-text-2); }
+[data-theme="night"] .ai-explain-btn { background: var(--n-raised); border-color: rgba(125, 211, 232, .35); color: #8fd3e3; }
+[data-theme="night"] .ai-explain-btn:hover { background: var(--n-hover); }
+[data-theme="night"] .mock-exam-btn { background: var(--n-raised); border-color: rgba(134, 195, 230, .4); color: var(--fn-time); }
+[data-theme="night"] .mock-exam-btn:hover { background: var(--n-hover); }
+[data-theme="night"] .test-clock { color: var(--fn-time); }
+[data-theme="night"] .test-clock.is-low { color: var(--n-red); }
+[data-theme="night"] .test-unanswered { color: var(--n-amber); }
+[data-theme="night"] .ai-explain-out { background: var(--n-surface); border-color: var(--n-border); color: var(--n-text); }
+[data-theme="night"] .ai-explain-concept b, [data-theme="night"] .ai-explain-tip b { color: #8fd3e3; }
+[data-theme="night"] .ai-explain-note { color: var(--n-text-2); }
+[data-theme="night"] .ai-explain-out.is-error { background: #3a2418; border-color: #6b3a22; color: #fdba74; }
 [data-theme="night"] .grade-feedback { border-top-color: var(--n-border); }
 [data-theme="night"] .hl-btn-action { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
 [data-theme="night"] .hl-color-btn.selected { border-color: var(--n-text); }

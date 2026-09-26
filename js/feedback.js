@@ -521,8 +521,8 @@ function spriteConfirmFixed() {
   const bubble = document.getElementById('spriteBubble');
   bubble.textContent = '谢谢！';
   bubble.classList.add('show');
-  // 气泡还在就一直是说话的样子；中间闭嘴再张嘴钻传送门，看起来像说了两次
-  setSpritePose('talk');
+  // 道谢时整段都是开心的样子，直到钻传送门离开
+  setSpritePose('happy');
   if (typeof playSound === 'function') playSound('achieve');
 
   setTimeout(() => {

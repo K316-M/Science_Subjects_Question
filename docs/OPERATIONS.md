@@ -209,9 +209,9 @@ https://science-subjects-question.vercel.app/dev/#pending
 | `GITHUB_BRANCH` | 选填 | 预设 `main` |
 | `UPSTASH_REDIS_REST_URL` | 选填 | 跨装置同步要用，见下方 |
 | `UPSTASH_REDIS_REST_TOKEN` | 选填 | 同上 |
-| `GEMINI_API_KEY` | 选填 | 做答题的「交给 AI 批改」要用（和 GitHub Actions 那把可以是同一把）。没设就显示「AI 批改还没开启」，学生照样能写、能翻答案 |
+| `GEMINI_API_KEY` | 选填 | 做答题的「交给 AI 批改」与选择题的「AI 讲给我听」要用（和 GitHub Actions 那把可以是同一把）。没设就显示「还没开启」，其他功能照常 |
 
-> **AI 批改的额度**：网站是公开的，每个 IP 每小时最多批改 20 次（有设 Upstash 就跨服务器计数，没设只能各台各算）。
+> **AI 的额度**：网站是公开的，每个 IP 每小时最多批改 20 次、讲解 30 次（有设 Upstash 就跨服务器计数，没设只能各台各算）。
 > 批改用最新版本的 **flash**，几秒内出结果；pro 要等几十秒，不适合学生按了等。
 
 > 三个 `DEV_` 只要缺一个、或密钥不足 16 字符，登录页就会显示「尚未启用」并**列出到底缺哪一项**。照着补就行。
@@ -740,14 +740,14 @@ js/notes.js             笔记画布
 js/archive.js           题目档与 PDF 下载
 js/feedback.js          申诉与通知小精灵
 js/review.js            复习排程与错题本规则
-js/chapter-test.js      整章测验
+js/chapter-test.js      整章测验与模拟统考（计时）
 assets/visual|audio/    背景图与音乐（处理好、网站正在用的）
 assets/sprite/          小精灵姿势图（处理好、网站正在用的）
 images/<科目>/          题目配图
 papers/*.json           三科正式题库
 papers/pending_approval.json   待审区（AI 产物先进这里）
 data/resolved_issues.json      申诉处理结果（由工作台写入）
-api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改、同步）
+api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改与讲解、同步）
 dev/                    开发者工作台（独立的深色网站）
 
 ── 你放东西的地方（不部署）──

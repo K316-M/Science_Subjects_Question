@@ -51,6 +51,10 @@
     "api/grade.js": {
       "includeFiles": "papers/*_question_bank.json",
       "maxDuration": 60
+    },
+    "api/explain.js": {
+      "includeFiles": "papers/*_question_bank.json",
+      "maxDuration": 60
     }
   }
 }
