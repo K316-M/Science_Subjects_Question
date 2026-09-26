@@ -251,6 +251,34 @@ async function run() {
     }
   });
 
+  await section('导览结束回到原位', async () => {
+    // 导览每一步都会把画面捲到目标；走完（或跳过）要捲回按「引导」之前的位置，不能停在最後一步
+    // 视窗矮一点：做题页只有八百多 px 高，844 的视窗几乎捲不动
+    const { ctx, page, errors } = await open({ height: 560 });
+    await enter(page);
+    await page.evaluate(() => scrollTo(0, 250)); await page.waitForTimeout(300);
+    const y0 = await page.evaluate(() => Math.round(scrollY));
+    const ys = [];
+    await page.evaluate(() => document.getElementById('guideBtn').click());
+    for (let i = 0; i < 10 && await page.evaluate(() => !!document.querySelector('.tour-tip')); i++) {
+      await page.waitForTimeout(700);
+      ys.push(await page.evaluate(() => Math.round(scrollY)));
+      await page.evaluate(() => document.querySelector('.tour-tip .tour-btn.go').click());
+    }
+    await page.waitForTimeout(1000);
+    const y1 = await page.evaluate(() => Math.round(scrollY));
+    check('导览结束回到原位', '走完做题页导览：捲回按「引导」之前的位置', y0 > 0 && ys.some(y => Math.abs(y - y0) > 20) && Math.abs(y1 - y0) <= 2,
+      `之前 ${y0}，导览中 ${ys.join('→')}，结束後 ${y1}`);
+    await page.evaluate(() => scrollTo(0, 250)); await page.waitForTimeout(300);
+    await page.evaluate(() => document.getElementById('guideBtn').click()); await page.waitForTimeout(700);
+    const yEsc = await page.evaluate(() => Math.round(scrollY));
+    await page.keyboard.press('Escape'); await page.waitForTimeout(1000);
+    const y2 = await page.evaluate(() => Math.round(scrollY));
+    check('导览结束回到原位', '按 Esc 跳过也捲回原位', Math.abs(yEsc - y0) > 20 && Math.abs(y2 - y0) <= 2, `之前 ${y0}，第一步 ${yEsc}，结束後 ${y2}`);
+    check('导览结束回到原位', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('继续上次学习', async () => {
     // 只是点进一科看过、一题都没做：回首页不该出现「继续上次学习进度」；答了一题才出现
     const { ctx, page, errors } = await open();
