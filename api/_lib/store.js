@@ -48,4 +48,4 @@ async function writeDoc(code, doc) {
   await command(['SET', keyFor(code), JSON.stringify(doc), 'EX', String(TTL_SECONDS)]);
 }
 
-module.exports = { config, readDoc, writeDoc };
+module.exports = { config, command, readDoc, writeDoc };

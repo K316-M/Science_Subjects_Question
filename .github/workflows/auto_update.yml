@@ -6,8 +6,13 @@ on:
     - cron: '0 0 * * 1'
   push:
     paths:
-      - 'papers/**'
+      - 'papers/*_question_bank.json'   # 只有正式题库变了才巡检；待审区的进出不用
   workflow_dispatch: # 支持手动点按测试
+
+# /dev 连续采纳好几题时会连推好几次：只跑最新那次，前面还在跑的直接取消
+concurrency:
+  group: inspect
+  cancel-in-progress: true
 
 jobs:
   inspect:

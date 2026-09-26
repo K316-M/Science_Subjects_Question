@@ -1,162 +1,11 @@
 // 审题：把待审区（papers/pending_approval.json）里的题目采纳进正式题库，或直接退回。
 // 这是整条流水线最後一哩 —— 在此之前，AI 产出的题目永远到不了学生手上。
+// 采纳时可以顺便带上 /dev 编辑器里的修改（patch）与新配图，和题库、待审区一起一个 commit 写进去。
 const { publishingConfig, verifySession, sendJson, readJsonBody, sameOrigin } = require('./_lib/devauth');
-
-const PENDING_PATH = 'papers/pending_approval.json';
-const SUBJECTS = ['biology', 'chemistry', 'physics'];
-const bankPath = subject => `papers/${subject}_question_bank.json`;
-
-class InputError extends Error {}
-
-class GitHubError extends Error {
-  constructor(status, detail) {
-    super(`GitHub API ${status}`);
-    this.status = status;
-    this.detail = detail;
-  }
-}
-
-function ghHeaders(token) {
-  return {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'uec-science-dev-console',
-  };
-}
-
-async function readFile(pub, filePath) {
-  const url = `https://api.github.com/repos/${pub.repo}/contents/${filePath}?ref=${encodeURIComponent(pub.branch)}`;
-  const res = await fetch(url, { headers: ghHeaders(pub.token) });
-
-  if (res.status === 404) {
-    return { sha: null, json: null };
-  }
-
-  if (!res.ok) {
-    throw new GitHubError(res.status, await res.text());
-  }
-
-  const data = await res.json();
-
-  try {
-    return {
-      sha: data.sha,
-      json: JSON.parse(
-        Buffer.from(data.content || '', 'base64').toString('utf8')
-      ),
-    };
-  } catch (e) {
-    throw new InputError(
-      `${filePath} 不是合法的 JSON，请先修好再采纳。`
-    );
-  }
-}
-
-async function writeFile(pub, filePath, json, sha, message) {
-  const res = await fetch(
-    `https://api.github.com/repos/${pub.repo}/contents/${filePath}`,
-    {
-      method: 'PUT',
-      headers: {
-        ...ghHeaders(pub.token),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message,
-        content: Buffer.from(
-          JSON.stringify(json, null, 2) + '\n',
-          'utf8'
-        ).toString('base64'),
-        branch: pub.branch,
-        ...(sha ? { sha } : {}),
-      }),
-    }
-  );
-
-  if (!res.ok) {
-    throw new GitHubError(res.status, await res.text());
-  }
-}
-
-const normalize = t =>
-  String(t || '').replace(/\s+/g, '').trim();
-
-// 只挑认得的栏位写进题库。
-// 待审区里的其余栏位（flags、来源、时间戳等）不带进正式资料。
-function toBankEntry(item) {
-  // =========================
-  // 主观题
-  // =========================
-  if (item.type === 'subjective') {
-    const question = String(item.question || '').trim();
-    const answer = String(item.answer || '').trim();
-
-    if (!question) {
-      throw new InputError('这题没有题干，不能采纳。');
-    }
-
-    if (!answer) {
-      throw new InputError('主观题没有答案，不能采纳。');
-    }
-
-    return {
-      question,
-      answer,
-    };
-  }
-
-  // =========================
-  // 选择题
-  // =========================
-  const q = String(item.q || '').trim();
-
-  const options = Array.isArray(item.options)
-    ? item.options.map(o => String(o).trim())
-    : [];
-
-  if (!q) {
-    throw new InputError('这题没有题干，不能采纳。');
-  }
-
-  if (options.length !== 4) {
-    throw new InputError('选项不是 4 个，不能采纳。');
-  }
-
-  if (options.some(o => !o)) {
-    throw new InputError('有选项是空白的，不能采纳。');
-  }
-
-  // 检查选项经过 normalize 后是否重复
-  const normalizedOptions = options.map(normalize);
-
-  if (new Set(normalizedOptions).size !== 4) {
-    throw new InputError('选择题存在重复选项，不能采纳。');
-  }
-
-  if (
-    !Number.isInteger(item.answer) ||
-    item.answer < 0 ||
-    item.answer > 3
-  ) {
-    throw new InputError(
-      '答案序号不在 0–3 之间，不能采纳。'
-    );
-  }
-
-  const entry = {
-    q,
-    options,
-    answer: item.answer,
-    explanation: String(item.explanation || '').trim(),
-  };
-
-  if (item.image) {
-    entry.image = String(item.image);
-  }
-
-  return entry;
-}
+const { snapshot, readJson, commitFiles, sendError } = require('./_lib/github');
+const {
+  SUBJECTS, PENDING_PATH, bankPath, InputError, normalize, toBankEntry, applyPatch, decodeImage,
+} = require('./_lib/questions');
 
 module.exports = async (req, res) => {
   // =========================
@@ -216,15 +65,14 @@ module.exports = async (req, res) => {
     // =========================
     // 读取待审区
     // =========================
-    const pending = await readFile(
-      pub,
-      PENDING_PATH
-    );
+    const snap = await snapshot(pub);
+    const writes = [];
+    const pendingJson = await readJson(pub, snap, PENDING_PATH);
 
     const items =
-      pending.json &&
-      Array.isArray(pending.json.items)
-        ? pending.json.items
+      pendingJson &&
+      Array.isArray(pendingJson.items)
+        ? pendingJson.items
         : [];
 
     if (!items.length) {
@@ -334,6 +182,7 @@ module.exports = async (req, res) => {
         }
 
         groups.get(subject).push({
+          ask,
           item,
           chapterId: String(
             ask.chapterId ||
@@ -347,14 +196,15 @@ module.exports = async (req, res) => {
       // 逐科目处理
       // ----------------------------------------------------------
       for (const [subject, rows] of groups) {
-        const bank = await readFile(
+        const bankJson = await readJson(
           pub,
+          snap,
           bankPath(subject)
         );
 
         if (
-          !bank.json ||
-          !Array.isArray(bank.json.sections)
+          !bankJson ||
+          !Array.isArray(bankJson.sections)
         ) {
           rows.forEach(r =>
             markSkipped(
@@ -366,13 +216,14 @@ module.exports = async (req, res) => {
           continue;
         }
 
-        const sections = bank.json.sections;
+        const sections = bankJson.sections;
         let changed = 0;
 
         // --------------------------------------------------------
         // 逐题处理
         // --------------------------------------------------------
         for (const {
+          ask,
           item,
           chapterId,
         } of rows) {
@@ -393,10 +244,18 @@ module.exports = async (req, res) => {
           // 数据验证
           // ------------------------------------------------------
           let entry;
+          let image = null;
 
           try {
-            entry = toBankEntry(item);
+            // 编辑器里的修改与新配图，先套上去再验证
+            const edited = applyPatch(item, ask.patch);
+            if (ask.image) {
+              image = decodeImage(subject, item.id, ask.image);
+              edited.image = image.ref;
+            }
+            entry = toBankEntry(edited);
           } catch (e) {
+            if (!(e instanceof InputError)) throw e;
             markSkipped(
               item.id,
               e.message
@@ -510,6 +369,9 @@ module.exports = async (req, res) => {
           // 正式写入
           // ------------------------------------------------------
           list.push(entry);
+          if (image) {
+            writes.push({ path: image.path, base64: image.base64 });
+          }
 
           markHandled(item.id);
           changed += 1;
@@ -519,13 +381,10 @@ module.exports = async (req, res) => {
         // 该科目有新增题目才写回 GitHub
         // --------------------------------------------------------
         if (changed) {
-          await writeFile(
-            pub,
-            bankPath(subject),
-            bank.json,
-            bank.sha,
-            `📥 采纳 ${changed} 道题目进 ${subject} 题库`
-          );
+          writes.push({
+            path: bankPath(subject),
+            json: bankJson,
+          });
         }
       }
     } else {
@@ -556,27 +415,25 @@ module.exports = async (req, res) => {
     // 从 pending 区移除已经处理成功的题目
     // ============================================================
     if (handled.length) {
-      // 题库先写、待审区后写。
-      //
-      // 如果待审区这一步失败：
-      //   题目会继续留在 pending。
-      //
-      // 下一次再次采纳时：
-      //   目标章节的去重逻辑会避免重复写入。
+      // 题库、配图、待审区在同一个 commit 里：要嘛全部写进去，要嘛都没写。
       const keep = items.filter(
         it => !handledSet.has(it.id)
       );
 
-      await writeFile(
-        pub,
-        PENDING_PATH,
-        {
-          ...pending.json,
+      writes.push({
+        path: PENDING_PATH,
+        json: {
+          ...pendingJson,
           items: keep,
         },
-        pending.sha,
+      });
+
+      await commitFiles(
+        pub,
+        snap,
+        writes,
         action === 'adopt'
-          ? `✅ 待审区移除已采纳的 ${handled.length} 题`
+          ? `📥 采纳 ${handled.length} 道题目进题库`
           : `🗑️ 退回 ${handled.length} 道待审题目`
       );
     }
@@ -591,51 +448,6 @@ module.exports = async (req, res) => {
       skipped,
     });
   } catch (err) {
-    // ==========================================================
-    // 输入错误
-    // ==========================================================
-    if (err instanceof InputError) {
-      return sendJson(res, 400, {
-        ok: false,
-        error: 'bad_request',
-        message: err.message,
-      });
-    }
-
-    // ==========================================================
-    // GitHub API 错误
-    // ==========================================================
-    if (err instanceof GitHubError) {
-      const map = {
-        401: 'GITHUB_TOKEN 无效或已过期，请重新产生。',
-        403: 'GITHUB_TOKEN 权限不足：需要对该仓库的 Contents「Read and write」权限。',
-        404: '找不到仓库或档案（检查 GITHUB_REPO）。',
-        409: '档案刚被别处改动，请重试一次。',
-        422: '档案刚被别处改动，请重试一次。',
-      };
-
-      return sendJson(res, 502, {
-        ok: false,
-        error: 'github_error',
-        message:
-          map[err.status] ||
-          `GitHub 返回错误（${err.status}）。`,
-      });
-    }
-
-    // ==========================================================
-    // 未知服务器错误
-    // ==========================================================
-    console.error(
-      'dev-approve failed:',
-      err
-    );
-
-    return sendJson(res, 500, {
-      ok: false,
-      error: 'server_error',
-      message:
-        '服务器处理失败，请稍后再试。',
-    });
+    return sendError(res, err, 'dev-approve');
   }
 };

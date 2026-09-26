@@ -183,6 +183,23 @@
 }
 .card-note-btn:hover { background: var(--retro-teal-dark); color: var(--retro-cream); transform: translateY(-2px); }
 .card-note-btn.has-note { background: var(--retro-coral-deep); border-color: var(--retro-coral-deep); color: #fff; }
+/* 有笔记的题：「看笔记」开关与「编辑笔记」一起放在右下角 */
+.card-note-actions { position: absolute; right: 14px; bottom: 12px; z-index: 3; display: flex; gap: 8px; }
+.card-note-actions .card-note-btn { position: static; }
+.note-inline-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--retro-cream); border: 1.5px solid var(--retro-teal-dark); color: var(--retro-teal-dark);
+  font: inherit; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 20px; cursor: pointer;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.1); transition: all 0.2s;
+}
+.note-inline-toggle:hover, .note-inline-toggle[aria-expanded="true"] { background: var(--retro-teal-dark); color: var(--retro-cream); }
+.note-inline {
+  margin-top: 14px; padding: 12px 14px; border-radius: 14px;
+  background: #fffbea; border: 1.5px solid #f3d27a; animation: softFadeIn 0.2s ease;
+}
+.note-inline-head { font-size: 12px; font-weight: 800; color: #a16207; margin-bottom: 6px; }
+.note-inline-text { font-size: 14px; line-height: 1.7; color: #3f3f46; white-space: pre-wrap; word-break: break-word; }
+.note-inline-ink { display: block; max-width: 100%; margin-top: 8px; border-radius: 10px; background: #fff; border: 1px solid #f1e3b3; }
 .flashcard, .form-question-card { position: relative; }
 .flashcard { padding-bottom: 56px; }
 .form-question-card .form-card-body { padding-bottom: 56px; }

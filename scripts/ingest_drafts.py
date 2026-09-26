@@ -7,11 +7,14 @@ AI 自动录题 + 审题
 
   1. 格式：题干不能空、选择题要恰好 4 个 A–D 选项、答案要是 0–3、选项不能重复
   2. 重复：和正式题库、待审区、同一批里的题目比对，太像的不收
-  3. 答案复核：另外请 Gemini 在「看不到答案」的情况下重做一次选择题，
+  3. 文字：夹英文虚词、残留转写标记、题号没去掉；Word/PPT/文字档还会逐字和原档比对，
+     AI 改字、加字、漏字都标出来（检查细节见 qa.py）
+  4. 答案复核：另外请 Gemini 在「看不到答案」的情况下重做一次选择题，
      和原档标的答案（萤光笔、答案表）或第一次推断的答案比对，不一致就标出来
 
-格式坏掉、重复的题不进待审区，只写在报告里；其余进 papers/pending_approval.json，
-在 /dev「AI 录题待审」逐题采纳。读不了的档案（旧版 .doc 等）也写进报告，告诉你要另存成什么。
+格式坏掉、重复的题不进待审区，只写在报告里；其余进 papers/pending_approval.json。
+/dev「AI 录题待审」把被标出问题的题展开给你改，没问题的收成清单一键采纳。
+处理完的原档直接删掉（git 历史里还找得回来）；读不了的档案（旧版 .doc 等）留在原处，报告里写要另存成什么。
 
 需要 GEMINI_API_KEY（GitHub Secrets）；没有就跳过。
 """
@@ -21,13 +24,14 @@ import glob
 import json
 import os
 import re
-import shutil
 import sys
 import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gemini_api
 import ingest_formats
+import qa
+from qa import extract_json_array
 from generate_questions import normalize, too_similar
 
 SUBJECTS = ["biology", "chemistry", "physics"]
@@ -69,16 +73,25 @@ def build_prompt(subject, chapters):
     return f"""你是马来西亚华文独立中学（董总 UEC 高中统考）{SUBJECT_LABEL.get(subject, subject)}科的资深命题老师兼录入编辑。
 下面是一份题目资料（可能是照片、PDF，或从 Word/PowerPoint 抽出的文字），请把其中【每一道题】转写为规范化 JSON，严格遵守：
 
+0. 只取两样东西：题目的文字（题干、选项、原档附的答案）与题目要看的图。
+   页首页尾、页码、学校名、「(0 分数)」这类分数或作答系统的字样、说明文字都不要。
+   题干与选项照原文一字不改（包括化学式、单位、上下标），不要翻译、不要润饰。
 1. 题干去掉原始题号（如 "1." "(3)"），保留题干文字；题干里的罗马数字叙述（I、II、III…）要保留。
 2. 选择题：options 恰好 4 个字符串，以 "A. " "B. " "C. " "D. " 开头；answer 是正确选项下标（0=A…3=D）；
    explanation 写一段简明、符合统考评分标准的考点解析。
 3. 非选择题（简答/计算/论述）：输出 question 与含得分点的参考答案 answer_text。
-4. 答案来源 answer_source：
-   - 原档有标答案就照原档，填 "marked"。文字里的「[标记:萤光]…[/标记]」「[标记:底线]…」「[标记:彩色字]…」
-     是原档的萤光笔/底线/彩色字，老师常用来标正确选项；文末若有答案表也算。
-   - 原档完全没标，才由你自己作答，填 "ai"。
-5. figure_needed：题目要看图/图表/装置图才能作答就填 true。
-   原档文字里有「[图N]」时，把这题用到的图编号填进 figure_refs（例如 [1]），没有就填 []。
+4. 答案来源 answer_source —— 老师常用「高光」标正确答案：
+   - Word/PPT 抽出的文字里，「[标记:萤光]…[/标记]」「[标记:底色]…」「[标记:底线]…」「[标记:彩色字]…」
+     是原档的萤光笔、底色、底线、彩色字。标在某个选项（或选项字母）上，那个选项就是答案。
+   - 照片与 PDF 请直接看：萤光笔涂过、圈起来、打勾、写上的字母、颜色不同的选项，都是标出来的答案。
+   - 文末或另页的答案表也算。
+   - 标记只落在题干里的几个字上（例如强调「不」「错误」），那是提醒，不是答案。
+   - 看得出原档标了答案就照原档，填 "marked"；原档完全没标，才由你自己作答，填 "ai"。
+5. figure_needed：题目要看图/图表/装置图才能作答（例如看泌尿系统图回答部位名称）就填 true。
+   - Word/PPT：原档文字里有「[图N]」时，把这题用到的图编号填进 figure_refs（例如 [1]），没有就填 []。
+   - 照片/PDF：填 figure_box = {{"page": 第几页（照片填 1）, "box": [ymin, xmin, ymax, xmax]}}，
+     座标是 0–1000 的相对位置，只框图本身（含图上的标号与图说），不要框进题干与选项文字。
+     几题共用同一张图就各自填同一个框。
 6. 依下列官方章节框架判断所属章节，填 chapter_id；真的判断不了填 "unclassified"：
 {chapter_lines}
 
@@ -88,6 +101,7 @@ def build_prompt(subject, chapters):
   "chapter_id": "章节id 或 unclassified",
   "figure_needed": true/false,
   "figure_refs": [],
+  "figure_box": null,
   "answer_source": "marked 或 ai",
   "q": "题干（mcq）",
   "question": "题干（subjective）",
@@ -99,26 +113,8 @@ def build_prompt(subject, chapters):
 """
 
 
-def build_check_prompt(subject, mcqs):
-    lines = []
-    for i, q in enumerate(mcqs, 1):
-        lines.append(f"第 {i} 题：{q['q']}\n" + "\n".join(q["options"]))
-    return f"""你是 UEC 高中统考{SUBJECT_LABEL.get(subject, subject)}科阅卷老师。请独立作答下列选择题（不要参考任何其他资料上的答案），
-只回传 JSON 数组，每题一项：{{"n": 题号, "answer": 0-3 的下标（0=A…3=D）, "reason": "一句话理由"}}
-
-""" + "\n\n".join(lines)
-
-
-def extract_json_array(text):
-    cleaned = re.sub(r"^```(json)?|```$", "", text.strip(), flags=re.M).strip()
-    data = json.loads(cleaned)
-    if not isinstance(data, list):
-        raise json.JSONDecodeError("不是 JSON 数组", cleaned, 0)
-    return data
-
-
 def list_draft_files(draft_dir):
-    """drafts/<科目>/ 底下的档案（不含 _processed 等子目录）"""
+    """drafts/<科目>/ 底下的档案（不含子目录）"""
     return [p for p in sorted(glob.glob(os.path.join(draft_dir, "*")))
             if os.path.isfile(p) and os.path.basename(p) not in SKIP_NAMES and not os.path.basename(p).startswith(".")]
 
@@ -150,35 +146,6 @@ def stem_of(record):
     return record.get("q") or record.get("question") or ""
 
 
-def cross_check(subject, records, report_flags):
-    """答案复核：Gemini 不看答案再做一次选择题。失败不挡录题，只在报告里说没复核到"""
-    mcqs = [r for r in records if r["type"] == "mcq"]
-    if not mcqs:
-        return
-    try:
-        answers = extract_json_array(gemini_api.generate(API_KEY, [{"text": build_check_prompt(subject, mcqs)}], temperature=0))
-    except (gemini_api.GeminiError, json.JSONDecodeError) as e:
-        report_flags.append(f"答案复核没跑成（{str(e)[:60]}），这批的答案请全部人工核对")
-        for r in mcqs:
-            r["flags"].append("答案未经 AI 复核")
-        return
-    by_n = {a.get("n"): a for a in answers if isinstance(a, dict)}
-    for i, r in enumerate(mcqs, 1):
-        got = by_n.get(i, {})
-        second = got.get("answer")
-        if not isinstance(second, int) or not 0 <= second <= 3:
-            r["flags"].append("答案未经 AI 复核")
-            continue
-        r["review"] = {"ai_answer": second, "reason": str(got.get("reason", ""))[:120]}
-        if second == r["answer"]:
-            if r.get("answer_source") == "ai":
-                r["flags"].append("原档没标答案，由 AI 作答（两次一致），仍请核对")
-            continue
-        who = "原档标的" if r.get("answer_source") == "marked" else "AI 第一次作答"
-        r["flags"].append(f"⚠️ 答案有疑：{who}是 {LETTERS[r['answer']]}，AI 复核选 {LETTERS[second]}"
-                          f"（{r['review']['reason'] or '无理由'}），请核对")
-
-
 def process_file(path, subject, ctx, report):
     fname = os.path.basename(path)
     rel = path.replace("\\", "/")
@@ -187,6 +154,9 @@ def process_file(path, subject, ctx, report):
     except ingest_formats.Unsupported as e:
         report["files"].append({"subject": subject, "source": fname, "status": "⛔ 读不了", "detail": str(e)})
         return None
+    # Word/PPT/文字档有原文可以逐字比对；照片与 PDF 没有，只能靠答案复核
+    first = parts[0].get("text", "") if parts else ""
+    source = qa.canon(first) if first.startswith(ingest_formats.SOURCE_HEADER) else None
 
     try:
         entries = extract_json_array(gemini_api.generate(API_KEY, [{"text": ctx["prompt"]}] + parts, temperature=0.2))
@@ -215,6 +185,7 @@ def process_file(path, subject, ctx, report):
         if qtype == "subjective":
             record["question"] = str(entry.get("question") or entry.get("q") or "").strip()
             record["answer"] = str(entry.get("answer_text") or entry.get("answer") or "").strip()
+            record["flags"].append("做答题的参考答案没有自动复核，请核对得分点")
         else:
             record["q"] = str(entry.get("q") or entry.get("question") or "").strip()
             record["options"] = [str(o).strip() for o in (entry.get("options") or [])]
@@ -227,20 +198,31 @@ def process_file(path, subject, ctx, report):
         if problem:
             rejected.append((record, f"格式有问题：{problem}"))
             continue
+        record["flags"] += qa.text_problems(record)
+        if source:
+            record["flags"] += qa.source_drift(record, source)
         stem = stem_of(record)
         if too_similar(stem, ctx["known"]):
             rejected.append((record, "和题库或待审区里已有的题目太像"))
             continue
         ctx["known"].append(normalize(stem))
 
-        # 配图：Word/PPT 用它指到的内嵌图；照片来源存整张原图；PDF 没办法自动裁，请人工补
+        # 配图：Word/PPT 用它指到的内嵌图；照片、PDF 照 Gemini 回报的位置裁；都不行才退回整张原图或请人工补
         if entry.get("figure_needed"):
             refs = [n for n in (entry.get("figure_refs") or []) if isinstance(n, int) and n in media]
+            fbox = entry.get("figure_box") if isinstance(entry.get("figure_box"), dict) else {}
+            cropped = None
+            if not refs and fbox.get("box") and (0 in media or path.lower().endswith(".pdf")):
+                cropped = ingest_formats.crop_figure(path, fbox.get("page", 1), fbox["box"],
+                                                     photo=media[0][1] if 0 in media else None)
             if refs:
                 ext, data = media[refs[0]]
                 record["image"] = save_image(subject, record["id"], ext, data)
                 if len(refs) > 1:
                     record["flags"].append(f"这题用到 {len(refs)} 张图，只自动放了第一张")
+            elif cropped:
+                record["image"] = save_image(subject, record["id"], *cropped)
+                record["flags"].append("配图是 AI 从原档自动裁的，请确认有没有裁到整张图")
             elif 0 in media:
                 ext, data = media[0]
                 record["image"] = save_image(subject, record["id"], ext, data)
@@ -251,7 +233,7 @@ def process_file(path, subject, ctx, report):
             record["flags"].append("题干提到图表，但 AI 判断不需要配图，请确认")
         accepted.append(record)
 
-    cross_check(subject, accepted, report["notes"])
+    qa.cross_check(API_KEY, subject, accepted, report["notes"])
     report["files"].append({"subject": subject, "source": fname, "status": "✅ 已录入",
                             "detail": f"录入 {len(accepted)} 题" + (f"，退回 {len(rejected)} 题" if rejected else "")})
     report["accepted"].extend(accepted)
@@ -281,27 +263,26 @@ def process_subject(subject, pending_items, report):
     ctx = {"prompt": build_prompt(subject, chapters), "chapter_ids": {c["id"] for c in chapters},
            "chapter_title": {c["id"]: c["title"] for c in chapters}, "known": known}
 
-    processed_dir = os.path.join(draft_dir, "_processed")
     new_items = []
     for path in files:
         got = process_file(path, subject, ctx, report)
         if got is None:
             continue              # 读不了或转写失败：档案留着，报告里说明
         new_items.extend(got)
-        os.makedirs(processed_dir, exist_ok=True)
-        shutil.move(path, os.path.join(processed_dir, os.path.basename(path)))
+        os.remove(path)           # 题目已经进待审区，原档不留在仓库里（git 历史里找得回来）
     return new_items
 
 
 def generate_report(report):
     acc, rej = report["accepted"], report["rejected"]
     doubtful = [r for r in acc if any(f.startswith("⚠️") for f in r["flags"])]
+    flagged = [r for r in acc if r["flags"]]
     lines = ["# 🧪 AI 录题与审题报告", "",
              f"> 录入 **{len(acc)}** 题进待审区"
-             + (f"，其中 **{len(doubtful)}** 题答案有疑" if doubtful else "")
+             + (f"：**{len(flagged)}** 题被标出问题要逐题看，{len(acc) - len(flagged)} 题没问题可一键采纳" if acc else "")
              + (f"；退回 **{len(rej)}** 题" if rej else "") + "。"]
     if acc:
-        lines.append("> 合并这个 PR 只是把题目放进待审区；之後到 /dev「AI 录题待审」逐题核对、按「采纳」，才会进正式题库。")
+        lines.append("> 合并这个 PR 只是把题目放进待审区；之後到 /dev「AI 录题待审」处理，按「采纳」才会进正式题库。")
     else:
         lines.append("> 这次一题都没录到，原因看下面「档案」那一栏。转写失败的档案留在原处，下次推送或手动重跑工作流会再试。")
     lines.append("")
@@ -313,7 +294,7 @@ def generate_report(report):
         lines.append(f"| {SUBJECT_LABEL.get(f['subject'], f['subject'])} | {f['source']} | {f['status']} | {f['detail']} |")
 
     if doubtful:
-        lines += ["", "## 答案有疑，优先核对", "", "| 题目 | 疑点 |", "|---|---|"]
+        lines += ["", "## 答案有疑或和原档不一致，优先核对", "", "| 题目 | 疑点 |", "|---|---|"]
         for r in doubtful:
             why = "；".join(f for f in r["flags"] if f.startswith("⚠️"))
             lines.append(f"| {stem_of(r)[:40]}… | {why} |")

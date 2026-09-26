@@ -77,7 +77,8 @@ def align(a, ref_mask):
     rm = cv2.resize(ref_mask, None, fx=small, fy=small, interpolation=cv2.INTER_AREA)
     m = board_mask(a)
     best = (-1, 1.0, 0, 0)
-    for s in np.arange(0.80, 1.21, 0.01):
+    # 范围放宽到 0.6–1.8：後来补的 happy/sleep/write 是 1024px 原图、角色画得比较小，要放大约 1.5 倍
+    for s in np.arange(0.60, 1.81, 0.01):
         sm = cv2.resize(m, None, fx=small * s, fy=small * s, interpolation=cv2.INTER_AREA)
         pad = np.zeros((rm.shape[0] * 3, rm.shape[1] * 3), np.float32)
         oy, ox = rm.shape[0], rm.shape[1]
@@ -89,7 +90,8 @@ def align(a, ref_mask):
             best = (v, s, (ox - loc[0]) / small, (oy - loc[1]) / small)
     _, s, tx, ty = best
     M = np.float32([[s, 0, tx], [0, s, ty]])
-    h, w = a.shape[:2]
+    # 输出用 idle 的画布大小：原图尺寸不一样（1024 vs 1254）时，用原图大小会把放大後超出的部分切掉
+    h, w = ref_mask.shape[:2]
     # 先预乘 alpha 再变换，避免透明区的颜色渗到边上
     pm = a.copy()
     pm[..., :3] *= pm[..., 3:4] / 255

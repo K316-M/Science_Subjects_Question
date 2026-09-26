@@ -158,6 +158,8 @@
 [data-theme="night"] .exam-slot.is-past { color: var(--n-text-2); }
 [data-theme="night"] .exam-slot-time { color: var(--n-text); }
 [data-theme="night"] .exam-slot-note, [data-theme="night"] .exam-list-hint { color: var(--n-text-2); }
+[data-theme="night"] .exam-part-len, [data-theme="night"] .exam-parts-subj { color: var(--n-text-2); }
+[data-theme="night"] .exam-parts li.is-now { background: rgba(156, 74, 58, .35); }
 [data-theme="night"] .exam-slot.is-next .exam-slot-tag { background: #9c4a3a; color: var(--n-btn-text); }
 [data-theme="night"] .exam-slot.is-past .exam-slot-subj { text-decoration-color: rgba(255, 255, 255, .3); }
 /* 日历在暗底上：纸面压暗、墨线换成米白，红色抬头收一档 */
@@ -204,6 +206,10 @@
 [data-theme="night"] .kbd-hint kbd { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
 [data-theme="night"] .card-note-btn { box-shadow: 0 3px 8px rgba(0, 0, 0, .35); }
 [data-theme="night"] .card-note-btn:hover { background: var(--retro-teal); color: var(--n-text); }
+[data-theme="night"] .note-inline-toggle { box-shadow: 0 3px 8px rgba(0, 0, 0, .35); }
+[data-theme="night"] .note-inline { background: #2e2a1c; border-color: #6b5a2a; }
+[data-theme="night"] .note-inline-head { color: #e8c97a; }
+[data-theme="night"] .note-inline-text { color: var(--n-text); }
 [data-theme="night"] .card-note-btn.has-note { background: #9c4a3a; border-color: #9c4a3a; color: var(--n-btn-text); }
 
 /* 实心的主要按钮：深玉绿 × 米白字 */
@@ -224,6 +230,16 @@
 [data-theme="night"] .flip-toggle-title { color: var(--n-text-2); }
 [data-theme="night"] .flip-status-pill { background: var(--n-sunken); }
 [data-theme="night"] .flip-answer-content { background: var(--n-surface); color: var(--n-text); }
+[data-theme="night"] .form-q-num { background: rgba(255, 255, 255, .08); color: var(--n-text-2); }
+[data-theme="night"] .subj-attempt { background: var(--n-sunken); border-color: var(--n-border-strong); }
+[data-theme="night"] .subj-attempt-label { color: var(--n-text-2); }
+[data-theme="night"] .subj-attempt-input { color: var(--n-text); background-image: repeating-linear-gradient(transparent 0 26px, rgba(255, 255, 255, .07) 26px 27px); }
+[data-theme="night"] .subj-grade-result { background: var(--n-surface); border-color: var(--n-border); color: var(--n-text); }
+[data-theme="night"] .subj-grade-result.is-error { background: #3a2418; border-color: #6b3a22; color: #fdba74; }
+[data-theme="night"] .grade-meter { background: var(--n-raised); }
+[data-theme="night"] .grade-point, [data-theme="night"] .grade-feedback { color: var(--n-text); }
+[data-theme="night"] .grade-comment { color: var(--n-text-2); }
+[data-theme="night"] .grade-feedback { border-top-color: var(--n-border); }
 [data-theme="night"] .hl-btn-action { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
 [data-theme="night"] .hl-color-btn.selected { border-color: var(--n-text); }
 [data-theme="night"] .hl-mark-yellow { color: var(--n-amber); }

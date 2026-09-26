@@ -15,6 +15,12 @@ on:
       - 'drafts/**'
   workflow_dispatch:
 
+# 连推好几次时排队一个一个跑，免得同时改待审区开出互相冲突的 PR。
+# 录题与出题各自一组：GitHub 同一组只留一个排队的，共用一组会把排队中的另一个取消掉
+concurrency:
+  group: ingest
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
@@ -31,6 +37,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: 安装依赖（照片转正、PDF 转图，用来裁配图）
+        run: pip install --quiet pillow pypdfium2
 
       - name: 运行 AI 自动录题脚本
         id: ingest

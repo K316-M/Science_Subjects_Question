@@ -21,18 +21,26 @@ import urllib.request
 
 API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 
-# 偏好顺序：够快够便宜、而且支援图片输入。
-# 新的排前面 —— 实测发现旧版会对「新用户」关闭，光看清单看不出来。
-PREFERRED = [
-    "gemini-3.6-flash",
-    "gemini-3.5-flash",
-    "gemini-3.7-flash",
-    "gemini-3.8-flash",
-    "gemini-2.5-flash",
-    "gemini-3.5-flash-lite",
-    "gemini-3.1-flash-lite",
-    "gemini-2.5-flash-lite",
-]
+# 挑模型的顺序：版本新的优先（3.8 不行才到 3.7…），同一版本里 pro → flash → flash-lite，
+# 正式版排在 preview/exp 前面。不写死型号 —— 每次都从 Google 的模型清单现排，
+# 新模型上架就自动用上，旧模型下架也不会整条流水线跟着坏。
+TIER_RANK = {"pro": 0, "flash": 1, "flash-lite": 2}
+MODEL_RE = re.compile(r"^gemini-(\d+(?:\.\d+)?)-(pro|flash-lite|flash)(?:-(latest|\d{3}|preview[\w.-]*|exp[\w.-]*))?$")
+
+
+def rank_models(names):
+    """只留一般文字/图片用途的 gemini 模型（去掉 tts、image、embedding、live 等），按上面的顺序排好"""
+    ranked = []
+    for name in names:
+        m = MODEL_RE.match(name)
+        if not m:
+            continue
+        version, tier, suffix = m.groups()
+        unstable = 1 if suffix and suffix.startswith(("preview", "exp")) else 0
+        key = tuple(-int(n) for n in version.split("."))   # 用整数比，3.10 才会排在 3.9 前面
+        ranked.append(((key, TIER_RANK[tier], unstable, name), name))
+    return [name for _, name in sorted(ranked)]
+
 
 _resolved = None
 _available = None
@@ -78,15 +86,8 @@ def _catalogue(api_key):
 
 
 def _next_candidate(api_key):
-    """从清单里挑一个还没试过的，偏好顺序优先，其次任何 flash。"""
-    available = _catalogue(api_key)
-    for name in PREFERRED:
-        if name in available and name not in _tried:
-            return name
-    for name in available:
-        if "flash" in name and name not in _tried:
-            return name
-    return next((m for m in available if m not in _tried), None)
+    """从清单里挑一个还没试过的：最高级的优先。"""
+    return next((m for m in rank_models(_catalogue(api_key)) if m not in _tried), None)
 
 
 def _suggested_model(message):
@@ -99,7 +100,7 @@ def _suggested_model(message):
 
 
 def resolve_model(api_key):
-    """GEMINI_MODEL 有指定就用指定的；否则问 Google 现在有什么，按偏好挑。"""
+    """GEMINI_MODEL 有指定就用指定的；否则问 Google 现在有什么，挑最高级的。"""
     global _resolved
     if _resolved:
         return _resolved
@@ -117,23 +118,22 @@ UNAVAILABLE = ("no longer available", "is not found", "not supported", "404")
 # 临时性的：等一下再试就好，换模型也没意义（但同一个模型一直忙，最后才换）
 TRANSIENT = ("high demand", "overloaded", "try again later", "temporarily",
              "internal error", "503", "500", "502", "504", "deadline exceeded", "timed out")
-# 额度用尽：重试与换模型都救不了，立刻停手以免白烧时间
+# 额度用尽：额度是按模型算的（pro 的免费额度最少），同一个模型重试没用，直接换下一个
 QUOTA = ("exceeded your current quota", "quota exceeded", "billing", "resource_exhausted")
 
 BACKOFF = (4, 10, 25)   # 秒
 
 
-def generate(api_key, parts, temperature=0.4, timeout=120):
+def generate(api_key, parts, temperature=0.4, timeout=300):
     """parts 是 Gemini 的 contents[0].parts，文字或图片都塞这里。
 
-    「清单里列得出来」不等于「这把金钥能用」—— 旧版模型会对新用户关闭。
-    所以被拒绝时会自动换一个再试：Google 的错误讯息若写了建议替代就照它的，
-    否则往偏好清单的下一个走。
+    从最高级的模型开始：下架、额度用完、一直忙，就往下一级换。
+    Google 的错误讯息若写了建议替代就照它的，否则按 rank_models 的顺序走。
     """
     global _resolved
     last = None
 
-    for _ in range(5):                       # 最多换 5 个模型（尖峰时段常常连着好几个都忙）
+    for _ in range(8):                       # 最多换 8 个模型（pro 额度用完、尖峰时段常常连着好几个都不行）
         model = resolve_model(api_key)
 
         for attempt, wait in enumerate((0,) + BACKOFF):
@@ -146,13 +146,13 @@ def generate(api_key, parts, temperature=0.4, timeout=120):
                 last = e
                 low = str(e).lower()
                 if any(k in low for k in QUOTA):
-                    raise                    # 额度问题：重试与换模型都没用
+                    break                    # 这个模型额度用完：重试没用，换下一个
                 if any(k in low for k in TRANSIENT):
                     continue                 # 临时忙碌：等一下再打同一个模型
                 break                        # 其他错误：跳出去判断要不要换模型
 
         low = str(last).lower()
-        if not any(k in low for k in UNAVAILABLE + TRANSIENT):
+        if not any(k in low for k in UNAVAILABLE + TRANSIENT + QUOTA):
             raise last                       # 不是模型层面的问题，换了也一样
         _tried.append(model)
         nxt = _suggested_model(str(last)) or _next_candidate(api_key)

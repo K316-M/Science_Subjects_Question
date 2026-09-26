@@ -346,15 +346,108 @@ function subjNoteContext(qIndex) {
 function openMcqNote() { openNoteEditor(currentMcqNoteContext()); }
 function openSubjNote(qIndex) { openNoteEditor(subjNoteContext(qIndex)); }
 
-// 已经有笔记的题目，按钮显示成高亮的"已有笔记"
+// 题目卡上的笔记：有笔记的题多一个「看笔记」开关，直接在题目下面展开／收起，
+// 不必进编辑画面或笔记专页；原本的按钮变成「编辑笔记」。
+// 展开过的题记在这里，换题再回来还是开的（只到这次开网页为止）
+const inlineNoteOpen = new Set();
+
 function refreshNoteButtons() {
   const store = loadNotesStore();
   document.querySelectorAll('[data-note-key]').forEach(btn => {
-    const has = !!store[btn.getAttribute('data-note-key')];
-    btn.classList.toggle('has-note', has);
-    if (window.setBtnLabel) window.setBtnLabel(btn, has ? 'notebook' : 'pencil', has ? '已有笔记' : '做笔记');
-    else btn.textContent = has ? '已有笔记' : '做笔记';
+    const key = btn.getAttribute('data-note-key');
+    const note = store[key];
+    btn.classList.toggle('has-note', !!note);
+    if (window.setBtnLabel) window.setBtnLabel(btn, 'pencil', note ? '编辑笔记' : '做笔记');
+    else btn.textContent = note ? '编辑笔记' : '做笔记';
+    syncInlineNote(btn, key, note);
   });
+}
+
+function syncInlineNote(btn, key, note) {
+  // 按钮收进右下角的按钮组，展开的笔记面板放在按钮组上面
+  let group = btn.parentElement;
+  if (!group.classList.contains('card-note-actions')) {
+    group = document.createElement('div');
+    group.className = 'card-note-actions';
+    btn.replaceWith(group);
+    group.appendChild(btn);
+  }
+  let toggle = group.querySelector('.note-inline-toggle');
+  let panel = group.previousElementSibling && group.previousElementSibling.classList.contains('note-inline')
+    ? group.previousElementSibling : null;
+
+  if (!note) {
+    if (toggle) toggle.remove();
+    if (panel) panel.remove();
+    return;
+  }
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.className = 'note-inline';
+    panel.hidden = true;
+    group.before(panel);
+  }
+  if (!toggle) {
+    toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'note-inline-toggle';
+    toggle.addEventListener('click', () => {
+      if (inlineNoteOpen.has(key)) inlineNoteOpen.delete(key);
+      else inlineNoteOpen.add(key);
+      if (typeof playSound === 'function') playSound('flip');
+      refreshNoteButtons();
+    });
+    group.insertBefore(toggle, btn);
+  }
+  const open = inlineNoteOpen.has(key);
+  toggle.setAttribute('aria-expanded', String(open));
+  if (window.setBtnLabel) window.setBtnLabel(toggle, 'notebook', open ? '收起笔记' : '看笔记');
+  else toggle.textContent = open ? '收起笔记' : '看笔记';
+  panel.hidden = !open;
+  if (open) renderInlineNote(panel, note);
+}
+
+function renderInlineNote(panel, note) {
+  panel.replaceChildren();
+  const head = document.createElement('div');
+  head.className = 'note-inline-head';
+  head.textContent = `我的笔记 · ${new Date(note.updatedAt).toLocaleDateString('zh-CN')}`;
+  panel.appendChild(head);
+  if (note.textNote) {
+    const text = document.createElement('div');
+    text.className = 'note-inline-text';
+    text.textContent = note.textNote;
+    panel.appendChild(text);
+  }
+  if (note.strokes && note.strokes.length) {
+    const canvas = document.createElement('canvas');
+    canvas.className = 'note-inline-ink';
+    panel.appendChild(canvas);
+    drawInlineInk(canvas, note, panel.clientWidth - 2);
+  }
+}
+
+// 手写笔迹：只取实际画过的范围，按面板宽度缩放（最多原尺寸，不放大）
+function drawInlineInk(canvas, note, maxWidth) {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  note.strokes.forEach(s => s.pts.forEach(([x, y]) => {
+    if (x < minX) minX = x; if (x > maxX) maxX = x;
+    if (y < minY) minY = y; if (y > maxY) maxY = y;
+  }));
+  const pad = 12;
+  const bw = Math.max(maxX - minX, 20) + pad * 2;
+  const bh = Math.max(maxY - minY, 20) + pad * 2;
+  const scale = Math.min(1, Math.max(maxWidth, 120) / bw);
+  const W = Math.round(bw * scale), H = Math.round(bh * scale);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = `${W}px`;
+  canvas.style.height = `${H}px`;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.translate(-(minX - pad) * scale, -(minY - pad) * scale);
+  note.strokes.forEach(s => drawSingleStroke(ctx, s, scale));
 }
 
 /* ---------- 笔记列表页 ---------- */

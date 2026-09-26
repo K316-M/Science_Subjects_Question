@@ -11,7 +11,8 @@ AI 依考纲出题脚本
   - generate_questions.py : 依考纲生成全新的练习题（来源是模型，必须人工核对）
 
 ⚠️ AI 写的理科题目可能科学性出错。本脚本产出的每一题都标记 needs_expert_check，
-   一律只进待审区，必须由人审核合并后才会上线。
+   一律只进待审区，必须由人审核合并后才会上线。每题都另请 Gemini 不看答案重做一次
+   （qa.cross_check），答案对不上、文字有问题的才会被标出、在 /dev 展开要你逐题看。
 
 运行需要 GEMINI_API_KEY；未配置时直接跳过。
 """
@@ -26,6 +27,7 @@ import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gemini_api
+import qa
 
 SUBJECTS = ["biology", "chemistry", "physics"]
 SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理"}
@@ -233,7 +235,7 @@ def process_subject(subject, report_rows):
                 continue
 
             known_norms.append(normalize(entry.get("q", "")))
-            new_items.append({
+            item = {
                 "id": f"{subject}_gen_{uuid.uuid4().hex[:8]}",
                 "subject": subject,
                 "type": "mcq",
@@ -244,16 +246,23 @@ def process_subject(subject, report_rows):
                 "answer": entry["answer"],
                 "explanation": entry.get("explanation", "").strip(),
                 "origin": "ai_generated",
+                "answer_source": "generated",
                 "needs_expert_check": True,
-                "flags": ["AI 依考纲生成的原创题，合并前请核对科学正确性与答案"],
+                "flags": [],
                 "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "syllabus_used": bool(syllabus),
-            })
+            }
+            item["flags"] += qa.text_problems(item)
+            new_items.append(item)
             kept += 1
 
         if kept:
             report_rows.append((subject, title, "✅ 已生成", f"{kept} 题" + ("（依官方考纲）" if syllabus else "（仅依章节标题）")))
 
+    # 整科一次复核，比每章各打一次省呼叫次数
+    notes = []
+    qa.cross_check(API_KEY, subject, new_items, notes)
+    report_rows.extend((subject, "—", "⚠️ 复核", n) for n in notes)
     return new_items
 
 
@@ -264,7 +273,8 @@ def generate_report(rows, total):
         f"> 本批次共产出 **{total}** 道原创选择题，全部停在待审区。",
         "",
         "> ⚠️ **这些题目是 AI 写的，科学正确性未经验证。**",
-        "> 请逐题核对答案与解析再合并；有疑虑的直接在 PR 里删掉那一题即可。",
+        "> 每题都请 AI 不看答案重做过一次；对不上的会在 /dev 展开要你逐题看，其余收在「一键采纳」清单。",
+        "> 复核用的是同一个模型家族，两次都错的题它抓不到 —— 一键采纳前请扫一眼。",
         "",
         "| 科目 | 章节 | 状态 | 说明 |",
         "|---|---|---|---|",
