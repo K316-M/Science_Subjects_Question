@@ -3,6 +3,7 @@
 //   target = 'bank'   ：改已经上线的题（学生看得到，存档後自动部署）
 //     action = 'hide' / 'unhide'：下架／恢复。题目留在原位、加上 hidden，学生端不显示。
 //     不真的删掉：学生的进度、错题、笔记都按「第几题」记，删掉一题，後面每一题的纪录都会对到别题。
+//     action = 'clearExplain'：清掉这一题（选择题）全班共用的 AI 讲解，下一个问的人会拿到新的。
 // 两种都跟采纳一样用 toBankEntry 验证，改完是坏的就不让存。
 // GET：直接从 GitHub 读最新的三科题库与待审区。网站上的 /papers 要等 Vercel 部署完（约一分钟）
 // 才会更新，工作台若读那份，刚存的修改会「消失」一下，接著再改就会撞到「题库被改过」。
@@ -11,6 +12,7 @@ const { snapshot, readJson, commitFiles, sendError } = require('./_lib/github');
 const {
   SUBJECTS, PENDING_PATH, bankPath, InputError, normalize, stemOf, toBankEntry, applyPatch, decodeImage,
 } = require('./_lib/questions');
+const { clearExplain } = require('./_lib/ai');
 
 module.exports = async (req, res) => {
   if (!verifySession(req)) {
@@ -84,6 +86,12 @@ module.exports = async (req, res) => {
       // 用题干核对是不是同一题：页面打开之後题库若被改过，索引可能已经指到别题
       if (!current || normalize(stemOf(current)) !== normalize(body.expect)) {
         throw new InputError('题库在你打开之後被改过，请按「重新整理」再改。');
+      }
+      if (body.action === 'clearExplain') {
+        if (type !== 'mcq') throw new InputError('只有选择题有 AI 讲解。');
+        const n = await clearExplain(subject, section.id, body.index, current);
+        if (n === null) throw new InputError('没有设定 Upstash，AI 讲解没有共用快取，不用清。');
+        return sendJson(res, 200, { ok: true, cleared: n });
       }
       if (body.action === 'hide' || body.action === 'unhide') {
         const hide = body.action === 'hide';

@@ -249,7 +249,18 @@ function renderMyReports() {
     box.innerHTML = `<div class="archive-empty" style="padding: 24px;">你还没有提交过任何问题。</div>`;
     return;
   }
-  box.innerHTML = reports.map(r => `
+  // 已解决、而且在小精灵那里点过「没问题了」的，收进最下面的折叠区：纪录还在，但不占版面
+  const done = reports.filter(r => r.status === 'resolved' && r.acknowledged);
+  const open = reports.filter(r => !done.includes(r));
+  box.innerHTML = open.map(reportItemHtml).join('')
+    + (done.length ? `<details class="fb-done"${open.length ? '' : ' open'}>
+        <summary>已处理完的 ${done.length} 条</summary>
+        ${done.map(reportItemHtml).join('')}
+      </details>` : '');
+}
+
+function reportItemHtml(r) {
+  return `
     <div class="fb-report-item">
       <div class="fb-report-head">
         <span class="fb-status ${r.status}">${r.status === 'resolved' ? '<svg class="ic" aria-hidden="true"><use href="#i-check-circle"></use></svg>已解决' : '<svg class="ic" aria-hidden="true"><use href="#i-alert"></use></svg>处理中'}</span>
@@ -265,13 +276,15 @@ function renderMyReports() {
         <button class="note-mini-btn" style="flex:0 0 auto;" onclick="copyReportText('${escapeFb(r.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-copy"></use></svg>复制</button>
         <button class="note-mini-btn danger" style="flex:0 0 auto;" onclick="deleteReport('${escapeFb(r.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>删除</button>
       </div>
-    </div>`).join('');
+    </div>`;
 }
 
 function deleteReport(id) {
   if (!confirm('确定删除这条申诉记录？')) return;
   const store = loadFeedbackStore();
   store.reports = store.reports.filter(r => r.id !== id);
+  // 记下删过哪一条：不然另一台装置同步时会把它加回来
+  store.deleted = Object.assign({}, store.deleted, { [id]: Date.now() });
   saveFeedbackStore(store);
   renderMyReports();
   refreshSprite();

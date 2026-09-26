@@ -439,6 +439,10 @@
 .fb-input:focus, .fb-textarea:focus, .fb-select:focus { outline: none; border-color: var(--retro-teal-dark); }
 .fb-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.6; }
 
+.fb-done { margin-top: 4px; }
+.fb-done > summary { cursor: pointer; padding: 8px 4px; font-size: 13px; font-weight: 700; color: var(--text-muted); }
+.fb-done > summary:hover { color: var(--text-main); }
+.fb-done[open] > summary { margin-bottom: 8px; }
 .fb-report-item {
   background: var(--card-bg); border: 1px solid var(--card-border);
   border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;

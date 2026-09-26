@@ -1023,8 +1023,21 @@ function bankEditPanel(subject, chapterIdx, type, qIndex) {
     toast('已存档，约一分钟後学生就看得到', 'good');
     rerender();
   });
+  // 全班共用的 AI 讲解讲错了：清掉，下一个问的学生会拿到重新讲的。改过题目内容的话旧讲解本来就会作废
+  let clearBtn = null;
+  if (type === 'mcq') {
+    clearBtn = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', disabled: !canPublish() }, icon('trash'), el('span', { text: '清除 AI 讲解' }));
+    clearBtn.addEventListener('click', async () => {
+      if (!confirm('清掉这一题四个选项的 AI 讲解？\n\n下一个按「AI 讲给我听」的学生会拿到重新讲的版本。已经看过的学生，装置上存的那份不会变。')) return;
+      const data = await busy(clearBtn, () => api('/api/dev-edit', {
+        method: 'POST',
+        body: { target: 'bank', action: 'clearExplain', subject, chapterId: sec.id, type: 'mcq', index: qIndex, expect: item.q },
+      }));
+      if (data) toast(data.cleared ? `已清除 ${data.cleared} 份讲解` : '这一题还没有人问过 AI 讲解', 'good');
+    });
+  }
   return el('div', { class: 'ed-panel' }, ed.node,
-    el('div', { class: 'row' }, save, canPublish() ? null : el('span', { class: 'field-hint', text: NO_PUBLISH_HINT })));
+    el('div', { class: 'row' }, save, clearBtn, canPublish() ? null : el('span', { class: 'field-hint', text: NO_PUBLISH_HINT })));
 }
 
 /* ==========================================================================
