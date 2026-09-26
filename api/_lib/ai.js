@@ -122,4 +122,30 @@ async function callGemini(key, prompt) {
   throw last || new Error('no model');
 }
 
-module.exports = { SUBJECTS, useQuota, htmlToText, findQuestion, callGemini };
+// ---------- 选择题讲解的共用快取 ----------
+// 同一题、选同一个答案，全班拿同一份讲解：第一个人问过之後，其他人不扣次数、也不再呼叫 Gemini。
+// 键里带题目内容的杂凑：在 /dev 改过题干、选项、答案或解析，旧讲解自动作废。
+const EXPLAIN_TTL_SECONDS = 180 * 24 * 60 * 60;
+function explainKey(subject, chapterId, index, chosen, item) {
+  const content = JSON.stringify([item.q, item.options, item.answer, item.explanation || '']);
+  return `uec:explain:v1:${subject}:${chapterId}:${index}:${chosen}:${hash(content)}`;
+}
+async function readExplain(key) {
+  if (!store.config().ready) return null;
+  try {
+    const raw = await store.command(['GET', key]);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }   // 快取坏了就当没有，照常问 AI
+}
+async function saveExplain(key, result) {
+  if (!store.config().ready) return;
+  try { await store.command(['SET', key, JSON.stringify(result), 'EX', String(EXPLAIN_TTL_SECONDS)]); } catch (e) { /* 存不进去下次再问一次而已 */ }
+}
+// /dev 清掉某一题四个选项的讲解（讲错了，要 AI 重讲）
+async function clearExplain(subject, chapterId, index, item) {
+  if (!store.config().ready) return null;
+  const keys = [0, 1, 2, 3].map(c => explainKey(subject, chapterId, index, c, item));
+  return store.command(['DEL', ...keys]);
+}
+
+module.exports = { SUBJECTS, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain, clearExplain };

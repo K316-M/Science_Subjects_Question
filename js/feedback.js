@@ -272,6 +272,8 @@ function deleteReport(id) {
   if (!confirm('确定删除这条申诉记录？')) return;
   const store = loadFeedbackStore();
   store.reports = store.reports.filter(r => r.id !== id);
+  // 记下删过哪一条：不然另一台装置同步时会把它加回来
+  store.deleted = Object.assign({}, store.deleted, { [id]: Date.now() });
   saveFeedbackStore(store);
   renderMyReports();
   refreshSprite();

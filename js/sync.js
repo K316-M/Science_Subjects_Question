@@ -141,15 +141,24 @@
   }
 
   function mergeFeedback(a, b) {
-    // {reports: [{id, sent, ...}]}；依 id 联集，已寄出的状态优先保留
+    // {reports: [{id, sent, ...}], deleted: {id: 删除时间}}；依 id 联集。
+    // 「往前走」的状态不能被另一台较旧的资料退回去：寄出、已解决、已读（点过「没问题了」）任一边有就算有，
+    // 不然小精灵会再通知一次。删过的（deleted）两边都不留
+    const deleted = mergeDeleted((a && a.deleted) || {}, (b && b.deleted) || {});
     const byId = new Map();
     [...((a && a.reports) || []), ...((b && b.reports) || [])].forEach(r => {
-      if (!r || !r.id) return;
+      if (!r || !r.id || deleted[r.id]) return;
       const prev = byId.get(r.id);
-      if (!prev) byId.set(r.id, r);
-      else byId.set(r.id, Object.assign({}, prev, r, { sent: prev.sent || r.sent }));
+      if (!prev) { byId.set(r.id, r); return; }
+      const merged = Object.assign({}, prev, r, {
+        sent: Boolean(prev.sent || r.sent),
+        acknowledged: Boolean(prev.acknowledged || r.acknowledged),
+        reply: r.reply || prev.reply,
+      });
+      if (prev.status === 'resolved' || r.status === 'resolved') merged.status = 'resolved';
+      byId.set(r.id, merged);
     });
-    return { reports: Array.from(byId.values()) };
+    return { reports: Array.from(byId.values()), deleted };
   }
 
   function mergeReview(a, b) {
@@ -349,7 +358,7 @@
 
   window.UECSync = {
     makeCode, pretty, normalize, connect, disconnect, sync, status, takeLink, pastCodes,
-    _merge: { mergeNotes, mergeDeleted, mergeHighlights, mergeTour },   // 给测试用
+    _merge: { mergeNotes, mergeDeleted, mergeHighlights, mergeTour, mergeFeedback },   // 给测试用
     onChange: fn => { listeners.add(fn); return () => listeners.delete(fn); },
     hasLocalChanges,
   };

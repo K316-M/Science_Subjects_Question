@@ -81,6 +81,7 @@
 | AI 批改：几成分数算「可接受」「部分正确」 | `api/grade.js` | `PASS_RATIO`、`PARTIAL_RATIO` | `0.8`、`0.4` | 🟢 |
 | AI 讲解（选择题「讲给我听」）：每台装置每小时几次 | `api/explain.js` | `LIMIT_PER_HOUR` | `30` | 🟡 和批改分开计 |
 | AI 讲解：同一个网络每小时合计几次 | `api/explain.js` | `NETWORK_LIMIT_PER_HOUR` | `300` | 🟡 |
+| AI 讲解全班共用的快取存多久 | `api/_lib/ai.js` | `EXPLAIN_TTL_SECONDS` | 180 天 | 🟢 |
 | AI 讲解在装置上最多存几则 | `index.html` | `EXPLAIN_KEEP` | `300` | 🟢 超过就丢最旧的 |
 | **AI 讲解的讲法**（多长、先讲什么） | `api/explain.js` | `buildPrompt` 里的「要求」1～4 | | 🔴 第 4 条（不可推翻正确答案）不要删 |
 | 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS` | `40` | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
