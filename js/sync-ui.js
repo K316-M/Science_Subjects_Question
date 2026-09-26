@@ -64,6 +64,8 @@
     document.body.appendChild(mask);
     document.addEventListener('keydown', e => {
       if (!mask.classList.contains('is-open')) return;
+      // 导览（js/onboarding.js）盖在面板上时，键盘归导览管：Esc 只关导览、Tab 在导览的按钮间移动
+      if (e.defaultPrevented || document.querySelector('.tour-tip')) return;
       if (e.key === 'Escape') close();
       else if (e.key === 'Tab') trapTab(e);
     });
@@ -152,17 +154,17 @@
         try { await navigator.clipboard.writeText(s.code); say('已复制到剪贴簿', true); }
         catch (e) { say('复制失败，请手动选取上面那串码', false); }
       };
-      const now = el('button', 'sync-btn ghost', s.syncing ? '同步中…' : '立即同步');
+      const now = el('button', 'sync-btn ghost sync-now', s.syncing ? '同步中…' : '立即同步');
       now.disabled = s.syncing;
       now.onclick = doSync;
       row.append(copyLink, copy, now);
       box.appendChild(row);
 
-      box.appendChild(el('div', 'sync-note',
+      box.appendChild(el('div', 'sync-note sync-what',
         '扫码、打开链结，或在另一台装置输入这串码，两边的进度就会自动合并——答对过的题目不会因为另一台没做过而被覆盖掉。这个码和链结就是你的钥匙，只传给自己，不要贴到群组里。'));
 
       const row2 = el('div', 'sync-row');
-      const off = el('button', 'sync-btn ghost', '在这台装置断开');
+      const off = el('button', 'sync-btn ghost sync-off', '在这台装置断开');
       off.onclick = () => {
         if (!confirm('断开之后这台装置就不再同步，本机的资料仍然保留。确定吗？')) return;
         window.UECSync.disconnect(); render(); say('已断开', true);
@@ -192,6 +194,10 @@
 
     msgEl = el('div', 'sync-msg');
     box.appendChild(msgEl);
+    // 第一次看到「已连接」的面板时介绍它（刚产生／输入同步码之後也算）；等面板淡入、QR 画好再开始
+    if (s.connected && window.UECOnboarding) setTimeout(() => {
+      if (mask.classList.contains('is-open')) window.UECOnboarding.once('sync');
+    }, 600);
   }
 
   let qrLib = null;
@@ -264,7 +270,7 @@
 
   // 合并之后画面上的数字要跟着更新，否则要重整才看得到另一台装置的进度
   window.refreshAfterSync = function () {
-    [['updateWrongCountBadge'], ['renderResumeCard'], ['renderActiveContent']].forEach(([fn]) => {
+    [['updateWrongCountBadge'], ['renderResumeCard'], ['renderActiveContent'], ['refreshNotesAfterSync']].forEach(([fn]) => {
       if (typeof window[fn] === 'function') { try { window[fn](); } catch (e) {} }
     });
     if (window.OrbitSubjects && window.OrbitSubjects.refresh) window.OrbitSubjects.refresh();

@@ -475,6 +475,8 @@
 /* 图还没载好：位置先占好（导览找得到），但看不见、点不到，飞入动画停在第一格 */
 .sprite-wrap.active.is-loading { opacity: 0; pointer-events: none; animation-play-state: paused; }
 .sprite-wrap.leaving { animation: spriteOut 0.55s ease forwards; }
+.sprite-wrap.is-done { pointer-events: none; }
+.sprite-wrap.is-done .sprite-char { cursor: default; }
 /* 从右下方沿弧线飞进来，机头先压低、到位时微微冲过头再回正 */
 @keyframes spriteIn {
   0% { opacity: 0; transform: translate(60px, 40px) rotate(8deg) scale(0.8); }
