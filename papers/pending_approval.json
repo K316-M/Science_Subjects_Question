@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_7d8c15c5b4",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap6",
-      "chapter_title": "第6章：营养成分的运输",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.097925Z",
-      "q": "冠状静脉直接将血液送往",
-      "options": [
-        "A. 右心室",
-        "B. 左心室",
-        "C. 右心房",
-        "D. 上腔静脉"
-      ],
-      "answer": 2,
-      "explanation": "冠状循环是负责心肌自身血液供应的循环。冠状静脉汇集心肌代谢后的静脉血，直接注入右心房。",
-      "review": {
-        "ai_answer": 2,
-        "reason": "心肌利用后的静脉血经由冠状静脉汇集至冠状窦，直接注入右心房。"
-      }
-    },
-    {
       "id": "biology_707ca3f4ee",
       "subject": "biology",
       "type": "mcq",
