@@ -1,30 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_e31cd22182",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap8",
-      "chapter_title": "第8章：内环境的恒定和排泄系统",
-      "source_draft": "drafts/biology/eclass生物题.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-25T06:17:43.087563Z",
-      "q": "淡水鱼类没有缺水问题，故其排除的含氮废物主要是",
-      "options": [
-        "A. 尿酸",
-        "B. 尿素",
-        "C. 氨",
-        "D. 尿素和尿酸"
-      ],
-      "answer": 2,
-      "explanation": "氨是有毒物质，需要大量的水来稀释并排出体外。淡水鱼生活在水中，水源充足，因此可以直接将含氮废物以氨的形式排出。",
-      "review": {
-        "ai_answer": 2,
-        "reason": "淡水鱼类生活在水中，有充足的水分来稀释高毒性的氨，因此其主要的含氮排泄物是氨。"
-      }
-    },
-    {
       "id": "biology_a99a0917d7",
       "subject": "biology",
       "type": "mcq",
