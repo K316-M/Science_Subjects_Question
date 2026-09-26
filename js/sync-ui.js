@@ -29,7 +29,7 @@
 .sync-note{margin-top: 12px;font-size:12px;line-height:1.75;color:var(--text-muted,#64748b);}
 .sync-past{align-items:center;margin-top: 6px;}
 .sync-past-code{flex:1;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;letter-spacing:.04em;color:var(--text-main,#0f172a);}
-.sync-qr{width:176px;height:176px;margin: 14px auto 4px;padding: 8px;border-radius:14px;background:#fff;
+.sync-qr{width:192px;height:192px;margin: 14px auto 4px;padding: 0;border-radius:14px;background:#fff;
   border:1px solid #e2e8f0;display:grid;place-items:center;}
 .sync-qr svg{width:100%;height:100%;display:block;}
 .sync-qr-cap{font-size:12px;text-align:center;color:var(--text-muted,#64748b);}
@@ -214,7 +214,8 @@
       const q = qrcode(0, 'M');
       q.addData(text);
       q.make();
-      holder.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+      // 四周留 4 格空白（QR 规格的 quiet zone）：Google Lens 不留也扫得到，但很多手机内建相机找不到码
+      holder.innerHTML = q.createSvgTag({ cellSize: 4, margin: 16, scalable: true });
     }).catch(() => {
       // 离线或载入失败：不画码，只留同步码与链结
       const cap = holder.nextSibling;

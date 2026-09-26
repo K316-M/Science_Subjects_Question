@@ -48,7 +48,7 @@ async function renderArchiveView() {
   const sections = bank.sections || [];
   const withQuestions = sections
     .map((sec, idx) => ({ sec, idx }))
-    .filter(({ sec }) => (sec.mcqs || []).length > 0 || (sec.subjectives || []).length > 0);
+    .filter(({ sec }) => [...(sec.mcqs || []), ...(sec.subjectives || [])].some(q => !q.hidden));
 
   if (withQuestions.length === 0) {
     area.innerHTML = `<div class="archive-empty">
@@ -62,11 +62,12 @@ async function renderArchiveView() {
   area.innerHTML = withQuestions.map(({ sec, idx }) => {
     const mcqs = sec.mcqs || [];
     const subjs = sec.subjectives || [];
-    const total = mcqs.length + subjs.length;
+    // 在 /dev 下架的题不列；i 仍是题库里的位置
+    const total = mcqs.filter(q => !q.hidden).length + subjs.filter(q => !q.hidden).length;
 
     const rows = [
-      ...mcqs.map((q, i) => archiveRowHtml(archiveState.subject, idx, 'mcq', i, q.q)),
-      ...subjs.map((q, i) => archiveRowHtml(archiveState.subject, idx, 'subj', i, q.question)),
+      ...mcqs.map((q, i) => (q.hidden ? '' : archiveRowHtml(archiveState.subject, idx, 'mcq', i, q.q))),
+      ...subjs.map((q, i) => (q.hidden ? '' : archiveRowHtml(archiveState.subject, idx, 'subj', i, q.question))),
     ].join('');
 
     return `
@@ -177,10 +178,10 @@ async function collectSelectedInSiteOrder() {
     sections.forEach((sec, chapterIdx) => {
       const picked = [];
       (sec.mcqs || []).forEach((q, i) => {
-        if (archiveState.selected.has(selKey(subject, chapterIdx, 'mcq', i))) picked.push({ type: 'mcq', data: q });
+        if (!q.hidden && archiveState.selected.has(selKey(subject, chapterIdx, 'mcq', i))) picked.push({ type: 'mcq', data: q });
       });
       (sec.subjectives || []).forEach((q, i) => {
-        if (archiveState.selected.has(selKey(subject, chapterIdx, 'subj', i))) picked.push({ type: 'subj', data: q });
+        if (!q.hidden && archiveState.selected.has(selKey(subject, chapterIdx, 'subj', i))) picked.push({ type: 'subj', data: q });
       });
       if (picked.length) chapters.push({ title: sec.title, items: picked });
     });

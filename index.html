@@ -318,6 +318,8 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cc-meta { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; }
     .cc-meta.is-done { color: var(--primary); }
+    .cc-meta-short { display: none; }
+    @media (max-width: 480px) { .cc-meta-short { display: inline; } }
     .cc-caret { flex: 0 0 auto; width: 18px; height: 18px; color: var(--text-muted); transition: transform .2s ease; }
     .chapter-current[aria-expanded="true"] .cc-caret { transform: rotate(180deg); }
     .chapter-test-btn {
@@ -331,7 +333,9 @@
     .chapter-panel[hidden] { display: none; }
     @media (max-width: 480px) {
       .chapter-current { padding-left: 12px; gap: 8px; }
-      .cc-text { flex-direction: column; gap: 0; }
+      /* 直排时 baseline 会让章名维持原本的宽度、不会被截成「…」，要拉满才会省略 */
+      .cc-text { flex-direction: column; align-items: stretch; gap: 0; }
+      .cc-meta-long { display: none; }
       .cc-name { font-size: 14px; }
       .chapter-test-btn { padding: 0 12px; }
     }
@@ -351,6 +355,17 @@
       -webkit-overflow-scrolling: touch;
     }
     .chapter-bookmark-rail::-webkit-scrollbar { display: none; }
+    .chapter-bookmark-rail.is-draggable { cursor: grab; }
+    .chapter-bookmark-rail.is-dragging { cursor: grabbing; user-select: none; }
+    .chapter-bookmark-rail.is-dragging .chapter-card { pointer-events: none; }
+    /* 捲动条：底线是整条轨道，深色那段是目前看得到的范围 */
+    .rail-track { position: relative; height: 6px; margin: -8px 20px 16px; border-radius: 6px; cursor: pointer;
+      background: rgba(15, 23, 42, .1); touch-action: none; }
+    .rail-track::before { content: ''; position: absolute; inset: -10px 0; }   /* 手指好按：点击范围比看到的粗 */
+    .rail-track[hidden] { display: none; }
+    .rail-thumb { position: absolute; top: 0; left: 0; height: 100%; min-width: 24px; border-radius: 6px;
+      background: var(--primary); opacity: .55; transition: opacity .2s; }
+    .rail-track:hover .rail-thumb, .rail-track.is-dragging .rail-thumb { opacity: .9; }
 
     .chapter-card {
       flex: 0 0 152px;
@@ -662,8 +677,9 @@
       font: inherit; font-size: 16px; line-height: 1.75; color: #0f172a;
       background-image: repeating-linear-gradient(transparent 0 27px, rgba(77, 129, 137, .16) 27px 28px); background-attachment: local; }
     .subj-attempt-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
-    .subj-attempt-count { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
-    .subj-grade-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border: none; border-radius: 12px;
+    .subj-attempt-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; min-width: 0; }
+    .subj-attempt-count, .subj-grade-quota { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .subj-grade-btn { flex: 0 0 auto; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border: none; border-radius: 12px;
       background: var(--fn-go); color: #fff; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
       box-shadow: 0 6px 14px -6px rgba(4, 120, 87, .6); transition: transform .15s, opacity .15s; }
     .subj-grade-btn:hover { transform: translateY(-1px); }
@@ -1065,6 +1081,8 @@
         <button type="button" class="mock-exam-btn" id="mockExamBtn" onclick="startMockExam()" hidden><svg class="ic" aria-hidden="true"><use href="#i-timer"></use></svg><span id="mockExamLabel">模拟统考</span></button>
       </div>
       <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
+      <!-- 章节卡横向排不下时的捲动条：手机看得出可以滑，电脑可以拖它（卡片本身也能用滑鼠拖） -->
+      <div class="rail-track" id="chapterRailTrack" aria-hidden="true" hidden><div class="rail-thumb" id="chapterRailThumb"></div></div>
     </div>
     <div class="sub-bookmark-bar" role="tablist" aria-label="练习模式">
       <button class="sub-tab-btn active" id="subBtnMcq" role="tab" aria-selected="true" onclick="switchSubSection('mcq')"><svg class="ic" aria-hidden="true"><use href="#i-cards"></use></svg><span>选择题<span class="tab-long">练习</span></span></button>
@@ -1605,6 +1623,20 @@
   };
 
   let fullDatabase = { sections: [] };
+  // 在 /dev 下架的题（hidden: true）留在题库原位、只是不给学生看：
+  // 进度、错题、笔记都按「第几题」记，真的删掉的话後面每一题的纪录都会对到别题
+  const isLive = q => Boolean(q) && !q.hidden;
+  const liveCount = list => (list || []).filter(isLive).length;
+  // 章节卡、章节选单上的题数：「选择 5 · 做答 1」，没有的那一种不写
+  function countLabel(sec) {
+    const mcq = liveCount(sec.mcqs), subj = liveCount(sec.subjectives);
+    return [mcq ? `选择 ${mcq}` : '', subj ? `做答 ${subj}` : ''].filter(Boolean).join(' · ');
+  }
+  // 从 from 开始往 dir 方向找第一个没下架的题；找不到回传 -1
+  function liveIdx(list, from, dir) {
+    for (let i = from; i >= 0 && i < (list || []).length; i += dir) if (isLive(list[i])) return i;
+    return -1;
+  }
   let activeChapterIdx = 0;
   let activeSubMode = 'mcq';
   let currentMcqIdx = 0;
@@ -1647,8 +1679,10 @@
   function getChapterProgress(subject, chapterId, totalMcqs) {
     const store = loadProgressStore();
     const chapData = (store[subject] && store[subject][chapterId]) || {};
+    // 下架的题答对过也不算进掌握数，不然会出现「6/5」
+    const sec = subject === currentSubject && (fullDatabase.sections || []).find(x => x.id === chapterId);
     let mastered = 0;
-    Object.values(chapData).forEach(v => { if (v === 'mastered') mastered++; });
+    Object.entries(chapData).forEach(([i, v]) => { if (v === 'mastered' && (!sec || isLive((sec.mcqs || [])[i]))) mastered++; });
     return { mastered, total: totalMcqs };
   }
   // 错题本 = 还没掌握的题：答错就收（以前答对过也一样），要在不同的两天都答对才移出。
@@ -1662,7 +1696,7 @@
     sections.forEach((sec, chapterIdx) => {
       const chapData = subjData[sec.id] || {};
       (sec.mcqs || []).forEach((item, mcqIdx) => {
-        if (chapData[mcqIdx] === 'wrong' && !(R && R.hasRecord(subject, sec.id, mcqIdx))) {
+        if (isLive(item) && chapData[mcqIdx] === 'wrong' && !(R && R.hasRecord(subject, sec.id, mcqIdx))) {
           list.push({ chapterIdx, mcqIdx, chapterTitle: sec.title, question: item.q, lapses: 1, okDays: 0, stubborn: false });
         }
       });
@@ -1821,7 +1855,78 @@ function openSubject(subject, initialChapterIdx, subMode) {
     window.dispatchEvent(new CustomEvent('uec:view', { detail: viewId }));
   }
 
+  // ---- 章节轨道：捲动条＋滑鼠拖曳 ----
+  // 触控本来就能滑；滑鼠没有横向滚轮，所以让卡片区可以按住拖，下面的捲动条也可以拖或点
+  let railScrollReady = false;
+  function setupRailScroll() {
+    if (railScrollReady) return;
+    const rail = document.getElementById('chapterRail');
+    const track = document.getElementById('chapterRailTrack');
+    const thumb = document.getElementById('chapterRailThumb');
+    if (!rail || !track || !thumb) return;
+    railScrollReady = true;
+
+    const update = () => {
+      const max = rail.scrollWidth - rail.clientWidth;
+      const overflow = max > 2;
+      track.hidden = !overflow;
+      rail.classList.toggle('is-draggable', overflow);
+      if (!overflow) return;
+      const tw = track.clientWidth;
+      const w = Math.max(24, tw * rail.clientWidth / rail.scrollWidth);
+      thumb.style.width = `${w}px`;
+      thumb.style.transform = `translateX(${(tw - w) * (rail.scrollLeft / max)}px)`;
+    };
+    rail.addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    new ResizeObserver(update).observe(rail);
+    new MutationObserver(update).observe(rail, { childList: true });
+
+    // 拖卡片区（只处理滑鼠；触控交给浏览器原生捲动）。移动超过 6px 才算拖，不然就是点卡片
+    let drag = null;
+    rail.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0 || !rail.classList.contains('is-draggable')) return;
+      drag = { x: e.clientX, left: rail.scrollLeft, moved: false };
+    });
+    addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) < 6) return;
+      drag.moved = true;
+      rail.classList.add('is-dragging');
+      rail.scrollLeft = drag.left - dx;
+    });
+    addEventListener('pointerup', () => {
+      if (!drag) return;
+      const moved = drag.moved;
+      drag = null;
+      rail.classList.remove('is-dragging');
+      // 拖完放开时浏览器会补一个 click，别让它当成选了那一章
+      if (moved) rail.addEventListener('click', ev => { ev.stopPropagation(); ev.preventDefault(); }, { capture: true, once: true });
+    });
+
+    // 捲动条：点哪里跳到哪里，按住拖动（滑鼠、触控都可以）
+    const seek = clientX => {
+      const r = track.getBoundingClientRect();
+      const w = thumb.offsetWidth;
+      const ratio = Math.min(1, Math.max(0, (clientX - r.left - w / 2) / (r.width - w)));
+      rail.scrollLeft = ratio * (rail.scrollWidth - rail.clientWidth);
+    };
+    track.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      track.setPointerCapture(e.pointerId);
+      track.classList.add('is-dragging');
+      seek(e.clientX);
+    });
+    track.addEventListener('pointermove', e => { if (track.hasPointerCapture(e.pointerId)) seek(e.clientX); });
+    const release = () => track.classList.remove('is-dragging');
+    track.addEventListener('pointerup', release);
+    track.addEventListener('pointercancel', release);
+    update();
+  }
+
   function renderChapterRail() {
+    setupRailScroll();
     const rail = document.getElementById('chapterRail');
     rail.innerHTML = '';
     const sections = fullDatabase.sections || [];
@@ -1834,18 +1939,18 @@ function openSubject(subject, initialChapterIdx, subMode) {
       card.setAttribute('role', 'tab');
       card.setAttribute('aria-selected', String(activeChapterIdx === idx));
       card.setAttribute('tabindex', activeChapterIdx === idx ? '0' : '-1');
-      card.setAttribute('aria-label', sec.title);
 
       const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
       const tagText = match ? match[0] : `第 ${idx + 1} 章`;
       const nameText = sec.title.replace(/第.*[章节][：:]?/, '');
-      const total = sec.mcqs ? sec.mcqs.length : 0;
+      const total = liveCount(sec.mcqs);
       const { mastered } = getChapterProgress(currentSubject, sec.id, total);
       const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
 
+      // 进度只算选择题（做答题没有对错纪录）；还没开始时列出两种题各几题
       let foot;
-      if (total === 0) foot = '整理中';
-      else if (mastered === 0) foot = `${total} 题`;
+      if (!countLabel(sec)) foot = '整理中';
+      else if (total === 0 || mastered === 0) foot = countLabel(sec);
       else if (mastered === total) foot = `<span class="chap-done"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.6l3.2 3.2L13 5"/></svg>已掌握</span>`;
       else foot = `<span class="num">${mastered}/${total}</span><span class="chap-bar"><i style="width:${pct}%"></i></span>`;
 
@@ -1854,6 +1959,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
         <div class="chap-name">${nameText}</div>
         <div class="chap-foot">${foot}</div>
       `;
+      // aria-label 会盖掉卡片里的字，题数与进度要一起念出来
+      card.setAttribute('aria-label', `${sec.title}，${card.querySelector('.chap-foot').textContent.trim()}`);
       rail.appendChild(card);
     });
 
@@ -1889,11 +1996,18 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const match = sec.title.match(/第[一二三四五六七八九十0-9]+[章节]/);
     idxEl.textContent = match ? match[0] : `第 ${activeChapterIdx + 1} 章`;
     nameEl.textContent = sec.title.replace(/第.*[章节][：:]?/, '');
-    const total = (sec.mcqs || []).length;
+    const total = liveCount(sec.mcqs);
     const { mastered } = getChapterProgress(currentSubject, sec.id, total);
-    metaEl.textContent = total === 0 ? '整理中' : mastered === total ? '已掌握' : mastered ? `${mastered}/${total}` : `${total} 题`;
+    const counts = countLabel(sec);
+    const meta = !counts ? '整理中' : total === 0 || !mastered ? counts : mastered === total ? '已掌握' : `${mastered}/${total}`;
+    // 手机上这一行要先让章名放得下：只写总题数，分项在展开後的章节卡上
+    const short = total + liveCount(sec.subjectives);
+    metaEl.innerHTML = meta === counts
+      ? `<span class="cc-meta-long">${counts}</span><span class="cc-meta-short">${short} 题</span>`
+      : meta;
+    metaEl.dataset.label = meta;
     metaEl.classList.toggle('is-done', total > 0 && mastered === total);
-    toggle.setAttribute('aria-label', `章节：${sec.title}，${metaEl.textContent}。按一下${toggle.getAttribute('aria-expanded') === 'true' ? '收起' : '换章节'}`);
+    toggle.setAttribute('aria-label', `章节：${sec.title}，${metaEl.dataset.label}。按一下${toggle.getAttribute('aria-expanded') === 'true' ? '收起' : '换章节'}`);
     test.hidden = total === 0;
     test.title = `一次做完这一章 ${total} 题，交卷才看答案`;
   }
@@ -1940,7 +2054,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const sec = (fullDatabase.sections || [])[chapterIdx];
     if (!sec) return;
     // 首页最显眼的横幅不能把学生送进一个没有题目的章节
-    if ((sec.mcqs || []).length + (sec.subjectives || []).length === 0) return;
+    if (liveCount(sec.mcqs) + liveCount(sec.subjectives) === 0) return;
     try {
       localStorage.setItem(LAST_VISIT_KEY, JSON.stringify({
         subject, chapterIdx, chapterTitle: sec.title, ts: Date.now()
@@ -2113,8 +2227,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const el = document.getElementById('bankCoverage');
     if (!el) return;
     const sections = fullDatabase.sections || [];
-    const withQ = sections.filter(sec => (sec.mcqs || []).length + (sec.subjectives || []).length > 0).length;
-    const total = sections.reduce((n, sec) => n + (sec.mcqs || []).length, 0);
+    const withQ = sections.filter(sec => liveCount(sec.mcqs) + liveCount(sec.subjectives) > 0).length;
+    const total = sections.reduce((n, sec) => n + liveCount(sec.mcqs), 0);
     el.textContent = sections.length
       ? `依考纲共 ${sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`
       : '';
@@ -2136,7 +2250,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     const part = paper && paper.parts.find(pt => pt[0].startsWith('试卷一'));
     const pool = [];
     (fullDatabase.sections || []).forEach(sec => (sec.mcqs || []).forEach((m, idx) => {
-      if (Array.isArray(m.options) && m.options.length) pool.push({ sec, m, idx });
+      if (isLive(m) && Array.isArray(m.options) && m.options.length) pool.push({ sec, m, idx });
     }));
     if (!part || !pool.length) return null;
     const [h1, m1] = part[1].split(':').map(Number);
@@ -2180,6 +2294,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
   const SUB_TAB_IDS = { mcq: 'subBtnMcq', subj: 'subBtnSubj', wrong: 'subBtnWrong', review: 'subBtnReview' };
   function markSubTab(mode) {
+    // 画面导览（js/onboarding.js）听这个：第一次切到某一种练法就介绍它
+    window.dispatchEvent(new CustomEvent('uec:submode', { detail: mode }));
     Object.entries(SUB_TAB_IDS).forEach(([m, id]) => {
       const b = document.getElementById(id);
       const on = m === mode;
@@ -2223,7 +2339,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
   function subjectQuestionCount() {
     return (fullDatabase.sections || []).reduce(
-      (n, sec) => n + (sec.mcqs || []).length + (sec.subjectives || []).length, 0);
+      (n, sec) => n + liveCount(sec.mcqs) + liveCount(sec.subjectives), 0);
   }
 
   // 今日复习的「今天总共几题」：把今天出现过的到期题记下来，做掉的就从到期清单消失，
@@ -2333,12 +2449,18 @@ function openSubject(subject, initialChapterIdx, subMode) {
     }
 
     if (activeSubMode === 'mcq') {
-      if (!sec.mcqs || sec.mcqs.length === 0) {
+      if (!liveCount(sec.mcqs)) {
         area.innerHTML = emptyState('cards', '这一章还没有选择题',
           '换一个章节看看，或到「做答题」试试。题目正在陆续补上。');
         return;
       }
+      // 停在一题刚被下架的题上（例如上次看到这里）：往後找，没有就往前
+      if (!isLive(sec.mcqs[currentMcqIdx])) {
+        const next = liveIdx(sec.mcqs, currentMcqIdx, 1);
+        currentMcqIdx = next >= 0 ? next : liveIdx(sec.mcqs, Math.min(currentMcqIdx, sec.mcqs.length - 1), -1);
+      }
       const item = sec.mcqs[currentMcqIdx];
+      const livePos = sec.mcqs.slice(0, currentMcqIdx + 1).filter(isLive).length;
       let figureHtml = '';
       if (item.image) {
         figureHtml = `
@@ -2363,7 +2485,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
           <div class="explanation" id="expContainer">${item.explanation}</div>
           <div class="card-footer">
             <button class="btn-nav" onclick="navMcq(-1)"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"></use></svg>上一题</button>
-            <span style="font-size:12px; color:var(--text-muted); font-weight:600;">第 ${currentMcqIdx + 1} / ${sec.mcqs.length} 题</span>
+            <span style="font-size:12px; color:var(--text-muted); font-weight:600;">第 ${livePos} / ${liveCount(sec.mcqs)} 题</span>
             <button class="btn-nav" onclick="navMcq(1)">下一题<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg></button>
           </div>
           <button class="card-note-btn" onclick="openMcqNote()"
@@ -2404,9 +2526,9 @@ function openSubject(subject, initialChapterIdx, subMode) {
         if (!correct) btns[chosenIdx].classList.add('wrong');
 
         playSound(correct ? 'correct' : 'wrong');
-        const beforeStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
+        const beforeStats = getChapterProgress(currentSubject, sec.id, liveCount(sec.mcqs));
         recordMcqResult(currentSubject, sec.id, currentMcqIdx, correct);
-        const afterStats = getChapterProgress(currentSubject, sec.id, sec.mcqs.length);
+        const afterStats = getChapterProgress(currentSubject, sec.id, liveCount(sec.mcqs));
         renderChapterRail();
         updateWrongCountBadge();
         updateSceneGlow();
@@ -2475,18 +2597,22 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
     } else {
       const subjs = sec.subjectives || [];
-      if (subjs.length === 0) {
+      const subjTotal = liveCount(subjs);
+      if (subjTotal === 0) {
         area.innerHTML = emptyState('doc-lines', '这一章还没有做答题', '可以先到「选择题练习」，那边的题目比较多。');
         return;
       }
       let cardsHtml = '';
 
+      let subjPos = 0;
       subjs.forEach((q, qIndex) => {
+        if (!isLive(q)) return;
+        subjPos += 1;
         cardsHtml += `
-          <div class="form-question-card">
+          <div class="form-question-card" data-idx="${qIndex}">
             <div class="form-card-top-bar"></div>
             <div class="form-card-body">
-              <div class="form-q-num">做答题 ${qIndex + 1}<span>／${subjs.length}</span></div>
+              <div class="form-q-num">做答题 ${subjPos}<span>／${subjTotal}</span></div>
               <div class="form-question-text">${q.question}</div>
               ${q.image ? `
               <div class="figure-container" onclick="openImageModal('${q.image}')">
@@ -2498,7 +2624,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
                 <textarea class="subj-attempt-input" id="subjAns_${qIndex}" rows="4" maxlength="3000"
                   placeholder="先自己写，写完交给 AI 批改，或翻开下面的参考答案对照"></textarea>
                 <div class="subj-attempt-bar">
-                  <span class="subj-attempt-count">0 字</span>
+                  <span class="subj-attempt-meta"><span class="subj-attempt-count">0 字</span><span class="subj-grade-quota"></span></span>
                   <button type="button" class="subj-grade-btn"><svg class="ic" aria-hidden="true"><use href="#i-send"></use></svg><span>交给 AI 批改</span></button>
                 </div>
                 <div class="subj-grade-result" hidden aria-live="polite"></div>
@@ -2538,8 +2664,57 @@ function openSubject(subject, initialChapterIdx, subMode) {
   }
 
   // ---- 选择题：作答後可以请 AI 依「你选的那个」讲解 ----
-  // 同一题同一个选项讲过就存起来（只到这次开网页为止），再按不重复花额度
-  const explainCache = new Map();
+  // 同一题同一个选项讲过就存在这台装置（见下面的 saveExplain），再选到不重复花额度
+  // ---- AI（批改、讲解）共用：装置码与剩余次数 ----
+  // 额度按装置算：全校连同一个 Wi-Fi 对外是同一个 IP，只按 IP 算会变成全校共用
+  function aiHeaders() {
+    let id = '';
+    try { id = localStorage.getItem('UEC_DEVICE_v1') || ''; } catch (e) {}
+    if (!/^[A-Za-z0-9_-]{16,64}$/.test(id)) {
+      id = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+      try { localStorage.setItem('UEC_DEVICE_v1', id); } catch (e) {}
+    }
+    return { 'Content-Type': 'application/json', 'X-UEC-Device': id };
+  }
+  // 服务器每次回的剩余次数记在这台装置；额度按整点重置，换了小时就不算数
+  const AI_QUOTA_KEY = 'UEC_AI_QUOTA_v1';
+  const thisHour = () => Math.floor(Date.now() / 3600000);
+  function rememberQuota(bucket, quota) {
+    if (!quota || typeof quota.left !== 'number') return;
+    let all = {};
+    try { all = JSON.parse(localStorage.getItem(AI_QUOTA_KEY)) || {}; } catch (e) {}
+    all[bucket] = { hour: thisHour(), left: quota.left, limit: quota.limit };
+    try { localStorage.setItem(AI_QUOTA_KEY, JSON.stringify(all)); } catch (e) {}
+  }
+  function gradeQuotaText() {
+    let q = null;
+    try { q = (JSON.parse(localStorage.getItem(AI_QUOTA_KEY)) || {}).grade; } catch (e) {}
+    const limit = (q && q.limit) || 20;
+    if (!q || q.hour !== thisHour()) return `AI 批改每小时 ${limit} 次`;
+    if (q.left <= 0) return `本小时的批改用完了，${Math.ceil((3600000 - Date.now() % 3600000) / 60000)} 分钟後重置`;
+    return `本小时还能批改 ${q.left} 次`;
+  }
+  function refreshGradeQuota() {
+    const text = gradeQuotaText();
+    document.querySelectorAll('.subj-grade-quota').forEach(n => { n.textContent = text; });
+  }
+
+  // 讲解存在这台装置：同一题选同一个答案，之後再选到就直接显示，不再扣次数
+  const EXPLAIN_KEY = 'UEC_EXPLAIN_v1';
+  const EXPLAIN_KEEP = 300;   // 最多存几则，超过就丢最旧的
+  function loadExplains() {
+    try { return JSON.parse(localStorage.getItem(EXPLAIN_KEY)) || {}; } catch (e) { return {}; }
+  }
+  function saveExplain(key, result) {
+    const all = loadExplains();
+    all[key] = { r: result, at: Date.now() };
+    const keys = Object.keys(all);
+    if (keys.length > EXPLAIN_KEEP) {
+      keys.sort((a, b) => all[a].at - all[b].at).slice(0, keys.length - EXPLAIN_KEEP).forEach(k => delete all[k]);
+    }
+    try { localStorage.setItem(EXPLAIN_KEY, JSON.stringify(all)); } catch (e) {}
+  }
+
   function addExplainButton(expBox, sec, idx, chosen) {
     const subject = currentSubject;
     const key = `${subject}__${sec.id}__${idx}__${chosen}`;
@@ -2574,22 +2749,26 @@ function openSubject(subject, initialChapterIdx, subMode) {
       add('ai-explain-note', '', 'AI 依题库的答案讲解，仅供参考。');
       btn.hidden = true;
     };
+    const saved = loadExplains()[key];
+    if (saved && saved.r) show(saved.r);
+    // 第一次看到这颗按钮时介绍它；等对错的音效和动画过去（1.5 秒）再出来，不抢作答的那一刻
+    else setTimeout(() => { if (btn.isConnected && window.UECOnboarding) window.UECOnboarding.once('explain'); }, 1500);
     btn.addEventListener('click', async () => {
-      if (explainCache.has(key)) return show(explainCache.get(key));
       btn.disabled = true;
       setBtnLabel(btn, 'help', 'AI 老师正在想…约 5 秒');
       let status = 0, data = {};
       try {
         const res = await fetch('/api/explain', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: aiHeaders(),
           body: JSON.stringify({ subject, chapterId: sec.id, index: idx, chosen }),
         });
         status = res.status;
         data = await res.json().catch(() => ({}));
       } catch (e) { /* 离线 */ }
       btn.disabled = false;
+      rememberQuota('explain', data.quota);
       if (status === 200 && data.ok) {
-        explainCache.set(key, data.result);
+        saveExplain(key, data.result);
         playSound('pop');
         return show(data.result);
       }
@@ -2638,6 +2817,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
       });
       btn.addEventListener('click', () => gradeSubjAnswer({ sec, idx, key, input, btn, out }));
     });
+    refreshGradeQuota();
   }
 
   async function gradeSubjAnswer({ sec, idx, key, input, btn, out }) {
@@ -2652,7 +2832,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     let status = 0, data = {};
     try {
       const res = await fetch('/api/grade', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: aiHeaders(),
         body: JSON.stringify({ subject: currentSubject, chapterId: sec.id, index: idx, answer }),
       });
       status = res.status;
@@ -2660,6 +2840,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
     } catch (e) { /* 离线 */ }
     btn.disabled = false;
     label.textContent = '再批改一次';
+    rememberQuota('grade', data.quota);
+    refreshGradeQuota();
     if (status === 200 && data.ok) {
       saveAttempt(key, { text: input.value, result: data.result, gradedText: input.value });
       renderGradeResult(out, data.result, false);
@@ -2706,7 +2888,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
   function ensureSubjNoteButtons(sec) {
     const container = document.getElementById('subjFormContainer');
     if (!container) return;
-    container.querySelectorAll('.form-question-card').forEach((card, i) => {
+    container.querySelectorAll('.form-question-card').forEach(card => {
+      const i = Number(card.dataset.idx);   // 题库里的位置；中间有下架的题时，和画面上的第几张卡不同
       if (card.querySelector('.card-note-btn')) return;
       const body = card.querySelector('.form-card-body');
       if (!body) return;
@@ -2725,19 +2908,19 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
   function startChapterTest() {
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
-    if (!sec || !(sec.mcqs || []).length || !window.UECTest) return;
+    if (!sec || !liveCount(sec.mcqs) || !window.UECTest) return;
     const subject = currentSubject;
     // 跟练习一样：这一次交卷让整章从「还没全对」变成「全对」，背景闪一下金光
-    let wasComplete = getChapterProgress(subject, sec.id, sec.mcqs.length).mastered === sec.mcqs.length;
+    let wasComplete = getChapterProgress(subject, sec.id, liveCount(sec.mcqs)).mastered === liveCount(sec.mcqs);
     window.UECTest.start({
       subjectLabel: SUBJECT_LABELS[subject] || '',
       chapterTitle: sec.title,
-      questions: sec.mcqs.map((m, idx) => Object.assign({}, m, { idx })),
+      questions: sec.mcqs.map((m, idx) => Object.assign({}, m, { idx })).filter(isLive),
       showView,
       playSound,
       onRecord: (idx, correct) => {
         recordMcqResult(subject, sec.id, idx, correct);
-        const now = getChapterProgress(subject, sec.id, sec.mcqs.length);
+        const now = getChapterProgress(subject, sec.id, liveCount(sec.mcqs));
         const complete = now.mastered === now.total;
         if (complete && !wasComplete) SceneAssets.shine(document.getElementById('customPhotoLayer'));
         wasComplete = complete;
@@ -2757,8 +2940,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
   function navMcq(delta) {
     cameFromReview = false;
     const sec = (fullDatabase.sections || [])[activeChapterIdx];
-    const newIdx = currentMcqIdx + delta;
-    if (newIdx >= 0 && newIdx < sec.mcqs.length) {
+    const newIdx = liveIdx(sec.mcqs, currentMcqIdx + delta, delta < 0 ? -1 : 1);
+    if (newIdx >= 0) {
       playSound('flip');
       lastNavDir = delta < 0 ? -1 : 1;
       currentMcqIdx = newIdx;

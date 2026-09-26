@@ -1,6 +1,8 @@
 // 改题：在 /dev 直接修改题目文字、答案、配图，不必到 GitHub 找 JSON 档。
 //   target = 'pending'：改待审区里的题（还没采纳）
 //   target = 'bank'   ：改已经上线的题（学生看得到，存档後自动部署）
+//     action = 'hide' / 'unhide'：下架／恢复。题目留在原位、加上 hidden，学生端不显示。
+//     不真的删掉：学生的进度、错题、笔记都按「第几题」记，删掉一题，後面每一题的纪录都会对到别题。
 // 两种都跟采纳一样用 toBankEntry 验证，改完是坏的就不让存。
 // GET：直接从 GitHub 读最新的三科题库与待审区。网站上的 /papers 要等 Vercel 部署完（约一分钟）
 // 才会更新，工作台若读那份，刚存的修改会「消失」一下，接著再改就会撞到「题库被改过」。
@@ -82,6 +84,17 @@ module.exports = async (req, res) => {
       // 用题干核对是不是同一题：页面打开之後题库若被改过，索引可能已经指到别题
       if (!current || normalize(stemOf(current)) !== normalize(body.expect)) {
         throw new InputError('题库在你打开之後被改过，请按「重新整理」再改。');
+      }
+      if (body.action === 'hide' || body.action === 'unhide') {
+        const hide = body.action === 'hide';
+        const changed = { ...current };
+        if (hide) { changed.hidden = true; changed.hidden_at = new Date().toISOString(); }
+        else { delete changed.hidden; delete changed.hidden_at; }
+        list[body.index] = changed;
+        writes.push({ path: bankPath(subject), json: bank });
+        const label = `${section.title || section.id} ${type === 'subjective' ? '做答题' : '选择题'}第 ${body.index + 1} 题`;
+        await commitFiles(pub, snap, writes, `${hide ? '🙈 下架' : '↩️ 恢复'} ${subject} 题库：${label}`);
+        return sendJson(res, 200, { ok: true, item: changed });
       }
       const edited = edit({ ...current, type }, subject, `${section.id}_${type}${body.index}`);
       delete edited.type;

@@ -414,6 +414,8 @@ table.data td.wrap { white-space: normal; min-width: 220px; }
 .issue + .issue { border-top: 1px solid var(--border); }
 .issue-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .issue-text { font-size: 13.5px; color: var(--ink-2); line-height: 1.6; }
+.issue.is-retired .issue-text { color: var(--ink-2); text-decoration: line-through; text-decoration-color: rgba(127,127,127,.5); }
+.pill-retired { color: var(--warning); border-color: var(--warning); border-style: dashed; }
 .q-preview { background: var(--plane); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.7; color: var(--ink-2); }
 .q-preview .q { color: var(--ink); white-space: pre-line; font-weight: 600; }
 .q-opt { margin-top: 5px; padding: 5px 9px; border-radius: 7px; border: 1px solid var(--border); }

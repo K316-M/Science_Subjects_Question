@@ -34,6 +34,8 @@ const state = {
   inspectorLevel: 'all',
   editorQuery: '',
   editorSubject: 'all',
+  editorChapter: '',
+  editorHiddenOnly: false,
   parsedReport: null,
 };
 
@@ -42,7 +44,7 @@ const ROUTES = {
   issues: { label: '申诉处理', icon: 'inbox', title: '申诉处理', desc: '学生的申诉会寄到你的 Formspree 邮箱。把邮件里的「开发者处理码」贴进来，写好处理说明后发布，学生下次开站就会看到通知小精灵。', render: renderIssues },
   inspector: { label: '题库巡检', icon: 'shield', title: '题库巡检', desc: '自动检查三科题库里的格式问题：选项数量、答案序号、缺少配图与解析、重复题目、图片死链。', render: renderInspector },
   pending: { label: 'AI 录题待审', icon: 'sparkles', title: 'AI 录题待审', desc: '被自动检查标出问题的题逐题展开，可以直接改文字、换配图再采纳；没问题的收成一张清单，扫过一遍一键采纳。', render: renderPending },
-  editor: { label: '题目修改', icon: 'edit', title: '题目修改', desc: '搜寻已上线的题目，直接改题干、选项、答案、解析或换配图。存档後约一分钟自动部署，学生就看得到。', render: renderEditor },
+  editor: { label: '题目修改', icon: 'edit', title: '题目修改', desc: '搜寻或按章节浏览已上线的题目：直接改题干、选项、答案、解析、换配图，或下架不要的题。存档後约一分钟自动部署，学生就看得到。', render: renderEditor },
   local: { label: '本机调试', icon: 'terminal', title: '本机调试', desc: '查看、导出或清除这台设备上学生站留下的本地数据，并能生成测试通知来预览小精灵。', render: renderLocal },
 };
 
@@ -233,6 +235,7 @@ function inspectBanks() {
     state.banks[subject].forEach((sec, chapterIdx) => {
       const base = { subject, chapterIdx, chapterTitle: sec.title };
       (sec.mcqs || []).forEach((item, qIndex) => {
+        if (item.hidden) return;   // 已下架，学生看不到，不用巡检
         const at = { ...base, type: 'mcq', qIndex, item };
         const opts = Array.isArray(item.options) ? item.options : [];
         if (!String(item.q || '').trim()) issues.push({ ...at, level: 'critical', label: '题干为空' });
@@ -252,6 +255,7 @@ function inspectBanks() {
         }
       });
       (sec.subjectives || []).forEach((item, qIndex) => {
+        if (item.hidden) return;
         const at = { ...base, type: 'subj', qIndex, item };
         if (!String(item.question || '').trim()) issues.push({ ...at, level: 'critical', label: '题干为空' });
         if (!String(item.answer || '').trim()) issues.push({ ...at, level: 'critical', label: '做答题缺少参考答案' });
@@ -1026,21 +1030,48 @@ function bankEditPanel(subject, chapterIdx, type, qIndex) {
 /* ==========================================================================
    题目修改（搜寻已上线的题）
    ========================================================================== */
-function searchBank(query, subject) {
-  const q = query.replace(/\s+/g, '').toLowerCase();
+// 找题：有关键字就搜；没有关键字时，选了科目与章节就列出整章；勾「只看已下架」列出下架的题
+function findBankItems() {
+  const q = state.editorQuery.replace(/\s+/g, '').toLowerCase();
+  const browsing = !q && state.editorSubject !== 'all' && state.editorChapter;
+  if (!q && !browsing && !state.editorHiddenOnly) return null;
   const hits = [];
-  if (!q) return hits;
-  SUBJECTS.filter(s => subject === 'all' || s === subject).forEach(s => {
+  SUBJECTS.filter(s => state.editorSubject === 'all' || s === state.editorSubject).forEach(s => {
     state.banks[s].forEach((sec, chapterIdx) => {
+      if (state.editorSubject !== 'all' && state.editorChapter && sec.id !== state.editorChapter) return;
       [['mcq', sec.mcqs || []], ['subj', sec.subjectives || []]].forEach(([type, list]) => {
         list.forEach((item, qIndex) => {
-          const hay = [item.q, item.question, ...(item.options || [])].join(' ').replace(/\s+/g, '').toLowerCase();
-          if (hay.includes(q)) hits.push({ subject: s, chapterIdx, chapterTitle: sec.title, type, qIndex, item });
+          if (state.editorHiddenOnly && !item.hidden) return;
+          if (q) {
+            const hay = [item.q, item.question, ...(item.options || [])].join(' ').replace(/\s+/g, '').toLowerCase();
+            if (!hay.includes(q)) return;
+          }
+          hits.push({ subject: s, chapterIdx, chapterTitle: sec.title, type, qIndex, item });
         });
       });
     });
   });
   return hits;
+}
+
+// 下架／恢复：题目留在题库原位（加 hidden），学生端不显示。
+// 不真的删掉：学生的进度、错题、笔记都按「第几题」记，删掉一题，後面每一题的纪录都会对到别题
+async function setHidden(btn, h, hide) {
+  if (hide && !confirm('下架这一题？\n\n学生会马上看不到它（约一分钟後部署完成），错题本、今日复习、题目档也会一起拿掉。\n题目会留在题库里，随时可以在这里按「恢复」。')) return;
+  const data = await busy(btn, () => api('/api/dev-edit', {
+    method: 'POST',
+    body: {
+      target: 'bank', action: hide ? 'hide' : 'unhide', subject: h.subject, chapterId: state.banks[h.subject][h.chapterIdx].id,
+      type: h.type === 'mcq' ? 'mcq' : 'subjective', index: h.qIndex, expect: h.item.q || h.item.question,
+    },
+  }));
+  if (!data) return;
+  const sec = state.banks[h.subject][h.chapterIdx];
+  (h.type === 'mcq' ? sec.mcqs : sec.subjectives)[h.qIndex] = data.item;
+  state.issues = inspectBanks();
+  updateNavCounts();
+  toast(hide ? '已下架，约一分钟後学生就看不到了' : '已恢复，约一分钟後学生就看得到', 'good');
+  rerender();
 }
 
 function renderEditor(body) {
@@ -1049,36 +1080,61 @@ function renderEditor(body) {
   const seg = el('div', { class: 'segmented', attrs: { role: 'group', 'aria-label': '科目' } });
   [['all', '全部'], ...SUBJECTS.map(s => [s, SUBJECT_LABEL[s]])].forEach(([v, label]) => seg.appendChild(el('button', {
     type: 'button', text: label, attrs: { 'aria-pressed': String(state.editorSubject === v) },
-    onclick: () => { state.editorSubject = v; navigate(); },
+    onclick: () => { state.editorSubject = v; state.editorChapter = ''; navigate(); },
   })));
   const input = el('input', {
     class: 'input', type: 'search', value: state.editorQuery,
     placeholder: '输入题干或选项里的几个字，例如「甘油」', attrs: { 'aria-label': '搜寻题目' },
   });
+
+  // 章节：先选一科才有得选；选了就不必打关键字，整章列出来
+  const chapter = el('select', { class: 'select select-inline', attrs: { 'aria-label': '章节' }, disabled: state.editorSubject === 'all' });
+  chapter.appendChild(el('option', { text: state.editorSubject === 'all' ? '先选一科，再选章节' : '全部章节', attrs: { value: '' } }));
+  if (state.editorSubject !== 'all') {
+    state.banks[state.editorSubject].forEach(sec => {
+      const n = (sec.mcqs || []).length + (sec.subjectives || []).length;
+      const opt = el('option', { text: `${sec.title || sec.id}（${n} 题）`, attrs: { value: sec.id } });
+      if (sec.id === state.editorChapter) opt.selected = true;
+      chapter.appendChild(opt);
+    });
+  }
+  chapter.addEventListener('change', () => { state.editorChapter = chapter.value; draw(); });
+  const hiddenOnly = el('input', { type: 'checkbox', checked: state.editorHiddenOnly });
+  hiddenOnly.addEventListener('change', () => { state.editorHiddenOnly = hiddenOnly.checked; draw(); });
+
   body.appendChild(el('div', { class: 'row' }, el('div', { style: 'flex:1; min-width:220px' }, input), seg));
+  body.appendChild(el('div', { class: 'row' }, chapter,
+    el('label', { class: 'field-hint', style: 'display:inline-flex; align-items:center; gap:6px; cursor:pointer' }, hiddenOnly, '只看已下架的题')));
 
   const results = el('div', { class: 'card list-card' });
   body.appendChild(results);
   const draw = () => {
     clear(results);
-    const hits = searchBank(state.editorQuery, state.editorSubject);
-    if (!state.editorQuery.trim() || !hits.length) {
+    const hits = findBankItems();
+    if (!hits || !hits.length) {
       results.appendChild(el('div', { class: 'empty' }, icon('search'),
-        el('div', { text: state.editorQuery.trim() ? '找不到含这几个字的题目。' : '输入关键字开始搜寻。' })));
+        el('div', { text: !hits ? '输入关键字搜寻，或选一科、再选章节，整章列出来。'
+          : state.editorHiddenOnly ? '没有已下架的题。' : '找不到符合的题目。' })));
       return;
     }
-    hits.slice(0, 30).forEach(h => {
+    const LIMIT = 60;
+    hits.slice(0, LIMIT).forEach(h => {
       const [editBtn, panel] = editToggle(h.subject, h.chapterIdx, h.type, h.qIndex);
+      const hidden = Boolean(h.item.hidden);
+      const toggle = el('button', { class: `btn btn-sm${hidden ? '' : ' btn-ghost'}`, type: 'button', disabled: !canPublish() },
+        icon(hidden ? 'undo' : 'eyeOff'), el('span', { text: hidden ? '恢复' : '下架' }));
+      toggle.addEventListener('click', () => setHidden(toggle, h, !hidden));
       const text = h.type === 'mcq' ? h.item.q : h.item.question;
-      results.appendChild(el('div', { class: 'issue' },
+      results.appendChild(el('div', { class: `issue${hidden ? ' is-retired' : ''}` },
         el('div', { class: 'issue-top' },
           el('span', { class: 'pill', text: `${SUBJECT_LABEL[h.subject]} · ${h.chapterTitle}` }),
           el('span', { class: 'pill', text: `${h.type === 'mcq' ? '选择题' : '做答题'} 第 ${h.qIndex + 1} 题` }),
-          el('span', { style: 'margin-left:auto' }, editBtn)),
-        el('div', { class: 'issue-text', text: String(text || '（空）').replace(/\s+/g, ' ').slice(0, 160) }),
+          hidden ? el('span', { class: 'pill pill-retired' }, icon('eyeOff'), el('span', { text: '已下架' })) : null,
+          el('span', { style: 'margin-left:auto; display:inline-flex; gap:6px' }, editBtn, toggle)),
+        el('div', { class: 'issue-text', text: String(text || '（空）').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').slice(0, 160) }),
         panel));
     });
-    if (hits.length > 30) results.appendChild(el('div', { class: 'issue field-hint', text: `还有 ${hits.length - 30} 题没列出，多打几个字缩小范围。` }));
+    if (hits.length > LIMIT) results.appendChild(el('div', { class: 'issue field-hint', text: `还有 ${hits.length - LIMIT} 题没列出，多打几个字或选章节缩小范围。` }));
   };
   input.addEventListener('input', () => { state.editorQuery = input.value; draw(); });
   draw();

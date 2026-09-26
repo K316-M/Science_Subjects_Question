@@ -558,5 +558,5 @@ legend.test-q-head { float: left; width: 100%; }
     return true;
   }
 
-  window.UECTest = { start, isActive: () => Boolean(state) };
+  window.UECTest = { start, isActive: () => Boolean(state), isTimed: () => Boolean(state && state.opts.timeLimitMs) };
 })();

@@ -1,10 +1,11 @@
 // 选择题「AI 讲给我听」：学生作答之後，依他选的选项讲清楚为什么对、为什么错。
 // 题目、选项、正解与题库解析都由服务器从题库读；浏览器只送「第几题、选了哪个」。
-// 每个 IP 每小时限 30 次（和批改分开计）。
+// 每台装置每小时限 30 次、同一个网络合计 300 次（和批改分开计）。
 const { sendJson, readJsonBody, sameOrigin } = require('./_lib/devauth');
-const { SUBJECTS, overLimit, htmlToText, findQuestion, callGemini } = require('./_lib/ai');
+const { SUBJECTS, useQuota, htmlToText, findQuestion, callGemini } = require('./_lib/ai');
 
 const LIMIT_PER_HOUR = 30;
+const NETWORK_LIMIT_PER_HOUR = 300;
 const LETTERS = 'ABCD';
 
 function buildPrompt(subjectLabel, item, chosen) {
@@ -53,8 +54,12 @@ module.exports = async (req, res) => {
   if (!item || !Array.isArray(item.options) || !Number.isInteger(item.answer)) {
     return sendJson(res, 404, { ok: false, error: 'not_found', message: '找不到这一题，请重新整理页面。' });
   }
-  if (await overLimit(req, 'explain', LIMIT_PER_HOUR)) {
-    return sendJson(res, 429, { ok: false, error: 'rate_limited', message: `这一小时已经请 AI 讲解 ${LIMIT_PER_HOUR} 次了，先看看题库的解析，一小时後再试。` });
+  const q = await useQuota(req, 'explain', LIMIT_PER_HOUR, NETWORK_LIMIT_PER_HOUR);
+  const quota = { left: q.left, limit: LIMIT_PER_HOUR, resetMin: q.resetMin };
+  if (q.over) {
+    return sendJson(res, 429, { ok: false, error: 'rate_limited', quota, message: q.shared
+      ? `你们这个网络这一小时已经请 AI 讲解很多次了，先看看题库的解析，${q.resetMin} 分钟後再试。`
+      : `这一小时的 ${LIMIT_PER_HOUR} 次讲解用完了，先看看题库的解析，${q.resetMin} 分钟後会重置。` });
   }
 
   try {
@@ -62,9 +67,11 @@ module.exports = async (req, res) => {
     const clip = (v, n) => String(v || '').replace(/[*#`]/g, '').trim().slice(0, n);
     const result = { concept: clip(json.concept, 80), why: clip(json.why, 400), tip: clip(json.tip, 120) };
     if (!result.why) throw new Error('empty');
-    return sendJson(res, 200, { ok: true, result, model });
+    return sendJson(res, 200, { ok: true, result, model, quota });
   } catch (e) {
     console.error('explain failed:', e && e.message);
-    return sendJson(res, 502, { ok: false, error: 'ai_error', message: 'AI 暂时讲解不了，请稍後再试。' });
+    await q.refund();
+    quota.left += 1;
+    return sendJson(res, 502, { ok: false, error: 'ai_error', quota, message: 'AI 暂时讲解不了，请稍後再试（这次不扣次数）。' });
   }
 };

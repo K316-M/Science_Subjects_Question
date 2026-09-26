@@ -86,6 +86,7 @@
     const out = [];
     (sections || []).forEach((sec, chapterIdx) => {
       (sec.mcqs || []).forEach((q, mcqIdx) => {
+        if (q.hidden) return;   // 在 /dev 下架的题
         const rec = store[itemKey(subject, sec.id, mcqIdx)];
         if (!rec || rec.due > now) return;
         out.push({
@@ -116,6 +117,7 @@
     const out = [];
     (sections || []).forEach((sec, chapterIdx) => {
       (sec.mcqs || []).forEach((q, mcqIdx) => {
+        if (q.hidden) return;
         const rec = store[itemKey(subject, sec.id, mcqIdx)];
         if (!isWeak(rec)) return;
         const okDays = rec.okDays !== undefined ? rec.okDays : Math.min(rec.reps || 0, WEAK_EXIT_DAYS);
@@ -151,7 +153,7 @@
     (sections || []).forEach(sec => {
       (sec.mcqs || []).forEach((q, mcqIdx) => {
         const rec = store[itemKey(subject, sec.id, mcqIdx)];
-        if (rec && rec.due > now && rec.due < soonest) soonest = rec.due;
+        if (!q.hidden && rec && rec.due > now && rec.due < soonest) soonest = rec.due;
       });
     });
     return soonest === Infinity ? null : soonest;
