@@ -89,9 +89,9 @@
     ],
     mock: [
       { target: '.test-clock', title: '模拟统考',
-        body: '照统考时间表的<strong>试卷一</strong>时间倒数。剩五分钟会变红；<strong>时间到自动交卷，没答的算错</strong>。' },
+        body: '照统考时间表的<strong>试卷一</strong>时间倒数，看完这段介绍才开始计时。剩五分钟会变红；<strong>时间到自动交卷，没答的算错</strong>。' },
       { target: '.test-submit', title: '可以提早交卷',
-        body: '还有题没答时，第一次按会先提醒你，再按一次才交。成绩会算进复习排程和错题本。' },
+        body: '还有题没答时，第一次按会先提醒你，再按一次才交。答过的题会算进复习排程和错题本；没答的只算分数。' },
       { target: '.test-exit', title: '中途离开',
         body: '退出就不计分；计时不会暂停。' },
     ],
@@ -180,7 +180,7 @@
     return r.width > 4 && r.height > 4 && cs.visibility !== 'hidden' && cs.display !== 'none';
   };
 
-  let block, spot, tip, tourName = null, steps = [], index = 0, returnTo = null, target = null, rafId = 0;
+  let block, spot, tip, tourName = null, steps = [], index = 0, returnTo = null, target = null, rafId = 0, holding = false;
 
   function currentTourName() {
     const test = document.getElementById('viewTest');
@@ -300,6 +300,8 @@
     const first = resolveStep(0, 1);
     if (first === -1) return;
     tourName = name; index = first;
+    // 模拟统考的导览开着时先不计时，读完才开始倒数（测验中工具列藏起来，按不到「引导」，不会被拿来暂停考试）
+    holding = name === 'mock' && Boolean(window.UECTest && window.UECTest.hold(true));
     returnTo = document.activeElement;
     build();
     render();
@@ -309,6 +311,7 @@
     const cur = steps[index];
     if (cur && cur.after) cur.after();
     if (tourName) markSeen(tourName);
+    if (holding) { holding = false; window.UECTest.hold(false); }
     tourName = null;
     [block, spot, tip].forEach(n => n && n.remove());
     block = spot = tip = null; target = null;

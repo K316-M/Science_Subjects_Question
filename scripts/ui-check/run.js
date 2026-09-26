@@ -695,7 +695,20 @@ async function run() {
     const { ctx, page, errors } = await open({ width: 1440, height: 900, clock: true });
     await enter(page);
     await page.evaluate(() => document.getElementById('mockExamBtn').click());
-    await page.waitForTimeout(500);
+    // 第一次进来：导览自己出现（换画面後 0.7 秒）；导览开着时计时不走，关掉才开始倒数
+    await page.waitForTimeout(1500);
+    const clockText = () => page.evaluate(() => document.querySelector('.test-clock').textContent);
+    const tour = await page.evaluate(() => (document.querySelector('.tour-tip .tour-title') || {}).textContent);
+    const c0 = await clockText();
+    await page.clock.fastForward(5 * 60e3);
+    const c1 = await clockText();
+    check('模拟统考', '第一次进来：导览开着时计时不走', tour === '模拟统考' && c1 === c0, `导览「${tour}」，${c0} → ${c1}`);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    const esc = await page.evaluate(() => ({ tour: !!document.querySelector('.tour-tip'), confirm: !document.querySelector('.test-confirm').hidden }));
+    await page.clock.fastForward(60e3);
+    const c2 = await clockText();
+    check('模拟统考', '按 Esc 关掉导览：开始倒数，不会跳出「退出测验」', !esc.tour && !esc.confirm && c2 !== c0, `${JSON.stringify(esc)}，${c0} → ${c2}`);
     const minutes = Number(await page.evaluate(() => document.getElementById('mockExamLabel').textContent.match(/(\d+) 分钟/)[1]));
     await page.evaluate(() => document.querySelector('#viewTest fieldset.test-q input').click());
     await page.clock.fastForward(minutes * 60e3 + 2000);
