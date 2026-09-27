@@ -234,7 +234,16 @@
   }
 
   async function call(path, options) {
-    const res = await fetch(path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, options));
+    let res;
+    try {
+      res = await fetch(path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, options));
+    } catch (e) {
+      // 连不上（离线、断线）fetch 会直接丢错：当成一般的失败回传，按「立即同步」才说得出原因，
+      // 背景自动同步也不会冒出未处理的错误
+      return { ok: false, status: 0, data: { error: 'offline', message: navigator.onLine === false
+        ? '目前没有网络，无法同步。连上网络後再按一次「立即同步」。'
+        : '连不上同步伺服器，请检查网络後再试。' } };
+    }
     let data = {};
     try { data = await res.json(); } catch (e) {}
     return { ok: res.ok, status: res.status, data };

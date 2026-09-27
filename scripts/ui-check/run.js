@@ -251,6 +251,27 @@ async function run() {
     }
   });
 
+  await section('离线', async () => {
+    // 离线时靠 service worker 的快取：背景素材先用 HEAD 探测在不在，HEAD 没接住的话，图明明快取了也换不了背景
+    const { ctx, page, errors } = await open({ width: 1280, height: 800, seed: { UEC_SYNC_v1: { code: 'ABCDEFGHJKLMNPQRSTUV' } } });
+    await page.waitForFunction(() => navigator.serviceWorker && navigator.serviceWorker.controller, null, { timeout: 15000 });
+    await page.reload(); await page.waitForTimeout(1200);
+    const scene = () => page.evaluate(() => document.body.classList.contains('has-scene'));
+    await page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click()); await page.waitForTimeout(900);
+    const online = await scene();
+    await ctx.setOffline(true);
+    await page.reload(); await page.waitForTimeout(1500);
+    await page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click()); await page.waitForTimeout(900);
+    check('离线', '离线：在线时看过的科目，背景照样换上', online && await scene(), `在线 ${online}`);
+    // 离线按「立即同步」：要说清楚是没有网络，不能按钮一闪就没下文
+    await page.evaluate(() => document.getElementById('syncBtn').click()); await page.waitForTimeout(400);
+    await page.evaluate(() => document.querySelector('.sync-now').click()); await page.waitForTimeout(600);
+    const msg = await page.evaluate(() => (document.querySelector('.sync-msg') || {}).textContent || '');
+    check('离线', '离线按「立即同步」：提示没有网络', /没有网络/.test(msg), `提示「${msg}」`);
+    check('离线', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('导览结束回到原位', async () => {
     // 导览每一步都会把画面捲到目标；走完（或跳过）要捲回按「引导」之前的位置，不能停在最後一步
     // 视窗矮一点：做题页只有八百多 px 高，844 的视窗几乎捲不动

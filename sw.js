@@ -40,12 +40,22 @@ self.addEventListener('activate', (event) => {
 // 离线或弱网时回退到上次成功加载过的版本，而不是白屏。
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.method !== 'GET') return;
+  if (req.method !== 'GET' && req.method !== 'HEAD') return;
 
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
   // 接口响应带登录状态，开发者工作台也不该离线缓存
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/dev/') || url.pathname === '/dev') return;
+
+  // 背景与音乐先用 HEAD 探测档案在不在（js/scene-assets.js）。离线时用快取里的同一个档案回答：
+  // 没接住的话，图明明快取了，也会被当成「没有这张图」，各科背景都换不了
+  if (req.method === 'HEAD') {
+    event.respondWith(
+      fetch(req).catch(() => caches.match(req.url).then((cached) =>
+        cached ? new Response(null, { status: cached.status, headers: cached.headers }) : Response.error()))
+    );
+    return;
+  }
 
   event.respondWith(
     fetch(req)
