@@ -26,6 +26,8 @@
 | 各科背景光团的颜色 | `index.html` | `SUBJECT_THEME` 的 `blobA` `blobB` | | | 🟢 |
 | 背景插画的浓淡 | `index.html` | `.custom-photo-layer` | | 见 [OPERATIONS 七·背景的浓淡](OPERATIONS.md#背景的浓淡) | 🟢 |
 | 护眼模式背景水彩的亮度 | `scripts/scene/build_scene.py` | `NIGHT_K` | `0.32` | 改完要重跑脚本，见 [OPERATIONS 七](OPERATIONS.md#护眼模式的颜色) | 🟡 |
+| 护眼模式的笔记画布颜色 | `css/night.css` | `--n-note-paper` | `#2c2924`（深色纸） | 调亮要重算下面五支笔的对比，别低於 4.5:1 | 🟡 |
+| 护眼模式的五支笔颜色 | `js/notes.js` | `NIGHT_INK` | 黑→米白、红→`#fb7185`、蓝→`#7cb4ff`、绿→`#4fd1a5`、橙→`#f7c35c` | 只改右边（夜间色）就好 | 🔴 左边要跟 `index.html` 五个色点的 `data-ink` 一样；以後改白天笔色时，旧颜色那一列要留著（旧笔记存的是旧颜色，删掉的话夜里会变回深色、看不见） |
 | 直式背景（手机、平板、iPad 横放）底图最多露出多宽 | `js/scene-assets.js` | `TALL_PLATE_SPAN` | `0.62`（底图中间 62%） | 调大：iPad 横放、5:4 屏幕会冒出第二个透镜／分子团；调小：底图放大变糊、下方山丘变大。改完要看 1024×768 和 1280×1024 | 🟡 |
 | 统考时间表弹出框的宽度 | `index.html` | `.exam-list {` 的 `width` | `min(520px, …)` | 窄於 460px 时名称自动换到下一行 | 🟢 |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |

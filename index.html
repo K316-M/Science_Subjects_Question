@@ -1196,11 +1196,11 @@
       <button class="note-tool-btn active" data-note-tool="pen" onclick="setNoteTool('pen', this)"><svg class="ic" aria-hidden="true"><use href="#i-brush"></use></svg>画笔</button>
       <button class="note-tool-btn" data-note-tool="eraser" onclick="setNoteTool('eraser', this)"><svg class="ic" aria-hidden="true"><use href="#i-eraser"></use></svg>橡皮擦</button>
       <div class="note-pen-colors">
-        <div class="note-color-dot selected" style="background:#1e293b;" onclick="setNoteColor('#1e293b', this)" title="黑"></div>
-        <div class="note-color-dot" style="background:#e11d48;" onclick="setNoteColor('#e11d48', this)" title="红"></div>
-        <div class="note-color-dot" style="background:#2563eb;" onclick="setNoteColor('#2563eb', this)" title="蓝"></div>
-        <div class="note-color-dot" style="background:#059669;" onclick="setNoteColor('#059669', this)" title="绿"></div>
-        <div class="note-color-dot" style="background:#f59e0b;" onclick="setNoteColor('#f59e0b', this)" title="橙"></div>
+        <div class="note-color-dot selected" style="background:#1e293b;" data-ink="#1e293b" onclick="setNoteColor('#1e293b', this)" title="黑"></div>
+        <div class="note-color-dot" style="background:#e11d48;" data-ink="#e11d48" onclick="setNoteColor('#e11d48', this)" title="红"></div>
+        <div class="note-color-dot" style="background:#2563eb;" data-ink="#2563eb" onclick="setNoteColor('#2563eb', this)" title="蓝"></div>
+        <div class="note-color-dot" style="background:#059669;" data-ink="#059669" onclick="setNoteColor('#059669', this)" title="绿"></div>
+        <div class="note-color-dot" style="background:#f59e0b;" data-ink="#f59e0b" onclick="setNoteColor('#f59e0b', this)" title="橙"></div>
       </div>
       <span class="note-toolbar-label">粗细</span>
       <input class="note-size-range" type="range" min="1" max="14" value="3" onchange="setNoteSize(this.value)" oninput="setNoteSize(this.value)">

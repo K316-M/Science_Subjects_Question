@@ -4,7 +4,8 @@
  * 原则（docs/DESIGN.md 第六轮）：
  *   - 深暖灰纸面，不用纯黑；字是米白，不用纯白。蓝光少、对比够但不刺眼
  *   - 实心按钮用深玉绿底配米白字，不在黑暗里亮成一块
- *   - 笔记画布、题目配图保留「纸」的颜色（调暗），深色笔迹和黑线图才看得见
+ *   - 题目配图保留「纸」的颜色（调暗），黑线图才看得见
+ *   - 笔记画布是深色纸；笔迹存的是白天的颜色，画的时候由 js/notes.js 的 NIGHT_INK 换成亮版本
  *   - PDF 汇出（#pdfStage）永远是白纸黑字，这里不碰
  * 为什么每条都带 [data-theme="night"]：做题测验、引导、同步的样式是 JS 後插进来的，
  * 要比它们多一层才盖得过去。
@@ -25,7 +26,8 @@
   --n-btn: #2b634b;          /* 实心按钮：深玉绿 × 米白字 6.1:1 */
   --n-btn-hover: #327356;
   --n-btn-text: #f3eee4;
-  --n-paper: #e4ded1;        /* 笔记画布、配图：调暗的纸 */
+  --n-paper: #e4ded1;        /* 题目配图：调暗的纸 */
+  --n-note-paper: #2c2924;   /* 笔记画布：深色纸，五支笔的夜间墨色（js/notes.js NIGHT_INK）在上面都 ≥ 5.4:1 */
   --n-green: #9ad9b6;
   --n-green-bg: rgba(111, 196, 150, .14);
   --n-red: #f2aaa6;
@@ -213,6 +215,7 @@
 [data-theme="night"] .note-inline { background: #2e2a1c; border-color: #6b5a2a; }
 [data-theme="night"] .note-inline-head { color: #e8c97a; }
 [data-theme="night"] .note-inline-text { color: var(--n-text); }
+[data-theme="night"] .note-inline-ink { background: var(--n-note-paper); border-color: var(--n-border-strong); }
 [data-theme="night"] .card-note-btn.has-note { background: #9c4a3a; border-color: #9c4a3a; color: var(--n-btn-text); }
 
 /* 实心的主要按钮：深玉绿 × 米白字 */
@@ -329,14 +332,15 @@
 [data-theme="night"] .note-toolbar, [data-theme="night"] .note-dialog-foot { background: var(--n-sunken); border-color: var(--n-border); }
 [data-theme="night"] .note-tool-btn { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
 [data-theme="night"] .note-tool-btn.active { background: var(--retro-teal); border-color: var(--retro-teal); color: var(--n-text); }
-[data-theme="night"] .note-color-dot.selected { border-color: var(--n-text); }
+/* 夜间墨色都是亮的（黑笔变米白），框线跟色点同色会糊在一起：改成深色间隔 + 外圈亮环 */
+[data-theme="night"] .note-color-dot.selected { border-color: var(--n-sunken); box-shadow: 0 0 0 2px var(--n-text); }
 /* 画布保留纸色：笔记里有深色笔迹，画在黑底上会看不见 */
 [data-theme="night"] .note-stage-scroll { background: var(--n-sunken); }
-[data-theme="night"] .note-stage { background: var(--n-paper); border-color: var(--n-border); }
-[data-theme="night"] .note-snapshot-q { color: #1e293b; }
-[data-theme="night"] .note-snapshot-opt { color: #3b4453; border-color: rgba(30, 41, 59, .18); }
-[data-theme="night"] .note-snapshot-hint { color: #4b5563; }
-[data-theme="night"] .note-snapshot-tag { background: rgba(4, 120, 87, .14); color: #065f46; }
+[data-theme="night"] .note-stage { background: var(--n-note-paper); border-color: var(--n-border-strong); }
+[data-theme="night"] .note-snapshot-q { color: var(--n-text); }
+[data-theme="night"] .note-snapshot-opt { color: var(--n-text-2); border-color: var(--n-border-strong); }
+[data-theme="night"] .note-snapshot-hint { color: var(--n-text-2); }
+[data-theme="night"] .note-snapshot-tag { background: var(--n-green-bg); color: var(--n-green); }
 [data-theme="night"] .note-text-area { border-top-color: var(--n-border); }
 [data-theme="night"] .note-text-area textarea { background: var(--n-sunken); border-color: var(--n-border-strong); color: var(--n-text); }
 [data-theme="night"] .btn-primary-retro, [data-theme="night"] .subj-grade-btn { background: var(--n-btn); color: var(--n-btn-text); box-shadow: 0 4px 12px -2px rgba(0, 0, 0, .5); }
@@ -344,7 +348,7 @@
 [data-theme="night"] .btn-ghost-retro { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
 
 /* ---------- 笔记、题目档、申诉页 ---------- */
-[data-theme="night"] .note-card-preview { background: var(--n-paper); border-bottom-color: var(--n-border); }
+[data-theme="night"] .note-card-preview { background: var(--n-note-paper); border-bottom-color: var(--n-border); }
 [data-theme="night"] .note-card-q { color: var(--n-text); }
 [data-theme="night"] .note-card-actions { background: var(--n-sunken); border-top-color: var(--n-border); }
 [data-theme="night"] .note-mini-btn { background: var(--n-raised); border-color: var(--n-border-strong); color: var(--n-text); }
