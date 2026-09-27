@@ -26,6 +26,7 @@
 | 各科背景光团的颜色 | `index.html` | `SUBJECT_THEME` 的 `blobA` `blobB` | | | 🟢 |
 | 背景插画的浓淡 | `index.html` | `.custom-photo-layer` | | 见 [OPERATIONS 七·背景的浓淡](OPERATIONS.md#背景的浓淡) | 🟢 |
 | 护眼模式背景水彩的亮度 | `scripts/scene/build_scene.py` | `NIGHT_K` | `0.32` | 改完要重跑脚本，见 [OPERATIONS 七](OPERATIONS.md#护眼模式的颜色) | 🟡 |
+| 直式背景（手机、平板、iPad 横放）底图最多露出多宽 | `js/scene-assets.js` | `TALL_PLATE_SPAN` | `0.62`（底图中间 62%） | 调大：iPad 横放、5:4 屏幕会冒出第二个透镜／分子团；调小：底图放大变糊、下方山丘变大。改完要看 1024×768 和 1280×1024 | 🟡 |
 | 统考时间表弹出框的宽度 | `index.html` | `.exam-list {` 的 `width` | `min(520px, …)` | 窄於 460px 时名称自动换到下一行 | 🟢 |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | 字级、行高、间距 | 各 CSS | — | | **只能用阶梯上的值**，见 [OPERATIONS 七·阶梯](OPERATIONS.md#字级行高间距的阶梯) | 🔴 |

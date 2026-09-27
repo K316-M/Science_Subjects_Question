@@ -108,6 +108,10 @@
   const svgCache = new Map();
 
   /* ---------- 分层场景（scene.json） ---------- */
+  // 直式画面时底图最多露出中间这么宽（占底图宽的比例）。四角的大物件（物理透镜、化学分子团…）直式时是贴著视窗摆的图层，
+  // 底图同一个位置也画著一份：画面一变宽（iPad 横放、5:4 屏幕），底图那份就露出来变成两个。
+  // 所以画面宽到会露出更多时，改成把底图放大（贴底对齐，上方是空白纸）。0.62 = 左右各藏 19%，盖过化学分子团（18%）和透镜的镜片
+  const TALL_PLATE_SPAN = 0.62;
   // 只用 transform 做动画：每个元素是独立的合成层，GPU 直接搬，不重绘（docs/DESIGN.md 原则 4）
   const SCENE_CSS = `
 .scene{position:absolute;inset:0;overflow:hidden;container-type:size;}
@@ -123,7 +127,9 @@
 @keyframes scene-bob{from{transform:translate(0,0)}to{transform:translate(3px,-5px)}}
 @keyframes scene-drift{from{transform:translate(0,0) rotate(0)}to{transform:translate(9px,-11px) rotate(9deg)}}
 .scene .is-tall{display:none;}
-@media (max-aspect-ratio: 4/3){.scene .is-wide{display:none;}.scene .is-tall{display:block;}}
+@media (max-aspect-ratio: 4/3){.scene .is-wide{display:none;}.scene .is-tall{display:block;}
+  .scene-stage{width:max(calc(100cqh * var(--ar)),calc(100cqw / ${TALL_PLATE_SPAN}));height:max(100cqh,calc(100cqw / ${TALL_PLATE_SPAN} / var(--ar)));
+    top:auto;bottom:0;transform:translateX(-50%);}}
 .scene img:not(.scene-plate){translate:calc(var(--px,0) * var(--depth,6px) * -1) calc(var(--py,0) * var(--depth,6px) * -1);
   transition:translate .9s cubic-bezier(.2,.8,.2,1);}
 .scene::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 2.4s ease;
