@@ -886,7 +886,9 @@
             "D. aaBb"
           ],
           "answer": 0,
-          "explanation": "【解析】：母本 aabb 只能产生 ab 配子，无论外来父本花粉提供何种显性基因，子代至少含隐性基因 ab，绝不可能出现双显性纯合子 AABB。"
+          "explanation": "【解析】：母本 aabb 只能产生 ab 配子，无论外来父本花粉提供何种显性基因，子代至少含隐性基因 ab，绝不可能出现双显性纯合子 AABB。",
+          "hidden": true,
+          "hidden_at": "2026-09-27T10:24:45.798Z"
         }
       ],
       "subjectives": [
