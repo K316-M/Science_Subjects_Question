@@ -73,7 +73,9 @@ jobs:
 
       - name: 新题推进待审区（直接推到 main）
         if: steps.generate.outputs.has_new == 'true'
-        run: bash scripts/push_pending.sh "🤖 AI 依考纲出题进待审区 · 批次 #${{ github.run_number }}"
+        # 用 | 写：单行的写法里，「空格 + #」之後会被 YAML 当成注解砍掉
+        run: |
+          bash scripts/push_pending.sh "🤖 AI 依考纲出题进待审区 · 批次 #${{ github.run_number }}"
 
       - name: 出题报告放进这次执行的摘要
         if: always()
