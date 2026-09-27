@@ -53,32 +53,6 @@
       }
     },
     {
-      "id": "physics_gen_a0edd47a",
-      "subject": "physics",
-      "type": "mcq",
-      "chapter_id": "chap2",
-      "chapter_title": "第二章：直线运动",
-      "q": "一辆汽车在直路上行驶，初速度为 10 m/s。司机踩下油门使汽车做匀加速直线运动，经过 80 m 的位移后，汽车的速度增加到 30 m/s。求该汽车运动过程中的加速度大小。",
-      "options": [
-        "A. 2.5 m/s²",
-        "B. 4.0 m/s²",
-        "C. 4.5 m/s²",
-        "D. 5.0 m/s²"
-      ],
-      "answer": 3,
-      "explanation": "考点：匀加速直线运动的速度-位移公式 v² = u² + 2as。已知 u = 10 m/s，v = 30 m/s，s = 80 m。代入公式：30² = 10² + 2 * a * 80，即 900 = 100 + 160a，解得 a = 800 / 160 = 5.0 m/s²。常见错误包括忘记对速度平方，或在移项计算时出现符号错误。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T10:44:04.008710+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 3,
-        "reason": "由匀加速运动公式 v² - v₀² = 2as，代入得 a = (900 - 100) / (2 × 80) = 5.0 m/s²。"
-      }
-    },
-    {
       "id": "physics_gen_139de6da",
       "subject": "physics",
       "type": "mcq",
