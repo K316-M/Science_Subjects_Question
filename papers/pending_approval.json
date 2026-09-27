@@ -27,32 +27,6 @@
       }
     },
     {
-      "id": "physics_gen_8297f85c",
-      "subject": "physics",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：物理量和数据处理",
-      "q": "某同学使用刻度尺测量一块矩形金属片的长度为 12.45 cm，使用游标卡尺测得其宽度为 4.2 cm。若要计算该金属片的面积，按有效数字的运算规则，其结果应记录为：",
-      "options": [
-        "A. 52.29 cm²",
-        "B. 52.3 cm²",
-        "C. 52 cm²",
-        "D. 50 cm²"
-      ],
-      "answer": 2,
-      "explanation": "考点：有效数字的乘法规则。在进行乘除运算时，结果的有效数字位数应与参与运算的物理量中有效数字位数最少的那一个一致。\n- 长度 12.45 cm 具有 4 位有效数字。\n- 宽度 4.2 cm 具有 2 位有效数字。\n- 计算面积：12.45 × 4.2 = 52.29 cm²。\n- 根据规则，结果应保留 2 位有效数字，故舍入为 52 cm²。常见错误是保留过多位数（A、B）或错误进位。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T10:42:09.553836+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "乘积的有效数字位数由有效数字最少的测量值（4.2 cm，2位）决定，修约后为 52 cm²。"
-      }
-    },
-    {
       "id": "physics_gen_18fd07a9",
       "subject": "physics",
       "type": "mcq",
