@@ -7,7 +7,7 @@
 //     action = 'move'：把下架的题移到同一科的另一章（toChapterId）。接在那一章最後面、仍是下架；
 //     原位留一个标了 moved_to 的隐藏空位 —— 两边原有的题号都不变，学生的纪录才不会错位。
 // 两种都跟采纳一样用 toBankEntry 验证，改完是坏的就不让存。
-// GET：直接从 GitHub 读最新的三科题库与待审区。网站上的 /papers 要等 Vercel 部署完（约一分钟）
+// GET：直接从 GitHub 读最新的各科题库与待审区。网站上的 /papers 要等 Vercel 部署完（约一分钟）
 // 才会更新，工作台若读那份，刚存的修改会「消失」一下，接著再改就会撞到「题库被改过」。
 const { publishingConfig, verifySession, sendJson, readJsonBody, sameOrigin } = require('./_lib/devauth');
 const { snapshot, readJson, commitFiles, sendError } = require('./_lib/github');

@@ -46,6 +46,7 @@
 | 首页大标题「独中理科」 | `index.html` | `retro-hero-title` | 🟢 |
 | 首页标题下的缎带「备考题库 · 复习系统」 | `index.html` | `retro-ribbon` | 🟢 |
 | **网站名称「独中理科复习网」**（浏览器分页、分享网址的预览、装到手机桌面的名称） | `index.html`、`manifest.json`、`dev/index.html` | `index.html` 的 `<title>`、`og:title`、`apple-mobile-web-app-title`；`manifest.json` 的 `name`、`short_name`；`dev/index.html` 的 `side-brand-text` | 🟡 六处一起改才一致。桌面图示下的短名（`short_name`、`apple-mobile-web-app-title`，现在「理科复习网」）最多约 5 个中文字，再长会被截断 |
+| 网站的一句话说明（Google 搜寻结果、分享网址的预览、装到手机桌面） | `index.html`、`manifest.json` | `index.html` 的 `name="description"`、`og:description`；`manifest.json` 的 `description` | 🟡 三处一起改才一致；加科目时记得补上科目名 |
 | 「选择学习学科」与下面的提示 | `index.html` | `page-heading`、`page-hint` | 🟢 |
 | 各科名称、英文名、轨道上的小字说明 | `js/orbit-subjects.js` | `SUBJECTS` 的 `name` `en` `note` | 🟢 |
 | 做题页上的科目名称（「生物科」） | `index.html` | `SUBJECT_LABELS` | 🟢 |

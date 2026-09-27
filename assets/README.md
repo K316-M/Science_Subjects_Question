@@ -17,6 +17,7 @@
 | `biology` | 生物做题页 | `assets/visual/biology/background.jpg` | `assets/audio/biology/ambient.mp3` |
 | `chemistry` | 化学做题页 | `assets/visual/chemistry/background.jpg` | `assets/audio/chemistry/ambient.mp3` |
 | `physics` | 物理做题页 | `assets/visual/physics/background.jpg` | `assets/audio/physics/ambient.mp3` |
+| `math` | 高级数学做题页 | `assets/visual/math/background.jpg` | `assets/audio/math/ambient.mp3`（还没放，现在播的是 `default` 那首） |
 | `default` | **所有找不到自己素材的场景** | `assets/visual/default/background.jpg` | `assets/audio/default/ambient.mp3` |
 
 想让全站有个统一的底图／底乐，只放 `default/` 那一份就够了。
