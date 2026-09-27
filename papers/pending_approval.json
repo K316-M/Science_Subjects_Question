@@ -1,4 +1,161 @@
 {
-  "items": [],
-  "generated_at": "2026-09-26T15:53:20.288116+00:00"
+  "items": [
+    {
+      "id": "biology_a1c4b0626c",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap18",
+      "chapter_title": "第18章：细菌与病毒",
+      "source_draft": "drafts/biology/GC练习.txt",
+      "answer_source": "ai",
+      "flags": [
+        "原档没标答案，由 AI 作答（两次一致），仍请核对"
+      ],
+      "ingested_at": "2026-09-27T09:56:23.006014Z",
+      "q": "以下哪项有关面包霉和青霉是正确的？\nI 主要构造为菌丝\nII 通过出芽繁殖\nIII 腐生或寄生\nIV 属于原生动物",
+      "options": [
+        "A. I, III",
+        "B. II, III",
+        "C. I, II, IV",
+        "D. II, III, IV"
+      ],
+      "answer": 0,
+      "explanation": "面包霉和青霉属于真菌，主要构造是菌丝，营腐生或寄生生活；出芽繁殖是酵母菌的特征，而它们不属于原生动物。",
+      "review": {
+        "ai_answer": 0,
+        "reason": "面包霉和青霉属于真菌，主要构造为菌丝，营腐生或寄生生活，而通过孢子繁殖且不属于原生动物。"
+      }
+    },
+    {
+      "id": "biology_1a23f2bc8b",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap7",
+      "chapter_title": "第7章：动植物的协调与反应",
+      "source_draft": "drafts/biology/GC练习.txt",
+      "answer_source": "ai",
+      "flags": [
+        "原档没标答案，由 AI 作答（两次一致），仍请核对"
+      ],
+      "ingested_at": "2026-09-27T09:56:23.009857Z",
+      "q": "下列哪三项有关气孔的叙述是正确的?\nI 保卫细胞近气孔侧的内壁较厚。\nII 气孔的大小由一对保卫细胞控制。\nIII 保卫细胞吸水后，会使气孔关闭。\nⅣ 保卫细胞内的二氧化碳浓度下降，会引起气孔开启。",
+      "options": [
+        "A. I，II，III",
+        "B. I，II，IV",
+        "C. I，III，Ⅳ",
+        "D. II，III，Ⅳ"
+      ],
+      "answer": 1,
+      "explanation": "保卫细胞吸水膨胀时，由于内壁厚、外壁薄，细胞向外弯曲，气孔应为开启而非关闭。I、II、IV 叙述均正确。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "保卫细胞吸水膨胀时气孔开启而非关闭，其余关于结构、控制机制及二氧化碳影响的叙述均正确。"
+      }
+    },
+    {
+      "id": "biology_53c755ea89",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap9",
+      "chapter_title": "第9章：健康与免疫",
+      "source_draft": "drafts/biology/GC练习.txt",
+      "answer_source": "ai",
+      "flags": [
+        "原档没标答案，由 AI 作答（两次一致），仍请核对"
+      ],
+      "ingested_at": "2026-09-27T09:56:23.014886Z",
+      "q": "接种卡介苗可有效预防结核病，其作用原理是",
+      "options": [
+        "A. 卡介苗能激活人体的吞噬细胞，将结核杆菌吞噬",
+        "B. 卡介苗能使人在不发病的情况下产生抵抗结核杆菌的抗体",
+        "C. 卡介苗能促进人体的各项生理活动，增强抵抗力",
+        "D. 卡介苗进入人体后能直接消灭侵入人体内的结核杆菌"
+      ],
+      "answer": 1,
+      "explanation": "卡介苗属于抗原，接种后可刺激人体免疫系统在不致病的情况下产生特异性抗体和记忆细胞，从而获得免疫力。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "疫苗作为抗原进入人体，能在不致病的情况下刺激免疫系统产生特异性抗体和记忆细胞。"
+      }
+    },
+    {
+      "id": "biology_eca3e5996e",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap12",
+      "chapter_title": "第12章：生殖",
+      "source_draft": "drafts/biology/GC练习.txt",
+      "answer_source": "ai",
+      "flags": [
+        "原档没标答案，由 AI 作答（两次一致），仍请核对"
+      ],
+      "ingested_at": "2026-09-27T09:56:23.016686Z",
+      "q": "下列哪个过程没有在花粉和胚囊的发育过程中出现?",
+      "options": [
+        "A. 花粉囊中一个小孢子母细胞经过减数分裂形成四个小孢子",
+        "B. 每个小孢子成熟后又经过一次减数分裂形成两个营养细胞",
+        "C. 胚珠中一个大孢子母细胞经过减数分裂,产生四个大孢子",
+        "D. 大孢子中的细胞核有丝分裂三次,形成了具八个核的胚囊"
+      ],
+      "answer": 1,
+      "explanation": "小孢子（花粉管细胞核）形成营养细胞和生殖细胞的过程是通过有丝分裂完成的，而非减数分裂。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "小孢子（花粉管细胞）形成后进行的是有丝分裂而非减数分裂，以产生营养细胞和生殖细胞。"
+      }
+    },
+    {
+      "id": "biology_79cac872be",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap15",
+      "chapter_title": "第15章：基因与遗传的定律",
+      "source_draft": "drafts/biology/GC练习.txt",
+      "answer_source": "ai",
+      "flags": [
+        "原档没标答案，由 AI 作答（两次一致），仍请核对"
+      ],
+      "ingested_at": "2026-09-27T09:56:23.018803Z",
+      "q": "由于遗传的相异，造成生物个体间有所差别，因此世界上没有两个完全相同的个体，这现象称为____。",
+      "options": [
+        "A. 新陈代谢",
+        "B. 繁殖",
+        "C. 演化",
+        "D. 变异"
+      ],
+      "answer": 3,
+      "explanation": "变异是指亲代与子代之间以及子代个体之间存在的差异现象。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "变异是指生物个体之间在性状上存在的差异现象。"
+      }
+    },
+    {
+      "id": "biology_70410d2cec",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/GC练习.txt",
+      "answer_source": "ai",
+      "flags": [
+        "原档没标答案，由 AI 作答（两次一致），仍请核对"
+      ],
+      "ingested_at": "2026-09-27T09:56:23.022278Z",
+      "q": "下列哪一项有关脊椎动物的心脏之叙述是错误的?",
+      "options": [
+        "A. 狗的心脏是由两个心房，两个心室组成的",
+        "B. 鸟的心脏是由两个心房，两个心室组成的",
+        "C. 青蛙的心脏是由两个心房，一个心室组成的",
+        "D. 鳄鱼的心脏是由两个心房，一个心室组成的"
+      ],
+      "answer": 3,
+      "explanation": "鳄鱼虽然是爬行动物，但其心脏结构较为特殊，已进化为完全的四腔室（两个心房，两个心室），不同于一般爬行动物的不完全四腔室。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "鳄鱼属于爬行动物中的特殊例子，其心脏已进化为完全隔开的两个心房和两个心室。"
+      }
+    }
+  ],
+  "generated_at": "2026-09-27T09:56:36.815764+00:00"
 }
