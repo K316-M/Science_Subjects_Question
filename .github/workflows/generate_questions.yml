@@ -18,11 +18,11 @@ on:
   workflow_dispatch:
     inputs:
       subject:
-        description: '只为某一科出题（留空＝三科都跑）'
+        description: '只为某一科出题（留空＝每一科都跑）'
         required: false
         default: ''
         type: choice
-        options: ['', 'biology', 'chemistry', 'physics']
+        options: ['', 'biology', 'chemistry', 'physics', 'math']
       chapters_per_run:
         description: '这次照顾几个章节'
         required: false

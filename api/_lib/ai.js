@@ -5,7 +5,9 @@ const path = require('path');
 const crypto = require('crypto');
 const store = require('./store');
 
-const SUBJECTS = { biology: '生物', chemistry: '化学', physics: '物理' };
+const SUBJECTS = { biology: '生物', chemistry: '化学', physics: '物理', math: '高级数学' };
+// 数学科的讲解／批改：式子写成 LaTeX，网页才排得出公式
+const MATH_PROMPT_RULE = '数学式子一律写成 $…$ 包住的 LaTeX，例如 $\\frac{1}{2}$、$\\sqrt{3}$（JSON 字串里反斜线写两次），小于、大于写 \\lt、\\gt；中文写在 $ 外面；这不算 Markdown。';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 // ---------- 限流：有 Upstash 就跨实例计数，没有就退回单一实例的记忆体 ----------
@@ -86,6 +88,21 @@ async function rankedModels(key) {
   return models;
 }
 
+// LaTeX 放进 JSON，反斜线要写两次；AI 只写一次时，\frac、\theta 会被当成 \f、\t 跳脱字元，公式悄悄坏掉。
+// 解析前补成两个。规则与清单同 scripts/qa.py 的 repair_latex_backslashes、LATEX_ESCAPE_LOOKALIKES（两边要一起改）
+const LATEX_ESCAPE_LOOKALIKES = new Set([
+  'frac', 'forall', 'beta', 'bar', 'begin', 'binom', 'big', 'bigl', 'bigr', 'boxed', 'because', 'bmod',
+  'neq', 'not', 'notin', 'nabla', 'right', 'rightarrow', 'rho', 'rangle', 'rm',
+  'times', 'theta', 'tan', 'tanh', 'text', 'textbf', 'textrm', 'tfrac', 'to', 'tau', 'triangle', 'therefore', 'tilde',
+]);
+function repairLatexBackslashes(text) {
+  return text.replace(/\\(u[0-9a-fA-F]{4}|[A-Za-z]+|[\s\S])/g, (m, body) => {
+    if (body === '\\' || body === '"' || body === '/' || /^u[0-9a-fA-F]{4}$/.test(body)) return m;
+    if ('bfnrt'.includes(body[0]) && !LATEX_ESCAPE_LOOKALIKES.has(body)) return m;   // \n 换行这类：保留
+    return '\\' + m;
+  });
+}
+
 async function callGemini(key, prompt) {
   let last = null;
   for (const model of (await rankedModels(key)).slice(0, 4)) {
@@ -109,7 +126,7 @@ async function callGemini(key, prompt) {
       const data = await res.json();
       const text = data.candidates && data.candidates[0] && data.candidates[0].content
         && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text;
-      return { model, json: JSON.parse(String(text || '').replace(/^```(json)?|```$/gm, '').trim()) };
+      return { model, json: JSON.parse(repairLatexBackslashes(String(text || '').replace(/^```(json)?|```$/gm, '').trim())) };
     } catch (e) {
       last = e;
       if (e.name === 'AbortError') continue;
@@ -148,4 +165,4 @@ async function clearExplain(subject, chapterId, index, item) {
   return store.command(['DEL', ...keys]);
 }
 
-module.exports = { SUBJECTS, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain, clearExplain };
+module.exports = { SUBJECTS, MATH_PROMPT_RULE, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain, clearExplain };

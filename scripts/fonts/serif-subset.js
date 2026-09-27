@@ -51,7 +51,7 @@ async function collect() {
   };
 
   await grab();
-  for (const subject of ['biology', 'chemistry', 'physics']) {
+  for (const subject of ['biology', 'chemistry', 'physics', 'math']) {
     await page.evaluate(s => openSubject(s, 0), subject);
     await page.waitForTimeout(1500);
     await grab();

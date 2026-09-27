@@ -1,8 +1,8 @@
 import os
 import json
 
-SUBJECTS = ["biology", "chemistry", "physics"]
-SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理"}
+SUBJECTS = ["biology", "chemistry", "physics", "math"]
+SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理", "math": "高级数学"}
 PENDING_PATH = "papers/pending_approval.json"
 REPORT_PATH = "docs/INSPECTION_REPORT.md"
 

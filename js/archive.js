@@ -4,7 +4,7 @@
    与用户勾选的先后次序无关。
    ========================================================================== */
 
-const ARCHIVE_SUBJECTS = ['biology', 'chemistry', 'physics'];
+const ARCHIVE_SUBJECTS = ['biology', 'chemistry', 'physics', 'math'];
 
 const archiveState = {
   subject: 'biology',
@@ -350,6 +350,7 @@ async function downloadArchivePdf() {
       const target = stage.firstElementChild;
       // 等图片解码完成，否则 html2canvas 会画出空白图
       await waitForImages(target);
+      if (window.renderMath) await window.renderMath(target);   // 数学公式排好、字型载完再截图
       const canvas = await window.html2canvas(target, {
         scale: 2,
         backgroundColor: '#ffffff',
@@ -386,15 +387,19 @@ function waitForImages(el) {
 async function printArchive() {
   if (archiveState.selected.size === 0) return;
   const groups = await collectSelectedInSiteOrder();
-  const blocks = buildPdfBlocks(groups);
   const win = window.open('', '_blank');
   if (!win) { alert('浏览器拦截了新窗口，请允许弹出窗口后再试。'); return; }
+  // 新视窗里没有排版程式：公式在这里先排好，再整段写过去（先开视窗，免得等载入太久被当成弹窗挡掉）
+  const sheet = document.createElement('div');
+  sheet.innerHTML = buildPdfBlocks(groups).join('');
+  if (window.renderMath) await window.renderMath(sheet);
   win.document.write(`<!DOCTYPE html><html lang="zh-MY"><head><meta charset="UTF-8">
     <title>独中理科 · 题目档</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/features.css">
+    ${sheet.querySelector('.katex') ? '<link rel="stylesheet" href="/vendor/katex/katex-swap.min.css"><style>.katex{font-size:1.1em}</style>' : ''}
     <style>body{margin: 0;background:#fff;} .pdf-block{page-break-inside:avoid;}</style>
-    </head><body>${blocks.join('')}</body></html>`);
+    </head><body>${sheet.innerHTML}</body></html>`);
   win.document.close();
   setTimeout(() => win.print(), 800);
 }

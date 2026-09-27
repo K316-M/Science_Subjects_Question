@@ -22,7 +22,7 @@
 | 按钮的功能色（绿／红／琥珀／青） | `index.html` | `--fn-go` `--fn-danger` `--fn-warn` `--fn-time` | | 用法见 [OPERATIONS 七·按钮的颜色](OPERATIONS.md#按钮的颜色与图标) | 🟡 |
 | 护眼模式的整套颜色 | `css/night.css` | 最上面 `--n-` 开头的变数 | | 见 [OPERATIONS 七·护眼模式](OPERATIONS.md#护眼模式的颜色) | 🟡 |
 | 手机浏览器顶端那条的颜色 | `js/theme.js` | `BAR_COLOR` | 白天 `#059669`、护眼 `#1d1b18` | | 🟢 |
-| 各科的强调色（首页轨道） | `js/orbit-subjects.js` | `SUBJECTS` 里的 `accent` | 生物绿、化学紫、物理蓝 | | 🟢 |
+| 各科的强调色（首页轨道） | `js/orbit-subjects.js` | `SUBJECTS` 里的 `accent` | 生物绿、化学紫、物理蓝、数学琥珀 | | 🟢 |
 | 各科背景光团的颜色 | `index.html` | `SUBJECT_THEME` 的 `blobA` `blobB` | | | 🟢 |
 | 背景插画的浓淡 | `index.html` | `.custom-photo-layer` | | 见 [OPERATIONS 七·背景的浓淡](OPERATIONS.md#背景的浓淡) | 🟢 |
 | 护眼模式背景水彩的亮度 | `scripts/scene/build_scene.py` | `NIGHT_K` | `0.32` | 改完要重跑脚本，见 [OPERATIONS 七](OPERATIONS.md#护眼模式的颜色) | 🟡 |
@@ -30,6 +30,8 @@
 | 护眼模式的笔记画布颜色 | `css/night.css` | `--n-note-paper` | `#2c2924`（深色纸） | 调亮要重算下面五支笔的对比，别低於 4.5:1 | 🟡 |
 | 护眼模式的五支笔颜色 | `js/notes.js` | `NIGHT_INK` | 黑→米白、红→`#fb7185`、蓝→`#7cb4ff`、绿→`#4fd1a5`、橙→`#f7c35c` | 只改右边（夜间色）就好 | 🔴 左边要跟 `index.html` 五个色点的 `data-ink` 一样；以後改白天笔色时，旧颜色那一列要留著（旧笔记存的是旧颜色，删掉的话夜里会变回深色、看不见） |
 | 直式背景（手机、平板、iPad 横放）底图最多露出多宽 | `js/scene-assets.js` | `TALL_PLATE_SPAN` | `0.62`（底图中间 62%） | 调大：iPad 横放、5:4 屏幕会冒出第二个透镜／分子团；调小：底图放大变糊、下方山丘变大。改完要看 1024×768 和 1280×1024 | 🟡 |
+| 数学公式的字比内文大多少 | `js/math-render.js` | `KATEX_TUNING` 里的 `font-size` | `1.1em`（KaTeX 预设 `1.21em`） | 太大夹在中文里很抢；题目档「打印版」另有一份，在 `js/archive.js` 搜 `.katex{font-size` | 🟢 |
+| 数学的分数、积分、Σ 排成全尺寸（像试卷） | `js/math-render.js` | `preProcess` | 每条公式前加 `\\displaystyle` | 拿掉就变回 KaTeX 预设的行内小分数，手机上很难看清 | 🟢 |
 | 统考时间表弹出框的宽度 | `index.html` | `.exam-list {` 的 `width` | `min(520px, …)` | 窄於 460px 时名称自动换到下一行 | 🟢 |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | /dev 列表（巡检、待审、题目修改）题与题之间的空隙 | `dev/dev.css` | `--list-gap` | `12px` | 每题一张卡；太小又会看起来连在一起 | 🟢 |
@@ -47,6 +49,7 @@
 | 「选择学习学科」与下面的提示 | `index.html` | `page-heading`、`page-hint` | 🟢 |
 | 各科名称、英文名、轨道上的小字说明 | `js/orbit-subjects.js` | `SUBJECTS` 的 `name` `en` `note` | 🟢 |
 | 做题页上的科目名称（「生物科」） | `index.html` | `SUBJECT_LABELS` | 🟢 |
+| 数学两份卷的名称（按钮「模拟高数Ⅰ · 60 分钟」、/dev 的卷别） | `index.html`、`dev/dev.js` | `PAPER_LABEL` | 🟡 两个档各一份，写一样才对得上 |
 | **每个画面的导览（聚光灯）文字** | `js/onboarding.js` | `TOURS` —— 每一步是 `{ title, body }`，`body` 可以用 `<strong>` | 🟢 |
 | 小精灵说的「谢谢！」 | `js/feedback.js` | `bubble.textContent` | 🟢 |
 | 小精灵通知面板的标题 | `js/feedback.js` | `spritePanelTitle` | 🟡 保留 `${…}` 那段，那是自动填的修复内容 |
@@ -97,16 +100,23 @@
 | AI 讲解全班共用的快取存多久 | `api/_lib/ai.js` | `EXPLAIN_TTL_SECONDS` | 180 天 | 🟢 |
 | AI 讲解在装置上最多存几则 | `index.html` | `EXPLAIN_KEEP` | `300` | 🟢 超过就丢最旧的 |
 | **AI 讲解的讲法**（多长、先讲什么） | `api/explain.js` | `buildPrompt` 里的「要求」1～4 | | 🔴 第 4 条（不可推翻正确答案）不要删 |
-| 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS` | `40` | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
+| 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS`；个别科目在 `MOCK_QUESTIONS_BY_SUBJECT` | 理科 `40`；数学 `15`（高数Ⅰ、Ⅱ 评量规格） | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
+| 模拟统考对到时间表的哪一科 | `index.html` | `EXAM_SUBJECT` | 数学用 `'math:I'`→`高级数学（Ⅰ）`、`'math:II'`→`高级数学（Ⅱ）` | 🔴 右边要和 `js/exam-timetable.js` 的 `subject` 一字不差（全形括号、罗马数字 Ⅰ Ⅱ），对不上按钮就不出现 |
+| 没标卷别的数学题，哪几章不进高数Ⅰ | `index.html` | `MATH_ADVANCED_CHAPTERS` | 第 30、31、33、34、35 章（《高级数学》才有） | 🔴 写章节 `id`（`chap30`），不是章名；课程标准改版才动 |
+| 数学卷别的代号 | `api/_lib/questions.js`、`scripts/ingest_drafts.py` | `PAPERS` | `'I'`、`'II'` | 🔴 题库里存的就是这两个字；改了，已经标好的题全部对不上 |
+| 照片档名怎么认高数Ⅰ／Ⅱ（第二页以後没有卷头时） | `scripts/ingest_drafts.py` | `PAPER_IN_FILENAME` | 「高数2」「高数Ⅱ」「SC07」→ Ⅱ；「高数1」「SC06」→ Ⅰ | 🟡 Ⅱ 要排在前面（「高数II」也含「高数I」） |
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |
-| **AI 录题的规则**（只取什么、高光怎么认） | `scripts/ingest_drafts.py` | `build_prompt` 里的 0～6 条 | | 🔴 JSON 栏位名称不要改，程式靠它读 |
+| **AI 录题的规则**（只取什么、高光怎么认） | `scripts/ingest_drafts.py` | `build_prompt` 里的 0～6 条；数学另加 `MATH_INGEST_RULES`（认卷别） | | 🔴 JSON 栏位名称不要改，程式靠它读 |
+| **数学公式的写法**（录题、出题 AI 共用：LaTeX、符号照公式表） | `scripts/qa.py` | `MATH_RULES` | | 🔴 「反斜线写两次」「不要直接打 < >」两条不要删；改了符号写法，`syllabus/math.md` 最後一段也要一起改 |
+| 网站 AI 讲解、批改的数学公式写法 | `api/_lib/ai.js` | `MATH_PROMPT_RULE` | | 🟡 要叫它用 `$…$` 包 LaTeX，学生站才排得出公式 |
+| AI 少写反斜线时自动补回的 LaTeX 指令（\\frac、\\theta 这类） | `scripts/qa.py`、`api/_lib/ai.js` | `LATEX_ESCAPE_LOOKALIKES` | 只列 b、f、n、r、t 开头的指令 | 🔴 两个档要一起改；不要加 `ne`、`nu`、`ni`（和「换行＋字母」分不出来） |
 | 复习排程（多久後再复习一次） | `js/review.js` | `EASE_START` `EASE_MIN` `EASE_MAX` `EASE_UP` `EASE_DOWN` | | 🔴 会影响每个学生已排好的复习 |
 | 复习间隔最长几天 | `js/review.js` | `MAX_INTERVAL_DAYS` | `60` | 🟢 |
 | 错题要在几个不同的日子答对才移出错题本 | `js/review.js` | `WEAK_EXIT_DAYS` | `2` | 🟢 |
 | 删掉的笔记要记住多久（防止另一台装置同步回来） | `js/sync.js` | `NOTE_TOMBSTONE_DAYS` | `365` | 🟢 |
 | 错几次标成「顽固」 | `js/review.js` | `STUBBORN_LAPSES` | `3` | 🟢 |
 | 申诉要寄到哪个信箱 | `js/feedback.js` | `FEEDBACK_ENDPOINT` | Formspree 表单 | 🟡 换成你自己的 Formspree 网址 |
-| 开放「高级数学」一科 | `js/orbit-subjects.js` | `SUBJECTS` 里 `math` 的 `enabled` | `false` | 🔴 要先建 `papers/math_question_bank.json` 的章节 |
+| 暂时关掉某一科（首页那颗球变灰、点不进去） | `js/orbit-subjects.js` | `SUBJECTS` 里那一科的 `enabled` | 四科都是 `true`（数学已开放） | 🟡 改 `false` 时 `note` 写「尚未开放」；要打开的科目，`papers/<科目>_question_bank.json` 要先有章节 |
 
 ---
 
@@ -114,13 +124,14 @@
 
 | 想做什么 | 放在哪里 | 说明 |
 |---|---|---|
-| 加题目（照片、Word、PPT、PDF） | `drafts/<biology\|chemistry\|physics>/` | [drafts/README.md](../drafts/README.md) |
+| 加题目（照片、Word、PPT、PDF） | `drafts/<biology\|chemistry\|physics\|math>/` | [drafts/README.md](../drafts/README.md)；数学高数Ⅰ、Ⅱ 都放 `drafts/math/` |
 | 改已上线的题、换配图、下架不要的题 | 网站 `/dev` →「题目修改」 | 不用碰 JSON，见 [OPERATIONS 一·4](OPERATIONS.md#4-修改已上线的题) |
 | 改章节名称或顺序 | `papers/<科目>_question_bank.json` 的 `sections[].title` | 🔴 不要改 `id`，学生的进度、笔记、划线都靠它对应 |
 | 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](../syllabus/README.md) |
 | 换背景图、背景音乐 | `assets/visual/<科目>/`、`assets/audio/<科目>/` | [assets/README.md](../assets/README.md) |
 | 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。分页那两张要先把多余白边裁掉再缩，不然 16px 只剩一团色块。浏览器会快取图标，换完可能要重开分页或清快取才看得到。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是另外重画的 SVG，不会跟著这 5 个档变：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |
+| 数学公式排版程式（KaTeX）换新版 | `vendor/katex/` | 🟡 照 `vendor/katex/README.md` 换掉同名档案；只留 `.woff2` 字型 |
 | 小精灵的姿势图 | `source/sprite/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
 | 申诉处理结果 | 网站 `/dev` →「申诉处理」 | 不必手改 `data/resolved_issues.json` |
 

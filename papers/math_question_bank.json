@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "subject": "math",
+    "title": "董总高中统考高级数学题库（35章，依《高级数学课程标准》2026年1月修订）"
+  },
+  "sections": [
+    {
+      "id": "chap1",
+      "title": "第一章：直角坐标系与直线",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap2",
+      "title": "第二章：一元二次方程式与二次函数",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap3",
+      "title": "第三章：多项式",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap4",
+      "title": "第四章：无理式",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap5",
+      "title": "第五章：函数",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap6",
+      "title": "第六章：不等式",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap7",
+      "title": "第七章：逻辑",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap8",
+      "title": "第八章：角度与弧度",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap9",
+      "title": "第九章：任意角的三角函数",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap10",
+      "title": "第十章：三角学的应用",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap11",
+      "title": "第十一章：三角恒等式与三角方程式",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap12",
+      "title": "第十二章：指数与对数",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap13",
+      "title": "第十三章：数列与级数",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap14",
+      "title": "第十四章：行列式",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap15",
+      "title": "第十五章：矩阵",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap16",
+      "title": "第十六章：圆",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap17",
+      "title": "第十七章：平面向量",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap18",
+      "title": "第十八章：立体几何",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap19",
+      "title": "第十九章：排列与组合",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap20",
+      "title": "第二十章：二项式定理",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap21",
+      "title": "第二十一章：极限",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap22",
+      "title": "第二十二章：微分及其应用（一）",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap23",
+      "title": "第二十三章：不定积分及其应用",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap24",
+      "title": "第二十四章：定积分及其应用",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap25",
+      "title": "第二十五章：统计学",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap26",
+      "title": "第二十六章：概率",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap27",
+      "title": "第二十七章：线性回归",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap28",
+      "title": "第二十八章：微分及其应用（二）",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap29",
+      "title": "第二十九章：积分法",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap30",
+      "title": "第三十章：微分方程式",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap31",
+      "title": "第三十一章：数学方法",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap32",
+      "title": "第三十二章：坐标轴的转换",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap33",
+      "title": "第三十三章：圆锥曲线",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap34",
+      "title": "第三十四章：复数",
+      "mcqs": [],
+      "subjectives": []
+    },
+    {
+      "id": "chap35",
+      "title": "第三十五章：空间向量",
+      "mcqs": [],
+      "subjectives": []
+    }
+  ]
+}

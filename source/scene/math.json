@@ -1,5 +1,5 @@
 {
- "_说明": "rect = 在参考图上圈出元素的框 [x, y, 宽, 高]。小元素排前面、大的锚点（左上的圆、右边那排立体）排最後。数学科还没开放：图层先放著，开放时在 index.html 的 SUBJECT_THEME 补上 math 就会用到。",
+ "_说明": "rect = 在参考图上圈出元素的框 [x, y, 宽, 高]。小元素排前面、大的锚点（左上的圆、右边那排立体）排最後。左上的圆 wide 是 true：横式也用图层、底图补成纸（它画到参考图宽度 28%，直式底图只藏得住左右 19%，留在底图里会和直式图层变成两个圆）。",
  "layers": [
   {"name": "dot-a",     "rect": [394, 27, 29, 29],    "motion": "float", "speed": 6},
   {"name": "tri-a",     "rect": [410, 252, 53, 48],   "motion": "drift", "speed": 12, "tall": {"left": "10%", "top": "31%", "width": "8vmin"}},
@@ -19,7 +19,7 @@
   {"name": "dice-r",    "rect": [1454, 569, 65, 64],  "motion": "bob",   "speed": 10, "tall": {"right": "5%", "top": "68%", "width": "11vmin"}},
   {"name": "tetra-r",   "rect": [1377, 664, 55, 53],  "motion": "bob",   "speed": 9},
   {"name": "ball-r",    "rect": [1595, 670, 45, 44],  "motion": "float", "speed": 7},
-  {"name": "circle",    "rect": [0, 0, 468, 372],     "motion": "none",  "wide": false, "tall": {"left": "0", "top": "0", "width": "56vmin"}},
+  {"name": "circle",    "rect": [0, 0, 468, 372],     "motion": "none",  "wide": true, "tall": {"left": "0", "top": "0", "width": "56vmin"}},
   {"name": "solids",    "rect": [1476, 0, 196, 618],  "motion": "float", "speed": 16, "wide": false, "tall": {"right": "0", "top": "4%", "width": "26vmin"}}
  ]
 }

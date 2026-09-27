@@ -421,6 +421,8 @@ table.data td.wrap { white-space: normal; min-width: 220px; }
 .q-opt.correct { border-color: rgba(12, 163, 12, 0.6); background: rgba(12, 163, 12, 0.1); color: #b5f0b5; }
 .q-exp { margin-top: 8px; color: var(--muted); }
 .q-preview svg { max-width: 100%; height: auto; background: #f8fafc; border-radius: 8px; }
+/* 上面那条是给 SVG 配图的；数学公式的根号、长括号也是 SVG，要照 KaTeX 自己的尺寸、不加底色 */
+.q-preview .katex svg { max-width: none; height: inherit; background: none; border-radius: 0; }
 /* 每题一张卡，题与题之间留空隙。以前整串题共用一张大卡片、中间只隔一条细线，
    手机上上一题的题干紧贴下一题的标签和按钮，分不清按钮是哪一题的 */
 .list-card { padding: 0; background: none; border: 0; display: flex; flex-direction: column; gap: var(--list-gap); }

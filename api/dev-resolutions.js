@@ -6,7 +6,7 @@ const {
 
 const FILE_PATH = 'data/resolved_issues.json';
 const VIEWS = ['viewSubjects', 'viewStudy', 'viewNotes', 'viewArchive', 'viewFeedback'];
-const SUBJECTS = ['biology', 'chemistry', 'physics'];
+const SUBJECTS = ['biology', 'chemistry', 'physics', 'math'];
 const SUB_MODES = ['mcq', 'subj', 'wrong'];
 
 // 使用者填错东西（可以直接告诉他哪里错了）

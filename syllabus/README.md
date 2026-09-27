@@ -6,6 +6,7 @@ AI 出题脚本（[scripts/generate_questions.py](../scripts/generate_questions.
 syllabus/biology.md      ← 生物考纲
 syllabus/chemistry.md    ← 化学考纲
 syllabus/physics.md      ← 物理考纲
+syllabus/math.md         ← 高级数学（高数Ⅰ、Ⅱ）：课程标准整理成的文字档
 ```
 
 **放了，出题就会依据官方考点；没放，就只依据章节标题出题**（质量差很多）。
@@ -27,6 +28,8 @@ syllabus/physics.md      ← 物理考纲
 4. commit + push
 
 ✅ 目前三科考纲都已放好（2026 年考纲，生物 5 页、化学 8 页、物理 5 页）。
+
+**高级数学例外**：高数Ⅰ、Ⅱ的评量规格只写「评量内容请参阅《高级数学课程标准》」，范围在课程标准里（30 页，前面大半是素养通论）。所以 `math.md` 是把课程标准的 35 章内容标准、考试结构、公式表的符号写法整理成文字（约 8600 字），才放得进出题提示词的 12000 字上限。课程标准改版时，照新版表 4、表 8 改这份就好。
 
 ## 放什么内容最有用
 
