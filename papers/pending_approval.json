@@ -1,4 +1,293 @@
 {
-  "items": [],
-  "generated_at": "2026-09-27T09:56:36.815764+00:00"
+  "items": [
+    {
+      "id": "physics_gen_cf8d80dc",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：物理量和数据处理",
+      "q": "下列哪一组物理量的单位在国际单位制（SI）中全部属于基本单位？",
+      "options": [
+        "A. 质量、长度、力",
+        "B. 时间、电流、热力学温度",
+        "C. 速度、位移、质量",
+        "D. 电压、电阻、电荷量"
+      ],
+      "answer": 1,
+      "explanation": "考点：SI基本单位。国际单位制共有7个基本单位：长度（m）、质量（kg）、时间（s）、电流（A）、热力学温度（K）、物质的量（mol）和发光强度（cd）。\n- A选项中的“力”是导出单位（N = kg·m/s²）。\n- B选项中时间、电流、热力学温度均属于基本单位，正确。\n- C选项中的“速度”是导出单位（m/s）。\n- D选项中的电压（V）、电阻（Ω）、电荷量（C）全部是导出单位。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:42:09.553651+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "时间（s）、电流（A）和热力学温度（K）均为国际单位制中的基本物理量。"
+      }
+    },
+    {
+      "id": "physics_gen_8297f85c",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：物理量和数据处理",
+      "q": "某同学使用刻度尺测量一块矩形金属片的长度为 12.45 cm，使用游标卡尺测得其宽度为 4.2 cm。若要计算该金属片的面积，按有效数字的运算规则，其结果应记录为：",
+      "options": [
+        "A. 52.29 cm²",
+        "B. 52.3 cm²",
+        "C. 52 cm²",
+        "D. 50 cm²"
+      ],
+      "answer": 2,
+      "explanation": "考点：有效数字的乘法规则。在进行乘除运算时，结果的有效数字位数应与参与运算的物理量中有效数字位数最少的那一个一致。\n- 长度 12.45 cm 具有 4 位有效数字。\n- 宽度 4.2 cm 具有 2 位有效数字。\n- 计算面积：12.45 × 4.2 = 52.29 cm²。\n- 根据规则，结果应保留 2 位有效数字，故舍入为 52 cm²。常见错误是保留过多位数（A、B）或错误进位。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:42:09.553836+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "乘积的有效数字位数由有效数字最少的测量值（4.2 cm，2位）决定，修约后为 52 cm²。"
+      }
+    },
+    {
+      "id": "physics_gen_18fd07a9",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：物理量和数据处理",
+      "q": "在测量某单摆的重力加速度 g 的实验中，已知公式为 g = 4π²L / T²。若长度 L 的测量值有 1% 的相对不确定度（相对误差），周期 T 的测量值有 2% 的相对不确定度，则计算所得的重力加速度 g 的相对不确定度为：",
+      "options": [
+        "A. 3%",
+        "B. 4%",
+        "C. 5%",
+        "D. 9%"
+      ],
+      "answer": 2,
+      "explanation": "考点：间接测量量的误差传递（积商形式）。对于公式 g = k · L¹ · T⁻²（k为常数），其相对不确定度 Δg/g = |1|·(ΔL/L) + |-2|·(ΔT/T)。\n- Δg/g = 1% + 2 × 2% = 5%。\n注意：指数项的系数必须取绝对值并与对应的相对误差相乘，周期 T 的平方贡献了双倍的误差。常见错误是直接相加（1%+2%=3%）或忽略平方项（A、B）。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:42:09.554143+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "根据误差传递公式，相对不确定度为 Δg/g = ΔL/L + 2(ΔT/T) = 1% + 2×2% = 5%。"
+      }
+    },
+    {
+      "id": "physics_gen_4c4614b2",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：物理量和数据处理",
+      "q": "关于物理量的性质与实验数据的处理，下列叙述何者正确？\nI. 坎德拉（cd）是国际单位制中的基本单位之一\nII. 系统误差可以通过多次测量取平均值的方法来消除\nIII. 矢量相加必须遵守平行四边形定则或三角形定则\nIV. 若物理公式两边的量纲（次元）相同，则该公式在物理学上必定是完全正确的",
+      "options": [
+        "A. I 与 III",
+        "B. II 与 IV",
+        "C. I、II 与 III",
+        "D. I、III 与 IV"
+      ],
+      "answer": 0,
+      "explanation": "考点：综合物理常识与误差理论。\n- I 正确：坎德拉是发光强度的 SI 基本单位。\n- II 错误：多次测量取平均值只能减小偶然误差（随机误差），系统误差通常由仪器不准或实验原理缺陷引起，不能通过平均法消除。\n- III 正确：这是矢量（Vector）的定义特征，区别于标量。\n- IV 错误：量纲分析只能检查公式在单位逻辑上是否自洽，无法确定公式中的无量纲常数（如 1/2, 2π 等）是否正确。\n综上，只有 I 和 III 正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:42:09.554595+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "坎德拉是基本单位，矢量相加遵循平行四边形定则；系统误差不可通过取平均消除，量纲正确不代表物理公式完全正确。"
+      }
+    },
+    {
+      "id": "physics_gen_5e189406",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：直线运动",
+      "q": "一物体沿直线完成一段路程。已知它在前一半路程的平均速率为 10 m/s，在后一半路程的平均速率为 15 m/s。求该物体在全程中的平均速率。",
+      "options": [
+        "A. 11.5 m/s",
+        "B. 12.0 m/s",
+        "C. 12.5 m/s",
+        "D. 13.0 m/s"
+      ],
+      "answer": 1,
+      "explanation": "考点：平均速率的定义（总路程除以总时间）。设总路程为 2S，则前一半路程的时间 t1 = S/10，后一半路程的时间 t2 = S/15。全程平均速率 v = 2S / (t1 + t2) = 2S / (S/10 + S/15) = 2 / (5/30) = 12 m/s。常见错误是直接取算术平均值 (10+15)/2 = 12.5 m/s，这仅在两段“时间”相等时才成立，而本题是“路程”相等。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:44:04.008202+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "等距离平均速率为两速率的调和平均值，即 2/(1/10 + 1/15) = 12.0 m/s。"
+      }
+    },
+    {
+      "id": "physics_gen_a0edd47a",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：直线运动",
+      "q": "一辆汽车在直路上行驶，初速度为 10 m/s。司机踩下油门使汽车做匀加速直线运动，经过 80 m 的位移后，汽车的速度增加到 30 m/s。求该汽车运动过程中的加速度大小。",
+      "options": [
+        "A. 2.5 m/s²",
+        "B. 4.0 m/s²",
+        "C. 4.5 m/s²",
+        "D. 5.0 m/s²"
+      ],
+      "answer": 3,
+      "explanation": "考点：匀加速直线运动的速度-位移公式 v² = u² + 2as。已知 u = 10 m/s，v = 30 m/s，s = 80 m。代入公式：30² = 10² + 2 * a * 80，即 900 = 100 + 160a，解得 a = 800 / 160 = 5.0 m/s²。常见错误包括忘记对速度平方，或在移项计算时出现符号错误。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:44:04.008710+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "由匀加速运动公式 v² - v₀² = 2as，代入得 a = (900 - 100) / (2 × 80) = 5.0 m/s²。"
+      }
+    },
+    {
+      "id": "physics_gen_139de6da",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：直线运动",
+      "q": "在不计空气阻力的情况下，将一小球自地面垂直向上抛出。已知小球在空中运动 6 s 后落回抛出点（取重力加速度 g = 10 m/s²）。关于小球的运动，下列叙述中错误的是：",
+      "options": [
+        "A. 小球上升的最大高度为 45 m",
+        "B. 小球被抛出时的初速度大小为 30 m/s",
+        "C. 在 t = 4 s 时，小球相对于地面的位移大小为 40 m",
+        "D. 在 t = 4 s 时，小球的速度方向垂直向上"
+      ],
+      "answer": 3,
+      "explanation": "考点：垂直上抛运动的对称性与运动规律。由对称性知上升时间 t = 3 s。根据 v = u - gt，0 = u - 10(3)，得 u = 30 m/s（B正确）。最大高度 H = (1/2)gt² = 0.5 * 10 * 3² = 45 m（A正确）。t = 4 s 时的位移 s = ut - (1/2)gt² = 30(4) - 0.5(10)(16) = 120 - 80 = 40 m（C正确）。t = 4 s 时的速度 v = u - gt = 30 - 10(4) = -10 m/s，负号表示方向向下，故D叙述错误。学生常混淆速度的方向与位移的方向。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:44:04.009229+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "上升至最高点用时 3 s，在 t = 4 s 时小球处于下落阶段，速度方向垂直向下。"
+      }
+    },
+    {
+      "id": "physics_gen_730cc23a",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：直线运动",
+      "q": "一个质点从静止开始做匀加速直线运动，历时 T 秒后速度达到 V；紧接着质点立即做匀减速直线运动，再经过 2T 秒后恰好停止。求质点在加速阶段与减速阶段所通过的位移大小之比。",
+      "options": [
+        "A. 1 : 2",
+        "B. 1 : 4",
+        "C. 2 : 1",
+        "D. 1 : 1"
+      ],
+      "answer": 0,
+      "explanation": "考点：匀变速直线运动的平均速度公式。对于匀变速运动，位移 s = (初速 + 末速) / 2 * 时间。加速阶段位移 s1 = (0 + V) / 2 * T = VT/2。减速阶段位移 s2 = (V + 0) / 2 * 2T = VT。因此 s1 : s2 = (VT/2) : VT = 1 : 2。此题也可通过 v-t 图像面积法快速判断：两个三角形的高（速度 V）相同，底边之比为 T : 2T，则面积之比即为 1 : 2。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:44:04.009779+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "加速和减速阶段的平均速度均等于 V/2，位移比等于时间比 T : 2T = 1 : 2。"
+      }
+    },
+    {
+      "id": "physics_gen_50ba9955",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第三章：牛顿运动定律",
+      "q": "关于物体的惯性，下列哪些叙述是正确的？\nI. 物体只有在静止或匀速直线运动时才具有惯性\nII. 物体的质量越大，其运动状态越难改变，说明其惯性越大\nIII. 在外力作用下，物体的惯性会随其加速度的增大而减小\nIV. 惯性是物体抵抗运动状态改变的一种属性",
+      "options": [
+        "A. 只有 I 和 II",
+        "B. 只有 II 和 IV",
+        "C. 只有 II 和 III",
+        "D. 只有 I、II 和 IV"
+      ],
+      "answer": 1,
+      "explanation": "本题考查对惯性概念的理解。惯性是物体的固有属性，仅由质量决定，与物体的运动状态（静止、匀速或加速）以及受力情况无关。因此 I 和 III 错误。质量是惯性大小的唯一量度，质量越大惯性越大，表现为运动状态越难改变，故 II 和 IV 正确。学生常误认为处于失重状态或加速状态的物体惯性会改变。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:44:38.081327+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "惯性是物体的固有属性，大小仅由质量决定，与运动状态和受力情况无关。"
+      }
+    },
+    {
+      "id": "physics_gen_9ab01dcc",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第三章：牛顿运动定律",
+      "q": "两名学生 A 和 B 穿着溜冰鞋面对面静止站在光滑冰面上。学生 A 的质量为 50 kg，学生 B 的质量为 70 kg。当学生 A 用 140 N 的力推学生 B 时，下列叙述何者正确？",
+      "options": [
+        "A. 学生 A 受到的反作用力为 100 N",
+        "B. 学生 B 受到的推力大于学生 A 受到的反作用力",
+        "C. 学生 A 获得的加速度大小为 2.8 m/s²",
+        "D. 学生 B 获得的加速度大小为 2.0 m/s²"
+      ],
+      "answer": 3,
+      "explanation": "本题结合牛顿第二和第三运动定律。根据牛顿第三定律，作用力与反作用力大小相等、方向相反，故 A 对 B 推力为 140 N，B 对 A 的反作用力也必为 140 N（排除 A、B）。根据牛顿第二定律 a = F/m：学生 A 的加速度 aA = 140/50 = 2.8 m/s²；学生 B 的加速度 aB = 140/70 = 2.0 m/s²。因此 D 正确，C 选项数值虽对但描述的是 A 的加速度。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "⚠️ 答案有疑：出题时给的是 D，AI 复核选 C（根据牛顿第三定律，A 受到 B 大小为 140 N 的反作用力，故 A 的加速度 a_A = 140 / 50 = 2.8 m/s²。），请核对"
+      ],
+      "generated_at": "2026-09-27T10:44:38.081966+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "根据牛顿第三定律，A 受到 B 大小为 140 N 的反作用力，故 A 的加速度 a_A = 140 / 50 = 2.8 m/s²。"
+      }
+    },
+    {
+      "id": "physics_gen_1a8f4758",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第三章：牛顿运动定律",
+      "q": "在光滑水平面上，有两个质量分别为 4 kg 和 6 kg 的木块甲和乙，中间用一根不可伸长的轻绳连接。现用 20 N 的水平恒力拉动木块乙，使两木块一起向右作匀加速运动。求连接两木块的轻绳上的张力大小。",
+      "options": [
+        "A. 8 N",
+        "B. 10 N",
+        "C. 12 N",
+        "D. 20 N"
+      ],
+      "answer": 0,
+      "explanation": "本题考查连接体问题的处理。首先将甲乙看作整体，根据牛顿第二定律 F = (m1 + m2)a，求得系统加速度 a = 20 / (4 + 6) = 2.0 m/s²。接着隔离木块甲（处于后方的木块），甲在水平方向仅受轻绳张力 T 的作用，根据 F = ma，得 T = m_甲 * a = 4 * 2.0 = 8 N。常见错误包括认为张力等于拉力 20 N，或误用木块乙的质量进行计算（得出 12 N）。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T10:44:38.082945+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "整体加速度 a = 20 / (4 + 6) = 2 m/s²，对木块甲由牛顿第二定律得绳子张力 T = m_甲 a = 4 × 2 = 8 N。"
+      }
+    }
+  ],
+  "generated_at": "2026-09-27T10:47:07.937701+00:00"
 }
