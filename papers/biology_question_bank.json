@@ -885,8 +885,6 @@
           ],
           "answer": 3,
           "explanation": "胎盘具有屏障作用，血细胞和大分子物质不能通过，但氧气、营养物质和某些抗体（如IgG）可以经胎盘进入胎儿体内，使胎儿获得被动免疫。",
-          "hidden": true,
-          "hidden_at": "2026-09-27T11:29:12.978Z",
           "moved_from": {
             "chapterId": "chap9",
             "index": 3
