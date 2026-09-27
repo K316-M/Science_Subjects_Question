@@ -1,29 +1,6 @@
 {
   "items": [
     {
-      "id": "chemistry_gen_f29c1c4f",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap2",
-      "chapter_title": "第二章：原子与分子",
-      "q": "设 NA 为阿伏加德罗常数的值。下列有关微粒数目的叙述中，正确的是：",
-      "options": [
-        "A. 标准状况下，22.4 L 的水（H2O）中所含有的分子数为 NA",
-        "B. 常温常压下，32 g 氧气（O2）与臭氧（O3）的混合气体中所含的氧原子数为 2 NA",
-        "C. 0.1 mol/L 的硫酸钠（Na2SO4）溶液中，所含的钠离子（Na+）数为 0.2 NA",
-        "D. 1 mol 氦气（He）中所含有的原子数为 2 NA"
-      ],
-      "answer": 1,
-      "explanation": "本题考查阿伏加德罗常数、气体摩尔体积、溶液浓度及分子结构的综合辨析。\n- A项错误：标准状况下，水（H2O）为液体，不能使用气体摩尔体积（22.4 L/mol）进行计算，22.4 L 水的质量远大于 18 g，其分子数远大于 NA。\n- B项正确：氧气（O2）和臭氧（O3）均仅由氧原子组成，因此 32 g 该混合气体中氧原子的总质量必然为 32 g。氧原子的物质的量为 32 g / 16 g/mol = 2 mol，故所含氧原子数为 2 NA。\n- C项错误：只给出了溶液的物质的量浓度，未给出溶液的体积，无法计算溶质的物质的量，因此无法确定钠离子数。\n- D项错误：氦气（He）属于稀有气体，是单原子分子，因此 1 mol 氦气中所含的原子数应为 NA，而非 2 NA。",
-      "origin": "ai_generated",
-      "needs_expert_check": true,
-      "flags": [
-        "AI 依考纲生成的原创题，采纳前请核对科学正确性与答案"
-      ],
-      "generated_at": "2026-09-26T08:25:09.609539+00:00",
-      "syllabus_used": true
-    },
-    {
       "id": "chemistry_gen_2bf253f3",
       "subject": "chemistry",
       "type": "mcq",
