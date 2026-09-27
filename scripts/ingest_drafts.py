@@ -35,8 +35,8 @@ import qa
 from qa import extract_json_array
 from generate_questions import normalize, too_similar
 
-SUBJECTS = ["biology", "chemistry", "physics"]
-SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理"}
+SUBJECTS = ["biology", "chemistry", "physics", "math"]
+SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理", "math": "高级数学"}
 DRAFTS_DIR = "drafts"
 PAPERS_DIR = "papers"
 IMAGES_DIR = "images"
@@ -47,6 +47,15 @@ PROBLEM_FLAG_PATH = "has_ingest_problems.txt"  # true：有档案失败，或一
 SKIP_NAMES = {".gitkeep", "README.md"}
 FIGURE_WORDS = ["如图", "下图", "上图", "图中", "图示", "曲线", "装置图", "示意图", "下表", "如下表"]
 LETTERS = "ABCD"
+PAPERS = ("I", "II")
+# 高数Ⅰ／Ⅱ：AI 看卷头认；照片第二页以后没有卷头，就看档名有没有写（例如「2025高数2_p3.jpg」）。先比 II，因为「高数II」也含「高数I」
+PAPER_IN_FILENAME = [("II", re.compile(r"SC0?7|高数\s*(2|二|Ⅱ|II)", re.I)),
+                     ("I", re.compile(r"SC0?6|高数\s*(1|一|Ⅰ|I)", re.I))]
+MATH_INGEST_RULES = """7. 看卷头判断是哪一份试卷，填 paper：「高级数学(I)」「高数Ⅰ」或试卷编号 SC06 → "I"；
+   「高级数学(II)」「高数Ⅱ」或 SC07 → "II"；这一页看不到卷头就填 null，不要猜。
+""" + qa.MATH_RULES + r"""- 原卷的公式照原样转成 LaTeX，不化简、不改写；向量照原卷写法（粗体 \mathbf{a}、箭头 \overrightarrow{AB}）。
+"""
+MATH_PAPER_FIELD = ',\n  "paper": "I 或 II 或 null"'
 
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
@@ -96,7 +105,7 @@ def build_prompt(subject, chapters):
      几题共用同一张图就各自填同一个框。
 6. 依下列官方章节框架判断所属章节，填 chapter_id；真的判断不了填 "unclassified"：
 {chapter_lines}
-
+{MATH_INGEST_RULES if subject == "math" else ""}
 只回传一个 JSON 数组，不要 Markdown 代码块或任何说明文字。每项：
 {{
   "type": "mcq 或 subjective",
@@ -110,9 +119,13 @@ def build_prompt(subject, chapters):
   "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
   "answer": 0,
   "explanation": "考点解析（mcq）",
-  "answer_text": "参考答案与得分点（subjective）"
+  "answer_text": "参考答案与得分点（subjective）"{MATH_PAPER_FIELD if subject == "math" else ""}
 }}
 """
+
+
+def paper_from_filename(fname):
+    return next((paper for paper, pattern in PAPER_IN_FILENAME if pattern.search(fname)), None)
 
 
 def list_draft_files(draft_dir):
@@ -137,7 +150,9 @@ def structural_problem(record):
     for i, opt in enumerate(options):
         if not re.match(rf"^{LETTERS[i]}[.．]\s*\S", str(opt).strip()):
             return f"第 {i + 1} 个选项不是以「{LETTERS[i]}.」开头"
-    if len({normalize(re.sub(r'^[A-D][.．]\s*', '', o)) for o in options}) != 4:
+    # 数学的 -1 和 1、0.5 和 5 是不同选项：负号、小数点不能像其他科那样去掉再比
+    same = (lambda o: re.sub(r"\s+", "", o)) if record["subject"] == "math" else normalize
+    if len({same(re.sub(r'^[A-D][.．]\s*', '', o)) for o in options}) != 4:
         return "有重复选项"
     if not isinstance(record.get("answer"), int) or not 0 <= record["answer"] <= 3:
         return "答案不是 A–D"
@@ -188,6 +203,10 @@ def process_file(path, subject, ctx, report):
             "flags": list(notes) + ([backup] if backup else []),
             "ingested_at": now_iso(),
         }
+        if subject == "math":
+            paper = entry.get("paper") if entry.get("paper") in PAPERS else paper_from_filename(fname)
+            if paper:
+                record["paper"] = paper
         if qtype == "subjective":
             record["question"] = str(entry.get("question") or entry.get("q") or "").strip()
             record["answer"] = str(entry.get("answer_text") or entry.get("answer") or "").strip()
@@ -235,7 +254,7 @@ def process_file(path, subject, ctx, report):
                 record["flags"].append("含配图：放的是整页原图，请裁剪成这题的图")
             else:
                 record["flags"].append("需要配图，但原档里抓不到图，请从原档截图补上")
-        elif any(w in stem for w in FIGURE_WORDS):
+        elif any(w in stem for w in FIGURE_WORDS if not (subject == "math" and w == "曲线")):   # 数学的「曲线 y=x²」是函数，不是图
             record["flags"].append("题干提到图表，但 AI 判断不需要配图，请确认")
         accepted.append(record)
 

@@ -2,8 +2,10 @@
    开发者工作台
    ========================================================================== */
 
-const SUBJECTS = ['biology', 'chemistry', 'physics'];
-const SUBJECT_LABEL = { biology: '生物', chemistry: '化学', physics: '物理' };
+const SUBJECTS = ['biology', 'chemistry', 'physics', 'math'];
+const SUBJECT_LABEL = { biology: '生物', chemistry: '化学', physics: '物理', math: '数学' };
+// 数学的卷别（题目的 paper 栏位）：模拟统考照它分高数Ⅰ、Ⅱ 抽题；没标的照章节分（见 index.html 的 MATH_ADVANCED_CHAPTERS）
+const PAPER_LABEL = { I: '高数Ⅰ', II: '高数Ⅱ' };
 const VIEW_LABEL = {
   viewSubjects: '主页（学科选择）',
   viewStudy: '做题页',
@@ -135,19 +137,14 @@ async function loadData() {
     if (handleUnauthenticated(status)) return;
     if (ok) fresh = data;
   }
-  const [bio, chem, phys, pending] = fresh
-    ? [fresh.banks.biology, fresh.banks.chemistry, fresh.banks.physics, fresh.pending]
+  const [banks, pending] = fresh
+    ? [fresh.banks, fresh.pending]
     : await Promise.all([
-      fetchJson('/papers/biology_question_bank.json'),
-      fetchJson('/papers/chemistry_question_bank.json'),
-      fetchJson('/papers/physics_question_bank.json'),
+      Promise.all(SUBJECTS.map(s => fetchJson(`/papers/${s}_question_bank.json`)))
+        .then(list => Object.fromEntries(SUBJECTS.map((s, i) => [s, list[i]]))),
       fetchJson('/papers/pending_approval.json'),
     ]);
-  state.banks = {
-    biology: (bio && bio.sections) || [],
-    chemistry: (chem && chem.sections) || [],
-    physics: (phys && phys.sections) || [],
-  };
+  state.banks = Object.fromEntries(SUBJECTS.map(s => [s, (banks[s] && banks[s].sections) || []]));
   state.pending = (pending && Array.isArray(pending.items)) ? pending.items : [];
   await loadResolutions();
   state.issues = inspectBanks();
@@ -913,25 +910,48 @@ function imagePicker(item) {
 }
 
 // 回传 { node, patch(), image() }：patch 只含改过的栏位，image 是新上传的图（data URL）或 null
-function questionEditor(item, isSubj) {
+function questionEditor(item, isSubj, subject) {
   const box = el('div', { class: 'editor' });
   const area = (value, rows) => el('textarea', { class: 'textarea', value: value || '', rows });
   const field = (label, control) => el('div', { class: 'field' }, el('span', { class: 'field-label', text: label }), control);
   const changed = values => Object.fromEntries(Object.entries(values)
     .filter(([k, v]) => v !== String(item[k] == null ? '' : item[k]).trim()));
   const img = imagePicker(item);
+  // 数学才有卷别
+  let paper = null;
+  if (subject === 'math') {
+    paper = el('select', { class: 'select select-inline', attrs: { 'aria-label': '卷别' } },
+      [['', '没标（照章节分）'], ['I', PAPER_LABEL.I], ['II', PAPER_LABEL.II]].map(([v, t]) =>
+        el('option', { text: t, selected: (item.paper || '') === v, attrs: { value: v } })));
+    box.appendChild(field('卷别', paper));
+  }
+  const withPaper = p => {
+    if (paper && paper.value !== (item.paper || '')) p.paper = paper.value;
+    return p;
+  };
+  // 数学：文字框里是 LaTeX 原文，底下照学生站排好公式给你对照；边打边更新
+  const livePreview = read => {
+    if (subject !== 'math') return null;
+    const slot = el('div');
+    const draw = () => slot.replaceChildren(questionPreview(read(), isSubj ? 'subj' : 'mcq'));
+    let timer = 0;
+    box.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(draw, 300); });
+    draw();
+    return field('预览（学生站看到的公式）', slot);
+  };
 
   if (isSubj) {
     const q = area(item.question, 5);
     const a = area(item.answer, 6);
-    appendChildren(box, [field('题干', q), field('配图', img.node), field('参考答案（学生站照 HTML 显示，<br> 是换行）', a)]);
+    appendChildren(box, [field('题干', q), field('配图', img.node), field('参考答案（学生站照 HTML 显示，<br> 是换行）', a),
+      livePreview(() => ({ question: q.value, answer: a.value }))]);
     return {
       node: box,
       image: img.image,
       patch: () => {
         const p = changed({ question: q.value.trim(), answer: a.value.trim() });
         if (img.removed()) p.image = '';
-        return p;
+        return withPaper(p);
       },
     };
   }
@@ -948,6 +968,7 @@ function questionEditor(item, isSubj) {
     field('选项（圈选的是正确答案）', el('div', { class: 'stack', style: 'gap:6px' },
       opts.map((o, i) => el('div', { class: 'ed-opt' }, radios[i], o)))),
     field('考点解析', exp),
+    livePreview(() => ({ q: q.value, options: opts.map(o => o.value), answer: radios.findIndex(r => r.checked), explanation: exp.value })),
   ]);
   return {
     node: box,
@@ -959,7 +980,7 @@ function questionEditor(item, isSubj) {
       const answer = radios.findIndex(r => r.checked);
       if (answer >= 0 && answer !== item.answer) p.answer = answer;
       if (img.removed()) p.image = '';
-      return p;
+      return withPaper(p);
     },
   };
 }
@@ -1006,7 +1027,7 @@ function bankEditPanel(subject, chapterIdx, type, qIndex) {
   const sec = state.banks[subject][chapterIdx];
   const list = type === 'mcq' ? sec.mcqs : sec.subjectives;
   const item = list[qIndex];
-  const ed = questionEditor(item, type !== 'mcq');
+  const ed = questionEditor(item, type !== 'mcq', subject);
   const save = el('button', { class: 'btn btn-primary btn-sm', type: 'button', disabled: !canPublish() }, icon('check'), el('span', { text: '存档并上线' }));
   save.addEventListener('click', async () => {
     const patch = ed.patch();
@@ -1188,6 +1209,7 @@ function renderEditor(body) {
         el('div', { class: 'issue-top' },
           el('span', { class: 'pill', text: `${SUBJECT_LABEL[h.subject]} · ${h.chapterTitle}` }),
           el('span', { class: 'pill', text: `${h.type === 'mcq' ? '选择题' : '做答题'} 第 ${h.qIndex + 1} 题` }),
+          PAPER_LABEL[h.item.paper] ? el('span', { class: 'pill', text: PAPER_LABEL[h.item.paper] }) : null,
           hidden ? el('span', { class: 'pill pill-retired' }, icon('eyeOff'), el('span', { text: moved ? '已移走' : '已下架' })) : null,
           actions),
         el('div', { class: 'issue-text', text: String(text || '（空）').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').slice(0, 160) }),
@@ -1239,6 +1261,7 @@ function originPills(item) {
     el('span', { class: 'pill', text: item.origin === 'ai_generated' ? '🤖 AI 出题' : '📄 档案录入' }),
     item.type !== 'subjective' && item.answer_source === 'marked' ? el('span', { class: 'pill', text: '答案：原档标的' }) : null,
     item.type !== 'subjective' && item.answer_source === 'ai' ? el('span', { class: 'pill', text: '答案：AI 作答' }) : null,
+    item.subject === 'math' ? el('span', { class: 'pill', text: PAPER_LABEL[item.paper] || '卷别没标' }) : null,
   ];
 }
 
@@ -1252,7 +1275,7 @@ function rejectButton(item) {
 }
 
 function problemCard(item, reasons) {
-  const ed = questionEditor(item, item.type === 'subjective');
+  const ed = questionEditor(item, item.type === 'subjective', item.subject);
   const picker = chapterPicker(item);
   const adopt = el('button', { class: 'btn btn-primary btn-sm', type: 'button', disabled: !canPublish() }, icon('check'), el('span', { text: '采纳（连同修改）' }));
   const save = el('button', { class: 'btn btn-sm', type: 'button', disabled: !canPublish() }, el('span', { text: '只存修改' }));
@@ -1290,7 +1313,7 @@ function cleanList(items) {
     const toggle = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', attrs: { 'aria-expanded': 'false' } }, icon('edit'), el('span', { text: '编辑' }));
     toggle.addEventListener('click', () => {
       if (!row.ed) {
-        row.ed = questionEditor(item, item.type === 'subjective');
+        row.ed = questionEditor(item, item.type === 'subjective', item.subject);
         appendChildren(panel, [row.ed.node, el('div', { class: 'row' },
           el('span', { class: 'field-hint', text: '改好後照样勾选、一起采纳；不要这题就' }), rejectButton(item))]);
       }
@@ -1339,7 +1362,7 @@ function renderPending(body, actions) {
   if (!state.pending.length) {
     body.appendChild(el('div', { class: 'card' }, el('div', { class: 'empty' }, icon('sparkles'),
       el('div', { text: '目前没有待审核的题目。' }),
-      el('div', { class: 'field-hint', style: 'margin-top:6px', text: '把题目档（照片、PDF、Word、PowerPoint、纯文字都可以）放进 drafts/biology、drafts/chemistry 或 drafts/physics 并推送；或到 Actions 手动跑「AI 依考纲出题」。' }))));
+      el('div', { class: 'field-hint', style: 'margin-top:6px', text: '把题目档（照片、PDF、Word、PowerPoint、纯文字都可以）放进 drafts/biology、drafts/chemistry、drafts/physics 或 drafts/math 并推送；或到 Actions 手动跑「AI 依考纲出题」。' }))));
     return;
   }
 

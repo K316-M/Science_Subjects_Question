@@ -1,7 +1,9 @@
 // 题目资料的共用规则：审题（dev-approve）与改题（dev-edit）都用这一套，
 // 才不会出现「待审区改得过、进了题库却是坏的」这种两边标准不一的情况。
 
-const SUBJECTS = ['biology', 'chemistry', 'physics'];
+const SUBJECTS = ['biology', 'chemistry', 'physics', 'math'];
+// 高级数学的题目各属统考哪一份卷：高数Ⅰ（SC06）或高数Ⅱ（SC07）。模拟统考照这个分题池
+const PAPERS = ['I', 'II'];
 const PENDING_PATH = 'papers/pending_approval.json';
 const bankPath = subject => `papers/${subject}_question_bank.json`;
 
@@ -34,6 +36,7 @@ function toBankEntry(item) {
       question,
       answer,
     };
+    if (PAPERS.includes(item.paper)) entry.paper = item.paper;
 
     // 做答题也常要看图（例如标出泌尿系统各部位），配图要跟着进题库
     if (item.image) {
@@ -87,6 +90,7 @@ function toBankEntry(item) {
     answer: item.answer,
     explanation: String(item.explanation || '').trim(),
   };
+  if (PAPERS.includes(item.paper)) entry.paper = item.paper;
 
   if (item.image) {
     entry.image = String(item.image);
@@ -96,7 +100,7 @@ function toBankEntry(item) {
 }
 
 // /dev 编辑器送来的修改：只收这几个栏位，其余一律忽略
-const IMAGE_PATH = /^\.\/images\/(biology|chemistry|physics)\/[\w.-]+\.(png|jpe?g|webp)$/;
+const IMAGE_PATH = /^\.\/images\/(biology|chemistry|physics|math)\/[\w.-]+\.(png|jpe?g|webp)$/;
 
 function applyPatch(item, patch) {
   const out = { ...item };
@@ -108,6 +112,13 @@ function applyPatch(item, patch) {
     if (!img) delete out.image;
     else if (IMAGE_PATH.test(img)) out.image = img;
     else throw new InputError('配图路径不对。');
+  }
+
+  if ('paper' in p) {
+    const paper = text(p.paper);
+    if (!paper) delete out.paper;
+    else if (PAPERS.includes(paper)) out.paper = paper;
+    else throw new InputError('卷别只能是高数Ⅰ或高数Ⅱ。');
   }
 
   if (item.type === 'subjective') {
@@ -147,5 +158,5 @@ function decodeImage(subject, name, dataUrl) {
 }
 
 module.exports = {
-  SUBJECTS, PENDING_PATH, bankPath, InputError, normalize, stemOf, toBankEntry, applyPatch, decodeImage,
+  SUBJECTS, PAPERS, PENDING_PATH, bankPath, InputError, normalize, stemOf, toBankEntry, applyPatch, decodeImage,
 };

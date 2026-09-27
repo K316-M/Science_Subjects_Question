@@ -6,6 +6,7 @@
 - `drafts/biology/`   生物
 - `drafts/chemistry/` 化学
 - `drafts/physics/`   物理
+- `drafts/math/`      高级数学（高数Ⅰ、高数Ⅱ都放这里；AI 会从卷头认出是哪一份。照片第二页以後没有卷头，档名写上「高数1」「高数2」就照档名标；都认不出来的到 /dev 补标）
 
 ## 收哪些格式
 

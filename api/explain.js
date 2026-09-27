@@ -3,18 +3,18 @@
 // 每台装置每小时限 30 次、同一个网络合计 300 次（和批改分开计）。
 // 讲过的存进 Upstash 给全班共用（见 _lib/ai.js 的 explainKey）：拿现成的不扣次数、不呼叫 Gemini。
 const { sendJson, readJsonBody, sameOrigin } = require('./_lib/devauth');
-const { SUBJECTS, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain } = require('./_lib/ai');
+const { SUBJECTS, MATH_PROMPT_RULE, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain } = require('./_lib/ai');
 
 const LIMIT_PER_HOUR = 30;
 const NETWORK_LIMIT_PER_HOUR = 300;
 const LETTERS = 'ABCD';
 
-function buildPrompt(subjectLabel, item, chosen) {
+function buildPrompt(subject, item, chosen) {
   const options = (item.options || []).map(o => htmlToText(o)).join('\n');
   const right = LETTERS[item.answer];
   const picked = LETTERS[chosen];
   const correct = chosen === item.answer;
-  return `你是马来西亚华文独中统考（UEC 高中）${subjectLabel}科老师，用简体中文、对高中生说话的口吻，讲解一道选择题。
+  return `你是马来西亚华文独中统考（UEC 高中）${SUBJECTS[subject]}科老师，用简体中文、对高中生说话的口吻，讲解一道选择题。
 
 【题目】
 ${htmlToText(item.q)}
@@ -30,7 +30,7 @@ ${options}
     : '先讲学生选的 ' + picked + ' 为什么不对、最可能是哪个观念弄混了，再讲为什么 ' + right + ' 才对。'}
 3. 最後给一个好记的小技巧或口诀，帮他下次不会再错。
 4. 总长不超过 220 字；不要用 Markdown 符号；讲的内容必须和正确答案 ${right} 一致，不可以推翻它。
-
+${subject === 'math' ? '5. ' + MATH_PROMPT_RULE + '\n' : ''}
 只回传 JSON：{"concept":"考点（一句）","why":"讲解（可分成几句）","tip":"小技巧（一句）"}`;
 }
 
@@ -69,7 +69,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { model, json } = await callGemini(key, buildPrompt(SUBJECTS[subject], item, chosen));
+    const { model, json } = await callGemini(key, buildPrompt(subject, item, chosen));
     const clip = (v, n) => String(v || '').replace(/[*#`]/g, '').trim().slice(0, n);
     const result = { concept: clip(json.concept, 80), why: clip(json.why, 400), tip: clip(json.tip, 120) };
     if (!result.why) throw new Error('empty');

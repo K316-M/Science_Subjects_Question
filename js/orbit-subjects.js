@@ -19,7 +19,7 @@
     { key: 'biology',   name: '生物',     en: 'Biology',     accent: '#059669', deco: 'dna',       glyph: 'leaf',     enabled: true,  note: '光合呼吸 · 神经调节 · 遗传育种' },
     { key: 'chemistry', name: '化学',     en: 'Chemistry',   accent: '#7c3aed', deco: 'atom',      glyph: 'flask',    enabled: true,  note: '化学键 · 化学平衡 · 有机化学' },
     { key: 'physics',   name: '物理',     en: 'Physics',     accent: '#0284c7', deco: 'pendulum',  glyph: 'wave',     enabled: true,  note: '力学 · 电磁学 · 光学' },
-    { key: 'math',      name: '高级数学', en: 'Adv. Maths',  accent: '#d97706', deco: 'geometry',  glyph: 'graph',    enabled: false, note: '尚未开放' },
+    { key: 'math',      name: '高级数学', en: 'Adv. Maths',  accent: '#d97706', deco: 'geometry',  glyph: 'graph',    enabled: true,  note: '高数Ⅰ · 高数Ⅱ · 函数到微积分' },
   ];
   /* ======================================== */
 

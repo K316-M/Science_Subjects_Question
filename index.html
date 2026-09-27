@@ -306,6 +306,7 @@
       font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
     .mock-exam-btn:hover { border-color: var(--fn-time); background: var(--fn-time-soft); }
     .mock-exam-btn[hidden] { display: none; }
+    .mock-exam-group { display: flex; flex-wrap: wrap; gap: 8px; }
 
     /* 章节选单：一行，点开才列出全部章节 */
     .chapter-picker { display: flex; align-items: stretch; gap: 8px; margin-bottom: 12px; }
@@ -1104,7 +1105,10 @@
     <div class="chapter-panel" id="chapterPanel" hidden>
       <div class="bank-row">
         <p class="bank-coverage" id="bankCoverage"></p>
-        <button type="button" class="mock-exam-btn" id="mockExamBtn" onclick="startMockExam()" hidden><svg class="ic" aria-hidden="true"><use href="#i-timer"></use></svg><span id="mockExamLabel">模拟统考</span></button>
+        <div class="mock-exam-group">
+          <button type="button" class="mock-exam-btn" id="mockExamBtn" onclick="startMockExam(0)" hidden><svg class="ic" aria-hidden="true"><use href="#i-timer"></use></svg><span id="mockExamLabel">模拟统考</span></button>
+          <button type="button" class="mock-exam-btn" id="mockExamBtn2" onclick="startMockExam(1)" hidden><svg class="ic" aria-hidden="true"><use href="#i-timer"></use></svg><span>模拟统考</span></button>
+        </div>
       </div>
       <div class="chapter-bookmark-rail" id="chapterRail" role="tablist" aria-label="章节"></div>
       <!-- 章节卡横向排不下时的捲动条：手机看得出可以滑，电脑可以拖它（卡片本身也能用滑鼠拖） -->
@@ -1142,6 +1146,7 @@
         <button class="archive-tab active" role="tab" aria-selected="true" data-arc-subject="biology" onclick="switchArchiveSubject('biology')">生物</button>
         <button class="archive-tab" role="tab" aria-selected="false" tabindex="-1" data-arc-subject="chemistry" onclick="switchArchiveSubject('chemistry')">化学</button>
         <button class="archive-tab" role="tab" aria-selected="false" tabindex="-1" data-arc-subject="physics" onclick="switchArchiveSubject('physics')">物理</button>
+        <button class="archive-tab" role="tab" aria-selected="false" tabindex="-1" data-arc-subject="math" onclick="switchArchiveSubject('math')">数学</button>
       </div>
       <label style="display:flex; align-items:center; gap: 6px; font-size:12px; font-weight:700; color:#334155; cursor:pointer;">
         <input type="checkbox" checked onchange="setArchiveIncludeAnswers(this.checked)" style="width:15px; height:15px; accent-color: var(--primary);">
@@ -1392,7 +1397,8 @@
   const SUBJECT_THEME = {
     biology:   { musicRoot: 196.00, filterHz: 1800, arpGap: 2400, blobA: '#6ee7b7', blobB: '#059669' },
     chemistry: { musicRoot: 174.61, filterHz: 1400, arpGap: 2000, blobA: '#c4b5fd', blobB: '#7c3aed' },
-    physics:   { musicRoot: 130.81, filterHz: 1100, arpGap: 2800, blobA: '#7dd3fc', blobB: '#0284c7' }
+    physics:   { musicRoot: 130.81, filterHz: 1100, arpGap: 2800, blobA: '#7dd3fc', blobB: '#0284c7' },
+    math:      { musicRoot: 146.83, filterHz: 1300, arpGap: 2600, blobA: '#fcd34d', blobB: '#d97706' }
   };
 
   // 纯五度堆叠音程：任意组合都不会产生刺耳的不协和碰撞，适合长时间背景铺底
@@ -1824,7 +1830,7 @@ let loadedSubject = null;   // fullDatabase 目前装的是哪一科（载入中
 
 // 支持根据当前选中的学科，动态载入对应的题库
 async function loadSubjectData(subjectName, initialChapterIdx) {
-  currentSubject = subjectName; // 'biology' | 'chemistry' | 'physics' 等
+  currentSubject = subjectName; // 'biology' | 'chemistry' | 'physics' | 'math'
   const targetPath = `/papers/${subjectName}_question_bank.json`;
 
   try {
@@ -1880,7 +1886,7 @@ async function loadSubjectData(subjectName, initialChapterIdx) {
 }
 
 // 用更通用的 openSubject 替换原有仅处理 biology 的实现
-const SUBJECT_LABELS = { biology: '生物科', chemistry: '化学科', physics: '物理科' };
+const SUBJECT_LABELS = { biology: '生物科', chemistry: '化学科', physics: '物理科', math: '高级数学' };
 
 function openSubject(subject, initialChapterIdx, subMode) {
   playSound('pop');
@@ -2304,37 +2310,54 @@ function openSubject(subject, initialChapterIdx, subMode) {
     el.textContent = sections.length
       ? `依考纲共 ${sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`
       : '';
-    const mock = mockExamPlan();
-    const btn = document.getElementById('mockExamBtn');
-    if (btn) {
+    // 一科一个按钮；数学分高数Ⅰ、高数Ⅱ两个
+    const papers = mockPapers();
+    document.querySelectorAll('.mock-exam-btn').forEach((btn, i) => {
+      const mock = i < papers.length ? mockExamPlan(papers[i]) : null;
       btn.hidden = !mock;
-      if (mock) document.getElementById('mockExamLabel').textContent = `模拟统考 · 试卷一 ${mock.minutes} 分钟`;
-    }
+      if (mock) btn.querySelector('span').textContent = mock.paper
+        ? `模拟${PAPER_LABEL[mock.paper]} · ${mock.minutes} 分钟`
+        : `模拟统考 · 试卷一 ${mock.minutes} 分钟`;
+    });
   }
 
   // ---- 模拟统考：从全科选择题随机抽题，照统考时间表的试卷一时间计时 ----
-  // 真卷的题数没有写在时间表上，这里假设一份试卷一是 MOCK_QUESTIONS 题；题库不够就按比例缩短时间
+  // 真卷的题数没有写在时间表上，这里假设一份试卷一是 MOCK_QUESTIONS 题（高数Ⅰ、Ⅱ 照评量规格是 15 题）；
+  // 题库不够就按比例缩短时间
   const MOCK_QUESTIONS = 40;
-  const EXAM_SUBJECT = { biology: '生物', chemistry: '化学', physics: '物理' };
-  function mockExamPlan() {
+  const MOCK_QUESTIONS_BY_SUBJECT = { math: 15 };
+  // 对到 js/exam-timetable.js 的科目名；数学用「科目:卷别」
+  const EXAM_SUBJECT = { biology: '生物', chemistry: '化学', physics: '物理', 'math:I': '高级数学（Ⅰ）', 'math:II': '高级数学（Ⅱ）' };
+  const PAPER_LABEL = { I: '高数Ⅰ', II: '高数Ⅱ' };
+  // 高数Ⅰ只考《高中数学》：这几章是《高级数学》才有的，没标卷别的题只进高数Ⅱ（章节 id 永久不变）
+  const MATH_ADVANCED_CHAPTERS = ['chap30', 'chap31', 'chap33', 'chap34', 'chap35'];
+  const mockPapers = () => (currentSubject === 'math' ? ['I', 'II'] : [null]);
+  // 标了卷别的题只进那一份；没标的，高数Ⅱ都收，高数Ⅰ不收进阶章
+  function inPaper(sec, m, paper) {
+    if (!paper) return true;
+    if (m.paper) return m.paper === paper;
+    return paper === 'II' || !MATH_ADVANCED_CHAPTERS.includes(sec.id);
+  }
+  function mockExamPlan(paper) {
     const table = window.UEC_EXAM;
-    const paper = table && (table.papers || []).find(p => p.subject === EXAM_SUBJECT[currentSubject]);
-    const part = paper && paper.parts.find(pt => pt[0].startsWith('试卷一'));
+    const exam = table && (table.papers || []).find(p => p.subject === EXAM_SUBJECT[paper ? `${currentSubject}:${paper}` : currentSubject]);
+    const part = exam && exam.parts.find(pt => pt[0].startsWith('试卷一'));
     const pool = [];
     (fullDatabase.sections || []).forEach(sec => (sec.mcqs || []).forEach((m, idx) => {
-      if (isLive(m) && Array.isArray(m.options) && m.options.length) pool.push({ sec, m, idx });
+      if (isLive(m) && Array.isArray(m.options) && m.options.length && inPaper(sec, m, paper)) pool.push({ sec, m, idx });
     }));
     if (!part || !pool.length) return null;
     const [h1, m1] = part[1].split(':').map(Number);
     const [h2, m2] = part[2].split(':').map(Number);
     const paperMinutes = (h2 * 60 + m2) - (h1 * 60 + m1);
-    const count = Math.min(MOCK_QUESTIONS, pool.length);
-    const minutes = Math.max(1, Math.round(paperMinutes * count / MOCK_QUESTIONS));
-    return { pool, count, minutes, paperMinutes };
+    const perPaper = MOCK_QUESTIONS_BY_SUBJECT[currentSubject] || MOCK_QUESTIONS;
+    const count = Math.min(perPaper, pool.length);
+    const minutes = Math.max(1, Math.round(paperMinutes * count / perPaper));
+    return { pool, count, minutes, paperMinutes, paper };
   }
 
-  function startMockExam() {
-    const plan = mockExamPlan();
+  function startMockExam(which) {
+    const plan = mockExamPlan(mockPapers()[which || 0]);
     if (!plan || !window.UECTest) return;
     const subject = currentSubject;
     const pool = plan.pool.slice();
@@ -2346,7 +2369,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     window.UECTest.start({
       subjectLabel: SUBJECT_LABELS[subject] || '',
       chapterTitle: `试卷一 · ${plan.count} 题`,
-      label: '模拟统考',
+      label: plan.paper ? `模拟统考 · ${PAPER_LABEL[plan.paper]}` : '模拟统考',
       timeLimitMs: plan.minutes * 60 * 1000,
       questions: picked.map((p, n) => Object.assign({}, p.m, { idx: n })),
       showView,
@@ -3318,5 +3341,6 @@ function openSubject(subject, initialChapterIdx, subMode) {
 <script src="/js/chapter-test.js"></script>
 <script src="/js/sync.js"></script>
 <script src="/js/sync-ui.js"></script>
+<script src="/js/math-render.js"></script>
 </body>
 </html>

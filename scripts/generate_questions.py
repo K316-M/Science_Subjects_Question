@@ -30,8 +30,8 @@ import gemini_api
 import pending_queue
 import qa
 
-SUBJECTS = ["biology", "chemistry", "physics"]
-SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理"}
+SUBJECTS = ["biology", "chemistry", "physics", "math"]
+SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理", "math": "高级数学"}
 PAPERS_DIR = "papers"
 SYLLABUS_DIR = "syllabus"
 REPORT_PATH = "GENERATION_REPORT.md"
@@ -142,7 +142,7 @@ def build_prompt(subject, section, syllabus):
 5. explanation 要写出考点与推理过程，说明为什么正确选项对、并点出常见错误理解。
 6. 四个选项中的错误选项要是「有道理的错」（常见迷思概念），不要明显凑数。
 7. 出「I、II、III…叙述组合」的题时，问句在前，每一项叙述各占一行（JSON 里用 \\n）。
-
+{qa.MATH_RULES if subject == "math" else ""}
 只返回一个 JSON 数组，不要包含 Markdown 代码块标记或任何额外说明文字。每项结构：
 {{
   "q": "题干",
@@ -159,7 +159,7 @@ def call_gemini(prompt):
 
 def extract_json_array(text):
     cleaned = re.sub(r"^```(json)?|```$", "", text.strip(), flags=re.M).strip()
-    return json.loads(cleaned)
+    return json.loads(qa.repair_latex_backslashes(cleaned))
 
 
 FIGURE_WORDS = ["如图", "下图", "上图", "图中", "图示", "如下表", "下表", "装置图", "示意图"]

@@ -1,7 +1,7 @@
 name: AI 自动录题流水线 (Ingest Drafts)
 
 # 管理员把题目档（照片、PDF、Word .docx、PowerPoint .pptx、纯文字）丢进
-# drafts/<biology|chemistry|physics>/ 并推送，本工作流调用 Gemini 转写题目、
+# drafts/<biology|chemistry|physics|math>/ 并推送，本工作流调用 Gemini 转写题目、
 # 自动审题（格式、重复、答案复核），直接推进 main 的待审区（不开 PR：每批都改同一个待审区档案，
 # 两批同时开着就一定冲突）。之後到 /dev「AI 录题待审」采纳才会上线。
 # 录题报告在这次执行的摘要（Actions → 点这次执行）；有档案处理失败（例如旧版 .doc）另开 Issue。

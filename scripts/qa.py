@@ -6,7 +6,8 @@
 让你改；flags 是空的题收在「一键采纳」清单里。所以这里的检查漏掉什么，你就少看到什么 ——
 宁可多标，不要少标。
 
-  1. text_problems   题干/选项夹英文虚词（「甘油 and 脂肪酸」）、残留转写标记、题号没去掉
+  1. text_problems   题干/选项夹英文虚词（「甘油 and 脂肪酸」）、残留转写标记、题号没去掉、
+                     数学公式的反斜线少写（控制字元）或 $ 没成对
   2. source_drift    Word/PPT/文字档：题干与选项要能在原档里一字不差找到，
                      AI 改字、加字、漏字（例如漏掉「不」）都标出来，并写出原档与录入的差异
   3. cross_check     请 Gemini 在看不到答案的情况下重做一次选择题，和已有答案比对
@@ -19,7 +20,7 @@ import unicodedata
 
 import gemini_api
 
-SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理"}
+SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理", "math": "高级数学"}
 LETTERS = "ABCD"
 
 CJK = re.compile(r"[一-鿿]")
@@ -28,11 +29,50 @@ LEFTOVER_MARK = re.compile(r"\[/?标记[^\]]*\]|\[图\d+\]")
 LEADING_NUMBER = re.compile(r"^\s*(\d{1,3}|[（(]\d{1,3}[)）])\s*[.．、)]")
 # 同一行里先有「I 叙述」再有「II」：罗马数字叙述没有各占一行（物理的电流 I 不会接著出现 II）
 ROMAN_ONE_LINE = re.compile(r"(?<![A-Za-z])I\s+\S.*?\sII(?![A-Za-z])")
+MATH_SPAN = re.compile(r"\$[^$]*\$")
+CONTROL_CHAR = re.compile(r"[\x08\x0c\t\r]")   # 公式的反斜线少写一个时，\b \f \t \r 会变成这些
+
+
+# ---------- 数学公式（LaTeX） ----------
+# 数学题的公式写成 $…$ 里的 LaTeX。放进 JSON 字串，反斜线要写两次（"\\frac"），AI 常常只写一次：
+#   \sin、\sqrt、\, 这类 → JSON 不合法，整批解析失败；
+#   \frac、\theta、\times、\beta → 被当成 \f \t \b 跳脱字元，悄悄变成看不见的控制字元，公式坏掉。
+# 解析前先补成两个反斜线。合法的跳脱（\n 换行、\" 引号、\uXXXX）不动；
+# \b \f \n \r \t 开头的字，只有列在这里的才当成公式指令补（\ne、\nu、\ni 可能是「换行＋字母」，不列，提示词要 AI 写 \neq）
+LATEX_ESCAPE_LOOKALIKES = {
+    "frac", "forall", "beta", "bar", "begin", "binom", "big", "bigl", "bigr", "boxed", "because", "bmod",
+    "neq", "not", "notin", "nabla", "right", "rightarrow", "rho", "rangle", "rm",
+    "times", "theta", "tan", "tanh", "text", "textbf", "textrm", "tfrac", "to", "tau", "triangle", "therefore", "tilde",
+}
+_BACKSLASH = re.compile(r"\\(u[0-9a-fA-F]{4}|[A-Za-z]+|.)", re.S)
+
+MATH_RULES = r"""
+【数学公式写法】
+- 公式一律写成 LaTeX，前后用 $ 包起来，例如 $\frac{1}{2}x^2$、$\sqrt{3}$、$\int_0^1 x\,dx$；中文字写在 $ 外面。
+- JSON 字串里的反斜线一律写两次：写 "\\frac{1}{2}"，不要写 "\frac{1}{2}"（少一个，公式会坏掉）。
+- 选项前缀写在 $ 外面，例如 "A. $x=-1$"。
+- 不等号写 \neq（不要写 \ne）；乘号 \times；点乘 \cdot。
+- 小于、大于写 \lt、\gt，小于等于、大于等于写 \leq、\geq；不要直接打 < >（网页会当成 HTML 标签吃掉）。
+- 符号照统考公式表：余割 \operatorname{cosec}（不写 csc）、反三角函数 \sin^{-1}x（不写 arcsin）、组合数 {}_nC_r、
+  对数 \log_a x、自然对数 \ln x、行列式 \det(A)、伴随矩阵 \operatorname{adj}(A)、无穷等比级数和 S_\infty、
+  矩阵 \begin{pmatrix}…\end{pmatrix}、行列式 \begin{vmatrix}…\end{vmatrix}。
+"""
+
+
+def repair_latex_backslashes(text):
+    def fix(m):
+        body = m.group(1)
+        if body in ("\\", '"', "/") or re.fullmatch(r"u[0-9a-fA-F]{4}", body):
+            return m.group(0)
+        if body[0] in "bfnrt" and body not in LATEX_ESCAPE_LOOKALIKES:
+            return m.group(0)
+        return "\\" + m.group(0)
+    return _BACKSLASH.sub(fix, text)
 
 
 def extract_json_array(text):
     cleaned = re.sub(r"^```(json)?|```$", "", text.strip(), flags=re.M).strip()
-    data = json.loads(cleaned)
+    data = json.loads(repair_latex_backslashes(cleaned))
     if not isinstance(data, list):
         raise json.JSONDecodeError("不是 JSON 数组", cleaned, 0)
     return data
@@ -52,12 +92,19 @@ def text_problems(record):
     pieces = [("题干", _stem(record))] + [(f"选项{LETTERS[i]}", o) for i, o in enumerate(record.get("options") or [])]
     for label, text in pieces:
         text = str(text)
-        if CJK.search(text):
-            m = ENGLISH_FILLER.search(text)
+        prose = MATH_SPAN.sub("", text)   # 公式里的 \text{or} 不算夹英文
+        if CJK.search(prose):
+            m = ENGLISH_FILLER.search(prose)
             if m:
                 out.append(f"{label}夹了英文「{m.group(0)}」，疑似转写错误")
         if LEFTOVER_MARK.search(text):
             out.append(f"{label}残留转写标记「{LEFTOVER_MARK.search(text).group(0)}」")
+        if CONTROL_CHAR.search(text):
+            out.append(f"{label}有看不见的控制字元，多半是公式的反斜线少写一个（\\frac、\\theta 这类），请检查公式")
+        if record.get("subject") == "math" and text.count("$") % 2:
+            out.append(f"{label}的公式 $ 没有成对，显示会乱掉")
+        if record.get("subject") == "math" and any(c in span for span in MATH_SPAN.findall(text) for c in "<>"):
+            out.append(f"{label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt")
     if LEADING_NUMBER.match(_stem(record)):
         out.append("题干开头的题号没去掉")
     if any(ROMAN_ONE_LINE.search(line) for line in _stem(record).splitlines()):
@@ -103,7 +150,8 @@ def source_drift(record, source):
     pieces = [("题干", _stem(record))] + [(f"选项{LETTERS[i]}", _option_body(o))
                                         for i, o in enumerate(record.get("options") or [])]
     for label, text in pieces:
-        why = _drift(text, source)
+        # 数学：原档的公式多半是方程式物件或上下标，抽出来的文字和 LaTeX 对不上；只比对公式以外的文字
+        why = next(filter(None, (_drift(chunk, source) for chunk in MATH_SPAN.split(str(text)))), None)
         if why:
             out.append(f"⚠️ {label}和原档不一致：{why}")
     return out

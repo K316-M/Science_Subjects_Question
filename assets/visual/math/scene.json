@@ -265,7 +265,7 @@
     379
    ],
    "motion": "none",
-   "wide": false,
+   "wide": true,
    "tall": {
     "left": "0",
     "top": "0",

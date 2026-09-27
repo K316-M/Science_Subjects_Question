@@ -123,6 +123,7 @@ function renderFeedbackView() {
       { v: 'study:biology', t: '生物科 · 做题页' },
       { v: 'study:chemistry', t: '化学科 · 做题页' },
       { v: 'study:physics', t: '物理科 · 做题页' },
+      { v: 'study:math', t: '高级数学 · 做题页' },
       { v: 'viewNotes', t: '笔记页' },
       { v: 'viewArchive', t: '题目档（下载）页' },
       { v: 'other', t: '其他／整个网站' },

@@ -13,7 +13,7 @@
 ### 1. 拍题录入（你手上的真题）
 
 ```
-把照片丢进 drafts/biology/  或 drafts/chemistry/  或 drafts/physics/
+把照片丢进 drafts/biology/  或 drafts/chemistry/  或 drafts/physics/  或 drafts/math/
   ↓ commit + push（用 GitHub 手机 App 上传也行）
 自动跑「AI 自动录题流水线」→ 题目直接进待审区（学生还看不到；不开 PR）
   ↓
@@ -27,6 +27,12 @@
 - 转写报告在 **Actions → 那次执行的摘要**，哪几题需要人工裁图、哪几题疑似漏了配图都会标出来；有档案处理失败会另开 Issue
 - 连续放好几批、边放边在 /dev 采纳都可以：每批推送前都会接在待审区最新版後面，推送时刚好被抢先就自动重来，不会冲突
 
+**高级数学**（`drafts/math/`，高数Ⅰ、高数Ⅱ 都放这里）：
+- 公式转写成 LaTeX（`$\frac{1}{2}$` 这类），网站用 KaTeX 排成公式；符号照统考公式表（`syllabus/math.md` 最後一段）
+- AI 看卷头认是哪一份：「高级数学(I)」、SC06 → 高数Ⅰ；「高级数学(II)」、SC07 → 高数Ⅱ。
+  照片第二页以後没有卷头，**档名写上「高数1」「高数2」（或 SC06、SC07）** 就照档名标；都认不出来的，到 /dev 的「卷别」补。
+  不补也能用：模拟统考会照章节分（见七之「统考时间表与题库覆盖」）
+
 ### 2. AI 依考纲出题（原创练习题）
 
 每周一早上 9 点（马来西亚时间）自动跑一次，也可以随时手动触发：
@@ -39,7 +45,7 @@ GitHub → Actions → 「AI 依考纲出题 (Generate Questions)」→ Run work
 
 | 参数 | 意思 | 建议 |
 |---|---|---|
-| `subject` | 只为某一科出题（留空＝三科都跑） | 试水时先选一科 |
+| `subject` | 只为某一科出题（留空＝每一科都跑） | 试水时先选一科 |
 | `chapters_per_run` | 这次照顾几个章节 | 预设 3 |
 | `questions_per_chapter` | 每章出几题 | 预设 4，试水可以填 2 |
 
@@ -73,6 +79,7 @@ https://science-subjects-question.vercel.app/dev/#pending
   有疑问的取消勾选，或按「编辑」展开来改
 
 每题都有 **归入章节** 下拉选单（AI 归类不一定准，未分类的不让采纳）与 **退回**（只从待审区移除，不进题库）。
+数学题另有 **卷别**（高数Ⅰ／高数Ⅱ／没标），编辑器底下有 **预览**：文字框是 LaTeX 原文，预览照学生站排好公式，边打边更新。
 
 手机上也能审，排队等车时就能处理十题。
 
@@ -96,6 +103,10 @@ https://science-subjects-question.vercel.app/dev/#pending
 不能恢复或再改），两边原有的题号都不变。不能插到那一章最前面：那一章原有的每一题都会往後推一格，学生的纪录全部错位。
 
 配图在浏览器里会先缩到长边 1600px 再上传（手机原图也不用自己压）；iPhone 的 HEIC 照片请先转成 JPG。
+
+**数学公式怎么写**：用 `$` 包住 LaTeX，例如 `$\frac{2x+1}{x-3}$`、`$\sqrt{3}$`、`$\int_0^1 x\,dx$`（在 /dev 的文字框里反斜线写一个就好）。
+小于、大于写 `\lt`、`\gt`（直接打 `<` 会被网页当成标签）；写错的公式在学生站显示成红字原文，不会整题不见。
+生物、化学、物理的题目里不要用成对的 `$`，也会被当成公式排版。
 
 ---
 
@@ -290,7 +301,7 @@ https://science-subjects-question.vercel.app/dev/#pending
 
 | 面板 | 能做什么 |
 |---|---|
-| 总览 | 三科题量、待审题数、各科进度图表 |
+| 总览 | 各科题量、待审题数、各科进度图表 |
 | 申诉处理 | 贴开发者代码 → 发布／撤回处理结果 |
 | 题库巡检 | 即时扫出缺配图、答案异常、选项不足的题 |
 | AI 录题待审 | 列出待审区的题目，逐题采纳或退回 |
@@ -310,7 +321,7 @@ https://science-subjects-question.vercel.app/dev/#pending
 GitHub → Actions → 「BioQuestion Auto Pipeline & Health Check」→ Run workflow
 ```
 
-- 扫**三科题库 + 待审区**
+- 扫**各科题库 + 待审区**
 - 结果写进 `docs/INSPECTION_REPORT.md`（每周自动更新并提交，随时可以打开看）
 - **只有真的发现缺陷才会开 Issue 提醒你**，题库正常的那几周不会打扰
 - 检查项目：缺配图、图片死链、选项不是 4 个、答案序号异常、简答题缺答案、题库为空或档案损坏、待审区缺解析
@@ -356,7 +367,7 @@ ffmpeg -i 新歌.mp3 -af loudnorm=I=-20:TP=-1.5:LRA=11 -c:a libmp3lame -b:a 128k
 ### 会动的分层背景（scene.json）
 
 四科都是一张水彩参考图拆成的图层（生物 17 层，化学、物理、数学各 20 层）：大的（纸、底部色带、角落的锚点）不动，小的慢慢摇、飘、晃；物理的单摆以顶端为支点真的在摆。
-数学科还没开放，图层已经放在 `assets/visual/math/`：开放时在 `index.html` 的 `SUBJECT_THEME` 补上 `math`（和 `SUBJECT_LABELS`），背景就会接上。
+数学的图层在 `assets/visual/math/`，音乐与背景色在 `index.html` 的 `SUBJECT_THEME.math`。
 **同一个资料夹里有 `scene.json` 就用它，没有才用 `background.svg`**——删掉 scene.json 就回到旧背景。
 
 **调整**：打开 `assets/visual/biology/scene.json`，每一个图层可以改：
@@ -369,7 +380,7 @@ ffmpeg -i 新歌.mp3 -af loudnorm=I=-20:TP=-1.5:LRA=11 -c:a libmp3lame -b:a 128k
 
 - 只想让某一个元素停下来：把它的 `motion` 改成 `"none"`
 - 学生系统设定了「减少动态」时，全部自动停止，不用另外处理
-- 「直式画面」是比例 4:3 以下，**包括 iPad 横放**。四角那几个只在直式出现的大物件（`"wide": false`）在底图上也画著一份，画面一宽就会露出来变成两个，所以直式时底图只露出中间 62%（`js/scene-assets.js` 的 `TALL_PLATE_SPAN`），左右各藏 19%。**做新场景时，角落大物件要画在参考图左右 19% 以内**；数学的圆规图画到 28%，开放前要另外处理（在 1100×1000 左右会看到两个圆）
+- 「直式画面」是比例 4:3 以下，**包括 iPad 横放**。四角那几个只在直式出现的大物件（`"wide": false`）在底图上也画著一份，画面一宽就会露出来变成两个，所以直式时底图只露出中间 62%（`js/scene-assets.js` 的 `TALL_PLATE_SPAN`），左右各藏 19%。**做新场景时，角落大物件要画在参考图左右 19% 以内**；画出去的，把那个图层设成 `"wide": true`（横式也用图层，底图那份补成纸）。数学左上的圆规画到 28%，就是这样处理的
 
 **背景会回应学习**（有 scene.json 的科目自动都有）：
 
@@ -575,6 +586,9 @@ python scripts/scene/build_scene.py night assets/visual/biology   # 四科各跑
 
 - **统考时间表**：首页横幅下面的卡通日历。写著最靠近的那一科，点开是全部场次与试卷一／试卷二的时间。
   资料在 `js/exam-timetable.js`（董总公布的时间表），换年份时照档案开头的格式改 `papers` 就好。
+- **模拟统考**：题库覆盖那一行旁边的按钮。从全科选择题随机抽，照时间表「试卷一」的时间计时；题目不够就按比例缩短时间。
+  理科一份当作 40 题（`index.html` 的 `MOCK_QUESTIONS`），数学照评量规格 15 题（`MOCK_QUESTIONS_BY_SUBJECT`），分高数Ⅰ、高数Ⅱ 两个按钮：
+  标了卷别的题只进那一份；没标的，高数Ⅱ都收，高数Ⅰ不收第 30、31、33、34、35 章（《高级数学》才有，`MATH_ADVANCED_CHAPTERS`）。
 - **题库覆盖**：做题页章节卡上面那一行，直接从题库算出来（`依考纲共 N 章 · 目前 M 章有题目，合计 K 道选择题`），不必手动维护；题库加了题目，这行自己会变。
 
 ---
@@ -609,7 +623,7 @@ const SUBJECTS = [
 ```
 
 - **加一科**：数组里加一行，角度自动重新均分，不用改其他代码
-- **开放数学科**：把 `math` 那行的 `enabled` 改成 `true`（前提是 `papers/math_question_bank.json` 要先有章节框架）
+- **暂时关掉一科**：那行的 `enabled` 改成 `false`、`note` 写「尚未开放」（四科目前都开着；科目有章节框架但还没题目时，球照样能点，面板写「题库整理中」）
 - **换配色**：改 `accent`，球的边框、涟漪、进度弧、按钮全部跟着变
 
 ---
@@ -760,7 +774,7 @@ js/chapter-test.js      整章测验与模拟统考（计时）
 assets/visual|audio/    背景图与音乐（处理好、网站正在用的）
 assets/sprite/          小精灵姿势图（处理好、网站正在用的）
 images/<科目>/          题目配图
-papers/*.json           三科正式题库
+papers/*.json           各科正式题库
 papers/pending_approval.json   待审区（AI 产物先进这里）
 data/resolved_issues.json      申诉处理结果（由工作台写入）
 api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改与讲解、同步）
