@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_79cac872be",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap15",
-      "chapter_title": "第15章：基因与遗传的定律",
-      "source_draft": "drafts/biology/GC练习.txt",
-      "answer_source": "ai",
-      "flags": [
-        "原档没标答案，由 AI 作答（两次一致），仍请核对"
-      ],
-      "ingested_at": "2026-09-27T09:56:23.018803Z",
-      "q": "由于遗传的相异，造成生物个体间有所差别，因此世界上没有两个完全相同的个体，这现象称为____。",
-      "options": [
-        "A. 新陈代谢",
-        "B. 繁殖",
-        "C. 演化",
-        "D. 变异"
-      ],
-      "answer": 3,
-      "explanation": "变异是指亲代与子代之间以及子代个体之间存在的差异现象。",
-      "review": {
-        "ai_answer": 3,
-        "reason": "变异是指生物个体之间在性状上存在的差异现象。"
-      }
-    },
-    {
       "id": "biology_70410d2cec",
       "subject": "biology",
       "type": "mcq",
