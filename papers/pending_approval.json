@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_a1c4b0626c",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap18",
-      "chapter_title": "第18章：细菌与病毒",
-      "source_draft": "drafts/biology/GC练习.txt",
-      "answer_source": "ai",
-      "flags": [
-        "原档没标答案，由 AI 作答（两次一致），仍请核对"
-      ],
-      "ingested_at": "2026-09-27T09:56:23.006014Z",
-      "q": "以下哪项有关面包霉和青霉是正确的？\nI 主要构造为菌丝\nII 通过出芽繁殖\nIII 腐生或寄生\nIV 属于原生动物",
-      "options": [
-        "A. I, III",
-        "B. II, III",
-        "C. I, II, IV",
-        "D. II, III, IV"
-      ],
-      "answer": 0,
-      "explanation": "面包霉和青霉属于真菌，主要构造是菌丝，营腐生或寄生生活；出芽繁殖是酵母菌的特征，而它们不属于原生动物。",
-      "review": {
-        "ai_answer": 0,
-        "reason": "面包霉和青霉属于真菌，主要构造为菌丝，营腐生或寄生生活，而通过孢子繁殖且不属于原生动物。"
-      }
-    },
-    {
       "id": "biology_1a23f2bc8b",
       "subject": "biology",
       "type": "mcq",
