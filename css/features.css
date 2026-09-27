@@ -74,7 +74,7 @@
 .nav-item:hover { color: var(--primary, #059669); }
 .nav-item.active { color: var(--primary, #059669); }
 
-/* 中央徽章：纯装饰的书法「学」字，不可点击 */
+/* 中央徽章：纯装饰的网站图标（原子＋书），不可点击 */
 .nav-logo {
   width: 64px; height: 64px;
   flex: 0 0 auto;
@@ -86,20 +86,17 @@
     inset 0 2px 4px rgba(255, 255, 255, 0.9),
     0 10px 24px -10px rgba(15, 23, 42, 0.45);
   display: flex; align-items: center; justify-content: center;
-  font-family: "Ma Shan Zheng", "KaiTi", "STKaiti", "Kaiti SC", "楷体", serif;
-  font-size: 40px; font-weight: 400; line-height: 1;
-  color: var(--retro-dark);
-  padding-bottom: 2px;
   margin: 0 6px;
   cursor: default;
   user-select: none;
 }
+.nav-logo .brand-logo { width: 74%; height: 74%; }
 
 @media (max-width: 640px) {
   .nav-item { font-size: 12px; letter-spacing: 0.8px; padding: 6px 8px; }
-  .nav-logo { width: 48px; height: 48px; font-size: 32px; margin: 0 2px; }
+  .nav-logo { width: 48px; height: 48px; margin: 0 2px; }
 }
-/* 320px 的旧机型：药丸左右留白与间距再收，四个按钮与「学」字才放得进一行 */
+/* 320px 的旧机型：药丸左右留白与间距再收，四个按钮与中间的图标才放得进一行 */
 @media (max-width: 340px) {
   .nav-inner { padding: 8px 8px; gap: 2px; }
   .nav-item { letter-spacing: 0; padding: 6px 6px; }

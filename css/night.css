@@ -27,6 +27,11 @@
   --n-btn-hover: #327356;
   --n-btn-text: #f3eee4;
   --n-paper: #e4ded1;        /* 题目配图：调暗的纸 */
+  /* 网站图标（原子＋书）：白天那组太饱和、封面的深蓝在深底上看不见，改成柔一点、封面提亮 */
+  --logo-orbit: #8bbbe6;
+  --logo-core: #e2ab54;
+  --logo-page: #6c9bcc;
+  --logo-cover: #4a7ab0;
   --n-note-paper: #2c2924;   /* 笔记画布：深色纸，五支笔的夜间墨色（js/notes.js NIGHT_INK）在上面都 ≥ 5.4:1 */
   --n-green: #9ad9b6;
   --n-green-bg: rgba(111, 196, 150, .14);
@@ -106,7 +111,6 @@
 [data-theme="night"] .nav-logo {
   background: linear-gradient(145deg, #3a352d, #2a2620);
   border-color: rgba(233, 225, 212, .55);
-  color: var(--n-text);
   box-shadow: 0 0 0 5px rgba(34, 32, 28, .8), inset 0 1px 2px rgba(255, 244, 224, .08), 0 10px 24px -10px rgba(0, 0, 0, .6);
 }
 [data-theme="night"] .util-bar { border-bottom-color: var(--n-border); }
@@ -131,7 +135,6 @@
   background: radial-gradient(circle at 34% 28%, color-mix(in oklab, var(--core-soft, #a7f3d0) 55%, #1a1917) 0%, color-mix(in oklab, var(--core-deep, #059669) 42%, #1a1917) 100%);
   box-shadow: 0 0 0 10px rgba(134, 207, 168, .04), 0 14px 32px -12px rgba(0, 0, 0, .7);
 }
-[data-theme="night"] .orbit-core span { color: var(--n-text); text-shadow: 0 1px 3px rgba(0, 0, 0, .6); }
 [data-theme="night"] .node-disc { background: var(--n-raised); border-color: var(--n-border-strong); box-shadow: 0 8px 20px -10px rgba(0, 0, 0, .7); }
 [data-theme="night"] .node-arc .arc-bg { stroke: rgba(240, 228, 206, .1); }
 [data-theme="night"] .node-label { color: var(--n-text-2); text-shadow: 0 0 5px var(--n-page), 0 0 5px var(--n-page), 0 1px 2px rgba(0, 0, 0, .9); }

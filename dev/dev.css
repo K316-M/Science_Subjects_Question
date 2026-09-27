@@ -29,7 +29,6 @@
   --list-gap: 12px;   /* 巡检、待审、题目修改列表：题与题之间的空隙 */
   --font: "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
-  --calligraphy: "Ma Shan Zheng", "KaiTi", "STKaiti", "Kaiti SC", serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -216,11 +215,11 @@ code, .mono { font-family: var(--mono); }
 }
 .brand-mark {
   width: 54px; height: 54px; border-radius: 14px;
-  background: var(--ink); color: #0d0d0d;
+  background: var(--ink);
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--calligraphy); font-size: 36px; line-height: 1;
   position: relative;
 }
+.brand-mark .brand-logo { width: 80%; height: 80%; display: block; }
 .brand-mark .tag {
   position: absolute; right: -8px; bottom: -6px;
   font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px;
@@ -297,7 +296,7 @@ code, .mono { font-family: var(--mono); }
   backdrop-filter: blur(10px);
 }
 .side-brand { display: flex; align-items: center; gap: 11px; padding: 4px 8px 18px; }
-.side-brand .brand-mark { width: 38px; height: 38px; font-size: 25px; border-radius: 10px; }
+.side-brand .brand-mark { width: 38px; height: 38px; border-radius: 10px; }
 .side-brand .brand-mark .tag { font-size: 8px; right: -7px; bottom: -5px; padding: 1px 4px; }
 .side-brand-text strong { display: block; font-size: 14px; font-weight: 700; }
 .side-brand-text span { font-size: 11.5px; color: var(--muted); }

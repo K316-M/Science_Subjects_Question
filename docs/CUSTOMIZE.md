@@ -26,6 +26,7 @@
 | 各科背景光团的颜色 | `index.html` | `SUBJECT_THEME` 的 `blobA` `blobB` | | | 🟢 |
 | 背景插画的浓淡 | `index.html` | `.custom-photo-layer` | | 见 [OPERATIONS 七·背景的浓淡](OPERATIONS.md#背景的浓淡) | 🟢 |
 | 护眼模式背景水彩的亮度 | `scripts/scene/build_scene.py` | `NIGHT_K` | `0.32` | 改完要重跑脚本，见 [OPERATIONS 七](OPERATIONS.md#护眼模式的颜色) | 🟡 |
+| 网站图标（原子＋书）的颜色：导航列中间的徽章、首页轨道中心 | `index.html`（白天）、`css/night.css`（护眼） | `--logo-orbit`（轨道、电子）`--logo-core`（原子核）`--logo-page`（书页）`--logo-cover`（封面） | 白天 `#0c88ea` `#fbaa1c` `#65b9fc` `#114889`；护眼 `#8bbbe6` `#e2ab54` `#6c9bcc` `#4a7ab0` | 护眼那组别用白天的深蓝，封面会在深底上看不见；首页球心会跟著科目变色（物理是蓝的），改完看一下物理 | 🟢 |
 | 护眼模式的笔记画布颜色 | `css/night.css` | `--n-note-paper` | `#2c2924`（深色纸） | 调亮要重算下面五支笔的对比，别低於 4.5:1 | 🟡 |
 | 护眼模式的五支笔颜色 | `js/notes.js` | `NIGHT_INK` | 黑→米白、红→`#fb7185`、蓝→`#7cb4ff`、绿→`#4fd1a5`、橙→`#f7c35c` | 只改右边（夜间色）就好 | 🔴 左边要跟 `index.html` 五个色点的 `data-ink` 一样；以後改白天笔色时，旧颜色那一列要留著（旧笔记存的是旧颜色，删掉的话夜里会变回深色、看不见） |
 | 直式背景（手机、平板、iPad 横放）底图最多露出多宽 | `js/scene-assets.js` | `TALL_PLATE_SPAN` | `0.62`（底图中间 62%） | 调大：iPad 横放、5:4 屏幕会冒出第二个透镜／分子团；调小：底图放大变糊、下方山丘变大。改完要看 1024×768 和 1280×1024 | 🟡 |
@@ -118,6 +119,7 @@
 | 改章节名称或顺序 | `papers/<科目>_question_bank.json` 的 `sections[].title` | 🔴 不要改 `id`，学生的进度、笔记、划线都靠它对应 |
 | 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](../syllabus/README.md) |
 | 换背景图、背景音乐 | `assets/visual/<科目>/`、`assets/audio/<科目>/` | [assets/README.md](../assets/README.md) |
+| 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。分页那两张要先把多余白边裁掉再缩，不然 16px 只剩一团色块。浏览器会快取图标，换完可能要重开分页或清快取才看得到。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是另外重画的 SVG，不会跟著这 5 个档变：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |
 | 小精灵的姿势图 | `source/sprite/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
 | 申诉处理结果 | 网站 `/dev` →「申诉处理」 | 不必手改 `data/resolved_issues.json` |
