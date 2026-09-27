@@ -4,6 +4,8 @@
 //     action = 'hide' / 'unhide'：下架／恢复。题目留在原位、加上 hidden，学生端不显示。
 //     不真的删掉：学生的进度、错题、笔记都按「第几题」记，删掉一题，後面每一题的纪录都会对到别题。
 //     action = 'clearExplain'：清掉这一题（选择题）全班共用的 AI 讲解，下一个问的人会拿到新的。
+//     action = 'move'：把下架的题移到同一科的另一章（toChapterId）。接在那一章最後面、仍是下架；
+//     原位留一个标了 moved_to 的隐藏空位 —— 两边原有的题号都不变，学生的纪录才不会错位。
 // 两种都跟采纳一样用 toBankEntry 验证，改完是坏的就不让存。
 // GET：直接从 GitHub 读最新的三科题库与待审区。网站上的 /papers 要等 Vercel 部署完（约一分钟）
 // 才会更新，工作台若读那份，刚存的修改会「消失」一下，接著再改就会撞到「题库被改过」。
@@ -87,6 +89,23 @@ module.exports = async (req, res) => {
       if (!current || normalize(stemOf(current)) !== normalize(body.expect)) {
         throw new InputError('题库在你打开之後被改过，请按「重新整理」再改。');
       }
+      const label = `${section.title || section.id} ${type === 'subjective' ? '做答题' : '选择题'}第 ${body.index + 1} 题`;
+      // 移走後留在原位的空位：恢复或再改，同一题就会出现在两章
+      if (current.moved_to) throw new InputError('这题已经移到别章了，请到那边改。');
+      if (body.action === 'move') {
+        if (!current.hidden) throw new InputError('只能移动已下架的题：先按「下架」。');
+        const dest = bank.sections.find(s => s.id === body.toChapterId);
+        if (!dest || dest === section) throw new InputError('请选另一个章节。');
+        const destList = type === 'subjective' ? (dest.subjectives = dest.subjectives || []) : (dest.mcqs = dest.mcqs || []);
+        const moved = { ...current, hidden: true, hidden_at: new Date().toISOString(), moved_from: { chapterId: section.id, index: body.index } };
+        destList.push(moved);
+        const to = { chapterId: dest.id, index: destList.length - 1 };
+        list[body.index] = { ...current, moved_to: to };
+        writes.push({ path: bankPath(subject), json: bank });
+        await commitFiles(pub, snap, writes,
+          `↪️ 移动 ${subject} 题库：${label} → ${dest.title || dest.id} 第 ${to.index + 1} 题（仍下架）`);
+        return sendJson(res, 200, { ok: true, item: list[body.index], moved, to });
+      }
       if (body.action === 'clearExplain') {
         if (type !== 'mcq') throw new InputError('只有选择题有 AI 讲解。');
         const n = await clearExplain(subject, section.id, body.index, current);
@@ -100,15 +119,15 @@ module.exports = async (req, res) => {
         else { delete changed.hidden; delete changed.hidden_at; }
         list[body.index] = changed;
         writes.push({ path: bankPath(subject), json: bank });
-        const label = `${section.title || section.id} ${type === 'subjective' ? '做答题' : '选择题'}第 ${body.index + 1} 题`;
         await commitFiles(pub, snap, writes, `${hide ? '🙈 下架' : '↩️ 恢复'} ${subject} 题库：${label}`);
         return sendJson(res, 200, { ok: true, item: changed });
       }
       const edited = edit({ ...current, type }, subject, `${section.id}_${type}${body.index}`);
       delete edited.type;
       const key = normalize(stemOf(edited));
+      // 移走後的空位和移过去的那题题干一样，不算重复
       const clash = bank.sections.some(s => ((type === 'subjective' ? s.subjectives : s.mcqs) || [])
-        .some(x => x !== current && normalize(stemOf(x)) === key));
+        .some(x => x !== current && !x.moved_to && normalize(stemOf(x)) === key));
       if (clash) throw new InputError('改完的题干和题库里另一题一模一样。');
       list[body.index] = edited;
       writes.push({ path: bankPath(subject), json: bank });

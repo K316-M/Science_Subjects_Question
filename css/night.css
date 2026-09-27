@@ -120,6 +120,7 @@
 [data-theme="night"] .page-heading, [data-theme="night"] .subject-title { color: var(--n-text); }
 [data-theme="night"] .subject-card:hover { background: var(--n-raised); }
 [data-theme="night"] .resume-card { background: linear-gradient(135deg, #2b634b, #2a5a74); color: var(--n-btn-text); }
+[data-theme="night"] .new-q-tip { background: var(--n-btn); color: var(--n-btn-text); box-shadow: 0 10px 28px -10px rgba(0,0,0,.7); }
 
 [data-theme="night"] .orbit-track.outer { border-color: rgba(134, 207, 168, .2); }
 [data-theme="night"] .orbit-track.inner { border-color: rgba(134, 195, 230, .12); }
