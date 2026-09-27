@@ -8,6 +8,9 @@ const store = require('./store');
 const SUBJECTS = { biology: '生物', chemistry: '化学', physics: '物理', math: '高级数学' };
 // 数学科的讲解／批改：式子写成 LaTeX，网页才排得出公式
 const MATH_PROMPT_RULE = '数学式子一律写成 $…$ 包住的 LaTeX，例如 $\\frac{1}{2}$、$\\sqrt{3}$（JSON 字串里反斜线写两次），小于、大于写 \\lt、\\gt；中文写在 $ 外面；这不算 Markdown。';
+// 生物、化学、物理：简单的直接打符号，复杂的才用 $…$（同 scripts/qa.py 的 FORMULA_RULES）。
+// 题目里有 $…$ 时 AI 讲解也会跟着写 LaTeX，没讲清楚就会写出 $ 外面的 \frac，学生看到原始码
+const FORMULA_PROMPT_RULE = '化学式、单位、简单符号直接打（H₂O、SO₄²⁻、m/s²、λ、Δ、→）；分数、根号里有式子这类复杂的才写成 $…$ 包住的 LaTeX（JSON 字串里反斜线写两次）；$ 外面不可以出现 \\frac、\\sqrt 这类反斜线指令；这不算 Markdown。';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 // ---------- 限流：有 Upstash 就跨实例计数，没有就退回单一实例的记忆体 ----------
@@ -165,4 +168,4 @@ async function clearExplain(subject, chapterId, index, item) {
   return store.command(['DEL', ...keys]);
 }
 
-module.exports = { SUBJECTS, MATH_PROMPT_RULE, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain, clearExplain };
+module.exports = { SUBJECTS, MATH_PROMPT_RULE, FORMULA_PROMPT_RULE, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain, clearExplain };

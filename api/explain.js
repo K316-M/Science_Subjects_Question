@@ -3,7 +3,7 @@
 // 每台装置每小时限 30 次、同一个网络合计 300 次（和批改分开计）。
 // 讲过的存进 Upstash 给全班共用（见 _lib/ai.js 的 explainKey）：拿现成的不扣次数、不呼叫 Gemini。
 const { sendJson, readJsonBody, sameOrigin } = require('./_lib/devauth');
-const { SUBJECTS, MATH_PROMPT_RULE, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain } = require('./_lib/ai');
+const { SUBJECTS, MATH_PROMPT_RULE, FORMULA_PROMPT_RULE, useQuota, htmlToText, findQuestion, callGemini, explainKey, readExplain, saveExplain } = require('./_lib/ai');
 
 const LIMIT_PER_HOUR = 30;
 const NETWORK_LIMIT_PER_HOUR = 300;
@@ -30,7 +30,7 @@ ${options}
     : '先讲学生选的 ' + picked + ' 为什么不对、最可能是哪个观念弄混了，再讲为什么 ' + right + ' 才对。'}
 3. 最後给一个好记的小技巧或口诀，帮他下次不会再错。
 4. 总长不超过 220 字；不要用 Markdown 符号；讲的内容必须和正确答案 ${right} 一致，不可以推翻它。
-${subject === 'math' ? '5. ' + MATH_PROMPT_RULE + '\n' : ''}
+5. ${subject === 'math' ? MATH_PROMPT_RULE : FORMULA_PROMPT_RULE}
 只回传 JSON：{"concept":"考点（一句）","why":"讲解（可分成几句）","tip":"小技巧（一句）"}`;
 }
 
