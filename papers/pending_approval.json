@@ -287,32 +287,6 @@
         "ai_answer": 0,
         "reason": "整体加速度 a = 20 / (4 + 6) = 2 m/s²，对木块甲由牛顿第二定律得绳子张力 T = m_甲 a = 4 × 2 = 8 N。"
       }
-    },
-    {
-      "id": "biology_102ca67f46",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第9章：健康与免疫",
-      "source_draft": "drafts/biology/GC练习2.docx",
-      "answer_source": "ai",
-      "flags": [
-        "原档没标答案，由 AI 作答（两次一致），仍请核对"
-      ],
-      "ingested_at": "2026-09-27T11:22:29.597136Z",
-      "q": "下列哪项经由母体胎盘传给胎儿？",
-      "options": [
-        "A. 红血球",
-        "B. 羊水",
-        "C. 肝糖",
-        "D. 抗体"
-      ],
-      "answer": 3,
-      "explanation": "胎盘具有屏障作用，血细胞和大分子物质不能通过，但氧气、营养物质和某些抗体（如IgG）可以经胎盘进入胎儿体内，使胎儿获得被动免疫。",
-      "review": {
-        "ai_answer": 3,
-        "reason": "母体的免疫球蛋白（抗体）可通过胎盘进入胎儿体内，使其获得被动免疫。"
-      }
     }
   ],
   "generated_at": "2026-09-27T11:22:39.569689+00:00"
