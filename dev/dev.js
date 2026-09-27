@@ -1054,7 +1054,8 @@ function findBankItems() {
       if (state.editorSubject !== 'all' && state.editorChapter && sec.id !== state.editorChapter) return;
       [['mcq', sec.mcqs || []], ['subj', sec.subjectives || []]].forEach(([type, list]) => {
         list.forEach((item, qIndex) => {
-          if (state.editorHiddenOnly && !item.hidden) return;
+          // 移走後留在原位的空位不能再操作，不列在「只看已下架」里（按章节浏览时照样看得到，说明题号为什么跳过）
+          if (state.editorHiddenOnly && (!item.hidden || item.moved_to)) return;
           if (q) {
             const hay = [item.q, item.question, ...(item.options || [])].join(' ').replace(/\s+/g, '').toLowerCase();
             if (!hay.includes(q)) return;
@@ -1084,6 +1085,30 @@ async function setHidden(btn, h, hide) {
   state.issues = inspectBanks();
   updateNavCounts();
   toast(hide ? '已下架，约一分钟後学生就看不到了' : '已恢复，约一分钟後学生就看得到', 'good');
+  rerender();
+}
+
+// 移到别章：只移下架的题。接在那一章最後面、仍是下架（检查过再按「恢复」）；
+// 原位留一个隐藏的空位，两边原有的题号都不变 —— 插到最前面的话，那一章每个学生的纪录都会错位
+async function moveHidden(btn, h, toChapterId) {
+  const secs = state.banks[h.subject];
+  const dest = secs.find(sec => sec.id === toChapterId);
+  const destList = (h.type === 'mcq' ? dest.mcqs : dest.subjectives) || [];
+  if (!confirm(`把这题移到「${dest.title || dest.id}」？\n\n会接在那一章最後面（第 ${destList.length + 1} 题），仍是下架；检查过再按「恢复」。\n原位会留一个隐藏的空位，两边原有的题号都不变。`)) return;
+  const data = await busy(btn, () => api('/api/dev-edit', {
+    method: 'POST',
+    body: {
+      target: 'bank', action: 'move', subject: h.subject, chapterId: secs[h.chapterIdx].id,
+      type: h.type === 'mcq' ? 'mcq' : 'subjective', index: h.qIndex, expect: h.item.q || h.item.question, toChapterId,
+    },
+  }));
+  if (!data) return;
+  const key = h.type === 'mcq' ? 'mcqs' : 'subjectives';
+  secs[h.chapterIdx][key][h.qIndex] = data.item;
+  (dest[key] = dest[key] || []).push(data.moved);
+  state.issues = inspectBanks();
+  updateNavCounts();
+  toast(`已移到「${dest.title || dest.id}」第 ${data.to.index + 1} 题，仍是下架`, 'good');
   rerender();
 }
 
@@ -1132,18 +1157,39 @@ function renderEditor(body) {
     }
     const LIMIT = 60;
     hits.slice(0, LIMIT).forEach(h => {
-      const [editBtn, panel] = editToggle(h.subject, h.chapterIdx, h.type, h.qIndex);
       const hidden = Boolean(h.item.hidden);
-      const toggle = el('button', { class: `btn btn-sm${hidden ? '' : ' btn-ghost'}`, type: 'button', disabled: !canPublish() },
-        icon(hidden ? 'undo' : 'eyeOff'), el('span', { text: hidden ? '恢复' : '下架' }));
-      toggle.addEventListener('click', () => setHidden(toggle, h, !hidden));
+      const moved = h.item.moved_to;
+      let actions = null, panel = null;
+      if (moved) {
+        const dest = state.banks[h.subject].find(sec => sec.id === moved.chapterId);
+        actions = el('span', { class: 'pill', style: 'margin-left:auto', text: `已移到「${dest ? dest.title : moved.chapterId}」第 ${moved.index + 1} 题` });
+      } else {
+        let editBtn;
+        [editBtn, panel] = editToggle(h.subject, h.chapterIdx, h.type, h.qIndex);
+        const toggle = el('button', { class: `btn btn-sm${hidden ? '' : ' btn-ghost'}`, type: 'button', disabled: !canPublish() },
+          icon(hidden ? 'undo' : 'eyeOff'), el('span', { text: hidden ? '恢复' : '下架' }));
+        toggle.addEventListener('click', () => setHidden(toggle, h, !hidden));
+        actions = el('span', { style: 'margin-left:auto; display:inline-flex; flex-wrap:wrap; gap:6px' }, editBtn, toggle);
+        if (hidden) {
+          // 下架的题才能移到别章
+          const to = el('select', { class: 'select select-inline', disabled: !canPublish(), attrs: { 'aria-label': '移到哪一章' } });
+          to.appendChild(el('option', { text: '移到别章…', attrs: { value: '' } }));
+          state.banks[h.subject].forEach((sec, i) => {
+            if (i !== h.chapterIdx) to.appendChild(el('option', { text: sec.title || sec.id, attrs: { value: sec.id } }));
+          });
+          const go = el('button', { class: 'btn btn-sm btn-ghost', type: 'button', disabled: true }, icon('send'), el('span', { text: '移过去' }));
+          to.addEventListener('change', () => { go.disabled = !to.value; });
+          go.addEventListener('click', () => moveHidden(go, h, to.value));
+          actions.append(to, go);
+        }
+      }
       const text = h.type === 'mcq' ? h.item.q : h.item.question;
       results.appendChild(el('div', { class: `issue${hidden ? ' is-retired' : ''}` },
         el('div', { class: 'issue-top' },
           el('span', { class: 'pill', text: `${SUBJECT_LABEL[h.subject]} · ${h.chapterTitle}` }),
           el('span', { class: 'pill', text: `${h.type === 'mcq' ? '选择题' : '做答题'} 第 ${h.qIndex + 1} 题` }),
-          hidden ? el('span', { class: 'pill pill-retired' }, icon('eyeOff'), el('span', { text: '已下架' })) : null,
-          el('span', { style: 'margin-left:auto; display:inline-flex; gap:6px' }, editBtn, toggle)),
+          hidden ? el('span', { class: 'pill pill-retired' }, icon('eyeOff'), el('span', { text: moved ? '已移走' : '已下架' })) : null,
+          actions),
         el('div', { class: 'issue-text', text: String(text || '（空）').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').slice(0, 160) }),
         panel));
     });
