@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "physics_gen_cf8d80dc",
-      "subject": "physics",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：物理量和数据处理",
-      "q": "下列哪一组物理量的单位在国际单位制（SI）中全部属于基本单位？",
-      "options": [
-        "A. 质量、长度、力",
-        "B. 时间、电流、热力学温度",
-        "C. 速度、位移、质量",
-        "D. 电压、电阻、电荷量"
-      ],
-      "answer": 1,
-      "explanation": "考点：SI基本单位。国际单位制共有7个基本单位：长度（m）、质量（kg）、时间（s）、电流（A）、热力学温度（K）、物质的量（mol）和发光强度（cd）。\n- A选项中的“力”是导出单位（N = kg·m/s²）。\n- B选项中时间、电流、热力学温度均属于基本单位，正确。\n- C选项中的“速度”是导出单位（m/s）。\n- D选项中的电压（V）、电阻（Ω）、电荷量（C）全部是导出单位。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T10:42:09.553651+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "时间（s）、电流（A）和热力学温度（K）均为国际单位制中的基本物理量。"
-      }
-    },
-    {
       "id": "physics_gen_18fd07a9",
       "subject": "physics",
       "type": "mcq",
