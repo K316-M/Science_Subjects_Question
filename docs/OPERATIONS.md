@@ -254,11 +254,11 @@ https://science-subjects-question.vercel.app/dev/#pending
 
 ### 流水线直接推到 main（不开 PR）
 
-两条流水线把新题直接推进 main 的待审区，用的是工作流自带的推送权限（巡检报告一直都是这样推的），不需要另外设定。
+录题、出题两条流水线把新题直接推进 main 的待审区，背景音乐处理把处理好的曲子直接推进 `assets/audio/`，用的都是工作流自带的推送权限（巡检报告一直都是这样推的），不需要另外设定。
 以前要勾的「Allow GitHub Actions to create and approve pull requests」现在用不到了，勾着也没关系。
 
 > ⚠️ 之後如果替 `main` 加上分支保护（例如「合并前必须经过 PR」），要把 GitHub Actions 列为可以直接推送，
-> 否则录题、出题会在「新题推进待审区」那步推不上去（原档留在 drafts/，放行後重跑就好）。
+> 否则录题、出题会在「新题推进待审区」那步推不上去（原档留在 drafts/，放行後重跑就好），背景音乐也会停在「推回 main」那步。
 
 
 ### 设定跨装置同步（选做，免费）
@@ -335,14 +335,13 @@ GitHub → Actions → 「BioQuestion Auto Pipeline & Health Check」→ Run wor
 
 ### 音乐响度统一
 
-五首背景音乐（首页、生物、化学、物理、数学）都统一到 −20 LUFS。**以后换新歌，原档放进 `source/audio/<科目>/ambient.mp3`，跑这行**，
-它会剪掉头尾静音、做成无缝循环、调到同样响度，输出到 `assets/audio/<科目>/`；不跑的话换曲时会忽大忽小：
+五首背景音乐（首页、生物、化学、物理、数学）都统一到 −20 LUFS。**以后换新歌，把原档上传到 `source/audio/<科目>/ambient.mp3` 就好**
+（手机 GitHub App 也行），「背景音乐自动处理」工作流（`.github/workflows/build_audio.yml`）会跑 `scripts/audio/build.py`：
+剪掉头尾静音、做成无缝循环、调到同样响度，输出到 `assets/audio/<科目>/` 并推回 main。结果在 Actions 那次执行的摘要。
 
-```bash
-python3 scripts/audio/build.py math     # 只做数学；不写科目＝全部重做
-```
-
-（要装 ffmpeg；没装的话丢给我跑也行。）
+- 档名一定要叫 `ambient`（首页是 `default/background`）：叫别的照样处理，但网站只认这两个名字，摘要会提醒、不会推上去
+- 改了 `build.py` 的响度（`LUFS`）之後，到 **Actions →「背景音乐自动处理」→ Run workflow**、科目留空，全部重做一次，不然新旧曲子会不一样大声
+- 想在自己电脑跑也行：装 Python 3 与 ffmpeg，`python3 scripts/audio/build.py math`（不写科目＝全部）
 
 ### 背景的浓淡
 
@@ -793,7 +792,7 @@ source/audio/candidates/  还没决定要不要用的候选曲
 scripts/                录题、出题、审题、巡检（Python）
 scripts/sprite|scene|audio/  把 source/ 的原始素材做成 assets/ 的成品
 scripts/ui-check/       一键 UI 检查（node run.js）
-.github/workflows/      三条自动化流水线
+.github/workflows/      四条自动化流水线（录题、出题、题库巡检、背景音乐处理）
 
 ── 文件（不部署）──
 README.md               专案介绍（GitHub 首页）

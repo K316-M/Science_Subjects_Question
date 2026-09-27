@@ -1,0 +1,105 @@
+name: 背景音乐自动处理 (Build Audio)
+
+# 把原档放进 source/audio/<科目>/ambient.mp3 并推送（手机 GitHub App、网页「Add file → Upload files」都行），
+# 本工作流跑 scripts/audio/build.py：剪掉头尾静音、做成无缝循环、响度统一到 -20 LUFS，
+# 输出到 assets/audio/<科目>/ 并直接推回 main，Vercel 部署完网站就换曲。
+# 网站只认 ambient / background 两个档名（js/scene-assets.js）：叫别的名字照样处理，但网站用不到，摘要里会提醒。
+# source/audio/ 不会部署（.vercelignore），只有处理过的 assets/audio/ 会上网站。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'source/audio/**'
+      - '!source/audio/candidates/**'   # 候选曲，还没决定要不要用
+  workflow_dispatch:
+    inputs:
+      scene:
+        description: '只重做某一科（例如 math）；留空＝全部重做（改了 build.py 的响度之後用）'
+        required: false
+        default: ''
+
+concurrency:
+  group: build-audio
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库代码
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装 ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: 找出要处理的科目
+        id: scenes
+        env:
+          SCENE: ${{ inputs.scene }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ -n "$SCENE" ]; then
+              if ! [[ "$SCENE" =~ ^[a-z_-]+$ ]] || [ ! -d "source/audio/$SCENE" ]; then
+                echo "::error::source/audio/ 底下没有「$SCENE」这个资料夹"; exit 1
+              fi
+              scenes="$SCENE"
+            else
+              scenes=$(ls source/audio | grep -vx candidates)
+            fi
+          else
+            # 这次推送新增或改过的原档属於哪几科（只删档不用重做）
+            scenes=$(jq -r '.commits[] | (.added + .modified)[]' "$GITHUB_EVENT_PATH" \
+              | grep '^source/audio/' | grep -v '^source/audio/candidates/' | cut -d/ -f3 | sort -u)
+          fi
+          echo "scenes=$(echo $scenes)" >> "$GITHUB_OUTPUT"
+          echo "要处理：${scenes:-（没有）}"
+
+      - name: 处理音乐
+        if: steps.scenes.outputs.scenes != ''
+        run: |
+          {
+            echo "## 🎵 背景音乐处理结果"
+            echo
+            for s in ${{ steps.scenes.outputs.scenes }}; do
+              [ -d "source/audio/$s" ] || continue
+              python scripts/audio/build.py "$s" | sed 's/^/- /'
+              for f in source/audio/$s/*.*; do
+                name=$(basename "${f%.*}")
+                if [ "$name" != ambient ] && [ "$name" != background ]; then
+                  echo "- ⚠️ \`$f\` 档名不是 ambient，网站不会播，这份没有推上去。要用它的话改名成 ambient.mp3 再上传"
+                fi
+              done
+            done
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 推回 main
+        if: steps.scenes.outputs.scenes != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # 只收网站认得的档名；档名不对的那份留在这次执行里，不推上网站占空间
+          for f in assets/audio/*/*.mp3; do
+            case "$(basename "$f")" in ambient.mp3|background.mp3) git add -- "$f" ;; esac
+          done
+          if git diff --cached --quiet; then echo "处理结果和原本的一样，不用推"; exit 0; fi
+          git commit -q -m "🎵 背景音乐处理好了：${{ steps.scenes.outputs.scenes }}"
+          # main 刚好被改动（录题、/dev 采纳）就重取再推
+          for i in 1 2 3 4 5; do
+            if git push -q origin HEAD:main; then echo "✅ 已推到 main"; exit 0; fi
+            echo "⏳ main 刚被改动，第 $i 次重试"
+            sleep $((i * 3))
+            git pull -q --rebase origin main
+          done
+          echo "❌ 试了 5 次都没推上去，到 Actions 重跑这个工作流就好"
+          exit 1

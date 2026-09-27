@@ -75,6 +75,7 @@
 | 点「有新题」提示框後，题卡从远处滑到定位的时间 | `index.html` | `NEW_TIP_PAN_MS` | `450` 毫秒 | 🟢 太长会像卡住；开了「减少动态」的装置不滑 |
 | 背景音乐音量 | `index.html` | `MUSIC_VOLUME` | `0.35`（0～1，iPhone／iPad 也照这个） | 🟢 |
 | 换科时音乐交叉淡入淡出 | `index.html` | `MUSIC_FADE_MS` | `900` 毫秒 | 🟢 `js/scene-assets.js` 的 `FADE_MS` 只管其他独立页面自己的音乐（目前没有这种页面），主网页不看它 |
+| 背景音乐的响度、剪静音的门槛、循环接头的淡接秒数 | `scripts/audio/build.py` | `LUFS`、`SILENCE_DB`、`XFADE` | `-20`、`-50`、`3.0` 秒 | 🟡 改完到 Actions 手动跑「背景音乐自动处理」、科目留空，全部重做；只重做一首会和其他首不一样大声 |
 | 音乐播完接回开头时，头尾交叉叠多久 | `index.html` | `MUSIC_LOOP_XFADE_MS` | `3000` 毫秒 | 🟢 太长会听到结尾和开头叠在一起；曲子短于它的 3 倍就不叠，直接重播 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |
 | **统考日期与每场的试卷一／二时间** | `js/exam-timetable.js` | `papers` | 2026 年董总时间表 | 🟡 格式见档案开头注解 |
@@ -129,7 +130,8 @@
 | 改已上线的题、换配图、下架不要的题 | 网站 `/dev` →「题目修改」 | 不用碰 JSON，见 [OPERATIONS 一·4](OPERATIONS.md#4-修改已上线的题) |
 | 改章节名称或顺序 | `papers/<科目>_question_bank.json` 的 `sections[].title` | 🔴 不要改 `id`，学生的进度、笔记、划线都靠它对应 |
 | 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](../syllabus/README.md) |
-| 换背景图、背景音乐 | `assets/visual/<科目>/`、`assets/audio/<科目>/` | [assets/README.md](../assets/README.md) |
+| 换背景图 | `assets/visual/<科目>/` | [assets/README.md](../assets/README.md) |
+| 换背景音乐 | `source/audio/<科目>/ambient.mp3`（上传就好） | 🟢 「背景音乐自动处理」工作流会剪静音、做无缝循环、调音量，推到 `assets/audio/`；档名一定要叫 `ambient` |
 | 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。分页那两张要先把多余白边裁掉再缩，不然 16px 只剩一团色块。浏览器会快取图标，换完可能要重开分页或清快取才看得到。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是另外重画的 SVG，不会跟著这 5 个档变：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |
 | 数学公式排版程式（KaTeX）换新版 | `vendor/katex/` | 🟡 照 `vendor/katex/README.md` 换掉同名档案；只留 `.woff2` 字型 |
