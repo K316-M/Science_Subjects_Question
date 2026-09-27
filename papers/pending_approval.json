@@ -53,32 +53,6 @@
       }
     },
     {
-      "id": "physics_gen_139de6da",
-      "subject": "physics",
-      "type": "mcq",
-      "chapter_id": "chap2",
-      "chapter_title": "第二章：直线运动",
-      "q": "在不计空气阻力的情况下，将一小球自地面垂直向上抛出。已知小球在空中运动 6 s 后落回抛出点（取重力加速度 g = 10 m/s²）。关于小球的运动，下列叙述中错误的是：",
-      "options": [
-        "A. 小球上升的最大高度为 45 m",
-        "B. 小球被抛出时的初速度大小为 30 m/s",
-        "C. 在 t = 4 s 时，小球相对于地面的位移大小为 40 m",
-        "D. 在 t = 4 s 时，小球的速度方向垂直向上"
-      ],
-      "answer": 3,
-      "explanation": "考点：垂直上抛运动的对称性与运动规律。由对称性知上升时间 t = 3 s。根据 v = u - gt，0 = u - 10(3)，得 u = 30 m/s（B正确）。最大高度 H = (1/2)gt² = 0.5 * 10 * 3² = 45 m（A正确）。t = 4 s 时的位移 s = ut - (1/2)gt² = 30(4) - 0.5(10)(16) = 120 - 80 = 40 m（C正确）。t = 4 s 时的速度 v = u - gt = 30 - 10(4) = -10 m/s，负号表示方向向下，故D叙述错误。学生常混淆速度的方向与位移的方向。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T10:44:04.009229+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 3,
-        "reason": "上升至最高点用时 3 s，在 t = 4 s 时小球处于下落阶段，速度方向垂直向下。"
-      }
-    },
-    {
       "id": "physics_gen_730cc23a",
       "subject": "physics",
       "type": "mcq",
