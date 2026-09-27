@@ -7,7 +7,7 @@
 宁可多标，不要少标。
 
   1. text_problems   题干/选项夹英文虚词（「甘油 and 脂肪酸」）、残留转写标记、题号没去掉、
-                     数学公式的反斜线少写（控制字元）或 $ 没成对
+                     公式的反斜线少写（控制字元）、$ 没成对、$ 外面的 LaTeX 指令、AI 在解析里自言自语
   2. source_drift    Word/PPT/文字档：题干与选项要能在原档里一字不差找到，
                      AI 改字、加字、漏字（例如漏掉「不」）都标出来，并写出原档与录入的差异
   3. cross_check     请 Gemini 在看不到答案的情况下重做一次选择题，和已有答案比对
@@ -31,6 +31,11 @@ LEADING_NUMBER = re.compile(r"^\s*(\d{1,3}|[（(]\d{1,3}[)）])\s*[.．、)]")
 ROMAN_ONE_LINE = re.compile(r"(?<![A-Za-z])I\s+\S.*?\sII(?![A-Za-z])")
 MATH_SPAN = re.compile(r"\$[^$]*\$")
 CONTROL_CHAR = re.compile(r"[\x08\x0c\t\r]")   # 公式的反斜线少写一个时，\b \f \t \r 会变成这些
+RAW_LATEX = re.compile(r"\\[A-Za-z]+")          # $ 外面的 \sqrt、\gamma：网站只排 $ 里面的，外面的原样显示成程式码
+# AI 出题／写解析时算到一半发现不对、自己改口留下的话。2026-09 那批：有这些字的题全都要改或退
+# （答案错、题目改到一半、选项对不上），而「答案有疑」反而多半是误报
+SELF_TALK = re.compile(r"等等|哎呀|重新(计算|分析|审题|核对|核算|检查)|让我们?(重新|检查|核对|修正)|"
+                       r"修正选项|与选项不符|若题目改为|重写(此|这)题|慢，检查")
 
 
 # ---------- 数学公式（LaTeX） ----------
@@ -56,6 +61,16 @@ MATH_RULES = r"""
 - 符号照统考公式表：余割 \operatorname{cosec}（不写 csc）、反三角函数 \sin^{-1}x（不写 arcsin）、组合数 {}_nC_r、
   对数 \log_a x、自然对数 \ln x、行列式 \det(A)、伴随矩阵 \operatorname{adj}(A)、无穷等比级数和 S_\infty、
   矩阵 \begin{pmatrix}…\end{pmatrix}、行列式 \begin{vmatrix}…\end{vmatrix}。
+"""
+
+# 生物、化学、物理：公式少，简单的直接打符号，复杂的才用 $…$ 的 LaTeX（网站一样排得出来）
+FORMULA_RULES = r"""
+【公式与符号写法】
+- 简单的直接打符号：H₂O、SO₄²⁻、Fe³⁺、m/s²、6.02×10²³、λ、Δ、Ω、μ、→、⇌、≤、≥、≠、√2。
+- 分数、根号里有式子这类复杂的公式才写 LaTeX，前后用 $ 包起来，例如 $\frac{1}{2}mv^2$、$\sqrt{\frac{2h}{g}}$；中文字写在 $ 外面。
+- $ 外面不可以出现 \sqrt、\frac、\gamma 这类反斜线指令（网页会原样显示成程式码）。
+- JSON 字串里的反斜线一律写两次：写 "\\frac{1}{2}"，不要写 "\frac{1}{2}"。
+- $ 里面的小于、大于写 \lt、\gt，不要直接打 < >。
 """
 
 
@@ -90,10 +105,11 @@ def text_problems(record):
     """只看题目本身就知道有问题的地方"""
     out = []
     pieces = [("题干", _stem(record))] + [(f"选项{LETTERS[i]}", o) for i, o in enumerate(record.get("options") or [])]
+    pieces.append(("解析", record.get("explanation") or ""))
     for label, text in pieces:
         text = str(text)
         prose = MATH_SPAN.sub("", text)   # 公式里的 \text{or} 不算夹英文
-        if CJK.search(prose):
+        if label != "解析" and CJK.search(prose):   # 解析常带英文术语，不查
             m = ENGLISH_FILLER.search(prose)
             if m:
                 out.append(f"{label}夹了英文「{m.group(0)}」，疑似转写错误")
@@ -101,10 +117,18 @@ def text_problems(record):
             out.append(f"{label}残留转写标记「{LEFTOVER_MARK.search(text).group(0)}」")
         if CONTROL_CHAR.search(text):
             out.append(f"{label}有看不见的控制字元，多半是公式的反斜线少写一个（\\frac、\\theta 这类），请检查公式")
-        if record.get("subject") == "math" and text.count("$") % 2:
+        if text.count("$") % 2:
             out.append(f"{label}的公式 $ 没有成对，显示会乱掉")
-        if record.get("subject") == "math" and any(c in span for span in MATH_SPAN.findall(text) for c in "<>"):
+        elif RAW_LATEX.search(prose):
+            out.append(f"{label}有没用 $ 包住的公式指令「{RAW_LATEX.search(prose).group(0)}」，学生会看到原始码，"
+                       "请改成符号（√、γ）或用 $ 包起来")
+        if any(c in span for span in MATH_SPAN.findall(text) for c in "<>"):
             out.append(f"{label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt")
+    for label, text in pieces:
+        m = SELF_TALK.search(str(text))
+        if m:
+            out.append(f"⚠️ {label}里有 AI 自言自语「{m.group(0)}」：这种题多半算错或中途改过题，答案、选项、解析都要核对")
+            break
     if LEADING_NUMBER.match(_stem(record)):
         out.append("题干开头的题号没去掉")
     if any(ROMAN_ONE_LINE.search(line) for line in _stem(record).splitlines()):

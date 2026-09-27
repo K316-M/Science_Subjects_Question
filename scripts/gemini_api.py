@@ -53,6 +53,15 @@ class GeminiError(Exception):
     """带着 API 实际回应的错误，方便在报告里显示到底哪里不对。"""
 
 
+class LowTierOnly(GeminiError):
+    """较强的模型都不能用，只剩呼叫端不肯用的等级（出题不用 flash-lite）：停手，等额度恢复再跑。"""
+
+
+def tier_of(name):
+    """pro／flash／flash-lite；Google 建议的替代型号可能带 -001 这类尾巴，不一定对得上 MODEL_RE，所以只看名字里有没有"""
+    return next((t for t in ("flash-lite", "flash", "pro") if f"-{t}" in name), None)
+
+
 def _read_error(e):
     if isinstance(e, urllib.error.HTTPError):
         try:
@@ -127,17 +136,23 @@ QUOTA = ("exceeded your current quota", "quota exceeded", "billing", "resource_e
 BACKOFF = (4, 10, 25)   # 秒
 
 
-def generate(api_key, parts, temperature=0.4, timeout=300):
+def generate(api_key, parts, temperature=0.4, timeout=300, skip_tiers=()):
     """parts 是 Gemini 的 contents[0].parts，文字或图片都塞这里。
 
     从最高级的模型开始：下架、额度用完、一直忙，就往下一级换。
     Google 的错误讯息若写了建议替代就照它的，否则按 rank_models 的顺序走。
+    skip_tiers：不肯用的等级（出题不用 flash-lite）。轮到这一级就丢 LowTierOnly 停手、不再往下换；
+    GEMINI_MODEL 指定的模型不受这个限制。
     """
     global _resolved, last_model
     last = None
 
     for _ in range(8):                       # 最多换 8 个模型（pro 额度用完、尖峰时段常常连着好几个都不行）
         model = resolve_model(api_key)
+        if tier_of(model) in skip_tiers and model != os.environ.get("GEMINI_MODEL", "").strip():
+            why = f"（{str(last)[:60]}）" if last else ""
+            raise LowTierOnly(f"较强的模型都不能用{why}，只剩 {model}，这次不用它出题。"
+                              "每日额度在马来西亚下午 3～4 点重置，之後到 Actions 手动再跑")
 
         for attempt, wait in enumerate((0,) + BACKOFF):
             if wait:
