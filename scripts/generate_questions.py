@@ -45,6 +45,7 @@ CHAPTERS_PER_RUN = int(os.environ.get("CHAPTERS_PER_RUN", "3"))
 ONLY_SUBJECT = os.environ.get("ONLY_SUBJECT", "").strip()
 
 SIMILARITY_LIMIT = 0.82   # 题干与既有题目相似度超过这个值就丢弃，避免换句话重复出题
+PAUSE_WHEN_WAITING = 1     # 每周自动跑时，待审区还有这么多道 AI 出的题没审完就先不出；0＝不管，照样出（手动跑不受影响）
 SYLLABUS_CHAR_LIMIT = 12000   # 考纲塞进提示词的上限；三科目前都在这个数字以内，会整份带上
 
 
@@ -298,9 +299,9 @@ def main():
 
     # 每周自动跑的那次：上一批 AI 出的题还没审完就先不出（现在直接进待审区，不管的话会越堆越多，
     # 而且挑章节只看正式题库，同几章会一直重复出）。手动跑不受影响
-    if os.environ.get("GITHUB_EVENT_NAME") == "schedule":
+    if os.environ.get("GITHUB_EVENT_NAME") == "schedule" and PAUSE_WHEN_WAITING:
         waiting = sum(1 for i in pending_queue.load_items() if i.get("origin") == "ai_generated")
-        if waiting:
+        if waiting >= PAUSE_WHEN_WAITING:
             generate_report([("—", "—", "⏭️ 这周不出", f"待审区还有 {waiting} 道 AI 出的题没审完，审完下周才会再出；急的话到 Actions 手动跑")], 0)
             print(f"待审区还有 {waiting} 道 AI 出的题没审完，这周先不出新题。")
             return

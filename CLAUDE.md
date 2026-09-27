@@ -63,3 +63,18 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+## 5. 本项目：每次改动都要同步 docs/CUSTOMIZE.md
+
+`docs/CUSTOMIZE.md` 是开发者「自己动手改」的索引（想改什么 → 档案 → 搜哪个名字 → 现在的值 → 🟢🟡🔴）。
+每一次改动（功能、文字、流程、工作流程、素材），在交付前都要检查：
+
+- **新增**了开发者可能想自己调的东西（数值、门槛、次数、时间、开关、文字、名称、排程）→ 在对应段落加一列
+- **改到**已经列出的项目（值、档案、名字变了，或多了一处要一起改）→ 更新那一列
+- 值**写死在程式中间、没有名字可搜** → 先抽成有名字、带注解的常数，再列进去（这份文件靠「搜名字」定位，不写行号）
+- 改错会坏事的（例如两处要一起改、改了会影响学生已存的资料）→ 标 🔴 并写明原因
+- 每个「搜这个名字」都要实际在那个档案里搜得到
+
+交付时在回覆里说明这次动了 CUSTOMIZE.md 的哪几列；没有要加的也要说「这次没有新的可调项目」。
