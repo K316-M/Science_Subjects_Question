@@ -105,7 +105,7 @@ def build_prompt(subject, chapters):
      几题共用同一张图就各自填同一个框。
 6. 依下列官方章节框架判断所属章节，填 chapter_id；真的判断不了填 "unclassified"：
 {chapter_lines}
-{MATH_INGEST_RULES if subject == "math" else ""}
+{MATH_INGEST_RULES if subject == "math" else qa.FORMULA_RULES}
 只回传一个 JSON 数组，不要 Markdown 代码块或任何说明文字。每项：
 {{
   "type": "mcq 或 subjective",
