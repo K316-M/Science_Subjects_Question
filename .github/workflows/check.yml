@@ -27,24 +27,37 @@ jobs:
     name: 资料与语法
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '22'
+          node-version: '24'
       - name: 检查题库、待审区、语法、CUSTOMIZE.md
         run: python scripts/check_repo.py
+      - name: 工作流用到的 action 版本都存在
+        # 录题、出题、巡检、音乐只在触发时才跑：版本号写错要等到那时才会坏，这里先一个一个问 GitHub
+        if: success() || failure()
+        run: |
+          bad=0
+          for ref in $(grep -hoE 'uses: *[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+' .github/workflows/*.yml | sed 's/uses: *//' | sort -u); do
+            if git ls-remote --exit-code "https://github.com/${ref%@*}" "refs/tags/${ref#*@}" "refs/heads/${ref#*@}" >/dev/null; then
+              echo "✅ $ref"
+            else
+              echo "❌ $ref 不存在（版本号打错，或那个 action 改名了）" | tee -a "$GITHUB_STEP_SUMMARY"; bad=1
+            fi
+          done
+          exit $bad
 
   ui:
     name: 介面（一键 UI 检查）
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: '22'
+          node-version: '24'
           cache: npm
           cache-dependency-path: scripts/ui-check/package-lock.json
       - name: 安装 Playwright 与 Chromium
@@ -62,7 +75,7 @@ jobs:
         run: node scripts/fonts/serif-subset.js --check
       - name: 失败时把截图存起来
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ui-check-screenshots
           path: scripts/ui-check/out/
