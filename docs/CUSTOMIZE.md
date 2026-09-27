@@ -64,8 +64,9 @@
 | 首页轨道绕圈速度 | `js/orbit-subjects.js` | `IDLE_SPEED` | `4`（度/秒，约 90 秒一圈） | 🟢 |
 | 点圆球後转到正上方的时间 | `js/orbit-subjects.js` | `SNAP_MS` | `760` 毫秒 | 🟢 |
 | 点「有新题」提示框後，题卡从远处滑到定位的时间 | `index.html` | `NEW_TIP_PAN_MS` | `450` 毫秒 | 🟢 太长会像卡住；开了「减少动态」的装置不滑 |
-| 背景音乐音量 | `index.html` | `MUSIC_VOLUME` | `0.35`（0～1） | 🟢 |
-| 换科时音乐交叉淡入淡出 | `index.html` `js/scene-assets.js` | `MUSIC_FADE_MS`、`FADE_MS` | `900` 毫秒 | 🟢 |
+| 背景音乐音量 | `index.html` | `MUSIC_VOLUME` | `0.35`（0～1，iPhone／iPad 也照这个） | 🟢 |
+| 换科时音乐交叉淡入淡出 | `index.html` | `MUSIC_FADE_MS` | `900` 毫秒 | 🟢 `js/scene-assets.js` 的 `FADE_MS` 只管其他独立页面自己的音乐（目前没有这种页面），主网页不看它 |
+| 音乐播完接回开头时，头尾交叉叠多久 | `index.html` | `MUSIC_LOOP_XFADE_MS` | `3000` 毫秒 | 🟢 太长会听到结尾和开头叠在一起；曲子短于它的 3 倍就不叠，直接重播 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |
 | **统考日期与每场的试卷一／二时间** | `js/exam-timetable.js` | `papers` | 2026 年董总时间表 | 🟡 格式见档案开头注解 |
 | AI 依考纲出题的自动排程 | `.github/workflows/generate_questions.yml` | `cron` | 每周一早上 9 点（马来西亚） | 🟡 cron 是 UTC，马来西亚时间减 8 小时 |

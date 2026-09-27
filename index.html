@@ -1467,45 +1467,78 @@
   }
 
   // ---- 环境背景音乐：优先使用 assets/audio/<subject>/ambient.*，找不到则用 Web Audio 生成式合成 ----
+  // 音档也接进 Web Audio，用 GainNode 控音量：iPhone／iPad 不让网页改 <audio> 的 volume（永远最大声），
+  // 以前改 volume 做的淡入淡出在那里完全没作用，换科时两首全音量叠在一起再硬切
   const MUSIC_VOLUME = 0.35;
   const MUSIC_FADE_MS = 900;   // 淡出与淡入同时进行，所以切换听起来是交叉过渡而不是断掉
+  // 播到结尾前这么久，从头再放一份叠上去、交叉接回开头。<audio loop> 接头会顿一下（化学那首掉约 12 dB），
+  // 化学那首结尾又是渐弱的；叠着接就听不出接缝。曲子比这个的 3 倍还短就不叠，交给 loop
+  const MUSIC_LOOP_XFADE_MS = 3000;
   let musicEnabled = false;
   let musicNodes = [];
   let musicTimer = null;
-  let customAudioEl = null;
+  let customTrack = null;      // { gain: 这首的总音量, voices: [{ el, g }] }，接头时会有两份同时在播
   let currentTrackUrl = null;
   let musicSessionId = 0;
 
-  // 用 rAF 把音量平滑推到目标值；同一个元素上重复呼叫会接手上一次的淡变
-  function fadeAudio(el, target, ms, onDone) {
-    if (el._fadeRaf) cancelAnimationFrame(el._fadeRaf);
-    const from = el.volume;
-    const start = performance.now();
-    const step = (now) => {
-      const t = Math.min((now - start) / ms, 1);
-      el.volume = Math.max(0, Math.min(1, from + (target - from) * t));
-      if (t < 1) {
-        el._fadeRaf = requestAnimationFrame(step);
-      } else {
-        el._fadeRaf = null;
-        if (onDone) onDone();
-      }
-    };
-    el._fadeRaf = requestAnimationFrame(step);
+  // 等功率曲线：一首淡出、一首淡入同时进行时，总音量不会在中间凹下去（直线淡化在中点少约 3 dB）
+  function fadeGain(param, to, ms) {
+    const now = audioCtx.currentTime;
+    const from = param.value;
+    param.cancelScheduledValues(now);
+    const curve = new Float32Array(32);
+    for (let i = 0; i < curve.length; i++) {
+      const t = i / (curve.length - 1);
+      curve[i] = to > from ? from + (to - from) * Math.sin(t * Math.PI / 2) : to + (from - to) * Math.cos(t * Math.PI / 2);
+    }
+    param.setValueCurveAtTime(curve, now, ms / 1000);
+  }
+
+  function addMusicVoice(track, url) {
+    const el = new Audio(url);
+    el.loop = true;   // 保险：万一下面的接头没接上，至少还会自己重播
+    const g = audioCtx.createGain();
+    g.gain.value = track.voices.length ? 0 : 1;
+    audioCtx.createMediaElementSource(el).connect(g);
+    g.connect(track.gain);
+    const voice = { el, g };
+    track.voices.push(voice);
+    el.addEventListener('timeupdate', () => {
+      const left = el.duration - el.currentTime;
+      if (track !== customTrack || voice.handedOff || !(el.duration >= MUSIC_LOOP_XFADE_MS * 3 / 1000)) return;
+      if (left * 1000 > MUSIC_LOOP_XFADE_MS + 500) return;
+      voice.handedOff = true;
+      el.loop = false;
+      const ms = Math.max(50, left * 1000);   // 旧的那份刚好在自己的结尾淡到 0
+      fadeGain(addMusicVoice(track, url).g.gain, 1, ms);
+      fadeGain(g.gain, 0, ms);
+      setTimeout(() => dropMusicVoice(track, voice), ms + 300);
+    });
+    el.play().catch((e) => console.warn('自定义背景音乐播放失败：', e.message));
+    return voice;
+  }
+
+  function dropMusicVoice(track, voice) {
+    voice.el.pause();
+    voice.el.removeAttribute('src');
+    voice.el.load();
+    voice.g.disconnect();
+    track.voices = track.voices.filter(v => v !== voice);
   }
 
   // 让目前这首开始淡出并交出控制权；不等它淡完，新的那首可以马上叠上来
   function releaseCurrentMusic() {
     if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
 
-    const leaving = customAudioEl;
-    customAudioEl = null;
+    const leaving = customTrack;
+    customTrack = null;
     currentTrackUrl = null;
     if (leaving) {
-      fadeAudio(leaving, 0, MUSIC_FADE_MS, () => {
-        leaving.pause();
-        leaving.src = '';
-      });
+      fadeGain(leaving.gain.gain, 0, MUSIC_FADE_MS);
+      setTimeout(() => {
+        leaving.voices.slice().forEach(v => dropMusicVoice(leaving, v));
+        leaving.gain.disconnect();
+      }, MUSIC_FADE_MS + 100);
     }
 
     const now = audioCtx ? audioCtx.currentTime : 0;
@@ -1527,30 +1560,31 @@
     const sessionId = ++musicSessionId;
     if (!musicEnabled) { releaseCurrentMusic(); return; }
 
+    // iPhone 规定 Web Audio 要在点击的当下叫醒，所以放在等待找曲子之前
+    initAudio();
+    if (audioCtx.state !== 'running') audioCtx.resume();
+
     // 先把新的曲目找出来再动旧的，才能做到「旧的淡出、新的同时淡入」
     const customUrl = await SceneAssets.findMusic(subject);
     if (sessionId !== musicSessionId) return; // 期间已切换，放弃
 
     // 换科目但用的是同一首曲子时，让它继续播，不要从头重来
-    if (customUrl && customUrl === currentTrackUrl && customAudioEl) return;
+    if (customUrl && customUrl === currentTrackUrl && customTrack) return;
 
     releaseCurrentMusic();
 
     if (customUrl) {
-      const el = new Audio(customUrl);
-      el.loop = true;
-      el.volume = 0;
-      customAudioEl = el;
+      const track = { gain: audioCtx.createGain(), voices: [] };
+      track.gain.gain.value = 0;
+      track.gain.connect(audioCtx.destination);
+      customTrack = track;
       currentTrackUrl = customUrl;
-      el.play().catch((e) => console.warn('自定义背景音乐播放失败：', e.message));
-      fadeAudio(el, MUSIC_VOLUME, MUSIC_FADE_MS);
+      addMusicVoice(track, customUrl);
+      fadeGain(track.gain.gain, MUSIC_VOLUME, MUSIC_FADE_MS);
       return;
     }
 
     // 回退：生成式合成（详见下方音阶设计说明）
-    initAudio();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-
     const theme = SUBJECT_THEME[subject] || SUBJECT_THEME.biology;
     const now = audioCtx.currentTime;
 
