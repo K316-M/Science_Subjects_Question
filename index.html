@@ -2764,7 +2764,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     else setTimeout(() => { if (btn.isConnected && window.UECOnboarding) window.UECOnboarding.once('explain'); }, 1500);
     btn.addEventListener('click', async () => {
       btn.disabled = true;
-      setBtnLabel(btn, 'help', 'AI 老师正在想…约 5 秒');
+      setBtnLabel(btn, 'help', 'AI 老师在想…10～20 秒');
       let status = 0, data = {};
       try {
         const res = await fetch('/api/explain', {

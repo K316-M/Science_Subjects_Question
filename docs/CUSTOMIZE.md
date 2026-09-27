@@ -47,6 +47,7 @@
 | 小精灵通知面板的标题 | `js/feedback.js` | `spritePanelTitle` | 🟡 保留 `${…}` 那段，那是自动填的修复内容 |
 | 做答题作答框的提示字 | `index.html` | `subj-attempt-input` 的 `placeholder` | 🟢 |
 | AI 批改结果下面的「仅供参考」说明 | `index.html` | `grade-note` | 🟢 |
+| AI 讲解、AI 批改等待时按钮上的字（「AI 老师在想…10～20 秒」「批改中…约 10 秒」） | `index.html` | `AI 老师在想`、`批改中…` | 🟡 写实际要等的时间，写短了学生会以为卡住；讲解那颗在 320px 手机上最多约 12 个中文字宽，再长会断成两行 |
 | 统考时间表最上面的两行说明 | `js/exam-timetable.js` | `rules`；`index.html` 搜 `exam-list-hint` | 🟢 |
 | 时间表的考试名称（「2026 年度第 52 届高中统考」） | `js/exam-timetable.js` | `title` | 🟢 |
 | 离线或连不上时按「立即同步」的提示 | `js/sync.js` | `目前没有网络` | 🟢 |
