@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_eca3e5996e",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap12",
-      "chapter_title": "第12章：生殖",
-      "source_draft": "drafts/biology/GC练习.txt",
-      "answer_source": "ai",
-      "flags": [
-        "原档没标答案，由 AI 作答（两次一致），仍请核对"
-      ],
-      "ingested_at": "2026-09-27T09:56:23.016686Z",
-      "q": "下列哪个过程没有在花粉和胚囊的发育过程中出现?",
-      "options": [
-        "A. 花粉囊中一个小孢子母细胞经过减数分裂形成四个小孢子",
-        "B. 每个小孢子成熟后又经过一次减数分裂形成两个营养细胞",
-        "C. 胚珠中一个大孢子母细胞经过减数分裂,产生四个大孢子",
-        "D. 大孢子中的细胞核有丝分裂三次,形成了具八个核的胚囊"
-      ],
-      "answer": 1,
-      "explanation": "小孢子（花粉管细胞核）形成营养细胞和生殖细胞的过程是通过有丝分裂完成的，而非减数分裂。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "小孢子（花粉管细胞）形成后进行的是有丝分裂而非减数分裂，以产生营养细胞和生殖细胞。"
-      }
-    },
-    {
       "id": "biology_79cac872be",
       "subject": "biology",
       "type": "mcq",
