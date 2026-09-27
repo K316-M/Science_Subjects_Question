@@ -114,6 +114,7 @@
 | **生物、化学、物理的公式写法**（录题、出题 AI 共用：简单的打符号，复杂的才用 `$…$`） | `scripts/qa.py` | `FORMULA_RULES` | | 🟡 「`$` 外面不可以出现反斜线指令」「反斜线写两次」不要删，不然学生会看到 `\sqrt` 原始码 |
 | 哪些字算 AI 自言自语（标「⚠️ …多半算错」） | `scripts/qa.py`、`dev/dev.js` | `SELF_TALK` | 等等、哎呀、重新计算、让我们重新…、慢，检查 | 🔴 两个档要一起改（录题出题时标一次、/dev 打开时再查一次，字句不同会重复显示）；只加正常解析不会出现的字，「不对，」「慢，」会误中「B 不对，因为…」「反应极慢，…」 |
 | 网站 AI 讲解、批改的数学公式写法 | `api/_lib/ai.js` | `MATH_PROMPT_RULE` | | 🟡 要叫它用 `$…$` 包 LaTeX，学生站才排得出公式 |
+| 网站 AI 讲解、批改的生物、化学、物理公式写法 | `api/_lib/ai.js` | `FORMULA_PROMPT_RULE` | 简单的打符号，复杂的才用 `$…$` | 🟡 和出题、录题的 `FORMULA_RULES`（`scripts/qa.py`）同一套写法，改一边另一边也要跟上 |
 | AI 少写反斜线时自动补回的 LaTeX 指令（\\frac、\\theta 这类） | `scripts/qa.py`、`api/_lib/ai.js` | `LATEX_ESCAPE_LOOKALIKES` | 只列 b、f、n、r、t 开头的指令 | 🔴 两个档要一起改；不要加 `ne`、`nu`、`ni`（和「换行＋字母」分不出来） |
 | 复习排程（多久後再复习一次） | `js/review.js` | `EASE_START` `EASE_MIN` `EASE_MAX` `EASE_UP` `EASE_DOWN` | | 🔴 会影响每个学生已排好的复习 |
 | 复习间隔最长几天 | `js/review.js` | `MAX_INTERVAL_DAYS` | `60` | 🟢 |
