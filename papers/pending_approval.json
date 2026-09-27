@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_1a23f2bc8b",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap7",
-      "chapter_title": "第7章：动植物的协调与反应",
-      "source_draft": "drafts/biology/GC练习.txt",
-      "answer_source": "ai",
-      "flags": [
-        "原档没标答案，由 AI 作答（两次一致），仍请核对"
-      ],
-      "ingested_at": "2026-09-27T09:56:23.009857Z",
-      "q": "下列哪三项有关气孔的叙述是正确的?\nI 保卫细胞近气孔侧的内壁较厚。\nII 气孔的大小由一对保卫细胞控制。\nIII 保卫细胞吸水后，会使气孔关闭。\nⅣ 保卫细胞内的二氧化碳浓度下降，会引起气孔开启。",
-      "options": [
-        "A. I，II，III",
-        "B. I，II，IV",
-        "C. I，III，Ⅳ",
-        "D. II，III，Ⅳ"
-      ],
-      "answer": 1,
-      "explanation": "保卫细胞吸水膨胀时，由于内壁厚、外壁薄，细胞向外弯曲，气孔应为开启而非关闭。I、II、IV 叙述均正确。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "保卫细胞吸水膨胀时气孔开启而非关闭，其余关于结构、控制机制及二氧化碳影响的叙述均正确。"
-      }
-    },
-    {
       "id": "biology_53c755ea89",
       "subject": "biology",
       "type": "mcq",
