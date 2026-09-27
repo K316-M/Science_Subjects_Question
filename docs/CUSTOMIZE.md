@@ -51,7 +51,7 @@
 | 各科名称、英文名、轨道上的小字说明 | `js/orbit-subjects.js` | `SUBJECTS` 的 `name` `en` `note` | 🟢 |
 | 做题页上的科目名称（「生物科」） | `index.html` | `SUBJECT_LABELS` | 🟢 |
 | 数学两份卷的名称（按钮「模拟高数Ⅰ · 60 分钟」、/dev 的卷别） | `index.html`、`dev/dev.js` | `PAPER_LABEL` | 🟡 两个档各一份，写一样才对得上 |
-| **每个画面的导览（聚光灯）文字** | `js/onboarding.js` | `TOURS` —— 每一步是 `{ title, body }`，`body` 可以用 `<strong>` | 🟢 |
+| **每个画面的导览（聚光灯）文字** | `js/onboarding.js` | `TOURS` —— 每一步有 title（标题）和 body（内文），内文可以用 `<strong>` | 🟢 |
 | 小精灵说的「谢谢！」 | `js/feedback.js` | `bubble.textContent` | 🟢 |
 | 小精灵通知面板的标题 | `js/feedback.js` | `spritePanelTitle` | 🟡 保留 `${…}` 那段，那是自动填的修复内容 |
 | 做答题作答框的提示字 | `index.html` | `subj-attempt-input` 的 `placeholder` | 🟢 |
@@ -105,7 +105,7 @@
 | 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS`；个别科目在 `MOCK_QUESTIONS_BY_SUBJECT` | 理科 `40`；数学 `15`（高数Ⅰ、Ⅱ 评量规格） | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
 | 模拟统考对到时间表的哪一科 | `index.html` | `EXAM_SUBJECT` | 数学用 `'math:I'`→`高级数学（Ⅰ）`、`'math:II'`→`高级数学（Ⅱ）` | 🔴 右边要和 `js/exam-timetable.js` 的 `subject` 一字不差（全形括号、罗马数字 Ⅰ Ⅱ），对不上按钮就不出现 |
 | 没标卷别的数学题，哪几章不进高数Ⅰ | `index.html` | `MATH_ADVANCED_CHAPTERS` | 第 30、31、33、34、35 章（《高级数学》才有） | 🔴 写章节 `id`（`chap30`），不是章名；课程标准改版才动 |
-| 数学卷别的代号 | `api/_lib/questions.js`、`scripts/ingest_drafts.py` | `PAPERS` | `'I'`、`'II'` | 🔴 题库里存的就是这两个字；改了，已经标好的题全部对不上 |
+| 数学卷别的代号 | `api/_lib/questions.js`、`scripts/ingest_drafts.py`、`scripts/check_repo.py` | `PAPERS` | `'I'`、`'II'` | 🔴 三处一起改；题库里存的就是这两个字，改了，已经标好的题全部对不上 |
 | 照片档名怎么认高数Ⅰ／Ⅱ（第二页以後没有卷头时） | `scripts/ingest_drafts.py` | `PAPER_IN_FILENAME` | 「高数2」「高数Ⅱ」「SC07」→ Ⅱ；「高数1」「SC06」→ Ⅰ | 🟡 Ⅱ 要排在前面（「高数II」也含「高数I」） |
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |
 | **AI 录题的规则**（只取什么、高光怎么认） | `scripts/ingest_drafts.py` | `build_prompt` 里的 0～6 条；数学另加 `MATH_INGEST_RULES`（认卷别） | | 🔴 JSON 栏位名称不要改，程式靠它读 |
@@ -117,6 +117,7 @@
 | 错题要在几个不同的日子答对才移出错题本 | `js/review.js` | `WEAK_EXIT_DAYS` | `2` | 🟢 |
 | 删掉的笔记要记住多久（防止另一台装置同步回来） | `js/sync.js` | `NOTE_TOMBSTONE_DAYS` | `365` | 🟢 |
 | 错几次标成「顽固」 | `js/review.js` | `STUBBORN_LAPSES` | `3` | 🟢 |
+| 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～5，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
 | 申诉要寄到哪个信箱 | `js/feedback.js` | `FEEDBACK_ENDPOINT` | Formspree 表单 | 🟡 换成你自己的 Formspree 网址 |
 | 暂时关掉某一科（首页那颗球变灰、点不进去） | `js/orbit-subjects.js` | `SUBJECTS` 里那一科的 `enabled` | 四科都是 `true`（数学已开放） | 🟡 改 `false` 时 `note` 写「尚未开放」；要打开的科目，`papers/<科目>_question_bank.json` 要先有章节 |
 

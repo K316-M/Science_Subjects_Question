@@ -16,11 +16,19 @@ const results = [];
 const check = (group, name, pass, detail) => results.push({ group, name, pass: Boolean(pass), detail: detail === undefined ? '' : detail });
 const bank = JSON.parse(fs.readFileSync(path.join(ROOT, 'papers', 'biology_question_bank.json'), 'utf8'));
 const CH1 = bank.sections[0];
+// 下架的题（hidden）学生看不到，测试也照这个算（同 index.html 的 isLive）。题目用「题库里的位置」记，下架的也占位置
+const live = list => (list || []).filter(q => q && !q.hidden);
+const liveIdx = sec => (sec.mcqs || []).map((q, i) => (q && !q.hidden ? i : -1)).filter(i => i >= 0);
+const CH1_LIVE = liveIdx(CH1);                 // 第一章上线中的选择题；画面上的第 1 题是 CH1.mcqs[CH1_LIVE[0]]
+const FIRST = CH1.mcqs[CH1_LIVE[0]];
 
 let URL_, browser;
 
-async function open({ width = 390, height = 844, mobile = false, reducedMotion, seed, clock = false } = {}) {
-  const ctx = await browser.newContext({ viewport: { width, height }, hasTouch: mobile, isMobile: mobile, reducedMotion });
+async function open({ width = 390, height = 844, mobile = false, reducedMotion, seed, clock = false, setup } = {}) {
+  // setup 会改网络回应（清空某科题库、关掉某科）：service worker 接手的请求 Playwright 拦不到，这时关掉它
+  const ctx = await browser.newContext({ viewport: { width, height }, hasTouch: mobile, isMobile: mobile, reducedMotion,
+    serviceWorkers: setup ? 'block' : 'allow' });
+  if (setup) await setup(ctx);
   // sessionStorage 标记：只在第一次载入时塞资料，重新整理不会把测试中的状态洗掉
   await ctx.addInitScript((seed) => {
     if (sessionStorage.getItem('__seeded')) return;
@@ -38,6 +46,20 @@ async function open({ width = 390, height = 844, mobile = false, reducedMotion, 
   await page.waitForTimeout(1000);
   return { ctx, page, errors, requests };
 }
+// 把某一科的题目清空（章节留着）：「零题科目」不必等题库真的没题
+const emptySubject = subject => ctx => ctx.route(`**/papers/${subject}_question_bank.json`, async r => {
+  const res = await r.fetch();
+  const data = await res.json();
+  data.sections.forEach(s => { s.mcqs = []; s.subjectives = []; });
+  await r.fulfill({ response: res, json: data });
+});
+// 把某一科改成「尚未开放」：四科都开放了，还是要测没开放的科目
+const closeSubject = key => ctx => ctx.route('**/js/orbit-subjects.js', async r => {
+  const res = await r.fetch();
+  const body = (await res.text()).replace(new RegExp(`(key: '${key}'[^}]*?enabled: )true`), '$1false');
+  await r.fulfill({ response: res, body });
+});
+
 async function enter(page, orbitIdx = 0) {
   // 轨道球一直在转，Playwright 等不到「静止」，所以直接在页面里点
   await page.evaluate(i => document.querySelectorAll('.orbit-node')[i].click(), orbitIdx);
@@ -167,8 +189,8 @@ async function run() {
     check('统考时间表与题库覆盖', '全部考完：说考完了，不再挑一科出来', /已经考完了/.test(done) && !/上午|下午/.test(done), done);
     await enter(page);
     const cov = (await page.textContent('#bankCoverage')).trim();
-    const withQ = bank.sections.filter(s => (s.mcqs || []).length + (s.subjectives || []).length > 0).length;
-    const total = bank.sections.reduce((n, s) => n + (s.mcqs || []).length, 0);
+    const withQ = bank.sections.filter(s => live(s.mcqs).length + live(s.subjectives).length > 0).length;
+    const total = bank.sections.reduce((n, s) => n + live(s.mcqs).length, 0);
     check('统考时间表与题库覆盖', '做题页写明题库覆盖了考纲几章', cov === `依考纲共 ${bank.sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`, cov);
     check('统考时间表与题库覆盖', '没有 JS 错误', errors.length === 0, errors[0]);
     await ctx.close();
@@ -318,9 +340,8 @@ async function run() {
 
   await section('新题提示', async () => {
     // 这台装置上次看第 1 章时，还没有最後那一题：这次进来要有提示框，点一下滑到那一题、提示框消失
-    const live = CH1.mcqs.map((q, i) => (q.hidden ? -1 : i)).filter(i => i >= 0);
-    const fresh = live[live.length - 1];
-    const seed = { UEC_SEEN_v1: { [`biology__${CH1.id}`]: { mcq: live.slice(0, -1), subj: (CH1.subjectives || []).map((q, i) => (q.hidden ? -1 : i)).filter(i => i >= 0) } } };
+    const fresh = CH1_LIVE[CH1_LIVE.length - 1];
+    const seed = { UEC_SEEN_v1: { [`biology__${CH1.id}`]: { mcq: CH1_LIVE.slice(0, -1), subj: (CH1.subjectives || []).map((q, i) => (q.hidden ? -1 : i)).filter(i => i >= 0) } } };
     const { ctx, page, errors } = await open({ seed });
     await enter(page);
     const tip = await page.evaluate(() => (document.getElementById('newQuestionTip') || {}).textContent || '');
@@ -328,7 +349,7 @@ async function run() {
     await page.evaluate(() => document.getElementById('newQuestionTip').click()); await page.waitForTimeout(700);
     const r = await page.evaluate(() => ({ gone: !document.getElementById('newQuestionTip'),
       pos: (document.querySelector('.flashcard .card-footer span') || {}).textContent, pan: !!document.querySelector('.flashcard.pan-right, .flashcard.pan-left') }));
-    check('新题提示', '点一下：换到那一题（横向快速滑进来），提示框消失', r.gone && r.pos === `第 ${live.length} / ${live.length} 题` && r.pan, JSON.stringify(r));
+    check('新题提示', '点一下：换到那一题（横向快速滑进来），提示框消失', r.gone && r.pos === `第 ${CH1_LIVE.length} / ${CH1_LIVE.length} 题` && r.pan, JSON.stringify(r));
     await page.evaluate(() => navHome()); await page.waitForTimeout(500);
     await enter(page);
     check('新题提示', '看过之後再进来：不再提示', await page.evaluate(() => !document.getElementById('newQuestionTip')));
@@ -339,7 +360,7 @@ async function run() {
   await section('答错结算', async () => {
     const { ctx, page, errors } = await open();
     await enter(page);
-    const ans = CH1.mcqs[0].answer;
+    const ans = FIRST.answer;
     const r = await page.evaluate((ans) => {
       const o = [...document.querySelectorAll('#optContainer .option-btn')];
       const wrong = o.findIndex((_, i) => i !== ans);
@@ -368,23 +389,23 @@ async function run() {
   });
 
   await section('错题本', async () => {
-    const legacyWrong = { biology: { [bank.sections[1].id]: { 0: 'wrong' } } };   // 复习功能上线前留下的错题
+    const legacyWrong = { biology: { [bank.sections[1].id]: { [liveIdx(bank.sections[1])[0]]: 'wrong' } } };   // 复习功能上线前留下的错题
     const { ctx, page, errors } = await open({ seed: { UEC_PROGRESS_v1: legacyWrong } });
     await enter(page);
-    const r = await page.evaluate(({ c1, DAY }) => {
+    const r = await page.evaluate(({ c1, a, b, DAY }) => {
       const R = window.UECReview;
       const base = new Date(); base.setHours(10, 0, 0, 0);
       const t = base.getTime();
       const s = [];
-      R.record('biology', c1, 0, false, t);             s.push(R.isWeakItem('biology', c1, 0));   // 答错 → 收进来
-      R.record('biology', c1, 0, true, t + 3600e3);     s.push(R.isWeakItem('biology', c1, 0));   // 同一天答对 → 还在
-      R.record('biology', c1, 0, true, t + 7200e3);     s.push(R.isWeakItem('biology', c1, 0));   // 同一天再对 → 还在
-      R.record('biology', c1, 0, true, t + DAY);        s.push(R.isWeakItem('biology', c1, 0));   // 隔天答对 → 移出
-      R.record('biology', c1, 0, false, t + 5 * DAY);   s.push(R.isWeakItem('biology', c1, 0));   // 掌握後又错 → 回来
-      for (let k = 0; k < 3; k++) R.record('biology', c1, 1, false, t + k * DAY);                  // 连错 3 次 → 顽固
+      R.record('biology', c1, a, false, t);             s.push(R.isWeakItem('biology', c1, a));   // 答错 → 收进来
+      R.record('biology', c1, a, true, t + 3600e3);     s.push(R.isWeakItem('biology', c1, a));   // 同一天答对 → 还在
+      R.record('biology', c1, a, true, t + 7200e3);     s.push(R.isWeakItem('biology', c1, a));   // 同一天再对 → 还在
+      R.record('biology', c1, a, true, t + DAY);        s.push(R.isWeakItem('biology', c1, a));   // 隔天答对 → 移出
+      R.record('biology', c1, a, false, t + 5 * DAY);   s.push(R.isWeakItem('biology', c1, a));   // 掌握後又错 → 回来
+      for (let k = 0; k < 3; k++) R.record('biology', c1, b, false, t + k * DAY);                  // 连错 3 次 → 顽固
       window.updateWrongCountBadge();   // 上面绕过介面直接写纪录；真实作答时介面会做这一步
       return s;
-    }, { c1: CH1.id, DAY });
+    }, { c1: CH1.id, a: CH1_LIVE[0], b: CH1_LIVE[1], DAY });
     check('错题本', '答错就收进来', r[0] === true);
     check('错题本', '同一天连对两次不移出', r[1] === true && r[2] === true);
     check('错题本', '不同的两天都答对才移出', r[3] === false);
@@ -408,7 +429,8 @@ async function run() {
   await section('今日复习', async () => {
     const now = Date.now();
     const rec = off => ({ ease: 2.3, interval: 3, reps: 1, lapses: 0, last: now - 5 * DAY, due: now - off });
-    const seed = { UEC_REVIEW_v1: { [`biology__${bank.sections[1].id}__1`]: rec(4 * DAY), [`biology__${bank.sections[2].id}__2`]: rec(60e3) } };
+    const seed = { UEC_REVIEW_v1: { [`biology__${bank.sections[1].id}__${liveIdx(bank.sections[1])[0]}`]: rec(4 * DAY),
+      [`biology__${bank.sections[2].id}__${liveIdx(bank.sections[2])[0]}`]: rec(60e3) } };
     const { ctx, page, errors } = await open({ seed });
     await enter(page);
     await page.evaluate(() => window.switchSubSection('review'));
@@ -515,10 +537,11 @@ async function run() {
 
   await section('背景回应', async () => {
     const now = Date.now();
-    const q = bank.sections[1].mcqs[1];
-    // 第一章只差第 1 题就全对：用来测「整章都答对」的金光
-    const almost = Object.fromEntries(CH1.mcqs.map((_, i) => [i, 'mastered']).slice(1));
-    const seed = { UEC_REVIEW_v1: { [`biology__${bank.sections[1].id}__1`]: { ease: 2.3, interval: 3, reps: 1, lapses: 0, last: now - 5 * DAY, due: now - DAY } },
+    const qi = liveIdx(bank.sections[1])[0];
+    const q = bank.sections[1].mcqs[qi];
+    // 第一章只差画面上的第 1 题就全对：用来测「整章都答对」的金光
+    const almost = Object.fromEntries(CH1_LIVE.slice(1).map(i => [i, 'mastered']));
+    const seed = { UEC_REVIEW_v1: { [`biology__${bank.sections[1].id}__${qi}`]: { ease: 2.3, interval: 3, reps: 1, lapses: 0, last: now - 5 * DAY, due: now - DAY } },
       UEC_PROGRESS_v1: { biology: { [CH1.id]: almost } } };
     const state = page => page.evaluate(() => {
       const l = document.getElementById('customPhotoLayer');
@@ -536,8 +559,8 @@ async function run() {
       await page.waitForTimeout(150);
     };
 
-    const { ctx, page, errors } = await open({ width: 1440, height: 900, seed });
-    await page.evaluate(() => document.querySelectorAll('.orbit-node')[3].click());      // 数学：还没开放
+    const { ctx, page, errors } = await open({ width: 1440, height: 900, seed, setup: closeSubject('math') });
+    await page.evaluate(() => document.querySelectorAll('.orbit-node')[3].click());      // 数学：测试时改成还没开放
     await page.waitForTimeout(900);
     const chem = await state(page);
     await page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());      // 生物
@@ -564,7 +587,7 @@ async function run() {
     const done = await state(page);
     await page.evaluate(() => { window.switchSubSection('mcq'); selectChapter(0); });
     await page.waitForTimeout(500);
-    await page.evaluate(i => document.querySelectorAll('#optContainer .option-btn')[i].click(), CH1.mcqs[0].answer);
+    await page.evaluate(i => document.querySelectorAll('#optContainer .option-btn')[i].click(), FIRST.answer);
     await page.waitForTimeout(150);
     const gold = await shines(page);
     check('背景回应', '还没开放的科目，首页不预览', !chem.on && !chem.scene, JSON.stringify(chem));
@@ -598,7 +621,7 @@ async function run() {
     await t.page.evaluate(() => document.getElementById('testStartBtn').click());
     await t.page.waitForTimeout(500);
     await t.page.evaluate(ans => document.querySelectorAll('#viewTest fieldset.test-q').forEach((f, i) => f.querySelectorAll('input')[ans[i]].click()),
-      CH1.mcqs.map(m => m.answer));
+      CH1_LIVE.map(i => CH1.mcqs[i].answer));
     await t.page.evaluate(() => document.querySelector('.test-submit').click());
     await t.page.waitForTimeout(150);
     const tg = await shines(t.page);
@@ -634,7 +657,7 @@ async function run() {
     const sc = await dp.evaluate(() => { const p = document.querySelector('#customPhotoLayer .scene-plate'); const l = document.querySelector('#customPhotoLayer .scene img.is-wide');
       return { plate: p ? p.src.split('/').pop() : '', op: l ? getComputedStyle(l).opacity : '' }; });
     check('护眼模式', '水彩换成夜色底图，图层压暗', sc.plate === 'plate-night.webp' && Number(sc.op) < 0.5, JSON.stringify(sc));
-    const ans = CH1.mcqs[0].answer;
+    const ans = FIRST.answer;
     await dp.evaluate(a => document.querySelectorAll('#optContainer .option-btn')[(a + 1) % 4].click(), ans);
     await dp.waitForTimeout(700);
     await dp.evaluate(() => scrollTo(0, 0));
@@ -697,7 +720,7 @@ async function run() {
   });
 
   await section('零题科目', async () => {
-    const { ctx, page, errors } = await open({ width: 1440, height: 900 });
+    const { ctx, page, errors } = await open({ width: 1440, height: 900, setup: emptySubject('chemistry') });   // 化学：测试时清空题目
     await contrast(page, 'desktop 首页', null, R);
     await page.evaluate(() => document.querySelectorAll('.orbit-node')[1].click());
     await page.waitForTimeout(600);
@@ -728,7 +751,7 @@ async function run() {
         overflow: document.documentElement.scrollWidth - innerWidth,
         ws: getComputedStyle(document.querySelector('#viewTest .test-q-text')).whiteSpace,
       }));
-      check(G, '进入後隐藏导航，一次列出整章', s.nav === 'none' && s.n === CH1.mcqs.length, `${s.n} 题`);
+      check(G, '进入後隐藏导航，一次列出整章', s.nav === 'none' && s.n === CH1_LIVE.length, `${s.n} 题`);
       check(G, '题干照题库换行（罗马数字叙述 I、II…各占一行）', s.ws === 'pre-line', s.ws);
       check(G, '题号与题干在卡片里、无横向溢出', s.legendInside && s.overflow === 0);
       if (vp.tag === 'mobile') { await contrast(page, 'mobile 测验作答', null, R); await shot(page, 'mobile-test-form'); }
