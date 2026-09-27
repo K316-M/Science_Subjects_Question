@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "physics_gen_18fd07a9",
-      "subject": "physics",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：物理量和数据处理",
-      "q": "在测量某单摆的重力加速度 g 的实验中，已知公式为 g = 4π²L / T²。若长度 L 的测量值有 1% 的相对不确定度（相对误差），周期 T 的测量值有 2% 的相对不确定度，则计算所得的重力加速度 g 的相对不确定度为：",
-      "options": [
-        "A. 3%",
-        "B. 4%",
-        "C. 5%",
-        "D. 9%"
-      ],
-      "answer": 2,
-      "explanation": "考点：间接测量量的误差传递（积商形式）。对于公式 g = k · L¹ · T⁻²（k为常数），其相对不确定度 Δg/g = |1|·(ΔL/L) + |-2|·(ΔT/T)。\n- Δg/g = 1% + 2 × 2% = 5%。\n注意：指数项的系数必须取绝对值并与对应的相对误差相乘，周期 T 的平方贡献了双倍的误差。常见错误是直接相加（1%+2%=3%）或忽略平方项（A、B）。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T10:42:09.554143+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "根据误差传递公式，相对不确定度为 Δg/g = ΔL/L + 2(ΔT/T) = 1% + 2×2% = 5%。"
-      }
-    },
-    {
       "id": "physics_gen_4c4614b2",
       "subject": "physics",
       "type": "mcq",
