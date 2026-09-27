@@ -44,7 +44,7 @@ const state = {
 const ROUTES = {
   overview: { label: '总览', icon: 'grid', title: '总览', desc: '题库规模、巡检结果与待办事项一览。', render: renderOverview },
   issues: { label: '申诉处理', icon: 'inbox', title: '申诉处理', desc: '学生的申诉会寄到你的 Formspree 邮箱。把邮件里的「开发者处理码」贴进来，写好处理说明后发布，学生下次开站就会看到通知小精灵。', render: renderIssues },
-  inspector: { label: '题库巡检', icon: 'shield', title: '题库巡检', desc: '自动检查三科题库里的格式问题：选项数量、答案序号、缺少配图与解析、重复题目、图片死链。', render: renderInspector },
+  inspector: { label: '题库巡检', icon: 'shield', title: '题库巡检', desc: '自动检查各科题库里的格式问题：选项数量、答案序号、缺少配图与解析、重复题目、图片死链。', render: renderInspector },
   pending: { label: 'AI 录题待审', icon: 'sparkles', title: 'AI 录题待审', desc: '被自动检查标出问题的题逐题展开，可以直接改文字、换配图再采纳；没问题的收成一张清单，扫过一遍一键采纳。', render: renderPending },
   editor: { label: '题目修改', icon: 'edit', title: '题目修改', desc: '搜寻或按章节浏览已上线的题目：直接改题干、选项、答案、解析、换配图，或下架不要的题。存档後约一分钟自动部署，学生就看得到。', render: renderEditor },
   local: { label: '本机调试', icon: 'terminal', title: '本机调试', desc: '查看、导出或清除这台设备上学生站留下的本地数据，并能生成测试通知来预览小精灵。', render: renderLocal },

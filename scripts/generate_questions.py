@@ -46,7 +46,7 @@ ONLY_SUBJECT = os.environ.get("ONLY_SUBJECT", "").strip()
 
 SIMILARITY_LIMIT = 0.82   # 题干与既有题目相似度超过这个值就丢弃，避免换句话重复出题
 PAUSE_WHEN_WAITING = 1     # 每周自动跑时，待审区还有这么多道 AI 出的题没审完就先不出；0＝不管，照样出（手动跑不受影响）
-SYLLABUS_CHAR_LIMIT = 12000   # 考纲塞进提示词的上限；三科目前都在这个数字以内，会整份带上
+SYLLABUS_CHAR_LIMIT = 12000   # 考纲塞进提示词的上限；四科目前都在这个数字以内，会整份带上
 
 
 def load_bank(subject):
