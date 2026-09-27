@@ -845,7 +845,9 @@
         {
           "id": "subj_virus_dogma",
           "question": "为研究某病毒致病过程，实验室做了如图模拟实验：\n(1) 从病毒分离得到单链大分子 A，碱基序列为 -GAACAUGUU-。加入试管甲反应后得到产物 X，其碱基序列是-CTTGTACAA-。试管甲模拟什么过程？\n(2) 将提纯产物 X 加入试管乙，得到能与核糖体结合的单链大分子 Y。产物 Y 是什么？试管乙模拟什么过程？\n(3) 将产物 Y 加入试管丙，反应得到组成该病毒外壳的化合物 Z。产物 Z 是什么？\n(4) 写出该病毒遗传信息的传递过程。",
-          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 试管甲模拟过程：</strong><br>• 物质 A 含 U 为单链 RNA，产物 X 含 T 为单链 DNA；<br>• 试管甲模拟以 RNA 为模板合成 DNA 的 <span class=\"hl-mark-yellow\">逆转录过程 (Reverse Transcription)</span>。<br><br><strong>(2) 产物 Y 与试管乙过程：</strong><br>• 产物 Y：与核糖体结合的单链大分子为 <span class=\"hl-mark-green\">mRNA（信使 RNA）</span>；<br>• 试管乙模拟过程：以 DNA 为模板合成 RNA 的 <span class=\"hl-mark-pink\">转录过程 (Transcription)</span>。<br><br><strong>(3) 产物 Z 名称：</strong><br>• 病毒外壳化合物为 <span class=\"hl-mark-yellow\">蛋白质（衣壳蛋白）</span>，试管丙模拟翻译过程。<br><br><strong>(4) 遗传信息传递途径（中心法则）：</strong><br>• 传递链：<span class=\"hl-mark-green\">RNA → DNA → RNA → 蛋白质</span>。"
+          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 试管甲模拟过程：</strong><br>• 物质 A 含 U 为单链 RNA，产物 X 含 T 为单链 DNA；<br>• 试管甲模拟以 RNA 为模板合成 DNA 的 <span class=\"hl-mark-yellow\">逆转录过程 (Reverse Transcription)</span>。<br><br><strong>(2) 产物 Y 与试管乙过程：</strong><br>• 产物 Y：与核糖体结合的单链大分子为 <span class=\"hl-mark-green\">mRNA（信使 RNA）</span>；<br>• 试管乙模拟过程：以 DNA 为模板合成 RNA 的 <span class=\"hl-mark-pink\">转录过程 (Transcription)</span>。<br><br><strong>(3) 产物 Z 名称：</strong><br>• 病毒外壳化合物为 <span class=\"hl-mark-yellow\">蛋白质（衣壳蛋白）</span>，试管丙模拟翻译过程。<br><br><strong>(4) 遗传信息传递途径（中心法则）：</strong><br>• 传递链：<span class=\"hl-mark-green\">RNA → DNA → RNA → 蛋白质</span>。",
+          "hidden": true,
+          "hidden_at": "2026-09-27T10:20:15.516Z"
         }
       ]
     },
