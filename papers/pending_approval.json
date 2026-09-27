@@ -1,4 +1,305 @@
 {
-  "items": [],
-  "generated_at": "2026-09-27T11:22:39.569689+00:00"
+  "items": [
+    {
+      "id": "chemistry_gen_181ac33b",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：水和氢",
+      "q": "关于实验室制取氢气的实验操作与原理，下列叙述何者正确？",
+      "options": [
+        "A. 为了提高反应速率，应使用浓硫酸代替稀硫酸与锌粒反应",
+        "B. 收集氢气时，由于其密度比空气大，应采用向上排空气法",
+        "C. 在点燃氢气或加热氢气还原氧化铜之前，必须先检验氢气的纯度",
+        "D. 反应后的残留液经过滤、蒸发、结晶后，可得到蓝色的五水合硫酸铜晶体"
+      ],
+      "answer": 2,
+      "explanation": "考点为氢气的实验室制法与安全。A项中浓硫酸具有强氧化性，与锌反应会产生二氧化硫而非氢气；B项氢气密度比空气小，应用向下排空气法或排水法收集；C项是实验安全的关键，氢气与空气混合达到爆炸极限时，点燃会发生爆炸，故正确；D项锌与稀硫酸反应生成硫酸锌，其溶液和晶体均为无色，蓝色是铜盐的特征。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T12:46:17.201317+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "氢气与空气或氧气混合加热或点燃易发生爆炸，故操作前必须检验纯度。"
+      }
+    },
+    {
+      "id": "chemistry_gen_921085ae",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：水和氢",
+      "q": "在工业上，常利用焦炭与水蒸气在高温下反应制取「水煤气」。关于此反应的叙述，下列何者正确？",
+      "options": [
+        "A. 该反应方程式为 C + H2O → CO + H2，属于放热反应",
+        "B. 在此反应中，水蒸气作为氧化剂，其中的氢元素被还原",
+        "C. 水煤气的主要成分是氢气和二氧化碳",
+        "D. 产物中的一氧化碳可通过通入澄清石灰水进行检验"
+      ],
+      "answer": 1,
+      "explanation": "考点为氢气的工业制法（水煤气法）。A项该反应是吸热反应，需要高温维持；B项中水蒸气失去氧给碳，氢元素的化合价从+1降至0，被还原，充当氧化剂，叙述正确；C项水煤气的主要成分是 CO 和 H2；D项一氧化碳不与石灰水反应，二氧化碳才可使石灰水变浑浊。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T12:46:17.201644+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "反应中水蒸气中的氢元素化合价由 +1 降至 0 被还原，水蒸气充当氧化剂。"
+      }
+    },
+    {
+      "id": "chemistry_gen_c9faacf3",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：水和氢",
+      "q": "将干燥的氢气通入装有下列固体粉末的硬质玻璃管中并加热，实验结束后，观察到固体粉末颜色由黑色变为红色的是：",
+      "options": [
+        "A. 二氧化锰 (MnO2)",
+        "B. 氧化镁 (MgO)",
+        "C. 氧化铜 (CuO)",
+        "D. 四氧化三铁 (Fe3O4)"
+      ],
+      "answer": 2,
+      "explanation": "考点为氢气的还原性。氢气具有还原性，在加热条件下能将金属活动性顺序中位于其后的金属氧化物还原。黑色氧化铜 (CuO) 被氢气还原后生成红色的金属铜 (Cu) 和水；二氧化锰和氧化镁不能被氢气还原（镁活性太强）；四氧化三铁被还原后生成黑色的铁粉或灰黑色固体，不会出现红色。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T12:46:17.201950+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "氢气在加热条件下能将黑色的氧化铜还原为红色的金属铜。"
+      }
+    },
+    {
+      "id": "chemistry_gen_db99c96c",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap1",
+      "chapter_title": "第一章：水和氢",
+      "q": "下列关于水与金属反应的叙述，哪些是正确的？\nI. 钠与冷水反应剧烈，熔成的小球在水面上四处游动\nII. 镁条放入冷水中会产生大量气泡，生成氢氧化镁沉淀\nIII. 红热的铁与水蒸气反应，生成黑色的四氧化三铁和氢气\nIV. 铜在高温下能与水蒸气反应置换出氢气",
+      "options": [
+        "A. 只有 I、II",
+        "B. 只有 I、III",
+        "C. 只有 II、IV",
+        "D. 只有 I、III、IV"
+      ],
+      "answer": 1,
+      "explanation": "考点为金属与水的反应规律。I项描述了钠与水反应的典型现象，正确；II项镁与冷水反应极慢，几乎观察不到气泡，只有在加热或与水蒸气反应时才明显，错误；III项是工业制氢的原理之一，红热的铁与水蒸气反应生成 Fe3O4，正确；IV项铜是不活泼金属，在金属活动性顺序中排在氢之后，不能与水或水蒸气发生置换反应，错误。故选B。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-27T12:46:17.202558+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "钠与冷水剧烈反应，铁在红热时与水蒸气反应生成四氧化三铁和氢气；而镁与冷水反应极慢，铜不与水反应。"
+      }
+    },
+    {
+      "id": "chemistry_gen_fb2d653a",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：原子与分子",
+      "q": "元素 X 与元素 Y 能形成两种二元化合物 A 和 B。已知在化合物 A 中，X 的质量百分含量为 50.0%；在化合物 B 中，X 的质量百分含量为 40.0%。若化合物 A 的化学式为 XY₂，则根据倍比定律，化合物 B 的化学式应为下列哪一项？",
+      "options": [
+        "A. XY",
+        "B. X₂Y₃",
+        "C. XY₃",
+        "D. X₂Y₅"
+      ],
+      "answer": 2,
+      "explanation": "【考点】倍比定律的应用与化学式推断。\n【解析】\n1. 在化合物 A（XY₂）中，X 的质量分数为 50.0%，则 Y 的质量分数为 50.0%。\n   质量比 m(X) : m(Y) = 50.0 : 50.0 = 1 : 1。\n   由化学式 XY₂ 可知，Ar(X) : [2 × Ar(Y)] = 1 : 1，即相对原子质量之比 Ar(X) : Ar(Y) = 2 : 1。\n2. 在化合物 B 中，X 的质量分数为 40.0%，则 Y 的质量分数为 60.0%。\n   质量比 m(X) : m(Y) = 40.0 : 60.0 = 2 : 3。\n3. 设化合物 B 的化学式为 X_m Y_n，则：\n   [m × Ar(X)] / [n × Ar(Y)] = (2m) / n = 2 / 3，解得 m / n = 1 / 3。\n   因此，化合物 B 的最简化学式为 XY₃。\n【常见错误】考生若未利用化合物 A 求出两元素的相对原子质量比，直接将质量百分比代入摩尔比计算，容易误选 B 或 D。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-27T12:48:14.160236+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "由化合物 A (XY₂) 推算得 Ar(X)=2Ar(Y)，化合物 B 中 X 与 Y 质量比为 2:3，其摩尔比为 1:3，化学式为 XY₃。"
+      }
+    },
+    {
+      "id": "chemistry_gen_98cf663a",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：原子与分子",
+      "q": "下列关于化学基本定律的叙述，哪几项是正确的？\nI. 根据定比定律，天然水与重水（D₂O）中氢（或重氢）与氧的质量比恒定不变\nII. 根据倍比定律，在 NO 与 NO₂ 中，与相同质量氮元素结合的氧元素质量比为 1 : 2\nIII. 质量守恒定律适用于所有化学反应，但涉及核反应时不适用\nIV. 聚乙烯塑料是纯净物，其碳与氢的质量比严格遵循定比定律",
+      "options": [
+        "A. I、IV",
+        "B. II、III",
+        "C. I、II、III",
+        "D. II、III、IV"
+      ],
+      "answer": 1,
+      "explanation": "【考点】化学基本定律（定比定律、倍比定律、质量守恒定律）的适用范围与概念辨析。\n【解析】\n- 叙述 I 错误：定比定律适用于同一种化合物。天然水（主要为 H₂O）与重水（D₂O）是组成同位素不同的不同物质，两者的氢/氧质量比不同（H₂O 中约为 1:8，D₂O 中约为 1:4）。\n- 叙述 II 正确：NO 与 NO₂ 是由相同元素组成的不同化合物，当氮原子数相同时（各为 1 个 N），氧原子数之比为 1 : 2，对应氧元素质量比为 1 : 2，完全符合倍比定律。\n- 叙述 III 正确：化学反应中原子种类和数目不变，严格遵循质量守恒定律；而核反应中存在质量亏损并释放核能，遵守质能守恒而非独立的质量守恒定律。\n- 叙述 IV 错误：聚乙烯是聚合度 n 不同的混合物，定比定律只适用于具有确定组成的纯净化合物。\n因此，正确的叙述为 II 和 III，答案选 B。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-27T12:48:14.161472+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "NO 与 NO₂ 中相同质量的氮结合的氧质量比为 1:2 符合倍比定律，且质量守恒定律不适用于核反应。"
+      }
+    },
+    {
+      "id": "chemistry_gen_e55e90be",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：原子与分子",
+      "q": "若国际纯粹与应用化学联合会（IUPAC）改变相对原子质量的基准，将其定义为“一个 ¹²C 原子质量的 1/24”，则下列各项物理量或数值中，保持不变的是：",
+      "options": [
+        "A. 一个氧原子的实际质量",
+        "B. 氧元素的相对原子质量",
+        "C. 1 mol 氧气（O₂）的质量",
+        "D. 阿伏加德罗常数（N_A）的数值"
+      ],
+      "answer": 0,
+      "explanation": "【考点】相对原子质量的定义与基准改变对各物理量的影响。\n【解析】\n- A 正确：一个原子的实际物理质量由其内部质子、中子和电子的真实质量决定，是微观粒子的固有客观属性，绝不会因人为规定的相对比较基准改变而改变。\n- B 错误：现行基准为 1 个 ¹²C 原子质量的 1/12（约为 1.66×10⁻²⁴ g）。若基准变为 1/24（基准数值减半），则氧原子的相对原子质量 = [一个氧原子的实际质量] / [基准质量]，其数值将变为原来的 2 倍（由 16 变为 32）。\n- C 错误：1 mol 物质的质量（摩尔质量以 g/mol 为单位时）在数值上等于其相对分子质量。相对分子质量变为原来的 2 倍，故 1 mol 氧气的质量也变为原来的 2 倍（由 32 g 变为 64 g）。\n- D 错误：阿伏加德罗常数定义为基准质量对应的摩尔基准（即相应克数中所含的原子数），基准改变后，N_A 的数值也将变为原来的 2 倍（约为 1.204×10²⁴ mol⁻¹）。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-27T12:48:14.162301+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "原子的实际物理质量是固有属性，不随人工定义的相对原子质量基准改变而改变。"
+      }
+    },
+    {
+      "id": "chemistry_gen_aefebe33",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap2",
+      "chapter_title": "第二章：原子与分子",
+      "q": "在密闭容器中放入 X、Y、Z、W 四种物质，在一定条件下充分反应。测得反应开始时及反应进行一段时间后各物质的质量如下：\n- 反应前：X 为 10.0 g，Y 为 2.0 g，Z 为 0.0 g，W 为 15.0 g\n- 一段时间后：X 为 4.0 g，Y 为 2.0 g，Z 为 18.0 g，W 为 3.0 g\n若使反应继续进行直到反应物完全耗尽，且反应中无其他副反应发生，则最终生成的 Z 的总质量为多少？",
+      "options": [
+        "A. 22.5 g",
+        "B. 25.0 g",
+        "C. 27.0 g",
+        "D. 30.0 g"
+      ],
+      "answer": 0,
+      "explanation": "【考点】质量守恒定律（物质不灭定律）、反应质量比与限量反应物的综合计算。\n【解析】\n1. 分析各物质在反应过程中的质量变化量（Δm）：\n   - Δm(X) = 4.0 g - 10.0 g = -6.0 g（反应物，消耗 6.0 g）\n   - Δm(Y) = 2.0 g - 2.0 g = 0.0 g（质量不变，可能为催化剂或惰性物质）\n   - Δm(W) = 3.0 g - 15.0 g = -12.0 g（反应物，消耗 12.0 g）\n   - Δm(Z) = 18.0 g - 0.0 g = +18.0 g（生成物，生成 18.0 g）\n   符合质量守恒：消耗的 X (6.0 g) + 消耗的 W (12.0 g) = 生成的 Z (18.0 g)。\n2. 反应中 X 与 W 反应的质量比为 m(X) : m(W) = 6.0 : 12.0 = 1 : 2。\n3. 判断限量反应物：\n   初始有 X = 10.0 g，W = 15.0 g。\n   若 15.0 g W 完全反应，所需 X 的质量 = 15.0 g × (1 / 2) = 7.5 g < 10.0 g。\n   因此，W 为限量反应物（完全耗尽），X 过量（剩余 10.0 g - 7.5 g = 2.5 g）。\n4. 根据质量守恒定律，最终生成 Z 的总质量 = 反应消耗的 X 质量 + 反应消耗的 W 质量 = 7.5 g + 15.0 g = 22.5 g。\n【常见错误】\n- 误以为 X 与 W 刚好全部反应完，得出 10.0 + 15.0 = 25.0 g（误选 B）；\n- 误将已生成的 18.0 g 与剩余质量直接相加导致计算混乱。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-27T12:48:14.163930+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "反应中 X 与 W 消耗的质量比为 1:2，生成 Z 为 3，初态 W(15.0g) 为限量试剂，完全反应生成 Z 的总质量为 22.5g。"
+      }
+    },
+    {
+      "id": "chemistry_gen_2ae600d3",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap4",
+      "chapter_title": "第四章：原子结构",
+      "q": "硼元素（B）在自然界中有两种稳定同位素 ¹⁰B 和 ¹¹B。已知硼的相对原子质量（平均原子质量）为 10.81，则自然界中 ¹¹B 同位素的原子百分含量为何？",
+      "options": [
+        "A. 19.0%",
+        "B. 40.5%",
+        "C. 59.5%",
+        "D. 81.0%"
+      ],
+      "answer": 3,
+      "explanation": "【考点】根据元素同位素在自然界的百分含量计算平均相对原子质量。\n【解析】设 ¹¹B 的百分含量为 x，则 ¹⁰B 的百分含量为 (1 - x)。根据平均相对原子质量计算公式：10.0 × (1 - x) + 11.0 × x = 10.81，解得 x = 0.81，即 81.0%。\n【常见错误】选项 A（19.0%）为 ¹⁰B 的百分含量，错将计算对象颠倒；选项 B 与 C 为计算公式混淆产生的干扰项。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-27T12:50:19.372236+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "根据平均相对原子质量公式 10(1-x) + 11x = 10.81，解得 ¹¹B 的丰度 x = 81.0%。"
+      }
+    },
+    {
+      "id": "chemistry_gen_c94ae9cb",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap4",
+      "chapter_title": "第四章：原子结构",
+      "q": "过渡金属钴（Co，原子序数 = 27）在形成化合物时常呈现 +2 价。下列关于基态 Co²⁺ 离子的核外电子排布式，何者正确？",
+      "options": [
+        "A. 1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁵ 4s²",
+        "B. 1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁶ 4s¹",
+        "C. 1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁷",
+        "D. 1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁹"
+      ],
+      "answer": 2,
+      "explanation": "【考点】应用核外电子排布规律写出过渡金属阳离子的电子排布式。\n【解析】基态 Co 原子的核外电子排布式为 1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁷ 4s²。当过渡金属原子失去电子形成阳离子时，电子会优先从主量子数较高的最外层 4s 轨域失去，而不是从 3d 轨域失去。因此 Co²⁺ 失去 2 个 4s 电子，其排布式为 1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁷。\n【常见错误】选项 A 误以为失去电子时先从 3d 轨域扣除；选项 B 误以为 3d 和 4s 各失去 1 个电子。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-27T12:50:19.373051+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "基态 Co 原子的电子排布式为 [Ar]3d⁷4s²，形成 Co²⁺ 时失去最外层的两个 4s 电子得到 [Ar]3d⁷。"
+      }
+    },
+    {
+      "id": "chemistry_gen_49f876cd",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap4",
+      "chapter_title": "第四章：原子结构",
+      "q": "某种单原子阴离子 R²⁻ 的质量数为 A，核外电子数为 x。则该元素原子核内的中子数为何？",
+      "options": [
+        "A. A - x + 2",
+        "B. A - x - 2",
+        "C. A + x - 2",
+        "D. A - x"
+      ],
+      "answer": 0,
+      "explanation": "【考点】原子序数、质量数、质子数、中子数与核外电子数的关系。\n【解析】阴离子 R²⁻ 带 2 个单位负电荷，代表中性原子 R 得到了 2 个电子。因此，中性原子 R 的核外电子数（即质子数 Z）为 x - 2。\n根据质量数关系：质量数 A = 质子数 Z + 中子数 N，可得中子数 N = A - Z = A - (x - 2) = A - x + 2。\n【常见错误】选项 B 误将阴离子当作阳离子计算质子数（Z = x + 2）；选项 D 忽略了离子所带的电荷量对电子数的影响。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-27T12:50:19.373936+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "阴离子 R²⁻ 的核外电子数为 x，则质子数为 x - 2，中子数等于质量数减去质子数，即 A - (x - 2) = A - x + 2。"
+      }
+    }
+  ],
+  "generated_at": "2026-09-27T12:50:33.852309+00:00"
 }
