@@ -26,6 +26,7 @@
   --critical: #d03b3b;
   --brand-coral: #e1614c;
   --radius: 14px;
+  --list-gap: 12px;   /* 巡检、待审、题目修改列表：题与题之间的空隙 */
   --font: "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
   --calligraphy: "Ma Shan Zheng", "KaiTi", "STKaiti", "Kaiti SC", serif;
@@ -411,7 +412,6 @@ table.data td.wrap { white-space: normal; min-width: 220px; }
 
 /* 巡检与待审列表 */
 .issue { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; }
-.issue + .issue { border-top: 1px solid var(--border); }
 .issue-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .issue-text { font-size: 13.5px; color: var(--ink-2); line-height: 1.6; }
 .issue.is-retired .issue-text { color: var(--ink-2); text-decoration: line-through; text-decoration-color: rgba(127,127,127,.5); }
@@ -422,7 +422,11 @@ table.data td.wrap { white-space: normal; min-width: 220px; }
 .q-opt.correct { border-color: rgba(12, 163, 12, 0.6); background: rgba(12, 163, 12, 0.1); color: #b5f0b5; }
 .q-exp { margin-top: 8px; color: var(--muted); }
 .q-preview svg { max-width: 100%; height: auto; background: #f8fafc; border-radius: 8px; }
-.list-card { padding: 0; overflow: hidden; }
+/* 每题一张卡，题与题之间留空隙。以前整串题共用一张大卡片、中间只隔一条细线，
+   手机上上一题的题干紧贴下一题的标签和按钮，分不清按钮是哪一题的 */
+.list-card { padding: 0; background: none; border: 0; display: flex; flex-direction: column; gap: var(--list-gap); }
+.list-card > .issue, .list-card > .empty { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.list-head { padding: 4px 2px 0; }   /* 列表标题（要处理的 N 题…）：不套卡片，放在卡片串上方 */
 
 /* 题目编辑器 */
 .editor { display: flex; flex-direction: column; gap: 12px; }

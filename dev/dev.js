@@ -1325,7 +1325,7 @@ function cleanList(items) {
   });
 
   return el('div', { class: 'card list-card' },
-    el('div', { class: 'issue' },
+    el('div', { class: 'list-head' },
       el('div', { class: 'card-title', text: `没被标出问题的 ${items.length} 题` }),
       el('div', { class: 'card-sub', text: 'AI 自动检查（格式、和原档逐字比对、不看答案重做一次）都通过。检查抓不到所有错误 —— 请扫过题干与绿色答案，有疑问的取消勾选或按「编辑」。' }),
       el('div', { class: 'row', style: 'margin-top:8px' }, go)),
@@ -1362,7 +1362,7 @@ function renderPending(body, actions) {
 
   if (problems.length) {
     body.appendChild(el('div', { class: 'card list-card' },
-      el('div', { class: 'issue' }, el('div', { class: 'card-title', text: `要处理的 ${problems.length} 题` }),
+      el('div', { class: 'list-head' }, el('div', { class: 'card-title', text: `要处理的 ${problems.length} 题` }),
         el('div', { class: 'card-sub', text: '直接在下面改文字、换配图，改好按「采纳」一次写进题库。' })),
       problems.map(p => problemCard(p.item, p.reasons))));
   }
