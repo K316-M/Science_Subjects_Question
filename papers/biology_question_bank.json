@@ -542,7 +542,9 @@
         {
           "id": "subj_circ_curve",
           "question": "在哺乳动物的某段循环途径中，从心脏流出的血液顺次流经三种血管 A、B、C，始流回心脏。已知流经血管 B 时血液含氧量显著增加，且血压沿 A → B → C 递减：\n(1) 当血液流经血管 B 时，血液含氧量有什么变化？这变化能在哪一个器官内发生？\n(2) 写出血管 C 的名称。血液自血管 C 流入心脏的哪一个心腔？\n(3) 列表比较血管 A 和血管 C 在结构上的两个不同点。",
-          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 含氧量变化与器官：</strong><br>• 含氧量变化：<span class=\"hl-mark-yellow\">含氧量增加（静脉血转变成动脉血）</span>；<br>• 发生器官：在 <span class=\"hl-mark-green\">肺（肺泡毛细血管网）</span> 内发生。<br><br><strong>(2) 血管名称与回流心腔：</strong><br>• 血管 C 名称：<span class=\"hl-mark-yellow\">肺静脉</span>；<br>• 流入心腔：流入心脏的 <span class=\"hl-mark-pink\">左心房</span>。<br><br><strong>(3) 血管 A（肺动脉）与血管 C（肺静脉）结构差异比较：</strong><br>1. <span class=\"hl-mark-green\">管壁厚薄与弹性</span>：血管 A 管壁较厚、弹性大；血管 C 管壁较薄、弹性小；<br>2. <span class=\"hl-mark-yellow\">管腔大小</span>：血管 A 管腔较小；血管 C 管腔相对较大。"
+          "answer": "<strong>【参考标准答案与核心得分点】：</strong><br><br><strong>(1) 含氧量变化与器官：</strong><br>• 含氧量变化：<span class=\"hl-mark-yellow\">含氧量增加（静脉血转变成动脉血）</span>；<br>• 发生器官：在 <span class=\"hl-mark-green\">肺（肺泡毛细血管网）</span> 内发生。<br><br><strong>(2) 血管名称与回流心腔：</strong><br>• 血管 C 名称：<span class=\"hl-mark-yellow\">肺静脉</span>；<br>• 流入心腔：流入心脏的 <span class=\"hl-mark-pink\">左心房</span>。<br><br><strong>(3) 血管 A（肺动脉）与血管 C（肺静脉）结构差异比较：</strong><br>1. <span class=\"hl-mark-green\">管壁厚薄与弹性</span>：血管 A 管壁较厚、弹性大；血管 C 管壁较薄、弹性小；<br>2. <span class=\"hl-mark-yellow\">管腔大小</span>：血管 A 管腔较小；血管 C 管腔相对较大。",
+          "hidden": true,
+          "hidden_at": "2026-09-27T10:05:29.779Z"
         }
       ]
     },
