@@ -64,14 +64,33 @@ function setupNoteCanvas(canvas, cssW, cssH) {
   return ctx;
 }
 
+// 护眼模式的笔迹颜色：画布在夜里是深色纸，存下来的仍是白天那组颜色，画的时候才换成同色系的亮版本
+// （深色纸 --n-note-paper 上对比都 ≥ 5.4:1）。左边要跟 index.html 五个色点的 data-ink 一样；
+// 旧笔记存的是当时的颜色，以後改白天的笔色时，旧颜色那一列要留著
+const NIGHT_INK = {
+  '#1e293b': '#e8e1d4',   // 黑 → 米白
+  '#e11d48': '#fb7185',   // 红
+  '#2563eb': '#7cb4ff',   // 蓝
+  '#059669': '#4fd1a5',   // 绿
+  '#f59e0b': '#f7c35c',   // 橙
+};
+function inkFor(color) {
+  if (document.documentElement.getAttribute('data-theme') !== 'night') return color;
+  return NIGHT_INK[String(color).toLowerCase()] || color;
+}
+function paintInkDots() {
+  document.querySelectorAll('.note-color-dot[data-ink]').forEach(d => { d.style.background = inkFor(d.dataset.ink); });
+}
+
 function drawSingleStroke(ctx, stroke, scale) {
   if (!stroke.pts.length) return;
   ctx.save();
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.globalCompositeOperation = stroke.mode === 'eraser' ? 'destination-out' : 'source-over';
-  ctx.strokeStyle = stroke.color;
-  ctx.fillStyle = stroke.color;
+  const ink = inkFor(stroke.color);
+  ctx.strokeStyle = ink;
+  ctx.fillStyle = ink;
   ctx.lineWidth = Math.max(0.5, stroke.size * scale);
 
   if (stroke.pts.length === 1) {
@@ -194,6 +213,7 @@ function openNoteEditor(ctx) {
   const textArea = document.getElementById('noteTextInput');
 
   snapshot.innerHTML = buildSnapshotHtml(ctx);
+  paintInkDots();
   textArea.value = existing ? (existing.textNote || '') : '';
   document.getElementById('noteSaveHint').textContent = existing
     ? `上次保存：${new Date(existing.updatedAt).toLocaleString('zh-CN')}`
@@ -542,8 +562,7 @@ function renderNotePreview(canvas, note) {
   canvas.height = H * dpr;
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, W, H);
+  // 不铺底色：透出 .note-card-preview 的纸色（护眼时是深色纸，以前铺白色会在夜里亮成一块）
 
   if (!note.strokes || !note.strokes.length) {
     ctx.fillStyle = '#94a3b8';
@@ -608,3 +627,12 @@ function gotoNoteQuestion(id) {
     }
   }, 650);
 }
+
+// 切换护眼时，已经画好的笔迹要换墨色重画：开著的编辑器、笔记列表的缩图、题卡下展开的笔记
+new MutationObserver(() => {
+  paintInkDots();
+  if (noteDraw.ctx) redrawNoteCanvas();
+  const view = document.getElementById('viewNotes');
+  if (view && view.classList.contains('active')) renderNotesView();
+  refreshNoteButtons();
+}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
