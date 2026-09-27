@@ -6,6 +6,7 @@
 # 新题在 new_pending_items.json（scripts/pending_queue.py 写的）。每次推送前都取 main 上最新的待审区再接上去：
 # /dev 刚好采纳、别的批次刚推上去，都只是重来一次，不会冲突（以前开 PR 就会）。
 set -euo pipefail
+TRIES=5   # 推送时 main 刚好被改动（/dev 采纳、别的批次）就重取再接，最多试几次；第 i 次失败後等 i×3 秒
 msg=$1; shift
 
 git config user.name "github-actions[bot]"
@@ -22,7 +23,7 @@ done
 if ! git diff --cached --quiet; then git commit -q -m "$msg"; extra=1; fi
 git branch -f batch HEAD
 
-for i in 1 2 3 4 5; do
+for i in $(seq "$TRIES"); do
   git fetch -q origin +refs/heads/main:refs/remotes/origin/main
   if [ "$extra" = 1 ]; then git rebase -q origin/main batch; else git branch -f batch origin/main; fi
   git checkout -q -B attempt batch
@@ -33,5 +34,5 @@ for i in 1 2 3 4 5; do
   echo "⏳ main 刚被改动（/dev 采纳或别的批次），第 $i 次重试"
   sleep $((i * 3))
 done
-echo "❌ 试了 5 次都被抢先，这批没推上去；重跑这个工作流就好（原档还在 drafts/）"
+echo "❌ 试了 $TRIES 次都被抢先，这批没推上去；重跑这个工作流就好（原档还在 drafts/）"
 exit 1

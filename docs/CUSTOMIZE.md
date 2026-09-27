@@ -38,7 +38,7 @@
 |---|---|---|---|
 | 首页大标题「独中理科」 | `index.html` | `retro-hero-title` | 🟢 |
 | 首页标题下的缎带「备考题库 · 复习系统」 | `index.html` | `retro-ribbon` | 🟢 |
-| 浏览器分页上的网站名称 | `index.html` | `<title>` | 🟢 |
+| **网站名称「独中理科复习网」**（浏览器分页、分享网址的预览、装到手机桌面的名称） | `index.html`、`manifest.json`、`dev/index.html` | `index.html` 的 `<title>`、`og:title`、`apple-mobile-web-app-title`；`manifest.json` 的 `name`、`short_name`；`dev/index.html` 的 `side-brand-text` | 🟡 六处一起改才一致。桌面图示下的短名（`short_name`、`apple-mobile-web-app-title`，现在「理科复习网」）最多约 5 个中文字，再长会被截断 |
 | 「选择学习学科」与下面的提示 | `index.html` | `page-heading`、`page-hint` | 🟢 |
 | 各科名称、英文名、轨道上的小字说明 | `js/orbit-subjects.js` | `SUBJECTS` 的 `name` `en` `note` | 🟢 |
 | 做题页上的科目名称（「生物科」） | `index.html` | `SUBJECT_LABELS` | 🟢 |
@@ -49,6 +49,8 @@
 | AI 批改结果下面的「仅供参考」说明 | `index.html` | `grade-note` | 🟢 |
 | 统考时间表最上面的两行说明 | `js/exam-timetable.js` | `rules`；`index.html` 搜 `exam-list-hint` | 🟢 |
 | 时间表的考试名称（「2026 年度第 52 届高中统考」） | `js/exam-timetable.js` | `title` | 🟢 |
+| 离线或连不上时按「立即同步」的提示 | `js/sync.js` | `目前没有网络` | 🟢 |
+| 巡检 Issue 的标题 | `.github/workflows/auto_update.yml` | `title:`，以及「找还开着的巡检 Issue」那步的 `startswith("🚨 题库巡检")` | 🔴 两处要一起改：标题开头对不上，每次巡检都会另开一个新的 Issue |
 
 ---
 
@@ -74,6 +76,8 @@
 |---|---|---|---|---|
 | 每次自动出题照顾几章、每章几题 | `.github/workflows/generate_questions.yml` | `chapters_per_run`、`questions_per_chapter` 的 `default` | 3 章 × 4 题 | 🟢 手动跑时也可以当场填 |
 | 新题和旧题多像就当成重复丢掉 | `scripts/generate_questions.py` | `SIMILARITY_LIMIT` | `0.82`（0～1） | 🟡 调低会丢掉更多题 |
+| 每周自动出题：待审区还有几道 AI 题没审完就先不出 | `scripts/generate_questions.py` | `PAUSE_WHEN_WAITING` | `1`（有 1 道就不出） | 🟢 `0`＝不管，照样出；手动跑不受影响 |
+| 录题／出题推进待审区时被抢先（/dev 刚采纳）最多重试几次 | `scripts/push_pending.sh` | `TRIES` | `5` | 🟢 通常用不到；全部失败就重跑那个工作流（原档还在 drafts/） |
 | 固定用某个 Gemini 模型（不自动挑） | GitHub → Settings → Actions 变数 | `GEMINI_MODEL` | 不设＝自动挑最高级 | 🟡 |
 | AI 批改：每台装置每小时几次 | `api/grade.js` | `LIMIT_PER_HOUR` | `20` | 🟡 越高越可能被刷额度；学生在做答题下方看得到剩几次 |
 | AI 批改：同一个网络（例如全校 Wi-Fi）每小时合计几次 | `api/grade.js` | `NETWORK_LIMIT_PER_HOUR` | `200` | 🟡 全校一起用时不够就调高 |
