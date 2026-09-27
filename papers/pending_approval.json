@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "biology_53c755ea89",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第9章：健康与免疫",
-      "source_draft": "drafts/biology/GC练习.txt",
-      "answer_source": "ai",
-      "flags": [
-        "原档没标答案，由 AI 作答（两次一致），仍请核对"
-      ],
-      "ingested_at": "2026-09-27T09:56:23.014886Z",
-      "q": "接种卡介苗可有效预防结核病，其作用原理是",
-      "options": [
-        "A. 卡介苗能激活人体的吞噬细胞，将结核杆菌吞噬",
-        "B. 卡介苗能使人在不发病的情况下产生抵抗结核杆菌的抗体",
-        "C. 卡介苗能促进人体的各项生理活动，增强抵抗力",
-        "D. 卡介苗进入人体后能直接消灭侵入人体内的结核杆菌"
-      ],
-      "answer": 1,
-      "explanation": "卡介苗属于抗原，接种后可刺激人体免疫系统在不致病的情况下产生特异性抗体和记忆细胞，从而获得免疫力。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "疫苗作为抗原进入人体，能在不致病的情况下刺激免疫系统产生特异性抗体和记忆细胞。"
-      }
-    },
-    {
       "id": "biology_eca3e5996e",
       "subject": "biology",
       "type": "mcq",
