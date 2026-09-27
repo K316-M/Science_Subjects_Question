@@ -289,30 +289,6 @@
       }
     },
     {
-      "id": "biology_1479b9e5bd",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "unclassified",
-      "chapter_title": "未分类（请人工归类）",
-      "source_draft": "drafts/biology/GC练习2.docx",
-      "answer_source": "marked",
-      "flags": [],
-      "ingested_at": "2026-09-27T11:22:29.579212Z",
-      "q": "不同环境的动物,有不同形式的气体交换构造,但是基本方法都是相同的,即（   ）。",
-      "options": [
-        "A. 利用大气压力",
-        "B. 利用肌肉收缩",
-        "C. 利用湿润细胞膜进行扩散",
-        "D. 利用气孔的开关"
-      ],
-      "answer": 2,
-      "explanation": "无论动物的呼吸器官如何不同（如鳃、肺、气管），气体交换的基本原理都是通过湿润的细胞膜进行物理扩散。",
-      "review": {
-        "ai_answer": 2,
-        "reason": "无论何种呼吸器官，气体交换的基本原理都是利用湿润的细胞膜进行物理扩散。"
-      }
-    },
-    {
       "id": "biology_979754a9ee",
       "subject": "biology",
       "type": "mcq",
