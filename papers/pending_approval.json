@@ -289,32 +289,6 @@
       }
     },
     {
-      "id": "biology_979754a9ee",
-      "subject": "biology",
-      "type": "mcq",
-      "chapter_id": "chap10",
-      "chapter_title": "第10章：生态系统",
-      "source_draft": "drafts/biology/GC练习2.docx",
-      "answer_source": "marked",
-      "flags": [
-        "需要配图，但原档里抓不到图，请从原档截图补上"
-      ],
-      "ingested_at": "2026-09-27T11:22:29.592426Z",
-      "q": "由于人类活动的影响,一些池塘或湖泊出现了大量浮游植物,水体变绿。因此,有人建议通过投放鱼苗来改善水质。下表表示部分淡水鱼的食性。最适宜投放哪种鱼苗?投放后该鱼种的种群数量增长曲线为哪种类型( )",
-      "options": [
-        "A. 青鱼,S型",
-        "B. 鲢鱼,S型",
-        "C. 鲫鱼,J型",
-        "D. 鲤鱼,J型"
-      ],
-      "answer": 1,
-      "explanation": "水体变绿是因为浮游植物过多，根据表格，鲢鱼以浮游植物为食，最适合投放。在有限的池塘生态系统中，种群增长受资源和空间限制，呈现S型增长曲线。",
-      "review": {
-        "ai_answer": 1,
-        "reason": "鲢鱼以浮游植物为食可改善水质，且在有限环境下的种群增长符合S型曲线。"
-      }
-    },
-    {
       "id": "biology_102ca67f46",
       "subject": "biology",
       "type": "mcq",
