@@ -47,6 +47,9 @@ ONLY_SUBJECT = os.environ.get("ONLY_SUBJECT", "").strip()
 SIMILARITY_LIMIT = 0.82   # 题干与既有题目相似度超过这个值就丢弃，避免换句话重复出题
 PAUSE_WHEN_WAITING = 1     # 每周自动跑时，待审区还有这么多道 AI 出的题没审完就先不出；0＝不管，照样出（手动跑不受影响）
 SYLLABUS_CHAR_LIMIT = 12000   # 考纲塞进提示词的上限；四科目前都在这个数字以内，会整份带上
+# 出题不用这几级模型：pro、flash 额度都用完就停手，不往下退（2026-09 那批答案错、解析自言自语的题几乎都出自 flash-lite）。
+# () ＝ 照样退到最後一级。录题（转写）不受影响
+GENERATE_SKIP_TIERS = ("flash-lite",)
 
 
 def load_bank(subject):
@@ -158,7 +161,7 @@ def build_prompt(subject, section, syllabus, pending=()):
 5. explanation 要写出考点与推理过程，说明为什么正确选项对、并点出常见错误理解。
 6. 四个选项中的错误选项要是「有道理的错」（常见迷思概念），不要明显凑数。
 7. 出「I、II、III…叙述组合」的题时，问句在前，每一项叙述各占一行（JSON 里用 \\n）。
-{qa.MATH_RULES if subject == "math" else ""}
+{qa.MATH_RULES if subject == "math" else qa.FORMULA_RULES}
 只返回一个 JSON 数组，不要包含 Markdown 代码块标记或任何额外说明文字。每项结构：
 {{
   "q": "题干",
@@ -170,7 +173,7 @@ def build_prompt(subject, section, syllabus, pending=()):
 
 
 def call_gemini(prompt):
-    return gemini_api.generate(API_KEY, [{"text": prompt}], temperature=0.7)
+    return gemini_api.generate(API_KEY, [{"text": prompt}], temperature=0.7, skip_tiers=GENERATE_SKIP_TIERS)
 
 
 def extract_json_array(text):
@@ -232,6 +235,9 @@ def process_subject(subject, report_rows):
 
         try:
             parsed = extract_json_array(call_gemini(build_prompt(subject, section, syllabus, pending.get(section.get("id"), []))))
+        except gemini_api.LowTierOnly as e:
+            report_rows.append((subject, title, "⏸️ 停手", str(e)))
+            break
         except gemini_api.GeminiError as e:
             report_rows.append((subject, title, "⚠️ 生成失败", str(e)[:160]))
             continue
