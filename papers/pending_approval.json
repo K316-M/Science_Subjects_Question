@@ -287,7 +287,251 @@
         "ai_answer": 0,
         "reason": "整体加速度 a = 20 / (4 + 6) = 2 m/s²，对木块甲由牛顿第二定律得绳子张力 T = m_甲 a = 4 × 2 = 8 N。"
       }
+    },
+    {
+      "id": "biology_64417ebaf2",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap15",
+      "chapter_title": "第15章：基因与遗传的定律",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-27T11:22:29.577338Z",
+      "q": "杂合子（B b）连续自交三代，其后代中纯合子的比例为（   ）。",
+      "options": [
+        "A. 1/8",
+        "B. 7/8",
+        "C. 7/16",
+        "D. 9/16"
+      ],
+      "answer": 1,
+      "explanation": "杂合子连续自交n代，后代中杂合子的比例为(1/2)^n，纯合子的比例为1-(1/2)^n。自交三代，纯合子比例为1-(1/2)^3 = 1-1/8 = 7/8。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "杂合子连续自交n代，后代中纯合子比例为1-(1/2)^n，当n=3时比例为7/8。"
+      }
+    },
+    {
+      "id": "biology_1479b9e5bd",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "unclassified",
+      "chapter_title": "未分类（请人工归类）",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-27T11:22:29.579212Z",
+      "q": "不同环境的动物,有不同形式的气体交换构造,但是基本方法都是相同的,即（   ）。",
+      "options": [
+        "A. 利用大气压力",
+        "B. 利用肌肉收缩",
+        "C. 利用湿润细胞膜进行扩散",
+        "D. 利用气孔的开关"
+      ],
+      "answer": 2,
+      "explanation": "无论动物的呼吸器官如何不同（如鳃、肺、气管），气体交换的基本原理都是通过湿润的细胞膜进行物理扩散。",
+      "review": {
+        "ai_answer": 2,
+        "reason": "无论何种呼吸器官，气体交换的基本原理都是利用湿润的细胞膜进行物理扩散。"
+      }
+    },
+    {
+      "id": "biology_b6da82a0ee",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap15",
+      "chapter_title": "第15章：基因与遗传的定律",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-27T11:22:29.581388Z",
+      "q": "一只基因型为Bb的杂合子老鼠一次产生了100万个精子，其中含有隐性基因b的精子数目是（   ）。",
+      "options": [
+        "A. 100万",
+        "B. 50万",
+        "C. 25万",
+        "D. 0"
+      ],
+      "answer": 1,
+      "explanation": "根据孟德尔分离定律，杂合子Bb在减数分裂产生配子时，等位基因B与b随同源染色体的分开而分离，产生的精子中B和b的比例为1:1，故含b的精子约为50万个。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "根据等位基因分离定律，基因型为Bb的个体产生的精子中，B与b的比例为1:1。"
+      }
+    },
+    {
+      "id": "biology_6ed453f2b5",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap12",
+      "chapter_title": "第12章：生殖",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-27T11:22:29.583921Z",
+      "q": "下列哪一项对人工受精的理解是不准确的?",
+      "options": [
+        "A. 人工受精的女性,其输卵管与子宫都是正常的",
+        "B. 人工受精是将精液注入女性的输卵管内,以便于精子与卵子在输卵管中结合",
+        "C. 人工受精前首先需要进行排卵",
+        "D. 收集精液的时间要依据排卵时期而定"
+      ],
+      "answer": 1,
+      "explanation": "人工受精（AI）通常是将处理过的精液通过人工方式注入女性的子宫颈或子宫腔内，而非直接注入输卵管。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "人工受精通常是将精子注入子宫腔或阴道内，而非直接注入输卵管。"
+      }
+    },
+    {
+      "id": "biology_bc94594a3f",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap10",
+      "chapter_title": "第10章：生态系统",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-27T11:22:29.585590Z",
+      "q": "某学生在某个实验中，将100只有着标记的野兔放生到旷野去。经过一段时间后，他随机取样200只野兔，其中只有5只有标记。根据估计，该旷野的野兔约有多少只？",
+      "options": [
+        "A. 500",
+        "B. 1000",
+        "C. 2000",
+        "D. 4000"
+      ],
+      "answer": 3,
+      "explanation": "根据标志重捕法公式：种群总数 = (初次捕获标记数 × 重捕总数) / 重捕中标记数 = (100 × 200) / 5 = 4000只。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "根据标志重捕法公式：总数 = (初次标记数 × 重捕总数) / 重捕中标记数，即 (100 × 200) / 5 = 4000。"
+      }
+    },
+    {
+      "id": "biology_6e7d89dc0a",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap7",
+      "chapter_title": "第7章：动植物的协调与反应",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-27T11:22:29.589231Z",
+      "q": "下列哪种神经纤维具有最大的传导速率?",
+      "options": [
+        "A. 粗而无髓鞘者",
+        "B. 细而无髓鞘者",
+        "C. 粗而有髓鞘者",
+        "D. 细而有髓鞘者"
+      ],
+      "answer": 2,
+      "explanation": "神经传导速率与神经纤维的直径成正比（越粗越快），且有髓鞘的神经纤维通过跳跃式传导，其速度远快于无髓鞘纤维。",
+      "review": {
+        "ai_answer": 2,
+        "reason": "神经传导速率与纤维直径成正比，且有髓鞘的纤维通过跳跃式传导速度更快。"
+      }
+    },
+    {
+      "id": "biology_d1d0fea5c1",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第6章：营养成分的运输",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-27T11:22:29.590715Z",
+      "q": "下列血管的血液中，含脂类物质最多的是",
+      "options": [
+        "A. 下腔静脉",
+        "B. 肝门静脉",
+        "C. 冠状动脉",
+        "D. 上腔静脉"
+      ],
+      "answer": 3,
+      "explanation": "脂类物质被小肠绒毛的乳糜管吸收后进入淋巴管，经胸导管汇入左锁骨下静脉，最后进入上腔静脉。因此，在体循环中，上腔静脉的脂类含量在饭后会显著升高。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "脂类物质经小肠绒毛乳糜管吸收进入淋巴系统，最终经胸导管注入上腔静脉进入血液循环。"
+      }
+    },
+    {
+      "id": "biology_979754a9ee",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap10",
+      "chapter_title": "第10章：生态系统",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [
+        "需要配图，但原档里抓不到图，请从原档截图补上"
+      ],
+      "ingested_at": "2026-09-27T11:22:29.592426Z",
+      "q": "由于人类活动的影响,一些池塘或湖泊出现了大量浮游植物,水体变绿。因此,有人建议通过投放鱼苗来改善水质。下表表示部分淡水鱼的食性。最适宜投放哪种鱼苗?投放后该鱼种的种群数量增长曲线为哪种类型( )",
+      "options": [
+        "A. 青鱼,S型",
+        "B. 鲢鱼,S型",
+        "C. 鲫鱼,J型",
+        "D. 鲤鱼,J型"
+      ],
+      "answer": 1,
+      "explanation": "水体变绿是因为浮游植物过多，根据表格，鲢鱼以浮游植物为食，最适合投放。在有限的池塘生态系统中，种群增长受资源和空间限制，呈现S型增长曲线。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "鲢鱼以浮游植物为食可改善水质，且在有限环境下的种群增长符合S型曲线。"
+      }
+    },
+    {
+      "id": "biology_102ca67f46",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap9",
+      "chapter_title": "第9章：健康与免疫",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "ai",
+      "flags": [
+        "原档没标答案，由 AI 作答（两次一致），仍请核对"
+      ],
+      "ingested_at": "2026-09-27T11:22:29.597136Z",
+      "q": "下列哪项经由母体胎盘传给胎儿？",
+      "options": [
+        "A. 红血球",
+        "B. 羊水",
+        "C. 肝糖",
+        "D. 抗体"
+      ],
+      "answer": 3,
+      "explanation": "胎盘具有屏障作用，血细胞和大分子物质不能通过，但氧气、营养物质和某些抗体（如IgG）可以经胎盘进入胎儿体内，使胎儿获得被动免疫。",
+      "review": {
+        "ai_answer": 3,
+        "reason": "母体的免疫球蛋白（抗体）可通过胎盘进入胎儿体内，使其获得被动免疫。"
+      }
+    },
+    {
+      "id": "biology_1bce9447f4",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap12",
+      "chapter_title": "第12章：生殖",
+      "source_draft": "drafts/biology/GC练习2.docx",
+      "answer_source": "marked",
+      "flags": [],
+      "ingested_at": "2026-09-27T11:22:29.598247Z",
+      "q": "出芽生殖的生物有________\nI 酵母\nII 水螅\nIII 变形虫",
+      "options": [
+        "A. I",
+        "B. I，II",
+        "C. I，III",
+        "D. II，III"
+      ],
+      "answer": 1,
+      "explanation": "酵母菌（真菌）和水螅（腔肠动物）都可以进行出芽生殖；变形虫（原生动物）进行的是二分裂。",
+      "review": {
+        "ai_answer": 1,
+        "reason": "酵母菌和水螅均可进行出芽生殖，而变形虫进行的是分裂生殖。"
+      }
     }
   ],
-  "generated_at": "2026-09-27T10:47:07.937701+00:00"
+  "generated_at": "2026-09-27T11:22:39.569689+00:00"
 }
