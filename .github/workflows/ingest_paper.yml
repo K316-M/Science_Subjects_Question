@@ -31,14 +31,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 检出仓库代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # 取开跑当下最新的 main，不是触发这次的那个 commit：连推两次时，第二次排队等第一次跑完，
           # 要看得到第一次已经删掉的原档与放进待审区的题，才不会把同一批再录一遍
           ref: main
 
       - name: 设置 Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -73,7 +73,7 @@ jobs:
 
       - name: 有档案没处理成功：开 Issue 提醒
         if: steps.ingest.outputs.has_problems == 'true'
-        uses: peter-evans/create-issue-from-file@v5
+        uses: peter-evans/create-issue-from-file@v6
         with:
           title: "⚠️ AI 录题：有档案没处理成功"
           content-filepath: INGEST_REPORT.md

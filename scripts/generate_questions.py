@@ -116,19 +116,28 @@ def too_similar(candidate, known_norms):
     return False
 
 
-def pick_chapters(bank):
-    """题目最少的章节优先，数量相同则照原顺序，确保每周都轮到不同章节。"""
-    sections = bank.get("sections", [])
-    ranked = sorted(
-        enumerate(sections),
-        key=lambda pair: (len(pair[1].get("mcqs", []) or []), pair[0]),
-    )
+def pending_stems(subject):
+    """待审区里这一科还没审的题，按章节分：挑章节、查重都要算进去。
+    不算的话，审题之前每次都挑到同几章空章，出一堆和待审题重复的题"""
+    out = {}
+    for item in pending_queue.load_items():
+        if item.get("subject") == subject:
+            out.setdefault(item.get("chapter_id"), []).append(item.get("q") or item.get("question") or "")
+    return out
+
+
+def pick_chapters(bank, pending):
+    """题目最少的章节优先（上线中的＋待审区里的；下架的学生看不到，不算），数量相同则照原顺序，确保每周都轮到不同章节。"""
+    def count(sec):
+        live = sum(1 for q in sec.get("mcqs", []) or [] if not q.get("hidden"))
+        return live + len(pending.get(sec.get("id"), []))
+    ranked = sorted(enumerate(bank.get("sections", [])), key=lambda pair: (count(pair[1]), pair[0]))
     return [sec for _, sec in ranked[:CHAPTERS_PER_RUN]]
 
 
-def build_prompt(subject, section, syllabus):
+def build_prompt(subject, section, syllabus, pending=()):
     label = SUBJECT_LABEL.get(subject, subject)
-    avoid = existing_stems(section)[:12]
+    avoid = (existing_stems(section) + list(pending))[:12]
     avoid_block = "\n".join(f"- {s[:60]}" for s in avoid) or "（本章目前没有题目）"
     syllabus_block = f"\n【官方考纲节录】\n{syllabus[:SYLLABUS_CHAR_LIMIT]}\n" if syllabus else ""
 
@@ -210,18 +219,19 @@ def process_subject(subject, report_rows):
     syllabus = load_syllabus(subject)
     new_items = []
 
-    # 查重要看整科：模型可能把别章已有的题再写一次，只比对本章会漏掉
+    # 查重要看整科（连同待审区）：模型可能把别章已有的题再写一次，只比对本章会漏掉
+    pending = pending_stems(subject)
     known_norms = [
         normalize(q.get("q", ""))
         for sec in bank.get("sections", [])
         for q in sec.get("mcqs", []) or []
-    ]
+    ] + [normalize(s) for stems in pending.values() for s in stems]
 
-    for section in pick_chapters(bank):
+    for section in pick_chapters(bank, pending):
         title = section.get("title", "")
 
         try:
-            parsed = extract_json_array(call_gemini(build_prompt(subject, section, syllabus)))
+            parsed = extract_json_array(call_gemini(build_prompt(subject, section, syllabus, pending.get(section.get("id"), []))))
         except gemini_api.GeminiError as e:
             report_rows.append((subject, title, "⚠️ 生成失败", str(e)[:160]))
             continue
