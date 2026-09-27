@@ -48,15 +48,8 @@
   animation: coreBreath 7s ease-in-out infinite;
   pointer-events: none;
 }
-.orbit-core span {
-  font-family: "Ma Shan Zheng", "KaiTi", "STKaiti", serif;
-  font-size: clamp(26px, 7vw, 34px);
-  /* 白字压在球心的白色高光上只有 1.02:1，等於看不见。改成深色字配白色柔光，
-     字身落在渐层的浅色区，不会碰到外缘的深绿。 */
-  color: #064e3b;
-  text-shadow: 0 1px 3px rgba(255, 255, 255, .95), 0 0 8px rgba(255, 255, 255, .8);
-  line-height: 1;
-}
+/* 网站图标放在球心的浅色区，不碰外缘会跟著科目变色的那圈 */
+.orbit-core .brand-logo { width: 68%; height: 68%; }
 @keyframes coreBreath {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   50%      { transform: translate(-50%, -50%) scale(1.045); }
