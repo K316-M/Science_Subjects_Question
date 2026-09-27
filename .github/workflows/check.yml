@@ -1,0 +1,69 @@
+name: 合并前检查 (Check)
+
+# 每个 PR、每次有人推到 main 都跑一次；有 ❌ 就代表合并／上线後网站会有东西坏掉。
+#   资料与语法：scripts/check_repo.py（题库 JSON、必填栏位、配图、Python／JS 语法、CUSTOMIZE.md 的搜名字）
+#   介面：scripts/ui-check/run.js（手机与桌面版面、对比度、键盘、作答与测验流程），加上标题宋体子集有没有缺字
+# 结果在 PR 下方的检查列表，点进去看摘要；UI 检查失败时截图打包在那次执行的 Artifacts。
+# 录题、出题、巡检、音乐这些流水线自己推的 commit 不会触发（GitHub 规定工作流推的不再触发工作流）。
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'drafts/**'        # 待录的题目原档，网站用不到
+      - 'source/**'        # 素材原档（音乐另有工作流处理）
+  workflow_dispatch:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  data:
+    name: 资料与语法
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 检查题库、待审区、语法、CUSTOMIZE.md
+        run: python scripts/check_repo.py
+
+  ui:
+    name: 介面（一键 UI 检查）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: scripts/ui-check/package-lock.json
+      - name: 安装 Playwright 与 Chromium
+        working-directory: scripts/ui-check
+        run: |
+          npm ci
+          npx playwright-core install --with-deps chromium
+      - name: 一键 UI 检查
+        working-directory: scripts/ui-check
+        shell: bash -o pipefail {0}
+        run: |
+          { echo '```'; node run.js; status=$?; echo '```'; exit $status; } | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: 标题宋体子集有没有缺字
+        if: success() || failure()
+        run: node scripts/fonts/serif-subset.js --check
+      - name: 失败时把截图存起来
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-check-screenshots
+          path: scripts/ui-check/out/
+          retention-days: 7

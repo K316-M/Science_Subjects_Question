@@ -95,6 +95,13 @@ def normalize(text):
     return re.sub(r"[\s，。、；：？！（）()\[\]<>“”\"'’·．.,;:?!-]+", "", str(text or ""))
 
 
+def option_key(opt, subject):
+    """比对「有没有重复选项」用：先去掉「A. 」前缀（不去的话四个选项开头都不同，永远比不出重复）。
+    数学的 -1 和 1、0.5 和 5 是不同选项，负号、小数点不能像其他科那样去掉，只去空白"""
+    body = re.sub(r"^\s*[A-D][.．]\s*", "", str(opt))
+    return re.sub(r"\s+", "", body) if subject == "math" else normalize(body)
+
+
 def existing_stems(section):
     return [q.get("q", "") for q in section.get("mcqs", [])]
 
@@ -165,7 +172,7 @@ def extract_json_array(text):
 FIGURE_WORDS = ["如图", "下图", "上图", "图中", "图示", "如下表", "下表", "装置图", "示意图"]
 
 
-def validate(entry):
+def validate(entry, subject):
     """返回 (是否可用, 问题说明)。挡掉模型最常见的几种出错方式。"""
     q = str(entry.get("q", "")).strip()
     if len(q) < 8:
@@ -181,7 +188,7 @@ def validate(entry):
     for idx, prefix in enumerate(["A.", "B.", "C.", "D."]):
         if not str(options[idx]).strip().startswith(prefix):
             return False, f"第 {idx + 1} 个选项缺少 {prefix} 前缀"
-    if len({normalize(o) for o in options}) != 4:
+    if len({option_key(o, subject) for o in options}) != 4:
         return False, "有重复选项"
 
     answer = entry.get("answer")
@@ -232,7 +239,7 @@ def process_subject(subject, report_rows):
 
         kept = 0
         for entry in parsed:
-            ok, why = validate(entry)
+            ok, why = validate(entry, subject)
             if not ok:
                 report_rows.append((subject, title, "🚫 已丢弃", why))
                 continue

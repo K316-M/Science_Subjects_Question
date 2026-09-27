@@ -662,6 +662,21 @@ python3 -m http.server 8080
 
 ⚠️ 这样开的话 `/api/` 接口不会动（开发者工作台登不进去），但学生网站的所有功能都能测。
 
+### 合并前检查（每个 PR 自动跑）
+
+每个 PR、每次有人直接推到 main（例如在 GitHub 网页上改题库），`.github/workflows/check.yml` 都会自动跑两项，
+结果在 PR 下方的检查列表（✅／❌），点「Details」看摘要：
+
+- **资料与语法**（不到 1 分钟）：`scripts/check_repo.py`
+  - 题库、待审区、scene.json 等 JSON 读不读得开
+  - 上线的题：题干、4 个选项、答案 A～D、做答题的参考答案、配图档案在不在、数学卷别只能是 I／II
+  - Python、JS 语法（含 `index.html` 里内嵌的程式）
+  - `docs/CUSTOMIZE.md` 每个「搜这个名字」在那一列的档案里搜不搜得到
+- **介面**（约 5 分钟）：下面那个一键 UI 检查，加上标题宋体子集有没有缺字；失败时截图在那次执行的 **Artifacts**
+
+**有 ❌ 就先别合并**（直接推到 main 的话，网站已经是坏的，照摘要修掉）。只挡「会让网站坏掉」的问题：
+缺解析、疑似缺图这类提醒还是看 /dev 的题库巡检。本机也能先跑：`python3 scripts/check_repo.py`。
+
 ### 一键 UI 检查（改了介面之後跑一次）
 
 自动开浏览器把网站走一遍：手机与桌面的版面、文字对比度、键盘操作、答错结算、错题本规则、今日复习、整章测验。每一项都是以前真的坏过的地方。
@@ -673,7 +688,9 @@ npx playwright-core install chromium   # 只有第一次、而且电脑上没有
 node run.js
 ```
 
-- 全部 ✅ 才代表可以推送；有 ❌ 会写出是哪一项、差多少
+- 全部 ✅ 才代表可以推送；有 ❌ 会写出是哪一项、差多少。每个 PR 也会自动跑一次（见上一节）
+- 测试照「上线中的题」算（下架的跳过），「零题科目」「没开放的科目」是测试时临时把化学清空、把数学关掉来测：
+  题库怎么增减都不用跟著改测试
 - 截图放在 `scripts/ui-check/out/`，至少看一眼——有些问题只有眼睛看得出来
 - 大约跑 2–3 分钟
 
@@ -791,8 +808,9 @@ source/audio/candidates/  还没决定要不要用的候选曲
 ── 工具（不部署）──
 scripts/                录题、出题、审题、巡检（Python）
 scripts/sprite|scene|audio/  把 source/ 的原始素材做成 assets/ 的成品
+scripts/check_repo.py   合并前检查：题库、语法、CUSTOMIZE.md 的搜名字
 scripts/ui-check/       一键 UI 检查（node run.js）
-.github/workflows/      四条自动化流水线（录题、出题、题库巡检、背景音乐处理）
+.github/workflows/      五条自动化流水线（录题、出题、题库巡检、背景音乐处理、合并前检查）
 
 ── 文件（不部署）──
 README.md               专案介绍（GitHub 首页）

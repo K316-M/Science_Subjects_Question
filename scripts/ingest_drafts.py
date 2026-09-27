@@ -33,7 +33,7 @@ import ingest_formats
 import pending_queue
 import qa
 from qa import extract_json_array
-from generate_questions import normalize, too_similar
+from generate_questions import normalize, option_key, too_similar
 
 SUBJECTS = ["biology", "chemistry", "physics", "math"]
 SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理", "math": "高级数学"}
@@ -150,9 +150,7 @@ def structural_problem(record):
     for i, opt in enumerate(options):
         if not re.match(rf"^{LETTERS[i]}[.．]\s*\S", str(opt).strip()):
             return f"第 {i + 1} 个选项不是以「{LETTERS[i]}.」开头"
-    # 数学的 -1 和 1、0.5 和 5 是不同选项：负号、小数点不能像其他科那样去掉再比
-    same = (lambda o: re.sub(r"\s+", "", o)) if record["subject"] == "math" else normalize
-    if len({same(re.sub(r'^[A-D][.．]\s*', '', o)) for o in options}) != 4:
+    if len({option_key(o, record["subject"]) for o in options}) != 4:
         return "有重复选项"
     if not isinstance(record.get("answer"), int) or not 0 <= record["answer"] <= 3:
         return "答案不是 A–D"
