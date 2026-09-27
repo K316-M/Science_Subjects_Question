@@ -335,13 +335,14 @@ GitHub → Actions → 「BioQuestion Auto Pipeline & Health Check」→ Run wor
 
 ### 音乐响度统一
 
-四首背景音乐已经统一到 −20 LUFS。**以后换新歌，先跑这行再放进去**，否则换曲时会忽大忽小：
+五首背景音乐（首页、生物、化学、物理、数学）都统一到 −20 LUFS。**以后换新歌，原档放进 `source/audio/<科目>/ambient.mp3`，跑这行**，
+它会剪掉头尾静音、做成无缝循环、调到同样响度，输出到 `assets/audio/<科目>/`；不跑的话换曲时会忽大忽小：
 
 ```bash
-ffmpeg -i 新歌.mp3 -af loudnorm=I=-20:TP=-1.5:LRA=11 -c:a libmp3lame -b:a 128k ambient.mp3
+python3 scripts/audio/build.py math     # 只做数学；不写科目＝全部重做
 ```
 
-（没装 ffmpeg 的话丢给我跑也行。）
+（要装 ffmpeg；没装的话丢给我跑也行。）
 
 ### 背景的浓淡
 
