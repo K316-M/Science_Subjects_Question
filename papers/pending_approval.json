@@ -1,29 +1,6 @@
 {
   "items": [
     {
-      "id": "chemistry_gen_01e57052",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap2",
-      "chapter_title": "第二章：原子与分子",
-      "q": "A 与 B 两种元素可形成化合物 X 和 Y。已知在化合物 X 中，A 的质量百分含量为 40.0%；在化合物 Y 中，A 的质量百分含量为 25.0%。若化合物 X 的化学式为 AB2，根据倍比定律，化合物 Y 的化学式应为：",
-      "options": [
-        "A. AB3",
-        "B. AB4",
-        "C. A2B3",
-        "D. A2B5"
-      ],
-      "answer": 1,
-      "explanation": "本题考查倍比定律（Law of Multiple Proportions）的理解与应用。在化合物 X 中，A 与 B 的质量之比为 40.0% : 60.0% = 2 : 3。若固定 A 的质量为 1 g，则与之结合的 B 的质量为 1.5 g。在化合物 Y 中，A 与 B 的质量之比为 25.0% : 75.0% = 1 : 3。若固定 A 的质量为 1 g，则与之结合的 B 的质量为 3.0 g。在 X 和 Y 中，与相同质量的 A 结合的 B 的质量之比为 1.5 : 3.0 = 1 : 2。根据倍比定律，此质量比应等于两化合物中 B 的原子个数比。由于化合物 X 的化学式为 AB2（即 1 个 A 原子结合 2 个 B 原子），因此在 Y 中，1 个 A 原子结合的 B 原子数应为 2 × 2 = 4 个，故 Y 的化学式为 AB4。常见迷思是直接将质量百分比之比（1:3）误认为原子个数比而误选 A。",
-      "origin": "ai_generated",
-      "needs_expert_check": true,
-      "flags": [
-        "AI 依考纲生成的原创题，采纳前请核对科学正确性与答案"
-      ],
-      "generated_at": "2026-09-26T08:25:09.609348+00:00",
-      "syllabus_used": true
-    },
-    {
       "id": "chemistry_gen_f29c1c4f",
       "subject": "chemistry",
       "type": "mcq",
