@@ -502,6 +502,23 @@
     @keyframes slideFromLeft  { from { opacity: 0; transform: translateX(-34px); } to { opacity: 1; transform: none; } }
     .flashcard.from-right { animation: slideFromRight .34s cubic-bezier(.16,1,.3,1) both; }
     .flashcard.from-left  { animation: slideFromLeft .34s cubic-bezier(.16,1,.3,1) both; }
+    /* 点「有新题」提示框：像横版游戏的镜头，题卡从远处快速滑到定位（NEW_TIP_PAN_MS 控制快慢） */
+    @keyframes panFromRight { from { opacity: .2; transform: translateX(70vw); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+    @keyframes panFromLeft  { from { opacity: .2; transform: translateX(-70vw); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+    .flashcard.pan-right { animation: panFromRight var(--pan-ms, 450ms) cubic-bezier(.22,1,.36,1) both; }
+    .flashcard.pan-left  { animation: panFromLeft var(--pan-ms, 450ms) cubic-bezier(.22,1,.36,1) both; }
+    /* 滑进来那一下题卡在画面外：裁掉横向超出，否则整页会多出横向捲动、被推到旁边 */
+    .is-panning { overflow-x: clip; }
+    /* 这一章多了新题：底部的提示框，点一下滑到那一题 */
+    .new-q-tip { position: fixed; left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); z-index: 60;
+      display: flex; align-items: center; gap: 6px; width: fit-content; margin: 0 auto;
+      padding: 12px 20px; border: 0; border-radius: 999px; cursor: pointer;
+      background: var(--fn-go); color: #fff; font: inherit; font-size: 14px; font-weight: 700;
+      box-shadow: 0 10px 28px -10px rgba(4,120,87,.65);
+      animation: newTipIn .4s cubic-bezier(.16,1,.3,1) both; }
+    .new-q-tip.is-leaving { animation: newTipOut .2s ease both; }
+    @keyframes newTipIn  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    @keyframes newTipOut { to { opacity: 0; transform: translateY(12px); } }
 
     /* 答对时徽章弹一下 —— 短、只做一次，纯粹是「对了」的即时回馈 */
     @keyframes badgePop {
@@ -537,7 +554,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       /* 选择器要写得跟动画那条一样具体（0,2,0），否则媒体查询不增加特异度，这条会被盖掉 */
-      .flashcard, .flashcard.from-right, .flashcard.from-left, .option-btn, .view.active { animation: none; }
+      .flashcard, .flashcard.from-right, .flashcard.from-left, .flashcard.pan-right, .flashcard.pan-left, .option-btn, .view.active, .new-q-tip { animation: none; }
       .option-btn:hover:not(.locked), .chapter-card:hover, .sound-toggle:hover, .resume-card:hover { transform: none; }
     }
 
@@ -1797,6 +1814,7 @@ async function loadSubjectData(subjectName, initialChapterIdx) {
       currentMcqIdx = 0;
       renderChapterRail();
       renderActiveContent();
+      checkNewQuestions();
       updateWrongCountBadge();
       updateSceneGlow();
       if (fullDatabase.sections.length > 0) saveLastVisit(subjectName, activeChapterIdx);
@@ -1842,6 +1860,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
 }
 
   function showView(viewId) {
+    dismissNewTip(true);
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
     const shapes = document.getElementById('floatingShapes');
@@ -2044,6 +2063,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     currentMcqIdx = 0;
     renderChapterRail();
     renderActiveContent();
+    checkNewQuestions();
     saveLastVisit(currentSubject, idx);
   }
 
@@ -2505,7 +2525,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
       if (typeof refreshNoteButtons === 'function') refreshNoteButtons();
 
       const cardEl = area.querySelector('.flashcard');
-      if (cardEl) cardEl.classList.add(lastNavDir < 0 ? 'from-left' : 'from-right');
+      if (cardEl) cardEl.classList.add(panNext ? (lastNavDir < 0 ? 'pan-left' : 'pan-right') : (lastNavDir < 0 ? 'from-left' : 'from-right'));
+      if (panNext) { cardEl.style.setProperty('--pan-ms', `${NEW_TIP_PAN_MS}ms`); panNext = false; }
 
       const optBox = document.getElementById('optContainer');
       const expBox = document.getElementById('expContainer');
@@ -2944,6 +2965,71 @@ function openSubject(subject, initialChapterIdx, subMode) {
         if (btn) btn.focus({ preventScroll: true });
       },
     });
+  }
+
+  // ---- 这一章多了新题：跳出提示框，点一下画面滑到那一题 ----
+  // 每台装置记下每一章上次看到的题（题号，不含下架的）。第一次进一章不提示（全部都是新的）；
+  // 之後多出来的（新采纳、恢复、从别章移过来的）就提示。一出现就算看过，下次不再跳
+  const SEEN_KEY = 'UEC_SEEN_v1';
+  const NEW_TIP_PAN_MS = 450;   // 点提示框後，题卡从远处滑到定位要几毫秒
+  let panNext = false;
+  function checkNewQuestions() {
+    dismissNewTip(true);
+    const sec = (fullDatabase.sections || [])[activeChapterIdx];
+    if (!sec) return;
+    const liveOf = list => (list || []).map((q, i) => (isLive(q) ? i : -1)).filter(i => i >= 0);
+    const now = { mcq: liveOf(sec.mcqs), subj: liveOf(sec.subjectives) };
+    let seen = {};
+    try { seen = JSON.parse(localStorage.getItem(SEEN_KEY)) || {}; } catch (e) {}
+    const key = `${currentSubject}__${sec.id}`;
+    const before = seen[key];
+    seen[key] = now;
+    try { localStorage.setItem(SEEN_KEY, JSON.stringify(seen)); } catch (e) {}
+    if (!before) return;
+    const mcq = now.mcq.filter(i => !(before.mcq || []).includes(i));
+    const subj = now.subj.filter(i => !(before.subj || []).includes(i));
+    if (!mcq.length && !subj.length) return;
+    const tip = document.createElement('button');
+    tip.type = 'button';
+    tip.className = 'new-q-tip';
+    tip.id = 'newQuestionTip';
+    tip.innerHTML = `这一章多了 ${mcq.length + subj.length} 道新题，点我去看<svg class="ic" aria-hidden="true"><use href="#i-arrow-right"></use></svg>`;
+    tip.addEventListener('click', () => {
+      dismissNewTip();
+      if (mcq.length) goToNewMcq(mcq[0]); else goToNewSubj(subj[0]);
+    });
+    document.body.appendChild(tip);
+  }
+  function dismissNewTip(now) {
+    const tip = document.getElementById('newQuestionTip');
+    if (!tip) return;
+    tip.id = '';
+    if (now || matchMedia('(prefers-reduced-motion: reduce)').matches) { tip.remove(); return; }
+    tip.classList.add('is-leaving');
+    setTimeout(() => tip.remove(), 220);
+  }
+  function goToNewMcq(idx) {
+    cameFromReview = false;
+    playSound('flip');
+    if (activeSubMode !== 'mcq') { activeSubMode = 'mcq'; markSubTab('mcq'); }
+    lastNavDir = idx >= currentMcqIdx ? 1 : -1;
+    currentMcqIdx = idx;
+    panNext = true;
+    const area = document.getElementById('activeStudyArea');
+    area.classList.add('is-panning');
+    setTimeout(() => area.classList.remove('is-panning'), NEW_TIP_PAN_MS + 50);
+    renderActiveContent();
+    // 只做垂直捲动（scrollIntoView 也会横向捲，题卡还在画面外时会把整页推走）；题卡已经在上半部就不捲
+    const top = area.getBoundingClientRect().top;
+    if (top < 0 || top > innerHeight / 2) {
+      scrollTo({ top: scrollY + top - 96, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+  }
+  function goToNewSubj(idx) {
+    playSound('flip');
+    if (activeSubMode !== 'subj') { activeSubMode = 'subj'; markSubTab('subj'); renderActiveContent(); }
+    const card = document.querySelector(`#activeStudyArea .form-question-card[data-idx="${idx}"]`);
+    if (card) card.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }
 
   function navMcq(delta) {

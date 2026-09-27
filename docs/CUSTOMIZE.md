@@ -51,6 +51,7 @@
 | 统考时间表最上面的两行说明 | `js/exam-timetable.js` | `rules`；`index.html` 搜 `exam-list-hint` | 🟢 |
 | 时间表的考试名称（「2026 年度第 52 届高中统考」） | `js/exam-timetable.js` | `title` | 🟢 |
 | 离线或连不上时按「立即同步」的提示 | `js/sync.js` | `目前没有网络` | 🟢 |
+| 章节多了新题时，底部提示框的字（「这一章多了 N 道新题，点我去看」） | `index.html` | `道新题，点我去看` | 🟡 保留 `${…}` 那段，那是自动填的题数；太长在 320px 手机上会断成两行 |
 | 巡检 Issue 的标题 | `.github/workflows/auto_update.yml` | `title:`，以及「找还开着的巡检 Issue」那步的 `startswith("🚨 题库巡检")` | 🔴 两处要一起改：标题开头对不上，每次巡检都会另开一个新的 Issue |
 
 ---
@@ -62,6 +63,7 @@
 | **小精灵的所有动作时间**（多久打瞌睡、多久眨一次眼、挥手多久、说谢谢後停多久…） | `js/feedback.js` | `SPRITE_TIMING` | 全部集中在这一块，每项都有注解 | 🟢 |
 | 首页轨道绕圈速度 | `js/orbit-subjects.js` | `IDLE_SPEED` | `4`（度/秒，约 90 秒一圈） | 🟢 |
 | 点圆球後转到正上方的时间 | `js/orbit-subjects.js` | `SNAP_MS` | `760` 毫秒 | 🟢 |
+| 点「有新题」提示框後，题卡从远处滑到定位的时间 | `index.html` | `NEW_TIP_PAN_MS` | `450` 毫秒 | 🟢 太长会像卡住；开了「减少动态」的装置不滑 |
 | 背景音乐音量 | `index.html` | `MUSIC_VOLUME` | `0.35`（0～1） | 🟢 |
 | 换科时音乐交叉淡入淡出 | `index.html` `js/scene-assets.js` | `MUSIC_FADE_MS`、`FADE_MS` | `900` 毫秒 | 🟢 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |

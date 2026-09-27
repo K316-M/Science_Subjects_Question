@@ -316,6 +316,26 @@ async function run() {
     await ctx.close();
   });
 
+  await section('新题提示', async () => {
+    // 这台装置上次看第 1 章时，还没有最後那一题：这次进来要有提示框，点一下滑到那一题、提示框消失
+    const live = CH1.mcqs.map((q, i) => (q.hidden ? -1 : i)).filter(i => i >= 0);
+    const fresh = live[live.length - 1];
+    const seed = { UEC_SEEN_v1: { [`biology__${CH1.id}`]: { mcq: live.slice(0, -1), subj: (CH1.subjectives || []).map((q, i) => (q.hidden ? -1 : i)).filter(i => i >= 0) } } };
+    const { ctx, page, errors } = await open({ seed });
+    await enter(page);
+    const tip = await page.evaluate(() => (document.getElementById('newQuestionTip') || {}).textContent || '');
+    check('新题提示', '这一章多了新题：出现提示框', tip.includes('1 道新题'), `提示「${tip}」`);
+    await page.evaluate(() => document.getElementById('newQuestionTip').click()); await page.waitForTimeout(700);
+    const r = await page.evaluate(() => ({ gone: !document.getElementById('newQuestionTip'),
+      pos: (document.querySelector('.flashcard .card-footer span') || {}).textContent, pan: !!document.querySelector('.flashcard.pan-right, .flashcard.pan-left') }));
+    check('新题提示', '点一下：换到那一题（横向快速滑进来），提示框消失', r.gone && r.pos === `第 ${live.length} / ${live.length} 题` && r.pan, JSON.stringify(r));
+    await page.evaluate(() => navHome()); await page.waitForTimeout(500);
+    await enter(page);
+    check('新题提示', '看过之後再进来：不再提示', await page.evaluate(() => !document.getElementById('newQuestionTip')));
+    check('新题提示', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('答错结算', async () => {
     const { ctx, page, errors } = await open();
     await enter(page);
