@@ -235,34 +235,6 @@
       }
     },
     {
-      "id": "physics_gen_9ab01dcc",
-      "subject": "physics",
-      "type": "mcq",
-      "chapter_id": "chap3",
-      "chapter_title": "第三章：牛顿运动定律",
-      "q": "两名学生 A 和 B 穿着溜冰鞋面对面静止站在光滑冰面上。学生 A 的质量为 50 kg，学生 B 的质量为 70 kg。当学生 A 用 140 N 的力推学生 B 时，下列叙述何者正确？",
-      "options": [
-        "A. 学生 A 受到的反作用力为 100 N",
-        "B. 学生 B 受到的推力大于学生 A 受到的反作用力",
-        "C. 学生 A 获得的加速度大小为 2.8 m/s²",
-        "D. 学生 B 获得的加速度大小为 2.0 m/s²"
-      ],
-      "answer": 3,
-      "explanation": "本题结合牛顿第二和第三运动定律。根据牛顿第三定律，作用力与反作用力大小相等、方向相反，故 A 对 B 推力为 140 N，B 对 A 的反作用力也必为 140 N（排除 A、B）。根据牛顿第二定律 a = F/m：学生 A 的加速度 aA = 140/50 = 2.8 m/s²；学生 B 的加速度 aB = 140/70 = 2.0 m/s²。因此 D 正确，C 选项数值虽对但描述的是 A 的加速度。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "⚠️ 答案有疑：出题时给的是 D，AI 复核选 C（根据牛顿第三定律，A 受到 B 大小为 140 N 的反作用力，故 A 的加速度 a_A = 140 / 50 = 2.8 m/s²。），请核对"
-      ],
-      "generated_at": "2026-09-27T10:44:38.081966+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "根据牛顿第三定律，A 受到 B 大小为 140 N 的反作用力，故 A 的加速度 a_A = 140 / 50 = 2.8 m/s²。"
-      }
-    },
-    {
       "id": "physics_gen_1a8f4758",
       "subject": "physics",
       "type": "mcq",
