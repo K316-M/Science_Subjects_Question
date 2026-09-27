@@ -102,7 +102,7 @@ def _option_body(opt):
 
 
 def text_problems(record):
-    """只看题目本身就知道有问题的地方"""
+    """只看题目本身就知道有问题的地方。/dev 的 textLint（dev/dev.js）是同一套，改规则或字句两边要一样"""
     out = []
     pieces = [("题干", _stem(record))] + [(f"选项{LETTERS[i]}", o) for i, o in enumerate(record.get("options") or [])]
     pieces.append(("解析", record.get("explanation") or ""))
@@ -120,8 +120,9 @@ def text_problems(record):
         if text.count("$") % 2:
             out.append(f"{label}的公式 $ 没有成对，显示会乱掉")
         elif RAW_LATEX.search(prose):
-            out.append(f"{label}有没用 $ 包住的公式指令「{RAW_LATEX.search(prose).group(0)}」，学生会看到原始码，"
-                       "请改成符号（√、γ）或用 $ 包起来")
+            # 标记本身会显示在 /dev：一句里有两个 $ 会被当成公式排掉，所以只能出现一个
+            out.append(f"{label}有写在公式外面的 LaTeX 指令「{RAW_LATEX.search(prose).group(0)}」，学生会看到原始码，"
+                       "请改成符号（√、γ），或前后加 $ 放进公式")
         if any(c in span for span in MATH_SPAN.findall(text) for c in "<>"):
             out.append(f"{label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt")
     for label, text in pieces:

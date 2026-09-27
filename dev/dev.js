@@ -205,23 +205,37 @@ function navigate() {
 const FIGURE_WORDS = /如图|下图|图中|图示|示意图|曲线图|装置图|见图|右图|左图/;
 
 // 与 scripts/qa.py 的 text_problems 同一套规则、同样的字句（待审区靠字句去重），
-// 已上线的题与还没跑过新检查的待审题也能被抓出来
+// 已上线的题与还没跑过新检查的待审题也能被抓出来。不用 (?<!…)：旧版 iPhone Safari 不认，整个 /dev 会打不开
 const ENGLISH_FILLER = /(^|[^A-Za-z])(and|or|the|of|is|are|not|which|with|what)(?![A-Za-z])/i;
 const LEFTOVER_MARK = /\[\/?标记[^\]]*\]|\[图\d+\]/;
 const LEADING_NUMBER = /^\s*(\d{1,3}|[（(]\d{1,3}[)）])\s*[.．、)]/;
+const ROMAN_ONE_LINE = /(^|[^A-Za-z])I\s+\S.*?\sII(?![A-Za-z])/;
+const MATH_SPAN = /\$[^$]*\$/g;
+const CONTROL_CHAR = /[\x08\x0c\t\r]/;
+const RAW_LATEX = /\\[A-Za-z]+/;
+const SELF_TALK = /等等|哎呀|重新(计算|分析|审题|核对|核算|检查)|让我们?(重新|检查|核对|修正)|修正选项|与选项不符|若题目改为|重写(此|这)题|慢，检查/;
 
 function textLint(item) {
   const out = [];
   const stem = String(item.q || item.question || '');
-  const pieces = [['题干', stem], ...(item.options || []).map((o, i) => [`选项${'ABCD'[i]}`, o])];
+  const pieces = [['题干', stem], ...(item.options || []).map((o, i) => [`选项${'ABCD'[i]}`, o]), ['解析', item.explanation]];
   pieces.forEach(([label, raw]) => {
     const text = String(raw || '');
-    const en = /[\u4e00-\u9fff]/.test(text) && text.match(ENGLISH_FILLER);
+    const prose = text.replace(MATH_SPAN, '');   // 公式里的 \text{or} 不算夹英文
+    const en = label !== '解析' && /[\u4e00-\u9fff]/.test(prose) && prose.match(ENGLISH_FILLER);   // 解析常带英文术语，不查
     if (en) out.push(`${label}夹了英文「${en[2]}」，疑似转写错误`);
     const mark = text.match(LEFTOVER_MARK);
     if (mark) out.push(`${label}残留转写标记「${mark[0]}」`);
+    if (CONTROL_CHAR.test(text)) out.push(`${label}有看不见的控制字元，多半是公式的反斜线少写一个（\\frac、\\theta 这类），请检查公式`);
+    const latex = prose.match(RAW_LATEX);
+    if ((text.match(/\$/g) || []).length % 2) out.push(`${label}的公式 $ 没有成对，显示会乱掉`);
+    else if (latex) out.push(`${label}有写在公式外面的 LaTeX 指令「${latex[0]}」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式`);
+    if ((text.match(MATH_SPAN) || []).some(span => /[<>]/.test(span))) out.push(`${label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt`);
   });
+  const talk = pieces.map(([label, raw]) => [label, String(raw || '').match(SELF_TALK)]).find(([, m]) => m);
+  if (talk) out.push(`⚠️ ${talk[0]}里有 AI 自言自语「${talk[1][0]}」：这种题多半算错或中途改过题，答案、选项、解析都要核对`);
   if (LEADING_NUMBER.test(stem)) out.push('题干开头的题号没去掉');
+  if (stem.split('\n').some(line => ROMAN_ONE_LINE.test(line))) out.push('题干的罗马数字叙述（I、II…）挤在同一行，请每项换行');
   return out;
 }
 
