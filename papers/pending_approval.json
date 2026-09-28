@@ -27,32 +27,6 @@
       }
     },
     {
-      "id": "chemistry_gen_c9faacf3",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：水和氢",
-      "q": "将干燥的氢气通入装有下列固体粉末的硬质玻璃管中并加热，实验结束后，观察到固体粉末颜色由黑色变为红色的是：",
-      "options": [
-        "A. 二氧化锰 (MnO2)",
-        "B. 氧化镁 (MgO)",
-        "C. 氧化铜 (CuO)",
-        "D. 四氧化三铁 (Fe3O4)"
-      ],
-      "answer": 2,
-      "explanation": "考点为氢气的还原性。氢气具有还原性，在加热条件下能将金属活动性顺序中位于其后的金属氧化物还原。黑色氧化铜 (CuO) 被氢气还原后生成红色的金属铜 (Cu) 和水；二氧化锰和氧化镁不能被氢气还原（镁活性太强）；四氧化三铁被还原后生成黑色的铁粉或灰黑色固体，不会出现红色。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T12:46:17.201950+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "氢气在加热条件下能将黑色的氧化铜还原为红色的金属铜。"
-      }
-    },
-    {
       "id": "chemistry_gen_fb2d653a",
       "subject": "chemistry",
       "type": "mcq",
