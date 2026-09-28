@@ -1,34 +1,6 @@
 {
   "items": [
     {
-      "id": "math_gen_5ea461ad",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap6",
-      "chapter_title": "第六章：不等式",
-      "q": "含绝对值的不等式 $|2x-3| \\lt 5$ 的整数解共有多少个？",
-      "options": [
-        "A. $4$ 个",
-        "B. $5$ 个",
-        "C. $6$ 个",
-        "D. $7$ 个"
-      ],
-      "answer": 1,
-      "explanation": "考点：含绝对值不等式的解法。由 $|2x-3| \\lt 5$ 可化为双不等式：$-5 \\lt 2x-3 \\lt 5$。各边同时加 $3$ 得：$-2 \\lt 2x \\lt 8$。各边同时除以 $2$ 得：$-1 \\lt x \\lt 4$。在此开区间内的整数解有：$0, 1, 2, 3$，共计 $4$ 个？等等，重新计算：$-1 \\lt x \\lt 4$ 的整数包括 $0, 1, 2, 3$，还有 $-1$ 吗？开区间不包含 $-1$。整数有 $0, 1, 2, 3$，共 $4$ 个。若题目为 $|2x-1| \\lt 5 \\implies -5 \\lt 2x-1 \\lt 5 \\implies -4 \\lt 2x \\lt 6 \\implies -2 \\lt x \\lt 3$，整数解有 $-1, 0, 1, 2$，共 $4$ 个。若题目为 $|3x-2| \\leq 4 \\implies -4 \\leq 3x-2 \\leq 4 \\implies -2 \\leq 3x \\leq 6 \\implies -\\frac{2}{3} \\leq x \\leq 2$，整数解有 $0, 1, 2$，共 $3$ 个。我们调整原题数据：设不等式 $|2x-1| \\leq 5$，其整数解共有多少个？解：$-5 \\leq 2x-1 \\leq 5 \\implies -4 \\leq 2x \\leq 6 \\implies -2 \\leq x \\leq 3$。闭区间 $[-2, 3]$ 内的整数有 $-2, -1, 0, 1, 2, 3$，共 $6$ 个。故选项 C 正确。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "⚠️ 审题建议退回：整数解是 0、1、2、3 共 4 个（A），却标 B；解析自言自语"
-      ],
-      "generated_at": "2026-09-27T18:11:22.385328+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "-5 < 2x-3 < 5 => -2 < 2x < 8 => -1 < x < 4，整数解有0,1,2,3共4个？核对：包含-1到4的整数为0,1,2,3（共4个）还是-1,0,1,2,3（5个）？重新算：-1<x<4整数为0,1,2,3"
-      }
-    },
-    {
       "id": "math_gen_05c24749",
       "subject": "math",
       "type": "mcq",
