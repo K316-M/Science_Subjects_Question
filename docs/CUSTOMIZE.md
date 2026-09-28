@@ -99,6 +99,7 @@
 | 出题不用哪一级模型（跳过它改试旧版 pro／flash，只剩这一级就停手） | `scripts/generate_questions.py` | `GENERATE_SKIP_TIERS` | `("flash-lite",)` | 🟡 `()`＝照样退到最後一级，题目品质差很多；录题不受影响。想固定用某个模型设 `GEMINI_MODEL` |
 | 答案复核不用哪一级模型（只剩这一级就不复核，标「答案未经 AI 复核」） | `scripts/qa.py` | `CHECK_SKIP_TIERS` | `("flash-lite",)` | 🟡 `()`＝照样用 flash-lite 复核，「答案有疑」会多出一堆它自己算错的误报；出题、录题都用这个复核 |
 | 录题／出题推进待审区时被抢先（/dev 刚采纳）最多重试几次 | `scripts/push_pending.sh` | `TRIES` | `5` | 🟢 通常用不到；全部失败就重跑那个工作流（原档还在 drafts/） |
+| 自动挑模型时排除哪些特殊用途的模型（名字含这些字的不拿来出题、录题、讲解） | `scripts/gemini_api.py`、`api/_lib/ai.js` | `NON_TEXT_MODEL` | tts、image、audio、live、embedding、customtools、computer-use、robotics | 🟡 两个档一起改（一个管录题出题、一个管学生站的 AI 讲解批改）；Google 出了新的非文字模型、报告里看到它回 HTTP 400 时加进来 |
 | 固定用某个 Gemini 模型（不自动挑） | GitHub → Settings → Actions 变数 | `GEMINI_MODEL` | 不设＝自动挑最高级 | 🟡 |
 | AI 批改：每台装置每小时几次 | `api/grade.js` | `LIMIT_PER_HOUR` | `20` | 🟡 越高越可能被刷额度；学生在做答题下方看得到剩几次 |
 | AI 批改：同一个网络（例如全校 Wi-Fi）每小时合计几次 | `api/grade.js` | `NETWORK_LIMIT_PER_HOUR` | `200` | 🟡 全校一起用时不够就调高 |
