@@ -1318,32 +1318,6 @@
       }
     },
     {
-      "id": "math_gen_6af4339c",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：直角坐标系与直线",
-      "q": "已知直线 $L_1$ 的方程为 $3x - 4y + 5 = 0$。若直线 $L_2$ 经过点 $(1, -2)$ 且与 $L_1$ 垂直，求原点 $(0, 0)$ 到直线 $L_2$ 的距离。",
-      "options": [
-        "A. $0.2$",
-        "B. $0.4$",
-        "C. $0.6$",
-        "D. $0.8$"
-      ],
-      "answer": 1,
-      "explanation": "考点为两直线垂直的斜率关系及点到直线的距离公式。直线 $L_1$ 的斜率为 $\\frac{3}{4}$，因 $L_2 \\perp L_1$，故 $L_2$ 的斜率为 $-\\frac{4}{3}$。利用点斜式求 $L_2$ 方程：$y - (-2) = -\\frac{4}{3}(x - 1)$，整理成一般式得 $4x + 3y + 2 = 0$。原点到 $L_2$ 的距离 $d = \\frac{|4(0) + 3(0) + 2|}{\\sqrt{4^2 + 3^2}} = \\frac{2}{5} = 0.4$。若误将斜率设为平行关系或距离公式分母未开方，会导致错误选项。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T18:02:01.684042+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "求出L2方程为4x+3y+2=0，利用点到直线距离公式得0.4。"
-      }
-    },
-    {
       "id": "math_gen_89f6482c",
       "subject": "math",
       "type": "mcq",
