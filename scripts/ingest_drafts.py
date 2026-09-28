@@ -181,10 +181,11 @@ def process_file(path, subject, ctx, report):
         report["files"].append({"subject": subject, "source": fname, "status": "⚠️ 转写失败",
                                 "detail": f"{str(e)[:120]}（档案留在原处，下次推送会再试）"})
         return None
-    # 首选模型额度用完或一直忙，会中途换成较弱的备用模型：每题标出来，/dev 审题时看得到
+    # 首选模型额度用完或一直忙，会中途换成低一级的备用模型（pro → flash）：每题标出来，/dev 审题时看得到。
+    # 同一级退到旧版（3.8-flash → 3.6-flash）不标
     model = gemini_api.last_model
     backup = (f"由备用模型 {model} 转写（首选 {gemini_api.first_choice} 额度用完或忙碌），请多留意错字、漏字"
-              if model != gemini_api.first_choice else None)
+              if gemini_api.downgraded() else None)
 
     accepted, rejected = [], []
     for entry in entries:

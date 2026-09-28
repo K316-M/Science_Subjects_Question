@@ -225,13 +225,26 @@ def build_check_prompt(subject, mcqs):
 """ + "\n\n".join(lines)
 
 
+# 答案复核不用哪一级模型。2026-09 化学那批 7 个「答案有疑」全是 flash-lite 自己算错；
+# 只剩这一级时宁可标「答案未经 AI 复核」，也不要给一堆假的疑点
+CHECK_SKIP_TIERS = ("flash-lite",)
+
+
 def cross_check(api_key, subject, records, report_notes):
     """Gemini 不看答案再做一次选择题。失败不挡录题，只把每题标成「未复核」"""
     mcqs = [r for r in records if r["type"] == "mcq"]
     if not mcqs:
         return
+    gemini_api.retry_busy()                  # 出题时忙碌被跳过的较强模型，这时多半又能用了：从最好的重新试
     try:
-        answers = extract_json_array(gemini_api.generate(api_key, [{"text": build_check_prompt(subject, mcqs)}], temperature=0))
+        answers = extract_json_array(gemini_api.generate(api_key, [{"text": build_check_prompt(subject, mcqs)}],
+                                                         temperature=0, skip_tiers=CHECK_SKIP_TIERS))
+    except gemini_api.LowTierOnly:
+        report_notes.append("答案复核没跑：较强的模型都额度用完或忙碌，只剩 flash-lite（它复核常自己算错，标出来的疑点多半是假的），"
+                            "这批的答案请全部人工核对")
+        for r in mcqs:
+            r["flags"].append("答案未经 AI 复核")
+        return
     except (gemini_api.GeminiError, json.JSONDecodeError) as e:
         report_notes.append(f"答案复核没跑成（{str(e)[:60]}），这批的答案请全部人工核对")
         for r in mcqs:

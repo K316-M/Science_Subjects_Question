@@ -96,7 +96,8 @@
 | 新题和旧题多像就当成重复丢掉 | `scripts/generate_questions.py` | `SIMILARITY_LIMIT` | `0.82`（0～1） | 🟡 调低会丢掉更多题 |
 | 每周自动出题：待审区还有几道 AI 题没审完就先不出 | `scripts/generate_questions.py` | `PAUSE_WHEN_WAITING` | `1`（有 1 道就不出） | 🟢 `0`＝不管，照样出；手动跑不受影响 |
 | 离线用：网站装好後先下载哪些档案 | `sw.js` | `OFFLINE_EXTRAS` | 四科题库＋数学公式排版（约 550KB） | 🟡 学生第一次打开就会下载；背景图（每科约 250KB）、音乐（每科约 2MB）要加进来前先想想学生的流量 |
-| 出题不用哪一级模型（较强的都用完就停手，不往下退） | `scripts/generate_questions.py` | `GENERATE_SKIP_TIERS` | `("flash-lite",)` | 🟡 `()`＝照样退到最後一级，题目品质差很多；录题不受影响。想固定用某个模型设 `GEMINI_MODEL` |
+| 出题不用哪一级模型（跳过它改试旧版 pro／flash，只剩这一级就停手） | `scripts/generate_questions.py` | `GENERATE_SKIP_TIERS` | `("flash-lite",)` | 🟡 `()`＝照样退到最後一级，题目品质差很多；录题不受影响。想固定用某个模型设 `GEMINI_MODEL` |
+| 答案复核不用哪一级模型（只剩这一级就不复核，标「答案未经 AI 复核」） | `scripts/qa.py` | `CHECK_SKIP_TIERS` | `("flash-lite",)` | 🟡 `()`＝照样用 flash-lite 复核，「答案有疑」会多出一堆它自己算错的误报；出题、录题都用这个复核 |
 | 录题／出题推进待审区时被抢先（/dev 刚采纳）最多重试几次 | `scripts/push_pending.sh` | `TRIES` | `5` | 🟢 通常用不到；全部失败就重跑那个工作流（原档还在 drafts/） |
 | 固定用某个 Gemini 模型（不自动挑） | GitHub → Settings → Actions 变数 | `GEMINI_MODEL` | 不设＝自动挑最高级 | 🟡 |
 | AI 批改：每台装置每小时几次 | `api/grade.js` | `LIMIT_PER_HOUR` | `20` | 🟡 越高越可能被刷额度；学生在做答题下方看得到剩几次 |

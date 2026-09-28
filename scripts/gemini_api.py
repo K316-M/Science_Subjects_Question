@@ -46,8 +46,9 @@ def rank_models(names):
 _resolved = None
 _available = None
 _tried = []
+_busy = set()         # _tried 里只是「一直忙」才跳过的：隔几分钟多半又能用，retry_busy() 会放回来
 first_choice = None   # 这次执行一开始挑中的模型
-last_model = None     # 最近一次真的回应的模型：和 first_choice 不同，就是中途换成了备用的（报告要写出来）
+last_model = None     # 最近一次真的回应的模型：比 first_choice 低一级就是中途退到备用（downgraded()，报告要写出来）
 
 
 class GeminiError(Exception):
@@ -61,6 +62,28 @@ class LowTierOnly(GeminiError):
 def tier_of(name):
     """pro／flash／flash-lite；Google 建议的替代型号可能带 -001 这类尾巴，不一定对得上 MODEL_RE，所以只看名字里有没有"""
     return next((t for t in ("flash-lite", "flash", "pro") if f"-{t}" in name), None)
+
+
+def downgraded():
+    """这次回应的模型比一开始挑中的低一级（pro → flash、flash → flash-lite）才算退到备用。
+    同一级退到旧版（3.8-flash → 3.6-flash）差别不大，不算：不然那批题全被挤出「一键采纳」清单。"""
+    if not last_model or not first_choice or last_model == first_choice:
+        return False
+    was, now = tier_of(first_choice), tier_of(last_model)
+    if was is None or now is None:
+        return True                          # 认不出等级的型号：保守，照样标
+    return TIER_RANK[now] > TIER_RANK[was]
+
+
+def retry_busy():
+    """把之前只是忙碌（503 之类）被跳过的模型放回候选，下次呼叫重新从最好的挑。
+    额度用完、下架的不放回：当天再试也一样。答案复核前呼叫：出题时忙的模型，几分钟后多半又能用了。"""
+    global _resolved
+    if not _busy or os.environ.get("GEMINI_MODEL", "").strip():
+        return
+    _tried[:] = [m for m in _tried if m not in _busy]
+    _busy.clear()
+    _resolved = None
 
 
 def _read_error(e):
@@ -142,14 +165,19 @@ def generate(api_key, parts, temperature=0.4, timeout=300, skip_tiers=()):
 
     从最高级的模型开始：下架、额度用完、一直忙，就往下一级换。
     Google 的错误讯息若写了建议替代就照它的，否则按 rank_models 的顺序走。
-    skip_tiers：不肯用的等级（出题不用 flash-lite）。轮到这一级就丢 LowTierOnly 停手、不再往下换；
-    GEMINI_MODEL 指定的模型不受这个限制。
+    skip_tiers：不肯用的等级（出题、答案复核不用 flash-lite）。轮到这一级就跳过、改试排在后面的旧版 pro／flash
+    （3.8-flash-lite 后面还有 3.6-flash）；真的只剩这一级才丢 LowTierOnly 停手。GEMINI_MODEL 指定的模型不受这个限制。
     """
     global _resolved, last_model
     last = None
 
     for _ in range(8):                       # 最多换 8 个模型（pro 额度用完、尖峰时段常常连着好几个都不行）
         model = resolve_model(api_key)
+        if tier_of(model) in skip_tiers and model != os.environ.get("GEMINI_MODEL", "").strip():
+            alt = next((m for m in rank_models(_catalogue(api_key)) if m not in _tried and tier_of(m) not in skip_tiers), None)
+            if alt:
+                print(f"↪️ 这里不用 {model}，改试 {alt}", file=sys.stderr)
+                _resolved = model = alt
         if tier_of(model) in skip_tiers and model != os.environ.get("GEMINI_MODEL", "").strip():
             why = f"（{str(last)[:60]}）" if last else ""
             busy = last is not None and any(k in str(last).lower() for k in TRANSIENT)
@@ -178,6 +206,8 @@ def generate(api_key, parts, temperature=0.4, timeout=300, skip_tiers=()):
         if not any(k in low for k in UNAVAILABLE + TRANSIENT + QUOTA):
             raise last                       # 不是模型层面的问题，换了也一样
         _tried.append(model)
+        if any(k in low for k in TRANSIENT) and not any(k in low for k in QUOTA + UNAVAILABLE):
+            _busy.add(model)
         nxt = _suggested_model(str(last)) or _next_candidate(api_key)
         if not nxt:
             raise last

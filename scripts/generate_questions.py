@@ -248,10 +248,11 @@ def process_subject(subject, report_rows):
         if not isinstance(parsed, list):
             report_rows.append((subject, title, "⚠️ 生成失败", "模型没有返回数组"))
             continue
-        # 首选模型额度用完或一直忙，会中途换成较弱的备用模型：每题标出来，/dev 审题时看得到
+        # 首选模型额度用完或一直忙，会中途换成低一级的备用模型（pro → flash）：每题标出来，/dev 审题时看得到。
+        # 同一级退到旧版（3.8-flash → 3.6-flash）不标
         model = gemini_api.last_model
         backup = (f"由备用模型 {model} 出题（首选 {gemini_api.first_choice} 额度用完或忙碌），科学正确性请多核对"
-                  if model != gemini_api.first_choice else None)
+                  if gemini_api.downgraded() else None)
 
         kept = 0
         for entry in parsed:
