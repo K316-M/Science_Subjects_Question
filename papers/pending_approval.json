@@ -1,58 +1,6 @@
 {
   "items": [
     {
-      "id": "chemistry_gen_921085ae",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：水和氢",
-      "q": "在工业上，常利用焦炭与水蒸气在高温下反应制取「水煤气」。关于此反应的叙述，下列何者正确？",
-      "options": [
-        "A. 该反应方程式为 C + H2O → CO + H2，属于放热反应",
-        "B. 在此反应中，水蒸气作为氧化剂，其中的氢元素被还原",
-        "C. 水煤气的主要成分是氢气和二氧化碳",
-        "D. 产物中的一氧化碳可通过通入澄清石灰水进行检验"
-      ],
-      "answer": 1,
-      "explanation": "考点为氢气的工业制法（水煤气法）。A项该反应是吸热反应，需要高温维持；B项中水蒸气失去氧给碳，氢元素的化合价从+1降至0，被还原，充当氧化剂，叙述正确；C项水煤气的主要成分是 CO 和 H2；D项一氧化碳不与石灰水反应，二氧化碳才可使石灰水变浑浊。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T12:46:17.201644+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "反应中水蒸气中的氢元素化合价由 +1 降至 0 被还原，水蒸气充当氧化剂。"
-      }
-    },
-    {
-      "id": "chemistry_gen_c9faacf3",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：水和氢",
-      "q": "将干燥的氢气通入装有下列固体粉末的硬质玻璃管中并加热，实验结束后，观察到固体粉末颜色由黑色变为红色的是：",
-      "options": [
-        "A. 二氧化锰 (MnO2)",
-        "B. 氧化镁 (MgO)",
-        "C. 氧化铜 (CuO)",
-        "D. 四氧化三铁 (Fe3O4)"
-      ],
-      "answer": 2,
-      "explanation": "考点为氢气的还原性。氢气具有还原性，在加热条件下能将金属活动性顺序中位于其后的金属氧化物还原。黑色氧化铜 (CuO) 被氢气还原后生成红色的金属铜 (Cu) 和水；二氧化锰和氧化镁不能被氢气还原（镁活性太强）；四氧化三铁被还原后生成黑色的铁粉或灰黑色固体，不会出现红色。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T12:46:17.201950+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "氢气在加热条件下能将黑色的氧化铜还原为红色的金属铜。"
-      }
-    },
-    {
       "id": "chemistry_gen_fb2d653a",
       "subject": "chemistry",
       "type": "mcq",
@@ -1806,34 +1754,6 @@
       }
     },
     {
-      "id": "math_gen_46afdb13",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap7",
-      "chapter_title": "第七章：逻辑",
-      "q": "下列关于命题及其否定的叙述中，哪一项是正确的？",
-      "options": [
-        "A. 命题「若 $x^2 = 4$，则 $x = 2$」的逆否命题为真命题",
-        "B. 命题「存在实数 $x$，使得 $x^2 + 1 \\leq 0$」的否定是「对所有实数 $x$，都有 $x^2 + 1 \\geq 0$」",
-        "C. 若命题 $p \\implies q$ 为假命题，则其逆命题 $q \\implies p$ 必为假命题",
-        "D. 命题「若 $xy = 0$，则 $x = 0$ 或 $y = 0$」的否命题为真命题"
-      ],
-      "answer": 0,
-      "explanation": "考点：四种命题的关系、全称与特称命题的否定。选项 A：原命题「若 $x^2 = 4$，则 $x = 2$」为假（因为 $x=-2$ 也是解），但其逆否命题与原命题同真假，原命题的逆否命题为真吗？等等，原命题为假，故其逆否命题应为**假**。抱歉，重新审视：原命题若假，逆否命题必假。让我们看选项 D：原命题「若 $xy=0$，则 $x=0$ 或 $y=0$」为真命题，故其逆否命题也为真，否命题为「若 $xy \\neq 0$，则 $x \\neq 0$ 且 $y \\neq 0$」为真。检查选项 B：原命题「存在实数 $x$，使得 $x^2+1 \\leq 0$」是假命题，其否定应为「对所有实数 $x$，都有 $x^2+1 \\gt 0$」，而选项 B 写的是 $x^2+1 \\geq 0$，故 B 错误。检查选项 C：原命题假，逆命题可能真也可能假。检查原题库标准：原命题「若 $x^2=4$，则 $x=2$」为假，逆否命题也为假。咦，有没有哪项是对的？让我们修正选项内容，确保有且仅有一个正确答案：\n修改选项 A 为：原命题「若 $x=2$，则 $x^2=4$」的逆否命题为假命题（原命题真，逆否真）。\n让我们重新设计一题：\n设命题的否定与四种命题。正确选项应为：\n「命题『对所有实数 $x$，都有 $x^2 \\geq 0$』的否定是『存在实数 $x$，使得 $x^2 \\lt 0$』」。\n由于本题已生成，直接提供修正后的题目或选用安全的选项：选项 D 的否命题。若原命题为真，否命题不一定真。正确应为考察特称命题的否定：原命题「$\\exists x \\in \\mathbb{R}, x^2 + 2x + 2 \\leq 0$」的否定是「$\\forall x \\in \\mathbb{R}, x^2 + 2x + 2 \\gt 0$」。因此正确选项为 B 的修正版。现设定答案及解释如下：",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
-      "generated_at": "2026-09-27T18:11:28.823800+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 0,
-        "reason": "原命题真伪与其逆否命题等价，且该逆否命题确实为真。"
-      }
-    },
-    {
       "id": "math_gen_7e461ad5",
       "subject": "math",
       "type": "mcq",
@@ -1975,92 +1895,6 @@
       }
     },
     {
-      "id": "math_gen_5864d45f",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第九章：任意角的三角函数",
-      "q": "若角 $\\theta$ 的终边经过点 $(-3, 4)$，则 $\\operatorname{cosec}\\theta + \\cot\\theta$ 的值为",
-      "options": [
-        "A. $-\\frac{1}{2}$",
-        "B. $\\frac{1}{2}$",
-        "C. $-2$",
-        "D. $2$"
-      ],
-      "answer": 1,
-      "explanation": "考点：任意角三角函数的坐标定义、余割与余切的定义。\n推理过程：设点 $P(x, y) = (-3, 4)$，则该点到原点的距离 $r = \\sqrt{(-3)^2 + 4^2} = 5$。\n根据任意角三角函数的定义：\n正弦 $\\sin\\theta = \\frac{y}{r} = \\frac{4}{5}$，故余割 $\\operatorname{cosec}\\theta = \\frac{1}{\\sin\\theta} = \\frac{5}{4}$；\n余切 $\\cot\\theta = \\frac{x}{y} = \\frac{-3}{4} = -\\frac{3}{4}$。\n因此，$\\operatorname{cosec}\\theta + \\cot\\theta = \\frac{5}{4} + \\left(-\\frac{3}{4}\\right) = \\frac{2}{4} = \\frac{1}{2}$。等等，计算一下：$\\frac{5}{4} - \\frac{3}{4} = \\frac{2}{4} = \\frac{1}{2}$。选项 B 是 $\\frac{1}{2}$，我们检查一下题目要求：若 $x=-3, y=4$，则 $\\sin\\theta = 4/5, \\cos\\theta = -3/5, \\tan\\theta = -4/3, \\operatorname{cosec}\\theta = 5/4, \\cot\\theta = -3/4$，所以 $\\operatorname{cosec}\\theta + \\cot\\theta = 5/4 - 3/4 = 1/2$，答案应为 B。\n修正答案下标为 1 (B)。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
-      "generated_at": "2026-09-27T18:11:39.794885+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "csc(theta) = r/y = 5/4，cot(theta) = x/y = -3/4，相加得2/4 = 1/2。"
-      }
-    },
-    {
-      "id": "math_gen_c41a1218",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第九章：任意角的三角函数",
-      "q": "若 $\\sin\\theta \\cos\\theta \\lt 0$ 且 $\\tan\\theta \\cos\\theta \\gt 0$，则角 $\\theta$ 是",
-      "options": [
-        "A. 第一象限角",
-        "B. 第二象限角",
-        "C. 第三象限角",
-        "D. 第四象限角"
-      ],
-      "answer": 1,
-      "explanation": "考点：任意角三角函数在各象限的正负号判定。\n推理过程：\n1. 由 $\\sin\\theta \\cos\\theta \\lt 0$ 可知，$\\sin\\theta$ 与 $\\cos\\theta$ 异号（一正一负）。\n2. 由 $\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$ 代入 $\\tan\\theta \\cos\\theta \\gt 0$ 得：$\\left(\\frac{\\sin\\theta}{\\cos\\theta}\\right) \\cos\\theta = \\sin\\theta \\gt 0$，即 $\\sin\\theta$ 为正数。\n3. 既然 $\\sin\\theta \\gt 0$，而 $\\sin\\theta$ 与 $\\cos\\theta$ 异号，则必有 $\\cos\\theta \\lt 0$。\n4. 正弦为正、余弦为负的角位于第二象限。\n常见错误：未将 $\\tan\\theta$ 化为 $\\frac{\\sin\\theta}{\\cos\\theta}$ 展开化简，导致符号判断混乱。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 D（sin cos < 0说明异号；tan cos > 0说明sin同号，推得第四象限。），请核对"
-      ],
-      "generated_at": "2026-09-27T18:11:39.797428+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 3,
-        "reason": "sin cos < 0说明异号；tan cos > 0说明sin同号，推得第四象限。"
-      }
-    },
-    {
-      "id": "math_gen_974ee0d4",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第九章：任意角的三角函数",
-      "q": "下列关于函数 $y = 3\\sin\\left(2x - \\frac{\\pi}{3}\\right)$ 的性质叙述，正确的是",
-      "options": [
-        "A. 其最小正周期为 $\\pi$",
-        "B. 其振幅为 $3$，最大值为 $3$",
-        "C. 其图像可由 $y = 3\\sin 2x$ 的图像向右平移 $\\frac{\\pi}{3}$ 个单位得到",
-        "D. 其图像可由 $y = 3\\sin 2x$ 的图像向左平移 $\\frac{\\pi}{6}$ 个单位得到"
-      ],
-      "answer": 0,
-      "explanation": "考点：正弦型函数的周期、振幅与图像平移变换。\n推理过程：\n对于函数 $y = A\\sin(\\omega x + \\phi)$：\n- 周期 $T = \\frac{2\\pi}{\\omega} = \\frac{2\\pi}{2} = \\pi$，故选项 A 正确。\n- 振幅 $|A| = 3$，因此最大值为 $3$，但最小值是 $-3$，选项 B 不完整；\n- 平移变换应先将解析式化为 $y = 3\\sin\\left[2\\left(x - \\frac{\\pi}{6}\\right)\\right]$，因此应将 $y = 3\\sin 2x$ 的图像向右平移 $\\frac{\\pi}{6}$ 个单位，故 C、D 错误。\n常见错误：误认为平移量直接是 $\\frac{\\pi}{3}$，忽略了需要把 $x$ 的系数提取出来的步骤。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 D（向左平移pi/6即 2(x + pi/6) - pi/3 = 2x + pi/3 - pi/3 = 2x，正确。），请核对"
-      ],
-      "generated_at": "2026-09-27T18:11:39.799690+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 3,
-        "reason": "向左平移pi/6即 2(x + pi/6) - pi/3 = 2x + pi/3 - pi/3 = 2x，正确。"
-      }
-    },
-    {
       "id": "math_gen_a2ad9251",
       "subject": "math",
       "type": "mcq",
@@ -2173,35 +2007,6 @@
       }
     },
     {
-      "id": "math_gen_0cf7ffa2",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap10",
-      "chapter_title": "第十章：三角学的应用",
-      "q": "某船在海上由西向东航行，在某一位置 $P$ 测得某灯塔 $L$ 在其北偏东 $30^\\circ$ 的方向上；船继续向东航行 $12$ 海里到达 $Q$ 点，此时测得灯塔 $L$ 在其北偏西 $60^\\circ$ 的方向上。求此时灯塔 $L$ 到 $Q$ 点的距离？",
-      "options": [
-        "A. $4\\sqrt{3}$ 海里",
-        "B. $6$ 海里",
-        "C. $6\\sqrt{3}$ 海里",
-        "D. $12$ 海里"
-      ],
-      "answer": 1,
-      "explanation": "考点：方位角与三角形边角关系。由题意知，船从 $P$ 到 $Q$ 向东航行 $12$ 海里，即 $PQ = 12$。在 $\\triangle PQL$ 中，$P$ 点处灯塔的方位是北偏东 $30^\\circ$，所以 $\\angle QPL = 90^\\circ - 30^\\circ = 60^\\circ$；$Q$ 点处灯塔的方位是北偏西 $60^\\circ$，所以 $\\angle PQL = 90^\\circ - 60^\\circ = 30^\\circ$。在 $\\triangle PQL$ 中，内角和为 $180^\\circ$，故第三个角 $\\angle PLQ = 180^\\circ - 60^\\circ - 30^\\circ = 90^\\circ$，即 $\\triangle PQL$ 是以 $L$ 为直角顶点的直角三角形。我们要求 $L$ 到 $Q$ 的距离，即求直角边 $LQ$。在直角三角形 $PQL$ 中，$\\cos 30^\\circ = \\frac{LQ}{PQ}$，因此 $LQ = PQ \\cos 30^\\circ = 12 \\times \\frac{\\sqrt{3}}{2} = 6\\sqrt{3}$... 慢，检查计算：$\\cos 30^\\circ = \\frac{LQ}{PQ} \\implies LQ = 12 \\times \\frac{\\sqrt{3}}{2}$ 应为 $6\\sqrt{3}$，选项 C 是 $6\\sqrt{3}$。重新核对：$\\sin 30^\\circ = \\frac{LQ}{PQ} = \\frac{LQ}{12}$，则 $LQ = 12 \\times \\sin 30^\\circ = 12 \\times \\frac{1}{2} = 6$ 海里。正确选项为 B。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 A（解特殊三角形（含30度、60度内角），由正弦定理求得对边长度为 4\\sqrt{3} 海里。），请核对"
-      ],
-      "generated_at": "2026-09-27T18:11:45.896858+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 0,
-        "reason": "解特殊三角形（含30度、60度内角），由正弦定理求得对边长度为 4\\sqrt{3} 海里。"
-      }
-    },
-    {
       "id": "chemistry_gen_5edda0d1",
       "subject": "chemistry",
       "type": "mcq",
@@ -2227,35 +2032,6 @@
       "review": {
         "ai_answer": 2,
         "reason": "同周期元素从左至右，电负性随原子序数增加而增大。"
-      }
-    },
-    {
-      "id": "chemistry_gen_71b10cf7",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap5",
-      "chapter_title": "第五章：元素周期表",
-      "q": "某主族元素 X 的逐级电离能数据如下（单位：kJ·mol⁻¹）：I₁ = 578，I₂ = 1817，I₃ = 2745，I₄ = 11578，I₅ = 14842。根据此数据推断，下列关于元素 X 的说法何者正确？",
-      "options": [
-        "A. 元素 X 位于元素周期表中的第 IVA 族（第 14 族）",
-        "B. 元素 X 在化合物中呈现的最高正化合价为 +3",
-        "C. 元素 X 的基态原子价电子排布式为 ns² np²",
-        "D. 元素 X 属于元素周期表中的 s 区元素"
-      ],
-      "answer": 1,
-      "explanation": "考点：根据逐级电离能的数据突变推断元素的位置及化合价。\n\n- 数据分析：由逐级电离能可知，I₁ = 578、I₂ = 1817、I₃ = 2745 kJ·mol⁻¹，失去前 3 个电子所需能量相对较小；而从 I₃ 到 I₄ 出现剧烈突跃（I₄ = 11578 kJ·mol⁻¹，约为 I₃ 的 4.2 倍），说明剥离第 4 个电子时破坏了内层稳定的电子层结构。\n- 结论：元素 X 的基态原子最外层有 3 个价电子，属于主族元素，位于第 IIIA 族（第 13 族），最高正化合价为 +3，基态价电子排布式为 ns² np¹，位于 p 区。\n- 选项判断：A 错误（应为 IIIA 族）；B 正确；C 错误（应为 ns² np¹）；D 错误（属于 p 区，如铝元素）。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 A（电离能在第4级发生突跃（I₄ > I₃），说明最外层有3个电子，位于第IIIA族（第13族）。），请核对"
-      ],
-      "generated_at": "2026-09-28T10:09:38.084890+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 0,
-        "reason": "电离能在第4级发生突跃（I₄ > I₃），说明最外层有3个电子，位于第IIIA族（第13族）。"
       }
     },
     {
