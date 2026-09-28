@@ -2231,35 +2231,6 @@
       }
     },
     {
-      "id": "chemistry_gen_e5c8ec7f",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap7",
-      "chapter_title": "第七章：氧化还原反应",
-      "q": "已知在酸性溶液中，IO₃⁻ 与 I⁻ 发生反应生成 I₂，其配平后的离子方程式为：\na IO₃⁻ + b I⁻ + c H⁺ → d I₂ + e H₂O\n下列关于该反应系数及相关概念的叙述，正确的是：",
-      "options": [
-        "A. 化学计量数比例 a : b = 1 : 5",
-        "B. IO₃⁻ 被氧化，作为还原剂",
-        "C. 反应中 IO₃⁻ 与 I⁻ 转移的电子数比例为 5 : 1",
-        "D. 若生成 3 mol I₂，反应中共转移 10 mol 电子"
-      ],
-      "answer": 0,
-      "explanation": "考点：氧化还原反应方程式的配平（归中反应）与相关电子转移计算。\n解析：\n配平离子方程式：IO₃⁻ 中 I 的氧化数为 +5，I⁻ 中 I 的氧化数为 -1，生成 I₂ (氧化数为 0)。1 个 IO₃⁻ 降低 5，5 个 I⁻ 共升高 5。配平得：1 IO₃⁻ + 5 I⁻ + 6 H⁺ → 3 I₂ + 3 H₂O。\n- A项正确：a = 1, b = 5，化学计量数比例 a : b = 1 : 5。\n- B项错误：IO₃⁻ 氧化数降低（+5 → 0），发生还原反应，被还原，作为氧化剂。\n- C项错误：还原剂（I⁻）失去的总电子数必然等于氧化剂（IO₃⁻）得到的总电子数，均转移 5 mol 电子，总得失电子数相等。\n- D项错误：生成 3 mol I₂ 时，反应转移的电子数为 5 mol，而非 10 mol。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 D（IO₃⁻ + 5I⁻ + 6H⁺ → 3I₂ + 3H₂O，生成 3 mol I₂ 时转移 5 mol e⁻？此题根据配平，总共 5 mol I⁻ 失去 5 mol e⁻ 生成 2.5 mol I₂，若生3 mol I₂则需转移 6 mol），请核对"
-      ],
-      "generated_at": "2026-09-28T10:10:49.623958+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 3,
-        "reason": "IO₃⁻ + 5I⁻ + 6H⁺ → 3I₂ + 3H₂O，生成 3 mol I₂ 时转移 5 mol e⁻？此题根据配平，总共 5 mol I⁻ 失去 5 mol e⁻ 生成 2.5 mol I₂，若生3 mol I₂则需转移 6 mol"
-      }
-    },
-    {
       "id": "chemistry_gen_059d84dd",
       "subject": "chemistry",
       "type": "mcq",
