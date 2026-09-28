@@ -23,6 +23,12 @@
   const SUB_TO_TOUR = { mcq: 'study', subj: 'subj', wrong: 'wrong', review: 'review' };
   let subMode = 'mcq';
 
+  // 「加到主画面」怎么加：iPhone／iPad 在分享选单里，Android 等其他浏览器在右上角选单里
+  const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const INSTALL_HOW = IS_IOS
+    ? '按<strong>分享</strong>键（Safari 在画面下方，Chrome 在网址列右边），往下找「<strong>加入主画面</strong>」。'
+    : '按浏览器右上角的选单（⋮），选「<strong>安装应用程式</strong>」或「<strong>加到主画面</strong>」。';
+
   /* ---------- 每个画面的导览内容 ---------- */
   const TOURS = {
     home: [
@@ -47,7 +53,7 @@
       { target: '#optContainer', title: '作答',
         body: '点一个选项作答，立刻看到对错和解析。有键盘的话，A–D 作答、←/→ 换题。' },
       { target: '#testStartBtn', title: '整章测验与模拟统考',
-        body: '「整章测验」一次列出整章，全部答完才能交卷。想练时间感，点开上面的章节选单，有<strong>「模拟统考」</strong>：全科抽题、照真的试卷一时间倒数。' },
+        body: '「整章测验」一次列出整章，全部答完才能交卷。想练时间感，点开上面的章节选单，有<strong>「模拟统考」</strong>：全科抽题、照统考时间表的考试时间倒数。数学分<strong>高数Ⅰ、高数Ⅱ</strong>两个按钮，各照自己那一份的时间。' },
       { target: '.card-note-btn', title: '做笔记',
         body: '把这一题导入成自己的笔记，可以手写、画图、打字。之後在上方「笔记」里都找得到。' },
     ],
@@ -79,7 +85,7 @@
     // 同步面板（js/sync-ui.js）连上之後第一次打开时介绍
     sync: [
       { target: '.sync-code', title: '这串就是你的钥匙',
-        body: '在另一台装置<strong>扫 QR 码</strong>、打开复制的链结，或输入这串码，就会接上。任何人拿到它都能看到你的进度和笔记，<strong>只传给自己</strong>。' },
+        body: '在另一台装置<strong>扫 QR 码</strong>、打开复制的链结，或输入这串码，就会接上。任何人拿到它都能看到你的进度和笔记，<strong>只传给自己</strong>。反过来，<strong>别人给的码也不要输入</strong>：他的进度、笔记会和你的合在一起，分不回来。' },
       { target: '.sync-now', title: '立即同步',
         body: '平常会<strong>自动同步</strong>：打开网站、切回这个分页时，还有做题後每分钟一次。刚在另一台装置做完题、想马上在这里看到，就按这个。' },
       { target: '.sync-what', title: '同步之後',
@@ -89,7 +95,7 @@
     ],
     mock: [
       { target: '.test-clock', title: '模拟统考',
-        body: '照统考时间表的<strong>试卷一</strong>时间倒数，看完这段介绍才开始计时。剩五分钟会变红；<strong>时间到自动交卷，没答的算错</strong>。' },
+        body: '照统考时间表的考试时间倒数（理科照<strong>试卷一</strong>，数学照<strong>高数Ⅰ或高数Ⅱ</strong>），看完这段介绍才开始计时。剩五分钟会变红；<strong>时间到自动交卷，没答的算错</strong>。' },
       { target: '.test-submit', title: '可以提早交卷',
         body: '还有题没答时，第一次按会先提醒你，再按一次才交。答过的题会算进复习排程和错题本；没答的只算分数。' },
       { target: '.test-exit', title: '中途离开',
@@ -112,6 +118,11 @@
         body: '勾选想要的章节或题目，整理成一份可以带走的题目档。' },
       { target: '.archive-toolbar', title: '下载或打印',
         body: '选好之後按「下载 PDF」，或用「打印版」直接列印。' },
+    ],
+    // 不是一进站就介绍：做过题、回到首页、手机或平板、还没加到主画面，才跳一次（见 maybeInstallTip）
+    install: [
+      { target: null, title: '加到主画面，没网也能做题',
+        body: INSTALL_HOW + '之後从主画面打开，就像 App 一样全萤幕，<strong>没网也能做题、看笔记</strong>（AI 讲解、批改和同步要有网才行）。新题和网站更新会自动带进来，不用重装。' },
     ],
     feedback: [
       { target: '#fbText', title: '哪里出错了？',
@@ -394,7 +405,7 @@
     // 换画面时（index.html 的 showView 会发出 uec:view）
     addEventListener('uec:view', e => {
       if (tourName) finish(true);
-      setTimeout(() => startWhenReady(currentTourName(), false), 700);
+      setTimeout(() => { startWhenReady(currentTourName(), false); maybeInstallTip(); }, 700);
     });
     // 做题页切换练法：第一次切到错题本、今日复习、做答题时介绍那一种
     addEventListener('uec:submode', e => {
@@ -406,11 +417,22 @@
     });
 
     const forced = new URLSearchParams(location.search).get('guide') === '1';
-    setTimeout(() => startWhenReady(currentTourName(), forced), 900);   // 等首页的动画落定
+    setTimeout(() => { startWhenReady(currentTourName(), forced); maybeInstallTip(); }, 900);   // 等首页的动画落定
   });
 
   // 没看过、而且现在没有别的导览在跑，才开始（给画面以外的时机用，例如按钮刚出现）
   const once = name => { if (!tourName && !readSeen()[name]) start(name, false); };
+
+  // 「加到主画面」：第一次进站先认识网站（首页导览），做过题之後回到首页才提；电脑、已经装好的不提
+  function maybeInstallTip() {
+    if (currentTourName() !== 'home' || !readSeen().home || readSeen().install) return;
+    const installed = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    if (installed || !matchMedia('(pointer: coarse)').matches) return;
+    let progress = {};
+    try { progress = JSON.parse(localStorage.getItem('UEC_PROGRESS_v1')) || {}; } catch (e) { /* 没有就当没做过 */ }
+    const didQuestions = Object.values(progress).some(sub => sub && Object.values(sub).some(ch => ch && Object.keys(ch).length));
+    if (didQuestions) setTimeout(() => { if (currentTourName() === 'home') once('install'); }, 1200);
+  }
 
   window.UECOnboarding = { start: name => start(name || currentTourName(), true), once, finish, KEY, TOURS };
 })();

@@ -113,7 +113,7 @@
       row.appendChild(make);
       box.appendChild(row);
 
-      box.appendChild(el('div', 'sync-note', '已经在别的装置产生过了？把那串码贴在下面：'));
+      box.appendChild(el('div', 'sync-note', '已经在你别的装置产生过了？把那串码贴在下面。只贴你自己的：贴了别人的，两个人的进度、笔记会合在一起，分不回来。'));
       const input = el('input', 'sync-input');
       input.placeholder = '例如 ABCD-EFGH-JKLM-NPQR-STUV';
       input.setAttribute('aria-label', '输入同步码');

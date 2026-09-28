@@ -53,6 +53,8 @@
 | 做题页上的科目名称（「生物科」） | `index.html` | `SUBJECT_LABELS` | 🟢 |
 | 数学两份卷的名称（按钮「模拟高数Ⅰ · 60 分钟」、/dev 的卷别） | `index.html`、`dev/dev.js` | `PAPER_LABEL` | 🟡 两个档各一份，写一样才对得上 |
 | **每个画面的导览（聚光灯）文字** | `js/onboarding.js` | `TOURS` —— 每一步有 title（标题）和 body（内文），内文可以用 `<strong>` | 🟢 |
+| 「加到主画面」提示：怎么加（iPhone／Android 各一句）、什么时候跳 | `js/onboarding.js` | `INSTALL_HOW`、`maybeInstallTip` | 🟢 现在是做过题、回到首页、手机或平板、还没装好才跳一次 |
+| 同步：提醒只接自己的码（输入框下方、打开同步链结时） | `js/sync-ui.js`、`js/sync.js` | `只贴你自己的`、`只接你自己装置的链结` | 🟢 |
 | 小精灵说的「谢谢！」 | `js/feedback.js` | `bubble.textContent` | 🟢 |
 | 小精灵通知面板的标题 | `js/feedback.js` | `spritePanelTitle` | 🟡 保留 `${…}` 那段，那是自动填的修复内容 |
 | 做答题作答框的提示字 | `index.html` | `subj-attempt-input` 的 `placeholder` | 🟢 |
@@ -79,6 +81,7 @@
 | 背景音乐的响度、剪静音的门槛、循环接头的淡接秒数 | `scripts/audio/build.py` | `LUFS`、`SILENCE_DB`、`XFADE` | `-20`、`-50`、`3.0` 秒 | 🟡 改完到 Actions 手动跑「背景音乐自动处理」、科目留空，全部重做；只重做一首会和其他首不一样大声 |
 | 音乐播完接回开头时，头尾交叉叠多久 | `index.html` | `MUSIC_LOOP_XFADE_MS` | `3000` 毫秒 | 🟢 太长会听到结尾和开头叠在一起；曲子短于它的 3 倍就不叠，直接重播 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |
+| 待在做题页、或从背景切回来时，多久检查一次题库有没有更新 | `index.html` | `BANK_RECHECK_MS` | 10 分钟 | 🟢 题库没变时伺服器只回「没变」，几乎不花流量；有变就跳「题库更新了」 |
 | **统考日期与每场的试卷一／二时间** | `js/exam-timetable.js` | `papers` | 2026 年董总时间表 | 🟡 格式见档案开头注解 |
 | AI 依考纲出题的自动排程 | `.github/workflows/generate_questions.yml` | `cron` | 每周一早上 9 点（马来西亚） | 🟡 cron 是 UTC，马来西亚时间减 8 小时 |
 | 题库体检的自动排程 | `.github/workflows/auto_update.yml` | `cron` | 每周一早上 8 点 | 🟡 同上 |
