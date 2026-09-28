@@ -198,6 +198,12 @@ function escapeNoteHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+// 放进 onclick="fn(…)" 的参数。只做 HTML 转义不够：属性值会先还原成原字再当程式跑，
+// id 里的单引号照样跳得出 '…'（笔记会跨装置同步，id 可能来自别人给的同步码）。先转成 JS 字串再转义
+function noteJsArg(str) {
+  return escapeNoteHtml(JSON.stringify(String(str == null ? '' : str)));
+}
+
 function openNoteEditor(ctx) {
   if (!ctx) return;
   if (typeof playSound === 'function') playSound('pop');
@@ -541,16 +547,16 @@ function renderNotesView() {
         <div class="note-card-time">更新于 ${new Date(n.updatedAt).toLocaleString('zh-CN')}</div>
       </div>
       <div class="note-card-actions">
-        <button class="note-mini-btn" onclick="editNoteById('${escapeNoteHtml(n.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-pencil"></use></svg>编辑</button>
-        <button class="note-mini-btn is-time" onclick="gotoNoteQuestion('${escapeNoteHtml(n.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-link"></use></svg>前往该题</button>
-        <button class="note-mini-btn danger" onclick="deleteNoteById('${escapeNoteHtml(n.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>删除</button>
+        <button class="note-mini-btn" onclick="editNoteById(${noteJsArg(n.id)})"><svg class="ic" aria-hidden="true"><use href="#i-pencil"></use></svg>编辑</button>
+        <button class="note-mini-btn is-time" onclick="gotoNoteQuestion(${noteJsArg(n.id)})"><svg class="ic" aria-hidden="true"><use href="#i-link"></use></svg>前往该题</button>
+        <button class="note-mini-btn danger" onclick="deleteNoteById(${noteJsArg(n.id)})"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>删除</button>
       </div>
     </div>
   `).join('')}</div>`;
 
   // 给每张卡片画出笔迹缩略图
   notes.forEach(n => {
-    const cvs = area.querySelector(`[data-preview-for="${n.id}"]`);
+    const cvs = area.querySelector(`[data-preview-for="${CSS.escape(n.id)}"]`);
     if (cvs) renderNotePreview(cvs, n);
   });
 }

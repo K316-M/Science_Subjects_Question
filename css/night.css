@@ -387,3 +387,13 @@
   color-scheme: light;
   --text-main: #0f172a; --text-muted: #475569; --primary: #047857; --primary-dark: #065f46; --primary-light: #ecfdf5;
 }
+
+/* 不认 color-mix 的旧浏览器（iOS 16.2、Chrome 111 以前，包括较旧的华为、三星内建浏览器）：
+   值里有 var() 的宣告不会退回上一条，而是整个变成「没设」（字色跟着外层、按钮没有底色），
+   所以不能只在前面多写一条，要在这些规则之後另外补。这一段必须留在档案最後 */
+@supports not (color: color-mix(in oklab, red 50%, blue)) {
+  [data-theme="night"] .orbit-core { background: radial-gradient(circle at 34% 28%, #33594a 0%, #1f3a31 100%); }
+  [data-theme="night"] .orbit-node.is-selected .node-label,
+  [data-theme="night"] .panel-stat strong { color: var(--n-text); }
+  [data-theme="night"] .panel-enter { background: var(--n-btn); }
+}

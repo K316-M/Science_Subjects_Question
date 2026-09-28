@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
   if (!key) return sendJson(res, 501, { ok: false, error: 'not_configured', message: 'AI 讲解还没开启。' });
 
   const body = await readJsonBody(req);
-  const subject = SUBJECTS[body.subject] ? body.subject : null;
+  const subject = Object.prototype.hasOwnProperty.call(SUBJECTS, body.subject) ? body.subject : null;   // 「constructor」这类物件内建名称不算
   const chosen = Number(body.chosen);
   if (!subject || !Number.isInteger(chosen) || chosen < 0 || chosen > 3) {
     return sendJson(res, 400, { ok: false, error: 'bad_request', message: '资料不完整，请重新整理页面。' });

@@ -412,6 +412,8 @@ table.data td.wrap { white-space: normal; min-width: 220px; }
 /* 巡检与待审列表 */
 .issue { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; }
 .issue-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.reject-pick { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.reject-pick input { width: 18px; height: 18px; accent-color: var(--critical); }
 .issue-text { font-size: 13.5px; color: var(--ink-2); line-height: 1.6; }
 .issue.is-retired .issue-text { color: var(--ink-2); text-decoration: line-through; text-decoration-color: rgba(127,127,127,.5); }
 .pill-retired { color: var(--warning); border-color: var(--warning); border-style: dashed; }

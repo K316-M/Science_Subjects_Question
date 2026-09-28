@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
   if (!key) return sendJson(res, 501, { ok: false, error: 'not_configured', message: 'AI 批改还没开启。' });
 
   const body = await readJsonBody(req);
-  const subject = SUBJECTS[body.subject] ? body.subject : null;
+  const subject = Object.prototype.hasOwnProperty.call(SUBJECTS, body.subject) ? body.subject : null;   // 「constructor」这类物件内建名称不算
   const answer = String(body.answer || '').trim();
   if (!subject) return sendJson(res, 400, { ok: false, error: 'bad_request', message: '科目不明。' });
   if (answer.length < 2) return sendJson(res, 400, { ok: false, error: 'bad_request', message: '先写下你的答案再批改。' });

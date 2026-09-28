@@ -100,4 +100,4 @@ python3 -m http.server 8080      # 浏览器开 http://localhost:8080
 
 纯静态网页，没有打包步骤；Vercel 托管，`api/` 是 Node 无伺服器函式；题库是 JSON 档，存在这个仓库里。
 自动化跑在 GitHub Actions；AI 用 Google Gemini（从 Google 的模型清单自动挑最新、最高级的模型）。
-service worker 采「网路优先、快取兜底」，离线也能开上次看过的内容。
+service worker 采「网路优先、快取兜底」，离线也能开上次看过的内容；装好时也会先下载四科题库与数学公式排版，没打开过的科目断网也能做题。
