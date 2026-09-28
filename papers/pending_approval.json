@@ -1,34 +1,6 @@
 {
   "items": [
     {
-      "id": "math_gen_05c24749",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap7",
-      "chapter_title": "第七章：逻辑",
-      "q": "设 $p$ 和 $q$ 为两个命题。若命题 $p \\lor q$ 为假命题，则下列哪一项必定为真命题？",
-      "options": [
-        "A. $p \\land q$",
-        "B. $\\neg p \\lor \\neg q$",
-        "C. $(\\neg p) \\lor q$",
-        "D. $p \\iff q$"
-      ],
-      "answer": 1,
-      "explanation": "考点：逻辑联结词（或、且、否定）的真值表。若 $p \\lor q$ 为假命题，根据「或」命题的定义，必须 $p$ 与 $q$ 同时为假命题（即 $\\neg p$ 为真且 $\\neg q$ 为真）。因此，$\\neg p \\land \\neg q$ 为真。根据摩根定律（De Morgan's laws），$(\\neg p \\lor \\neg q)$ 等价于 $\\neg(p \\land q)$，而 $p$ 与 $q$ 皆假时，$\\neg p \\lor \\neg q$ 显然为真。选项 A 的 $p \\land q$ 为假；选项 C 取决于具体真值；选项 D 中 $p$ 与 $q$ 同为假时，$p \\iff q$ 为真，但不如 B 具普遍必然性。常见错误是混淆「或」与「且」的真值判定规则。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "⚠️ 审题建议退回：p、q 都为假时 B、C、D 三个都为真"
-      ],
-      "generated_at": "2026-09-27T18:11:28.820898+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "p V q为假则p假且q假，则否定p为真，故(非p) V q为真。"
-      }
-    },
-    {
       "id": "chemistry_gen_68a2cf78",
       "subject": "chemistry",
       "type": "mcq",
