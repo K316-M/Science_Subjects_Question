@@ -1524,35 +1524,6 @@
       }
     },
     {
-      "id": "math_gen_32dd5aad",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap5",
-      "chapter_title": "第五章：函数",
-      "q": "设函数 $f(x) = \\frac{ax+1}{2x+b}$ 是奇函数，且定义域为 $\\mathbb{R} \\setminus \\{ \\frac{1}{2} \\} $，则常数 $a$ 和 $b$ 的值分别为",
-      "options": [
-        "A. $-1$",
-        "B. $0$",
-        "C. $\\frac{1}{2}$",
-        "D. $1$"
-      ],
-      "answer": 3,
-      "explanation": "考点：指数形式的奇函数判定。解析：函数 $f(x) = \\frac{a \\cdot 2^x + 1}{2^x - 1}$ 的定义域为 $x \\neq 0$，关于原点对称。若 $f(x)$ 为奇函数，则满足 $f(-x) = -f(x)$，即 $\\frac{a \\cdot 2^{-x} + 1}{2^{-x} - 1} = -\\frac{a \\cdot 2^x + 1}{2^x - 1}$。将分子分母同乘以 $2^x$，左边化为 $\\frac{a + 2^x}{1 - 2^x} = -\\frac{a \\cdot 2^x + 1}{2^x - 1}$。注意到 $\\frac{2^x + a}{-(2^x - 1)} = \\frac{a \\cdot 2^x + 1}{2^x - 1}$，即 $\\frac{2^x + a}{2^x - 1} = \\frac{a \\cdot 2^x + 1}{2^x - 1}$。对比分子各项系数可得 $a = 1$。正确选项为 D。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 D，AI 复核选 B（奇函数性质f(-x)=-f(x)对分式成立，推导得a=0，b随定义域排除对称点确定。），请核对"
-      ],
-      "generated_at": "2026-09-27T18:11:14.217660+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "奇函数性质f(-x)=-f(x)对分式成立，推导得a=0，b随定义域排除对称点确定。"
-      }
-    },
-    {
       "id": "math_gen_3198ed95",
       "subject": "math",
       "type": "mcq",
