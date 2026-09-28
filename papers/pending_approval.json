@@ -53,32 +53,6 @@
       }
     },
     {
-      "id": "chemistry_gen_db99c96c",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：水和氢",
-      "q": "下列关于水与金属反应的叙述，哪些是正确的？\nI. 钠与冷水反应剧烈，熔成的小球在水面上四处游动\nII. 镁条放入冷水中会产生大量气泡，生成氢氧化镁沉淀\nIII. 红热的铁与水蒸气反应，生成黑色的四氧化三铁和氢气\nIV. 铜在高温下能与水蒸气反应置换出氢气",
-      "options": [
-        "A. 只有 I、II",
-        "B. 只有 I、III",
-        "C. 只有 II、IV",
-        "D. 只有 I、III、IV"
-      ],
-      "answer": 1,
-      "explanation": "考点为金属与水的反应规律。I项描述了钠与水反应的典型现象，正确；II项镁与冷水反应极慢，几乎观察不到气泡，只有在加热或与水蒸气反应时才明显，错误；III项是工业制氢的原理之一，红热的铁与水蒸气反应生成 Fe3O4，正确；IV项铜是不活泼金属，在金属活动性顺序中排在氢之后，不能与水或水蒸气发生置换反应，错误。故选B。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T12:46:17.202558+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "钠与冷水剧烈反应，铁在红热时与水蒸气反应生成四氧化三铁和氢气；而镁与冷水反应极慢，铜不与水反应。"
-      }
-    },
-    {
       "id": "chemistry_gen_fb2d653a",
       "subject": "chemistry",
       "type": "mcq",
