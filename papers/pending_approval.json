@@ -1895,35 +1895,6 @@
       }
     },
     {
-      "id": "math_gen_974ee0d4",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第九章：任意角的三角函数",
-      "q": "下列关于函数 $y = 3\\sin\\left(2x - \\frac{\\pi}{3}\\right)$ 的性质叙述，正确的是",
-      "options": [
-        "A. 其最小正周期为 $\\pi$",
-        "B. 其振幅为 $3$，最大值为 $3$",
-        "C. 其图像可由 $y = 3\\sin 2x$ 的图像向右平移 $\\frac{\\pi}{3}$ 个单位得到",
-        "D. 其图像可由 $y = 3\\sin 2x$ 的图像向左平移 $\\frac{\\pi}{6}$ 个单位得到"
-      ],
-      "answer": 0,
-      "explanation": "考点：正弦型函数的周期、振幅与图像平移变换。\n推理过程：\n对于函数 $y = A\\sin(\\omega x + \\phi)$：\n- 周期 $T = \\frac{2\\pi}{\\omega} = \\frac{2\\pi}{2} = \\pi$，故选项 A 正确。\n- 振幅 $|A| = 3$，因此最大值为 $3$，但最小值是 $-3$，选项 B 不完整；\n- 平移变换应先将解析式化为 $y = 3\\sin\\left[2\\left(x - \\frac{\\pi}{6}\\right)\\right]$，因此应将 $y = 3\\sin 2x$ 的图像向右平移 $\\frac{\\pi}{6}$ 个单位，故 C、D 错误。\n常见错误：误认为平移量直接是 $\\frac{\\pi}{3}$，忽略了需要把 $x$ 的系数提取出来的步骤。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 D（向左平移pi/6即 2(x + pi/6) - pi/3 = 2x + pi/3 - pi/3 = 2x，正确。），请核对"
-      ],
-      "generated_at": "2026-09-27T18:11:39.799690+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 3,
-        "reason": "向左平移pi/6即 2(x + pi/6) - pi/3 = 2x + pi/3 - pi/3 = 2x，正确。"
-      }
-    },
-    {
       "id": "math_gen_a2ad9251",
       "subject": "math",
       "type": "mcq",
