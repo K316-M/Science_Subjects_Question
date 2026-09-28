@@ -223,6 +223,12 @@ const PLAIN_SCRIPTS = [
   new RegExp(`(^|[^A-Za-z0-9])(${ELEM}+[+-])(?![A-Za-z0-9+-])`, 'g'),
   /()([_^]\([^)]*\))/g,
 ];
+// 学生站只收这些网页标签（js/safe-html.js 的白名单）：同 qa.py 的 SAFE_TAGS，🔴 三处要一起改
+const SAFE_TAGS = new Set(['b', 'strong', 'i', 'em', 'u', 'sub', 'sup', 'br', 'span', 'p', 'div', 'small', 'ul', 'ol', 'li',
+  'table', 'thead', 'tbody', 'tr', 'td', 'th',
+  'svg', 'g', 'path', 'line', 'rect', 'circle', 'ellipse', 'polygon', 'polyline', 'text', 'tspan']);
+const HTML_TAG = /<\/?([A-Za-z][A-Za-z0-9-]*)([^>]*)/g;   // 「<」後面紧接字母才是标签；「a < b」只是文字
+const RISKY_ATTR = /\bon[a-z]+\s*=|javascript:/i;
 function plainScripts(text) {
   const found = [];
   PLAIN_SCRIPTS.forEach(rx => { for (const m of text.matchAll(rx)) { const s = m.index + m[1].length; found.push([s, s + m[2].length, m[2]]); } });
@@ -255,6 +261,21 @@ function textLint(item, subject = item.subject) {
     if ((text.match(MATH_SPAN) || []).some(span => /[<>]/.test(span))) out.push(`${label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt`);
     const plain = subject !== 'math' ? plainScripts(prose) : [];
     if (plain.length) out.push(`${label}有没写成上下标的「${plain.slice(0, 3).join('」「')}」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）`);
+  });
+  // 参考答案、配图在学生站也当网页显示，一起查
+  const extra = [['参考答案', item.answer], ['配图', item.figure]].filter(([, v]) => typeof v === 'string');
+  [...pieces, ...extra].forEach(([label, raw]) => {
+    const prose = String(raw || '').replace(MATH_SPAN, '');
+    HTML_TAG.lastIndex = 0;
+    let m;
+    while ((m = HTML_TAG.exec(prose))) {
+      const risky = m[2].match(RISKY_ATTR);
+      if (!SAFE_TAGS.has(m[1].toLowerCase())) {
+        out.push(`${label}有学生站会删掉的网页标签「<${m[1].toLowerCase()}」：只收 b、strong、br、span、sub、sup 这类排版用的，请改成文字`);
+        break;
+      }
+      if (risky) { out.push(`${label}的网页标签带了会执行程式的「${risky[0]}」，学生站会删掉，请拿掉`); break; }
+    }
   });
   const talk = pieces.map(([label, raw]) => [label, String(raw || '').match(SELF_TALK)]).find(([, m]) => m);
   if (talk) out.push(`⚠️ ${talk[0]}里有 AI 自言自语「${talk[1][0]}」：这种题多半算错或中途改过题，答案、选项、解析都要核对`);

@@ -67,11 +67,14 @@ jobs:
 
       - name: 处理音乐
         if: steps.scenes.outputs.scenes != ''
+        # 资料夹名走环境变数，不用 ${{ }} 直接拼进指令：名字里有 $(…) 也只会被当成文字
+        env:
+          SCENES: ${{ steps.scenes.outputs.scenes }}
         run: |
           {
             echo "## 🎵 背景音乐处理结果"
             echo
-            for s in ${{ steps.scenes.outputs.scenes }}; do
+            for s in $SCENES; do
               [ -d "source/audio/$s" ] || continue
               python scripts/audio/build.py "$s" | sed 's/^/- /'
               for f in source/audio/$s/*.*; do
@@ -85,6 +88,8 @@ jobs:
 
       - name: 推回 main
         if: steps.scenes.outputs.scenes != ''
+        env:
+          SCENES: ${{ steps.scenes.outputs.scenes }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -93,7 +98,7 @@ jobs:
             case "$(basename "$f")" in ambient.mp3|background.mp3) git add -- "$f" ;; esac
           done
           if git diff --cached --quiet; then echo "处理结果和原本的一样，不用推"; exit 0; fi
-          git commit -q -m "🎵 背景音乐处理好了：${{ steps.scenes.outputs.scenes }}"
+          git commit -q -m "🎵 背景音乐处理好了：$SCENES"
           # main 刚好被改动（录题、/dev 采纳）就重取再推
           for i in 1 2 3 4 5; do
             if git push -q origin HEAD:main; then echo "✅ 已推到 main"; exit 0; fi

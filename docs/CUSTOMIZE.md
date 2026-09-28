@@ -120,6 +120,7 @@
 | **生物、化学、物理的公式写法**（录题、出题 AI 共用：化学式、物理量的上下标，简单的打符号，复杂的才用 `$…$`） | `scripts/qa.py` | `FORMULA_RULES` | | 🟡 「`$` 外面不可以出现反斜线指令」「反斜线写两次」不要删，不然学生会看到 `\sqrt` 原始码 |
 | 哪些字算 AI 自言自语（标「⚠️ …多半算错」） | `scripts/qa.py`、`dev/dev.js` | `SELF_TALK` | 等等、哎呀、重新计算、让我们重新…、慢，检查 | 🔴 两个档要一起改（录题出题时标一次、/dev 打开时再查一次，字句不同会重复显示）；只加正常解析不会出现的字，「不对，」「慢，」会误中「B 不对，因为…」「反应极慢，…」 |
 | 哪些算「该写上下标却写成一般数字」（H2O、Fe3+、v0、m/s2） | `scripts/qa.py`、`dev/dev.js` | `PLAIN_SCRIPTS` | 化学式、物理量代号、单位次方、离子电荷、录题留下的 `_(…)` | 🔴 两个档要一起改、标记字句也要一样（不然 /dev 会重复显示）；数学不查（用 LaTeX） |
+| 题目里准许哪些网页标签（其他的学生站显示时删掉、自动检查会标出来） | `js/safe-html.js`、`scripts/qa.py`、`dev/dev.js` | `SAFE_HTML_TAGS`／`SAFE_SVG_TAGS`（safe-html.js）、`SAFE_TAGS`（qa.py、dev.js） | 排版用的 b、strong、i、em、u、sub、sup、br、span、p、div、small、清单与表格，加上 SVG 配图的图形元素 | 🔴 三处要一起改：只改 safe-html.js，检查不会标、题目却被删字；只改检查，会标一堆其实显示得出来的题。别加 img、a、iframe、script 这类能载入外部东西或执行程式的标签 |
 | 录 Word／PPT 时，上下标换成哪些 Unicode 字 | `scripts/ingest_formats.py` | `SUB`、`SUP` | 数字、＋－＝（）与有下标字的字母（ₖ、ₚ、ₘ…） | 🟢 换不了的留成 `_(…)`、`^(…)`，录题 AI 会改写成 `$…$` |
 | 网站 AI 讲解、批改的数学公式写法 | `api/_lib/ai.js` | `MATH_PROMPT_RULE` | | 🟡 要叫它用 `$…$` 包 LaTeX，学生站才排得出公式 |
 | 网站 AI 讲解、批改的生物、化学、物理公式写法 | `api/_lib/ai.js` | `FORMULA_PROMPT_RULE` | 上下标用真正的下标字（H₂O、v₀、Fe³⁺），复杂的才用 `$…$` | 🟡 和出题、录题的 `FORMULA_RULES`（`scripts/qa.py`）同一套写法，改一边另一边也要跟上 |

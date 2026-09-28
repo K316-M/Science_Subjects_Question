@@ -154,10 +154,10 @@ legend.test-q-head { float: left; width: 100%; }
     return m ? [m[1].toUpperCase(), m[2]] : [LETTERS[i] || String(i + 1), String(opt)];
   }
 
-  // 题干、图说、解析与练习模式一样以 HTML 呈现（题库里有 <sub>、<br> 等）
+  // 题干、图说、解析与练习模式一样以 HTML 呈现（题库里有 <sub>、<br> 等）；先过 safeHtml（js/safe-html.js）
   function htmlNode(tag, cls, html) {
     const n = el(tag, cls);
-    n.innerHTML = html || '';
+    n.innerHTML = safeHtml(html);
     return n;
   }
 

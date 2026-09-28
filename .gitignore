@@ -18,3 +18,7 @@ scripts/ui-check/out/
 INGEST_REPORT.md
 # 这批新题：scripts/push_pending.sh 推送前接进待审区用
 new_pending_items.json
+
+# 金钥只放 Vercel／GitHub 的环境变数；本机测试用的 .env 不进仓库（一推上 GitHub 就算外泄）
+.env
+.env.*
