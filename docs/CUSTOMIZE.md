@@ -116,10 +116,12 @@
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |
 | **AI 录题的规则**（只取什么、高光怎么认） | `scripts/ingest_drafts.py` | `build_prompt` 里的 0～6 条；数学另加 `MATH_INGEST_RULES`（认卷别） | | 🔴 JSON 栏位名称不要改，程式靠它读 |
 | **数学公式的写法**（录题、出题 AI 共用：LaTeX、符号照公式表） | `scripts/qa.py` | `MATH_RULES` | | 🔴 「反斜线写两次」「不要直接打 < >」两条不要删；改了符号写法，`syllabus/math.md` 最後一段也要一起改 |
-| **生物、化学、物理的公式写法**（录题、出题 AI 共用：简单的打符号，复杂的才用 `$…$`） | `scripts/qa.py` | `FORMULA_RULES` | | 🟡 「`$` 外面不可以出现反斜线指令」「反斜线写两次」不要删，不然学生会看到 `\sqrt` 原始码 |
+| **生物、化学、物理的公式写法**（录题、出题 AI 共用：化学式、物理量的上下标，简单的打符号，复杂的才用 `$…$`） | `scripts/qa.py` | `FORMULA_RULES` | | 🟡 「`$` 外面不可以出现反斜线指令」「反斜线写两次」不要删，不然学生会看到 `\sqrt` 原始码 |
 | 哪些字算 AI 自言自语（标「⚠️ …多半算错」） | `scripts/qa.py`、`dev/dev.js` | `SELF_TALK` | 等等、哎呀、重新计算、让我们重新…、慢，检查 | 🔴 两个档要一起改（录题出题时标一次、/dev 打开时再查一次，字句不同会重复显示）；只加正常解析不会出现的字，「不对，」「慢，」会误中「B 不对，因为…」「反应极慢，…」 |
+| 哪些算「该写上下标却写成一般数字」（H2O、Fe3+、v0、m/s2） | `scripts/qa.py`、`dev/dev.js` | `PLAIN_SCRIPTS` | 化学式、物理量代号、单位次方、离子电荷、录题留下的 `_(…)` | 🔴 两个档要一起改、标记字句也要一样（不然 /dev 会重复显示）；数学不查（用 LaTeX） |
+| 录 Word／PPT 时，上下标换成哪些 Unicode 字 | `scripts/ingest_formats.py` | `SUB`、`SUP` | 数字、＋－＝（）与有下标字的字母（ₖ、ₚ、ₘ…） | 🟢 换不了的留成 `_(…)`、`^(…)`，录题 AI 会改写成 `$…$` |
 | 网站 AI 讲解、批改的数学公式写法 | `api/_lib/ai.js` | `MATH_PROMPT_RULE` | | 🟡 要叫它用 `$…$` 包 LaTeX，学生站才排得出公式 |
-| 网站 AI 讲解、批改的生物、化学、物理公式写法 | `api/_lib/ai.js` | `FORMULA_PROMPT_RULE` | 简单的打符号，复杂的才用 `$…$` | 🟡 和出题、录题的 `FORMULA_RULES`（`scripts/qa.py`）同一套写法，改一边另一边也要跟上 |
+| 网站 AI 讲解、批改的生物、化学、物理公式写法 | `api/_lib/ai.js` | `FORMULA_PROMPT_RULE` | 上下标用真正的下标字（H₂O、v₀、Fe³⁺），复杂的才用 `$…$` | 🟡 和出题、录题的 `FORMULA_RULES`（`scripts/qa.py`）同一套写法，改一边另一边也要跟上 |
 | AI 少写反斜线时自动补回的 LaTeX 指令（\\frac、\\theta 这类） | `scripts/qa.py`、`api/_lib/ai.js` | `LATEX_ESCAPE_LOOKALIKES` | 只列 b、f、n、r、t 开头的指令 | 🔴 两个档要一起改；不要加 `ne`、`nu`、`ni`（和「换行＋字母」分不出来） |
 | 复习排程（多久後再复习一次） | `js/review.js` | `EASE_START` `EASE_MIN` `EASE_MAX` `EASE_UP` `EASE_DOWN` | | 🔴 会影响每个学生已排好的复习 |
 | 复习间隔最长几天 | `js/review.js` | `MAX_INTERVAL_DAYS` | `60` | 🟢 |

@@ -118,7 +118,8 @@ def _run_marks(rpr):
 MC_FALLBACK = "{http://schemas.openxmlformats.org/markup-compatibility/2006}Fallback"
 M = "{%s}" % NS["m"]
 SUP = str.maketrans("0123456789+-−=()n", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁻⁼⁽⁾ⁿ")
-SUB = str.maketrans("0123456789+-=()", "₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎")
+# 下标连字母也换（Eₖ、Eₚ、vₜ）：Unicode 只有这几个字母有下标字，其他的（b、c、d…、中文）退回 _(…) 让 AI 写成 $…$
+SUB = str.maketrans("0123456789+-−=()aehijklmnoprstuvx", "₀₁₂₃₄₅₆₇₈₉₊₋₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ")
 
 
 def _script(text, table, mark):
@@ -127,7 +128,8 @@ def _script(text, table, mark):
     if not text:
         return ""
     out = text.translate(table)
-    return out if all(ord(c) > 127 or c.isspace() for c in out) else f"{mark}({text})"
+    # 每个字都真的换成了上下标字才用（中文、b、c 这类没有下标字的，原样留着就看不出是下标）
+    return out if all(o != c or c.isspace() for o, c in zip(out, text)) else f"{mark}({text})"
 
 
 def _omml(node):
