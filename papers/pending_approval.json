@@ -2035,35 +2035,6 @@
       }
     },
     {
-      "id": "chemistry_gen_71b10cf7",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap5",
-      "chapter_title": "第五章：元素周期表",
-      "q": "某主族元素 X 的逐级电离能数据如下（单位：kJ·mol⁻¹）：I₁ = 578，I₂ = 1817，I₃ = 2745，I₄ = 11578，I₅ = 14842。根据此数据推断，下列关于元素 X 的说法何者正确？",
-      "options": [
-        "A. 元素 X 位于元素周期表中的第 IVA 族（第 14 族）",
-        "B. 元素 X 在化合物中呈现的最高正化合价为 +3",
-        "C. 元素 X 的基态原子价电子排布式为 ns² np²",
-        "D. 元素 X 属于元素周期表中的 s 区元素"
-      ],
-      "answer": 1,
-      "explanation": "考点：根据逐级电离能的数据突变推断元素的位置及化合价。\n\n- 数据分析：由逐级电离能可知，I₁ = 578、I₂ = 1817、I₃ = 2745 kJ·mol⁻¹，失去前 3 个电子所需能量相对较小；而从 I₃ 到 I₄ 出现剧烈突跃（I₄ = 11578 kJ·mol⁻¹，约为 I₃ 的 4.2 倍），说明剥离第 4 个电子时破坏了内层稳定的电子层结构。\n- 结论：元素 X 的基态原子最外层有 3 个价电子，属于主族元素，位于第 IIIA 族（第 13 族），最高正化合价为 +3，基态价电子排布式为 ns² np¹，位于 p 区。\n- 选项判断：A 错误（应为 IIIA 族）；B 正确；C 错误（应为 ns² np¹）；D 错误（属于 p 区，如铝元素）。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 A（电离能在第4级发生突跃（I₄ > I₃），说明最外层有3个电子，位于第IIIA族（第13族）。），请核对"
-      ],
-      "generated_at": "2026-09-28T10:09:38.084890+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 0,
-        "reason": "电离能在第4级发生突跃（I₄ > I₃），说明最外层有3个电子，位于第IIIA族（第13族）。"
-      }
-    },
-    {
       "id": "chemistry_gen_bcd57528",
       "subject": "chemistry",
       "type": "mcq",
