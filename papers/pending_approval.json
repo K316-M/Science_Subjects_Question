@@ -1895,34 +1895,6 @@
       }
     },
     {
-      "id": "math_gen_5864d45f",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第九章：任意角的三角函数",
-      "q": "若角 $\\theta$ 的终边经过点 $(-3, 4)$，则 $\\operatorname{cosec}\\theta + \\cot\\theta$ 的值为",
-      "options": [
-        "A. $-\\frac{1}{2}$",
-        "B. $\\frac{1}{2}$",
-        "C. $-2$",
-        "D. $2$"
-      ],
-      "answer": 1,
-      "explanation": "考点：任意角三角函数的坐标定义、余割与余切的定义。\n推理过程：设点 $P(x, y) = (-3, 4)$，则该点到原点的距离 $r = \\sqrt{(-3)^2 + 4^2} = 5$。\n根据任意角三角函数的定义：\n正弦 $\\sin\\theta = \\frac{y}{r} = \\frac{4}{5}$，故余割 $\\operatorname{cosec}\\theta = \\frac{1}{\\sin\\theta} = \\frac{5}{4}$；\n余切 $\\cot\\theta = \\frac{x}{y} = \\frac{-3}{4} = -\\frac{3}{4}$。\n因此，$\\operatorname{cosec}\\theta + \\cot\\theta = \\frac{5}{4} + \\left(-\\frac{3}{4}\\right) = \\frac{2}{4} = \\frac{1}{2}$。等等，计算一下：$\\frac{5}{4} - \\frac{3}{4} = \\frac{2}{4} = \\frac{1}{2}$。选项 B 是 $\\frac{1}{2}$，我们检查一下题目要求：若 $x=-3, y=4$，则 $\\sin\\theta = 4/5, \\cos\\theta = -3/5, \\tan\\theta = -4/3, \\operatorname{cosec}\\theta = 5/4, \\cot\\theta = -3/4$，所以 $\\operatorname{cosec}\\theta + \\cot\\theta = 5/4 - 3/4 = 1/2$，答案应为 B。\n修正答案下标为 1 (B)。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
-      "generated_at": "2026-09-27T18:11:39.794885+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "csc(theta) = r/y = 5/4，cot(theta) = x/y = -3/4，相加得2/4 = 1/2。"
-      }
-    },
-    {
       "id": "math_gen_c41a1218",
       "subject": "math",
       "type": "mcq",
