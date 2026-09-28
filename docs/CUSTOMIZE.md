@@ -147,6 +147,7 @@
 | 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。分页那两张要先把多余白边裁掉再缩，不然 16px 只剩一团色块。浏览器会快取图标，换完可能要重开分页或清快取才看得到。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是另外重画的 SVG，不会跟著这 5 个档变：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |
 | 数学公式排版程式（KaTeX）换新版 | `vendor/katex/` | 🟡 照 `vendor/katex/README.md` 换掉同名档案；只留 `.woff2` 字型。字型档有增减的话，`sw.js` 的 `KATEX_FONTS` 也要跟着改（离线下载用） |
+| 题目档下载 PDF 的程式（html2canvas、jsPDF）换新版 | `vendor/pdf/` | 🟢 照 `vendor/pdf/README.md` 换掉同名档案、改里面写的版本号；档名不变的话 `js/archive.js` 的 `PDF_LIBS` 不用动 |
 | 小精灵的姿势图 | `source/sprite/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
 | 申诉处理结果 | 网站 `/dev` →「申诉处理」 | 不必手改 `data/resolved_issues.json` |
 
