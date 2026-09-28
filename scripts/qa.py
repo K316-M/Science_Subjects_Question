@@ -40,7 +40,7 @@ SELF_TALK = re.compile(r"等等|哎呀|重新(计算|分析|审题|核对|核算
 # 不用 (?<!…)：dev/dev.js 有一份一样的，旧版 iPhone Safari 不认。第 2 组是要标出来的字
 _ELEM = r"(?:[A-Z][a-z]?[0-9]*|\((?:[A-Z][a-z]?[0-9]*)+\)[0-9]*)"
 PLAIN_SCRIPTS = [
-    re.compile(r"(^|[^A-Za-z0-9])(" + _ELEM + r"*(?:[A-Z][a-z]?[0-9]+|\((?:[A-Z][a-z]?[0-9]*)+\)[0-9]+)[+-]?" + _ELEM + r"*)(?![A-Za-z0-9])"),  # H2O、Ca(OH)2、Fe3+
+    re.compile(r"((?:^|[^A-Za-z0-9])[0-9]*)(" + _ELEM + r"*(?:[A-Z][a-z]?[0-9]+|\((?:[A-Z][a-z]?[0-9]*)+\)[0-9]+)[+-]?" + _ELEM + r"*)(?![A-Za-z0-9])"),  # H2O、2H2O（系数不标）、Ca(OH)2、Fe3+
     re.compile(r"(^|[^A-Za-z0-9.])([A-Za-z][0-9])(?![A-Za-z0-9.])"),                                          # v0、m1、T2、F1
     re.compile(r"(^|[^A-Za-z])((?:[a-z]+/)?(?:m|cm|mm|km|dm|s)[23])(?![A-Za-z0-9])"),                          # m/s2、cm3
     re.compile(r"(^|[^A-Za-z0-9])(" + _ELEM + r"+[+-])(?![A-Za-z0-9+-])"),                                    # NAD+、OH-
