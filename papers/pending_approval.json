@@ -18,9 +18,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T12:48:14.160236+00:00",
       "syllabus_used": true,
       "review": {
@@ -46,9 +44,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T12:48:14.161472+00:00",
       "syllabus_used": true,
       "review": {
@@ -74,9 +70,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T12:48:14.162301+00:00",
       "syllabus_used": true,
       "review": {
@@ -102,9 +96,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T12:48:14.163930+00:00",
       "syllabus_used": true,
       "review": {
@@ -130,9 +122,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T12:50:19.372236+00:00",
       "syllabus_used": true,
       "review": {
@@ -158,9 +148,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T12:50:19.373051+00:00",
       "syllabus_used": true,
       "review": {
@@ -186,9 +174,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T12:50:19.373936+00:00",
       "syllabus_used": true,
       "review": {
@@ -214,9 +200,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:51:54.402432+00:00",
       "syllabus_used": true,
       "review": {
@@ -242,9 +226,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:51:54.403913+00:00",
       "syllabus_used": true,
       "review": {
@@ -270,9 +252,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:51:54.405170+00:00",
       "syllabus_used": true,
       "review": {
@@ -298,9 +278,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:51:54.406284+00:00",
       "syllabus_used": true,
       "review": {
@@ -326,10 +304,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 C（由P - fv = ma，代入60000 - 2000v = 1000 × 2 = 2000，解得速率v = 20 m/s。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:52:17.685581+00:00",
       "syllabus_used": true,
       "review": {
@@ -355,10 +330,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 B（机械能守恒得最低点速度v = √(2gL(1-cos60°)) = √(gL)，向心力公式T - mg = m(v²/L)，代入得T = 1.5 mg。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:52:17.687241+00:00",
       "syllabus_used": true,
       "review": {
@@ -384,10 +356,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 A（上升过程克服阻力做功等于机械能损失，上升4m克服阻力做功W_f = mgh - E_k0 = 2×10×4 - 0.5×2×100 = 80 - 100 = -20J（阻力功20J）。上下全程克服阻力做功共40J，由动能定理E_k = E_），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:52:17.689140+00:00",
       "syllabus_used": true,
       "review": {
@@ -413,9 +382,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:52:17.690943+00:00",
       "syllabus_used": true,
       "review": {
@@ -441,9 +408,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:52:35.452162+00:00",
       "syllabus_used": true,
       "review": {
@@ -469,9 +434,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:52:35.454160+00:00",
       "syllabus_used": true,
       "review": {
@@ -497,10 +460,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 D（完全弹性碰撞，由动量守恒及恢复系数公式可得 m₁ : m₂ = 1 : 4。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:52:35.456538+00:00",
       "syllabus_used": true,
       "review": {
@@ -526,9 +486,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:52:35.458776+00:00",
       "syllabus_used": true,
       "review": {
@@ -554,9 +512,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:53:44.293545+00:00",
       "syllabus_used": true,
       "review": {
@@ -582,10 +538,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 C（x = 0.20 cos(5πt)，速度 v = -π sin(5πt)，当 t = 0.1 s 时，v = -π sin(0.5π) = -π，大小为 π m/s；加速度 a = -25π² x，当 t = 0.1 s 时 x = 0，a），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:53:44.295824+00:00",
       "syllabus_used": true,
       "review": {
@@ -611,9 +564,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:53:44.298856+00:00",
       "syllabus_used": true,
       "review": {
@@ -639,10 +590,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.7-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 A（单摆周期公式 T = 2π√(L/g)。摆长变为4倍，g变为1/4，则周期变为 √(4 / (1/4)) = √16 = 4 倍？不对，T ∝ √(L/g)，L变为4倍，g变为1/4，T' = 2π√(4L / (g/4)) = 2π√(1），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:53:44.301788+00:00",
       "syllabus_used": true,
       "review": {
@@ -668,9 +616,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:57:11.816035+00:00",
       "syllabus_used": true,
       "review": {
@@ -696,9 +642,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:57:11.821188+00:00",
       "syllabus_used": true,
       "review": {
@@ -724,9 +668,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:57:11.825299+00:00",
       "syllabus_used": true,
       "review": {
@@ -752,10 +694,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 D（ΔL = FL / (YA)，A_A/A_B = 2，L_A/L_B = 2，故 ΔL_A : ΔL_B = 2 : 1；应力 σ = F/A，A_A : A_B = 2 : 1，故 σ_A : σ_B = 1 : 2？错，直径比是√2，面），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:59:10.591652+00:00",
       "syllabus_used": true,
       "review": {
@@ -781,9 +720,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:59:10.594580+00:00",
       "syllabus_used": true,
       "review": {
@@ -809,9 +746,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:59:10.601260+00:00",
       "syllabus_used": true,
       "review": {
@@ -837,10 +772,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 B（毛细管截断后，由于曲率半径改变，液体不会溢出，液面平缓，接触角保持不变。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T17:59:10.605265+00:00",
       "syllabus_used": true,
       "review": {
@@ -866,9 +798,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:32.859574+00:00",
       "syllabus_used": true,
       "review": {
@@ -894,9 +824,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:32.863934+00:00",
       "syllabus_used": true,
       "review": {
@@ -923,7 +851,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+        "⚠️ 审题建议退回：没说金属比水热还是冷，A、D 都可能；解析里 AI 自言自语，推到最后选 D，答案却标 A"
       ],
       "generated_at": "2026-09-27T18:00:32.867946+00:00",
       "syllabus_used": true,
@@ -951,7 +879,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+        "⚠️ 审题建议退回：正确答案是 1200 J/(kg·°C)，四个选项都没有；解析在改题"
       ],
       "generated_at": "2026-09-27T18:00:32.875701+00:00",
       "syllabus_used": true,
@@ -978,9 +906,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:38.719969+00:00",
       "syllabus_used": true,
       "review": {
@@ -1006,9 +932,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:38.725690+00:00",
       "syllabus_used": true,
       "review": {
@@ -1034,9 +958,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:38.732283+00:00",
       "syllabus_used": true,
       "review": {
@@ -1062,9 +984,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:38.736218+00:00",
       "syllabus_used": true,
       "review": {
@@ -1090,9 +1010,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:44.909164+00:00",
       "syllabus_used": true,
       "review": {
@@ -1118,9 +1036,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:44.914387+00:00",
       "syllabus_used": true,
       "review": {
@@ -1146,9 +1062,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:44.920907+00:00",
       "syllabus_used": true,
       "review": {
@@ -1174,10 +1088,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 C（由 pV² = C 及理想气体状态方程 pV = nRT，可得 T ∝ V。体积膨胀为原来的2倍，绝对温度也变为原来的2倍。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:00:44.926674+00:00",
       "syllabus_used": true,
       "review": {
@@ -1203,9 +1114,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 D（通过分点坐标公式求出P点坐标代入直线方程解得k=5。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:02:01.683709+00:00",
       "syllabus_used": true,
       "review": {
@@ -1231,9 +1140,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 B（交点为(2, 1)，代入平行于3x+2y-1=0的直线得3x+2y-6=0。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:02:01.684804+00:00",
       "syllabus_used": true,
       "review": {
@@ -1259,10 +1166,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 B（利用韦达定理和alpha^2+beta^2=(alpha+beta)^2-2alpha*beta=3/4求得k=1/2。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:02:44.083142+00:00",
       "syllabus_used": true,
       "review": {
@@ -1288,9 +1192,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:02:44.083762+00:00",
       "syllabus_used": true,
       "review": {
@@ -1316,9 +1218,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:02:44.084434+00:00",
       "syllabus_used": true,
       "review": {
@@ -1344,9 +1244,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.8-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:02:44.085861+00:00",
       "syllabus_used": true,
       "review": {
@@ -1372,9 +1270,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:08:54.613491+00:00",
       "syllabus_used": true,
       "review": {
@@ -1400,9 +1296,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:08:54.614138+00:00",
       "syllabus_used": true,
       "review": {
@@ -1428,9 +1322,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:08:54.615478+00:00",
       "syllabus_used": true,
       "review": {
@@ -1456,10 +1348,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 C（利用因式定理，代入x^2+x-1=0的根化简多项式求得a与b的值及和为-4。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:08:54.616427+00:00",
       "syllabus_used": true,
       "review": {
@@ -1486,7 +1375,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+        "⚠️ 审题建议退回：定义域应为 (1, 2)（x = 2 时分母为 0），四个选项都不对"
       ],
       "generated_at": "2026-09-27T18:11:14.213545+00:00",
       "syllabus_used": true,
@@ -1514,7 +1403,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+        "⚠️ 审题建议退回：f(2a) 应为 8√5，选项里没有；解析自言自语、改题"
       ],
       "generated_at": "2026-09-27T18:11:14.214638+00:00",
       "syllabus_used": true,
@@ -1542,7 +1431,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
+        "⚠️ 审题建议退回：最小值应为 9/4，选项里没有；解析用了题目没给的 xy = 4"
       ],
       "generated_at": "2026-09-27T18:11:22.383452+00:00",
       "syllabus_used": true,
@@ -1569,9 +1458,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:22.384452+00:00",
       "syllabus_used": true,
       "review": {
@@ -1598,8 +1485,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 C（-5 < 2x-3 < 5 => -2 < 2x < 8 => -1 < x < 4，整数解有0,1,2,3共4个？核对：包含-1到4的整数为0,1,2,3（共4个）还是-1,0,1,2,3（5个）？重新算：-1<x<4整数为0,1,2,3），请核对"
+        "⚠️ 审题建议退回：整数解是 0、1、2、3 共 4 个（A），却标 B；解析自言自语"
       ],
       "generated_at": "2026-09-27T18:11:22.385328+00:00",
       "syllabus_used": true,
@@ -1626,10 +1512,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 B（x^2-4x-5>0 => (x-5)(x+1)>0，同解于(x-5)/(x+1)<0。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:22.386373+00:00",
       "syllabus_used": true,
       "review": {
@@ -1656,8 +1539,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 C（p V q为假则p假且q假，则否定p为真，故(非p) V q为真。），请核对"
+        "⚠️ 审题建议退回：p、q 都为假时 B、C、D 三个都为真"
       ],
       "generated_at": "2026-09-27T18:11:28.820898+00:00",
       "syllabus_used": true,
@@ -1684,10 +1566,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 B（p: -1<x<3，q: -1<x<2，q是p的子集，故p是q的充分而不必要条件。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:28.823180+00:00",
       "syllabus_used": true,
       "review": {
@@ -1713,9 +1592,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:28.828290+00:00",
       "syllabus_used": true,
       "review": {
@@ -1741,9 +1618,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:33.983667+00:00",
       "syllabus_used": true,
       "review": {
@@ -1769,9 +1644,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:33.985549+00:00",
       "syllabus_used": true,
       "review": {
@@ -1797,10 +1670,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 B（点在第三象限，主值区间内角度计算为 -pi + arctan(4/3) 或类似形式，选B。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:33.987754+00:00",
       "syllabus_used": true,
       "review": {
@@ -1826,9 +1696,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:33.990133+00:00",
       "syllabus_used": true,
       "review": {
@@ -1854,9 +1722,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:39.801826+00:00",
       "syllabus_used": true,
       "review": {
@@ -1882,9 +1748,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:45.884611+00:00",
       "syllabus_used": true,
       "review": {
@@ -1910,9 +1774,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:45.889118+00:00",
       "syllabus_used": true,
       "review": {
@@ -1938,9 +1800,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-27T18:11:45.891870+00:00",
       "syllabus_used": true,
       "review": {
@@ -1966,9 +1826,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:09:38.083462+00:00",
       "syllabus_used": true,
       "review": {
@@ -1994,9 +1852,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:09:38.085949+00:00",
       "syllabus_used": true,
       "review": {
@@ -2022,9 +1878,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:09:38.086955+00:00",
       "syllabus_used": true,
       "review": {
@@ -2050,9 +1904,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:10:00.888820+00:00",
       "syllabus_used": true,
       "review": {
@@ -2078,9 +1930,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:10:00.889883+00:00",
       "syllabus_used": true,
       "review": {
@@ -2106,9 +1956,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:10:00.891250+00:00",
       "syllabus_used": true,
       "review": {
@@ -2134,9 +1982,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:10:00.892781+00:00",
       "syllabus_used": true,
       "review": {
@@ -2162,9 +2008,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:10:49.621843+00:00",
       "syllabus_used": true,
       "review": {
@@ -2190,9 +2034,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:10:49.626860+00:00",
       "syllabus_used": true,
       "review": {
@@ -2218,10 +2060,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 C（根据得失电子守恒：0.02 L × 0.02 mol/L × 5 = 0.025 L × 0.05 mol/L × x，计算得 x = 3。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:10:49.629677+00:00",
       "syllabus_used": true,
       "review": {
@@ -2247,9 +2086,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:12:37.858326+00:00",
       "syllabus_used": true,
       "review": {
@@ -2275,10 +2112,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 A（钾的密度比钠大（K会沉于水下某些有机液，但比水小？钾密度 0.86g/cm³ 比水小，但钠密度 0.97g/cm³，两者均浮于水，但 II 说钾密度比钠小错误，钾密度其实比钠大）。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:12:37.861521+00:00",
       "syllabus_used": true,
       "review": {
@@ -2304,10 +2138,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 D（滴加同浓度稀盐酸时，两者产生气泡快慢肉眼难以明显区分瞬时差异，通常用 CaCl₂ 溶液鉴别（沉淀 vs 不沉淀）。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:12:37.863624+00:00",
       "syllabus_used": true,
       "review": {
@@ -2333,9 +2164,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:12:37.864914+00:00",
       "syllabus_used": true,
       "review": {
@@ -2361,9 +2190,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:13:22.841545+00:00",
       "syllabus_used": true,
       "review": {
@@ -2389,10 +2216,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 D（盐酸总物质的量为 0.5 L × 1.0 mol/L = 0.5 mol。MgO 和 CaO 共 0.2 mol，消耗 0.4 mol HCl，剩余 0.1 mol HCl 恰好被 NaOH 中和（消耗 0.1 mol NaOH），而 Mg），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:13:22.845952+00:00",
       "syllabus_used": true,
       "review": {
@@ -2418,9 +2242,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:13:22.847904+00:00",
       "syllabus_used": true,
       "review": {
@@ -2446,9 +2268,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:13:22.849744+00:00",
       "syllabus_used": true,
       "review": {
@@ -2475,7 +2295,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+        "审题：答案 C 正确；H⁺、Al³⁺、NH₄⁺ 的反应先后偏大陆高考，可能超出统考范围，你决定要不要采纳"
       ],
       "generated_at": "2026-09-28T10:14:05.871036+00:00",
       "syllabus_used": true,
@@ -2502,9 +2322,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:14:05.876391+00:00",
       "syllabus_used": true,
       "review": {
@@ -2530,9 +2348,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:14:05.878081+00:00",
       "syllabus_used": true,
       "review": {
@@ -2558,10 +2374,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 D（铝与盐酸和氢氧化钠反应化学计量数比产生 H₂ 相同质量时 NaOH 产生更多，说明铝在 HCl 中过量或完全反应而 NaOH 中铝未完全反应。），请核对"
-      ],
+      "flags": [],
       "generated_at": "2026-09-28T10:14:05.881803+00:00",
       "syllabus_used": true,
       "review": {
