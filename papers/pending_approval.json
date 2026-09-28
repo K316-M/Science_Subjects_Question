@@ -1,34 +1,6 @@
 {
   "items": [
     {
-      "id": "physics_gen_1b5389b4",
-      "subject": "physics",
-      "type": "mcq",
-      "chapter_id": "chap11",
-      "chapter_title": "第十一章：温度与热量",
-      "q": "将质量为 $100\\text{ g}$、温度为 $100\\text{ \\textdegree C}$ 的某金属块投入盛有 $200\\text{ g}$、温度为 $20\\text{ \\textdegree C}$ 水的绝热量热器中。若不计量热器的热容量，最终测得系统的平衡温度为 $30\\text{ \\textdegree C}$。已知水的比热容为 $4.2 \\times 10^3\\text{ J/(kg}\\cdot\\text{\\textdegree C)}$，则该金属块的比热容为",
-      "options": [
-        "A. $4.2 \\times 10^2\\text{ J/(kg}\\cdot\\text{\\textdegree C})$",
-        "B. $8.4 \\times 10^2\\text{ J/(kg}\\cdot\\text{\\textdegree C})$",
-        "C. $1.05 \\times 10^3\\text{ J/(kg}\\cdot\\text{\\textdegree C})$",
-        "D. $2.10 \\times 10^3\\text{ J/(kg}\\cdot\\text{\\textdegree C})$"
-      ],
-      "answer": 1,
-      "explanation": "考点：热量平衡定律与比热容的计算。解析：根据热平衡原理，金属块放出的热量等于水吸收的热量。设金属块比热容为 $c$，则：$m_{\\text{金}} c_{\\text{金}} (T_{\\text{金,初}} - T) = m_{\\text{水}} c_{\\text{水}} (T - T_{\\text{水,初}})$。代入数据：$0.1\\text{ kg} \\times c_{\\text{金}} \\times (100 - 30) = 0.2\\text{ kg} \\times 4.2 \\times 10^3\\text{ J/(kg}\\cdot\\text{\\textdegree C)} \\times (30 - 20)$。化简得：$7\\,c_{\\text{金}} = 0.2 \\times 4200 \\times 10 = 8400$。解得：$c_{\\text{金}} = \\frac{8400}{7} = 1200\\text{ J/(kg}\\cdot\\text{\\textdegree C)}$。等等，计算重算：$0.2 \\times 4200 = 840$，$840 \\times 10 = 8400$。$7\\,c = 8400$ 算出来是 $1200$。选项里没有 $1200$？让我们调整数字使得选项匹配。若平衡温度为 $25\\text{ \\textdegree C}$：$0.1 \\times c \\times (100 - 25) = 0.2 \\times 4200 \\times (25 - 20)$，即 $7.5\\,c = 0.2 \\times 4200 \\times 5 = 4200$，则 $c = 560$。若平衡温度为 $40\\text{ \\textdegree C}$：$0.1 \\times c \\times (100 - 40) = 0.2 \\times 4200 \\times (40 - 20) \\implies 6\\,c = 0.2 \\times 4200 \\times 20 = 16800 \\implies c = 2800$。让我们重新设计这道题的数值：设金属质量 $200\\text{ g}$（$0.2\\text{ kg}$），初温 $100\\text{ \\textdegree C}$；水质量 $100\\text{ g}$（$0.1\\text{ kg}$），初温 $20\\text{ \\textdegree C}$；平衡温度 $40\\text{ \\textdegree C}$。则：$0.2 \\times c \\times (100 - 40) = 0.1 \\times 4200 \\times (40 - 20)$，即 $12\\,c = 0.1 \\times 4200 \\times 20 = 8400$，解得 $c = 700\\text{ J/(kg}\\cdot\\text{\\textdegree C)}$。或者：设平衡温度 $30\\text{ \\textdegree C}$，金属质量 $200\\text{ g}$，水质量 $400\\text{ g}$，初温 $20\\text{ \\textdegree C}$：$0.2 \\times c \\times (100 - 30) = 0.4 \\times 4200 \\times (30 - 20) \\implies 14\\,c = 16800 \\implies c = 1200$。如果水质量 $200\\text{ g}$，水初温 $20\\text{ \\textdegree C}$，金属块 $400\\text{ g}$、初温 $100\\text{ \\textdegree C}$，平衡温度 $40\\text{ \\textdegree C}$：$0.4 \\times c \\times (100 - 40) = 0.2 \\times 4200 \\times (40 - 20) \\implies 24\\,c = 16800 \\implies c = 700$。让我们用经典的 $8.4 \\times 10^2$ 选项：若 $c = 840\\text{ J/(kg}\\cdot\\text{\\textdegree C)}$，$m_{\\text{金}} = 0.2\\text{ kg}$，$T_{\\text{初}} = 100\\text{ \\textdegree C}$；$m_{\\text{水}} = 0.1\\text{ kg}$，$T_{\\text{水初}} = 20\\text{ \\textdegree C}$。放热 = $0.2 \\times 840 \\times (100 - T) = 168(100 - T)$；吸热 = $0.1 \\times 4200 \\times (T - 20) = 420(T - 20)$。令 $168(100 - T) = 420(T - 20)$，两边除以 $84$：$2(100 - T) = 5(T - 20) \\implies 200 - 2T = 5T - 100 \\implies 7T = 300 \\implies T = 42.86\\text{ \\textdegree C}$（不够整）。改用：金属块质量 $0.5\\text{ kg}$，比热容待求；水质量 $0.2\\text{ kg}$，初温 $20\\text{ \\textdegree C}$，金属初温 $100\\text{ \\textdegree C}$，平衡温度 $40\\text{ \\textdegree C}$。吸热 = $0.2 \\times 4200 \\times (40 - 20) = 16800\\text{ J}$。放热 = $0.5 \\times c \\times (100 - 40) = 30\\,c = 16800 \\implies c = 560\\text{ J/(kg}\\cdot\\text{\\textdegree C)}$。若选 B（$8.4 \\times 10^2$）：设 $m_{\\text{金}} = 0.2\\text{ kg}$，$c = 840$，金属初温 $100\\text{ \\textdegree C}$；水 $m_{\\text{水}} = 0.4\\text{ kg}$，水初温 $20\\text{ \\textdegree C}$。放热 = $0.2 \\times 840 \\times (100 - T) = 168(100 - T)$；吸热 = $0.4 \\times 4200 \\times (T - 20) = 1680(T - 20)$。令 $168(100 - T) = 1680(T - 20) \\implies 100 - T = 10(T - 20) \\implies 100 - T = 10T - 200 \\implies 11T = 300$（还是不整）。为了保证高中物理计算题数据整洁，我们这样设计：质量为 $0.4\\text{ kg}$ 的某金属块（比热容 $c$），初温 $100\\text{ \\textdegree C}$，投入盛有 $0.2\\text{ kg}$、初温 $20\\text{ \\textdegree C}$ 水的量热器中，平衡温度为 $40\\text{ \\textdegree C}$。计算：放热 = $0.4 \\times c \\times (100 - 40) = 24\\,c$；吸热 = $0.2 \\times 4200 \\times (40 - 20) = 16800$。$24\\,c = 16800 \\implies c = 700\\text{ J/(kg}\\cdot\\text{\\textdegree C)}$。选项B改为 $7.0 \\times 10^2\\text{ J/(kg}\\cdot\\text{\\textdegree C)}$。修正后选项 B 为 $7.0 \\times 10^2\\text{ J/(kg}\\cdot\\text{\\textdegree C)}$，答案选 B。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "⚠️ 审题建议退回：正确答案是 1200 J/(kg·°C)，四个选项都没有；解析在改题"
-      ],
-      "generated_at": "2026-09-27T18:00:32.875701+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "放热 = 吸热：m_金 c_金 (100 - 30) = m_水 c_水 (30 - 20) => 0.1 × c_金 × 70 = 0.2 × 4200 × 10 => 7 c_金 = 8400 => c_金 = 1200？算术：0.1 "
-      }
-    },
-    {
       "id": "math_gen_089503c2",
       "subject": "math",
       "type": "mcq",
