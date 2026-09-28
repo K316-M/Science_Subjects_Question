@@ -203,10 +203,11 @@ function loadScriptOnce(src) {
   });
 }
 
+// 放在网站自己的档案里（vendor/pdf/，版本见那里的 README）：Service Worker 第一次用时存起来，之後没网也能下载 PDF
+const PDF_LIBS = ['/vendor/pdf/html2canvas.min.js', '/vendor/pdf/jspdf.umd.min.js'];
 async function loadPdfLibs() {
   if (window.html2canvas && window.jspdf) return;
-  await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-  await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  for (const src of PDF_LIBS) await loadScriptOnce(src);
 }
 
 function setPdfProgress(active, text, sub) {

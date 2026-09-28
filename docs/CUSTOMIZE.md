@@ -53,6 +53,8 @@
 | 做题页上的科目名称（「生物科」） | `index.html` | `SUBJECT_LABELS` | 🟢 |
 | 数学两份卷的名称（按钮「模拟高数Ⅰ · 60 分钟」、/dev 的卷别） | `index.html`、`dev/dev.js` | `PAPER_LABEL` | 🟡 两个档各一份，写一样才对得上 |
 | **每个画面的导览（聚光灯）文字** | `js/onboarding.js` | `TOURS` —— 每一步有 title（标题）和 body（内文），内文可以用 `<strong>` | 🟢 |
+| 「加到主画面」提示：怎么加（iPhone／Android 各一句）、什么时候跳 | `js/onboarding.js` | `INSTALL_HOW`、`maybeInstallTip` | 🟢 现在是做过题、回到首页、手机或平板、还没装好才跳一次 |
+| 同步：提醒只接自己的码（输入框下方、打开同步链结时） | `js/sync-ui.js`、`js/sync.js` | `只贴你自己的`、`只接你自己装置的链结` | 🟢 |
 | 小精灵说的「谢谢！」 | `js/feedback.js` | `bubble.textContent` | 🟢 |
 | 小精灵通知面板的标题 | `js/feedback.js` | `spritePanelTitle` | 🟡 保留 `${…}` 那段，那是自动填的修复内容 |
 | 做答题作答框的提示字 | `index.html` | `subj-attempt-input` 的 `placeholder` | 🟢 |
@@ -79,6 +81,7 @@
 | 背景音乐的响度、剪静音的门槛、循环接头的淡接秒数 | `scripts/audio/build.py` | `LUFS`、`SILENCE_DB`、`XFADE` | `-20`、`-50`、`3.0` 秒 | 🟡 改完到 Actions 手动跑「背景音乐自动处理」、科目留空，全部重做；只重做一首会和其他首不一样大声 |
 | 音乐播完接回开头时，头尾交叉叠多久 | `index.html` | `MUSIC_LOOP_XFADE_MS` | `3000` 毫秒 | 🟢 太长会听到结尾和开头叠在一起；曲子短于它的 3 倍就不叠，直接重播 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |
+| 待在做题页、或从背景切回来时，多久检查一次题库有没有更新 | `index.html` | `BANK_RECHECK_MS` | 10 分钟 | 🟢 题库没变时伺服器只回「没变」，几乎不花流量；有变就跳「题库更新了」 |
 | **统考日期与每场的试卷一／二时间** | `js/exam-timetable.js` | `papers` | 2026 年董总时间表 | 🟡 格式见档案开头注解 |
 | AI 依考纲出题的自动排程 | `.github/workflows/generate_questions.yml` | `cron` | 每周一早上 9 点（马来西亚） | 🟡 cron 是 UTC，马来西亚时间减 8 小时 |
 | 题库体检的自动排程 | `.github/workflows/auto_update.yml` | `cron` | 每周一早上 8 点 | 🟡 同上 |
@@ -113,10 +116,12 @@
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |
 | **AI 录题的规则**（只取什么、高光怎么认） | `scripts/ingest_drafts.py` | `build_prompt` 里的 0～6 条；数学另加 `MATH_INGEST_RULES`（认卷别） | | 🔴 JSON 栏位名称不要改，程式靠它读 |
 | **数学公式的写法**（录题、出题 AI 共用：LaTeX、符号照公式表） | `scripts/qa.py` | `MATH_RULES` | | 🔴 「反斜线写两次」「不要直接打 < >」两条不要删；改了符号写法，`syllabus/math.md` 最後一段也要一起改 |
-| **生物、化学、物理的公式写法**（录题、出题 AI 共用：简单的打符号，复杂的才用 `$…$`） | `scripts/qa.py` | `FORMULA_RULES` | | 🟡 「`$` 外面不可以出现反斜线指令」「反斜线写两次」不要删，不然学生会看到 `\sqrt` 原始码 |
+| **生物、化学、物理的公式写法**（录题、出题 AI 共用：化学式、物理量的上下标，简单的打符号，复杂的才用 `$…$`） | `scripts/qa.py` | `FORMULA_RULES` | | 🟡 「`$` 外面不可以出现反斜线指令」「反斜线写两次」不要删，不然学生会看到 `\sqrt` 原始码 |
 | 哪些字算 AI 自言自语（标「⚠️ …多半算错」） | `scripts/qa.py`、`dev/dev.js` | `SELF_TALK` | 等等、哎呀、重新计算、让我们重新…、慢，检查 | 🔴 两个档要一起改（录题出题时标一次、/dev 打开时再查一次，字句不同会重复显示）；只加正常解析不会出现的字，「不对，」「慢，」会误中「B 不对，因为…」「反应极慢，…」 |
+| 哪些算「该写上下标却写成一般数字」（H2O、Fe3+、v0、m/s2） | `scripts/qa.py`、`dev/dev.js` | `PLAIN_SCRIPTS` | 化学式、物理量代号、单位次方、离子电荷、录题留下的 `_(…)` | 🔴 两个档要一起改、标记字句也要一样（不然 /dev 会重复显示）；数学不查（用 LaTeX） |
+| 录 Word／PPT 时，上下标换成哪些 Unicode 字 | `scripts/ingest_formats.py` | `SUB`、`SUP` | 数字、＋－＝（）与有下标字的字母（ₖ、ₚ、ₘ…） | 🟢 换不了的留成 `_(…)`、`^(…)`，录题 AI 会改写成 `$…$` |
 | 网站 AI 讲解、批改的数学公式写法 | `api/_lib/ai.js` | `MATH_PROMPT_RULE` | | 🟡 要叫它用 `$…$` 包 LaTeX，学生站才排得出公式 |
-| 网站 AI 讲解、批改的生物、化学、物理公式写法 | `api/_lib/ai.js` | `FORMULA_PROMPT_RULE` | 简单的打符号，复杂的才用 `$…$` | 🟡 和出题、录题的 `FORMULA_RULES`（`scripts/qa.py`）同一套写法，改一边另一边也要跟上 |
+| 网站 AI 讲解、批改的生物、化学、物理公式写法 | `api/_lib/ai.js` | `FORMULA_PROMPT_RULE` | 上下标用真正的下标字（H₂O、v₀、Fe³⁺），复杂的才用 `$…$` | 🟡 和出题、录题的 `FORMULA_RULES`（`scripts/qa.py`）同一套写法，改一边另一边也要跟上 |
 | AI 少写反斜线时自动补回的 LaTeX 指令（\\frac、\\theta 这类） | `scripts/qa.py`、`api/_lib/ai.js` | `LATEX_ESCAPE_LOOKALIKES` | 只列 b、f、n、r、t 开头的指令 | 🔴 两个档要一起改；不要加 `ne`、`nu`、`ni`（和「换行＋字母」分不出来） |
 | 复习排程（多久後再复习一次） | `js/review.js` | `EASE_START` `EASE_MIN` `EASE_MAX` `EASE_UP` `EASE_DOWN` | | 🔴 会影响每个学生已排好的复习 |
 | 复习间隔最长几天 | `js/review.js` | `MAX_INTERVAL_DAYS` | `60` | 🟢 |
@@ -142,6 +147,7 @@
 | 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。分页那两张要先把多余白边裁掉再缩，不然 16px 只剩一团色块。浏览器会快取图标，换完可能要重开分页或清快取才看得到。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是另外重画的 SVG，不会跟著这 5 个档变：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |
 | 数学公式排版程式（KaTeX）换新版 | `vendor/katex/` | 🟡 照 `vendor/katex/README.md` 换掉同名档案；只留 `.woff2` 字型。字型档有增减的话，`sw.js` 的 `KATEX_FONTS` 也要跟着改（离线下载用） |
+| 题目档下载 PDF 的程式（html2canvas、jsPDF）换新版 | `vendor/pdf/` | 🟢 照 `vendor/pdf/README.md` 换掉同名档案、改里面写的版本号；档名不变的话 `js/archive.js` 的 `PDF_LIBS` 不用动 |
 | 小精灵的姿势图 | `source/sprite/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
 | 申诉处理结果 | 网站 `/dev` →「申诉处理」 | 不必手改 `data/resolved_issues.json` |
 

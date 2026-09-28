@@ -214,8 +214,30 @@ const MATH_SPAN = /\$[^$]*\$/g;
 const CONTROL_CHAR = /[\x08\x0c\t\r]/;
 const RAW_LATEX = /\\[A-Za-z]+/;
 const SELF_TALK = /等等|哎呀|重新(计算|分析|审题|核对|核算|检查)|让我们?(重新|检查|核对|修正)|修正选项|与选项不符|若题目改为|重写(此|这)题|慢，检查/;
+// 该写成上下标却写成一般数字的（H2O、Fe3+、v0、m/s2）：同 qa.py 的 PLAIN_SCRIPTS，第 2 组是要标出来的字
+const ELEM = '(?:[A-Z][a-z]?[0-9]*|\\((?:[A-Z][a-z]?[0-9]*)+\\)[0-9]*)';
+const PLAIN_SCRIPTS = [
+  new RegExp(`((?:^|[^A-Za-z0-9])[0-9]*)(${ELEM}*(?:[A-Z][a-z]?[0-9]+|\\((?:[A-Z][a-z]?[0-9]*)+\\)[0-9]+)[+-]?${ELEM}*)(?![A-Za-z0-9])`, 'g'),
+  /(^|[^A-Za-z0-9.])([A-Za-z][0-9])(?![A-Za-z0-9.])/g,
+  /(^|[^A-Za-z])((?:[a-z]+\/)?(?:m|cm|mm|km|dm|s)[23])(?![A-Za-z0-9])/g,
+  new RegExp(`(^|[^A-Za-z0-9])(${ELEM}+[+-])(?![A-Za-z0-9+-])`, 'g'),
+  /()([_^]\([^)]*\))/g,
+];
+function plainScripts(text) {
+  const found = [];
+  PLAIN_SCRIPTS.forEach(rx => { for (const m of text.matchAll(rx)) { const s = m.index + m[1].length; found.push([s, s + m[2].length, m[2]]); } });
+  found.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+  const out = [];
+  let reach = -1;
+  found.forEach(([start, end, token]) => {   // 被前面较长的包住的（m/s2 里的 s2）不另外列
+    if (end <= reach) return;
+    reach = Math.max(reach, end);
+    if (!out.includes(token)) out.push(token);
+  });
+  return out;
+}
 
-function textLint(item) {
+function textLint(item, subject = item.subject) {
   const out = [];
   const stem = String(item.q || item.question || '');
   const pieces = [['题干', stem], ...(item.options || []).map((o, i) => [`选项${'ABCD'[i]}`, o]), ['解析', item.explanation]];
@@ -231,6 +253,8 @@ function textLint(item) {
     if ((text.match(/\$/g) || []).length % 2) out.push(`${label}的公式 $ 没有成对，显示会乱掉`);
     else if (latex) out.push(`${label}有写在公式外面的 LaTeX 指令「${latex[0]}」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式`);
     if ((text.match(MATH_SPAN) || []).some(span => /[<>]/.test(span))) out.push(`${label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt`);
+    const plain = subject !== 'math' ? plainScripts(prose) : [];
+    if (plain.length) out.push(`${label}有没写成上下标的「${plain.slice(0, 3).join('」「')}」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）`);
   });
   const talk = pieces.map(([label, raw]) => [label, String(raw || '').match(SELF_TALK)]).find(([, m]) => m);
   if (talk) out.push(`⚠️ ${talk[0]}里有 AI 自言自语「${talk[1][0]}」：这种题多半算错或中途改过题，答案、选项、解析都要核对`);
@@ -258,7 +282,7 @@ function inspectBanks() {
           issues.push({ ...at, level: 'serious', label: '题干提到图，但没有配图' });
         }
         if (!String(item.explanation || '').trim()) issues.push({ ...at, level: 'warning', label: '缺少解析' });
-        textLint(item).forEach(label => issues.push({ ...at, level: 'serious', label }));
+        textLint(item, subject).forEach(label => issues.push({ ...at, level: 'serious', label }));
         const key = String(item.q || '').replace(/\s+/g, '');
         if (key) {
           if (seen.has(key)) issues.push({ ...at, level: 'warning', label: `与 ${seen.get(key)} 重复` });
@@ -273,7 +297,7 @@ function inspectBanks() {
         if (FIGURE_WORDS.test(item.question || '') && !item.image && !item.figure) {
           issues.push({ ...at, level: 'serious', label: '题干提到图，但没有配图' });
         }
-        textLint(item).forEach(label => issues.push({ ...at, level: 'serious', label }));
+        textLint(item, subject).forEach(label => issues.push({ ...at, level: 'serious', label }));
       });
     });
   });

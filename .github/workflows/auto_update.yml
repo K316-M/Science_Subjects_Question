@@ -5,6 +5,7 @@ on:
     # 每周一上午 8:00 (UTC 0:00) 自动巡检
     - cron: '0 0 * * 1'
   push:
+    branches: [main]                    # 只巡上线的题库；PR 分支上跑会把 main 接进分支再推（必失败），还会取消 main 正在跑的巡检
     paths:
       - 'papers/*_question_bank.json'   # 只有正式题库变了才巡检；待审区的进出不用
   workflow_dispatch: # 支持手动点按测试

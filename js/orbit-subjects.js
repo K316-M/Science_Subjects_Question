@@ -155,9 +155,9 @@
     return n;
   }
 
+  // 回到首页就重抓一次：学生没重新整理，也看得到刚采纳的题（抓不到时保留上次的数字）
   async function loadTotals() {
     await Promise.all(SUBJECTS.map(async (s) => {
-      s.total = 0;
       if (!s.enabled) return;
       try {
         const res = await fetch(`/papers/${s.key}_question_bank.json`);
@@ -329,7 +329,7 @@
   const view = document.getElementById('viewSubjects');
   if (view && window.MutationObserver) {
     new MutationObserver(() => {
-      if (view.classList.contains('active')) { deselect(); refresh(); }
+      if (view.classList.contains('active')) { deselect(); refresh(); loadTotals(); }
     }).observe(view, { attributes: true, attributeFilter: ['class'] });
   }
 

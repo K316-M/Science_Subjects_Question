@@ -36,6 +36,30 @@ RAW_LATEX = re.compile(r"\\[A-Za-z]+")          # $ 外面的 \sqrt、\gamma：�
 # （答案错、题目改到一半、选项对不上），而「答案有疑」反而多半是误报
 SELF_TALK = re.compile(r"等等|哎呀|重新(计算|分析|审题|核对|核算|检查)|让我们?(重新|检查|核对|修正)|"
                        r"修正选项|与选项不符|若题目改为|重写(此|这)题|慢，检查")
+# 该写成上下标却写成一般数字的（学生站就显示 H2O、Fe3+、v0、m/s2）。数学用 LaTeX，不查；$…$ 里面也不查。
+# 不用 (?<!…)：dev/dev.js 有一份一样的，旧版 iPhone Safari 不认。第 2 组是要标出来的字
+_ELEM = r"(?:[A-Z][a-z]?[0-9]*|\((?:[A-Z][a-z]?[0-9]*)+\)[0-9]*)"
+PLAIN_SCRIPTS = [
+    re.compile(r"((?:^|[^A-Za-z0-9])[0-9]*)(" + _ELEM + r"*(?:[A-Z][a-z]?[0-9]+|\((?:[A-Z][a-z]?[0-9]*)+\)[0-9]+)[+-]?" + _ELEM + r"*)(?![A-Za-z0-9])"),  # H2O、2H2O（系数不标）、Ca(OH)2、Fe3+
+    re.compile(r"(^|[^A-Za-z0-9.])([A-Za-z][0-9])(?![A-Za-z0-9.])"),                                          # v0、m1、T2、F1
+    re.compile(r"(^|[^A-Za-z])((?:[a-z]+/)?(?:m|cm|mm|km|dm|s)[23])(?![A-Za-z0-9])"),                          # m/s2、cm3
+    re.compile(r"(^|[^A-Za-z0-9])(" + _ELEM + r"+[+-])(?![A-Za-z0-9+-])"),                                    # NAD+、OH-
+    re.compile(r"()([_^]\([^)]*\))"),                                                                         # 录题留下的 _(…)、^(…)
+]
+
+
+def plain_scripts(text):
+    """依出现的位置排好；被前面较长的包住的（m/s2 里的 s2）不另外列，重复的也不列"""
+    found = sorted(((m.start(2), m.end(2), m.group(2)) for rx in PLAIN_SCRIPTS for m in rx.finditer(text)),
+                   key=lambda f: (f[0], -f[1]))
+    out, reach = [], -1
+    for start, end, token in found:
+        if end <= reach:
+            continue
+        reach = max(reach, end)
+        if token not in out:
+            out.append(token)
+    return out
 
 
 # ---------- 数学公式（LaTeX） ----------
@@ -66,7 +90,10 @@ MATH_RULES = r"""
 # 生物、化学、物理：公式少，简单的直接打符号，复杂的才用 $…$ 的 LaTeX（网站一样排得出来）
 FORMULA_RULES = r"""
 【公式与符号写法】
-- 简单的直接打符号：H₂O、SO₄²⁻、Fe³⁺、m/s²、6.02×10²³、λ、Δ、Ω、μ、→、⇌、≤、≥、≠、√2。
+- 化学式、离子一律用真正的下标、上标字：H₂O、Ca(OH)₂、C₆H₁₂O₆、SO₄²⁻、Fe³⁺、NH₄⁺、NAD⁺；不可以写成 H2O、SO42-、Fe3+、NAD+。
+- 物理量代号的下标也一样：v₀、v₁、m₁、m₂、F₁、R₁、T₂、Eₖ、Eₚ；单位的次方与 10 的次方用上标：m/s²、cm³、10⁻³、6.02×10²³。
+- 下标是中文或好几个字母的（F合、R总、v最大），写成 $F_{\text{合}}$、$R_{\text{总}}$、$v_{\max}$。
+- 其他简单的直接打符号：λ、Δ、Ω、μ、→、⇌、≤、≥、≠、√2。
 - 分数、根号里有式子这类复杂的公式才写 LaTeX，前后用 $ 包起来，例如 $\frac{1}{2}mv^2$、$\sqrt{\frac{2h}{g}}$；中文字写在 $ 外面。
 - $ 外面不可以出现 \sqrt、\frac、\gamma 这类反斜线指令（网页会原样显示成程式码）。
 - JSON 字串里的反斜线一律写两次：写 "\\frac{1}{2}"，不要写 "\frac{1}{2}"。
@@ -125,6 +152,10 @@ def text_problems(record):
                        "请改成符号（√、γ），或前后加 $ 放进公式")
         if any(c in span for span in MATH_SPAN.findall(text) for c in "<>"):
             out.append(f"{label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt")
+        plain = plain_scripts(prose) if record.get("subject") != "math" else []
+        if plain:
+            out.append(f"{label}有没写成上下标的「{'」「'.join(plain[:3])}」：化学式、物理量的数字要下标（H₂O、v₀），"
+                       "离子电荷、单位次方要上标（Fe³⁺、m/s²）")
     for label, text in pieces:
         m = SELF_TALK.search(str(text))
         if m:

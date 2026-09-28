@@ -358,9 +358,10 @@
     if (code.length !== CODE_LEN) return { linked: false, message: '这个同步链结不完整，请重新复制一次。' };
     const cur = loadState().code;
     if (cur === code) return { linked: false, already: true };
+    const mine = '\n只接你自己装置的链结：别人给的链结，两个人的进度、笔记会合在一起，分不回来。';
     const ask = cur
-      ? `这台装置已经连著另一串同步码（${pretty(cur)}）。要改接这个链结的同步码吗？\n两边的进度会合并在一起；原本那串会记在同步面板里，之後可以切回去。`
-      : '要把这台装置接上这个同步链结吗？两边的做题进度、错题本和笔记会合并在一起。';
+      ? `这台装置已经连著另一串同步码（${pretty(cur)}）。要改接这个链结的同步码吗？\n两边的进度会合并在一起；原本那串会记在同步面板里，之後可以切回去。${mine}`
+      : `要把这台装置接上这个同步链结吗？两边的做题进度、错题本和笔记会合并在一起。${mine}`;
     if (!confirm(ask)) return { linked: false };
     return { linked: connect(code).ok };
   }
