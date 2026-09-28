@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "chemistry_gen_181ac33b",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：水和氢",
-      "q": "关于实验室制取氢气的实验操作与原理，下列叙述何者正确？",
-      "options": [
-        "A. 为了提高反应速率，应使用浓硫酸代替稀硫酸与锌粒反应",
-        "B. 收集氢气时，由于其密度比空气大，应采用向上排空气法",
-        "C. 在点燃氢气或加热氢气还原氧化铜之前，必须先检验氢气的纯度",
-        "D. 反应后的残留液经过滤、蒸发、结晶后，可得到蓝色的五水合硫酸铜晶体"
-      ],
-      "answer": 2,
-      "explanation": "考点为氢气的实验室制法与安全。A项中浓硫酸具有强氧化性，与锌反应会产生二氧化硫而非氢气；B项氢气密度比空气小，应用向下排空气法或排水法收集；C项是实验安全的关键，氢气与空气混合达到爆炸极限时，点燃会发生爆炸，故正确；D项锌与稀硫酸反应生成硫酸锌，其溶液和晶体均为无色，蓝色是铜盐的特征。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T12:46:17.201317+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "氢气与空气或氧气混合加热或点燃易发生爆炸，故操作前必须检验纯度。"
-      }
-    },
-    {
       "id": "chemistry_gen_921085ae",
       "subject": "chemistry",
       "type": "mcq",
