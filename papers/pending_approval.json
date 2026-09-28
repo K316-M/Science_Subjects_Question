@@ -2252,7 +2252,686 @@
         "ai_answer": 0,
         "reason": "解特殊三角形（含30度、60度内角），由正弦定理求得对边长度为 4\\sqrt{3} 海里。"
       }
+    },
+    {
+      "id": "chemistry_gen_5edda0d1",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap5",
+      "chapter_title": "第五章：元素周期表",
+      "q": "关于第二周期元素（Li 至 F）性质的周期性递变规律，下列叙述何者正确？",
+      "options": [
+        "A. 原子半径随原子序数的增加而增大",
+        "B. 第一电离能（I₁）随原子序数的增加呈严格单调递增",
+        "C. 元素的电负性随原子序数的增加而增大",
+        "D. 最高价氧化物对应水化物的碱性随原子序数的增加而增强"
+      ],
+      "answer": 2,
+      "explanation": "考点：第二周期元素性质的周期性递变规律（电负性、第一电离能、原子半径与酸碱性）。\n\n- C 选项：同一周期从左到右，元素的核电荷数增加，吸引电子的能力增强，元素的电负性随原子序数的增加而增大（Li 为 1.0，F 为 4.0），故 C 正确。\n- A 选项：同一周期从左到右，电子层数相同，核电荷数增加导致核对核外电子的吸引力增强，原子半径随原子序数增加而逐渐减小，故 A 错误。\n- B 选项：同一周期元素的第一电离能总体呈递增趋势，但由于原子轨域的半充满或全充满稳态而存在反常现象。例如 Be（2s² 全充满）的第一电离能大于 B（2s² 2p¹），N（2p³ 半充满）的第一电离能大于 O（2p⁴），因此不是严格单调递增，故 B 错误。\n- D 选项：同一周期从左到右金属性减弱、非金属性增强，最高价氧化物对应水化物的碱性减弱、酸性增强（如 LiOH 呈强碱性，高氯酸/硝酸呈强酸性），故 D 错误。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:09:38.083462+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "同周期元素从左至右，电负性随原子序数增加而增大。"
+      }
+    },
+    {
+      "id": "chemistry_gen_71b10cf7",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap5",
+      "chapter_title": "第五章：元素周期表",
+      "q": "某主族元素 X 的逐级电离能数据如下（单位：kJ·mol⁻¹）：I₁ = 578，I₂ = 1817，I₃ = 2745，I₄ = 11578，I₅ = 14842。根据此数据推断，下列关于元素 X 的说法何者正确？",
+      "options": [
+        "A. 元素 X 位于元素周期表中的第 IVA 族（第 14 族）",
+        "B. 元素 X 在化合物中呈现的最高正化合价为 +3",
+        "C. 元素 X 的基态原子价电子排布式为 ns² np²",
+        "D. 元素 X 属于元素周期表中的 s 区元素"
+      ],
+      "answer": 1,
+      "explanation": "考点：根据逐级电离能的数据突变推断元素的位置及化合价。\n\n- 数据分析：由逐级电离能可知，I₁ = 578、I₂ = 1817、I₃ = 2745 kJ·mol⁻¹，失去前 3 个电子所需能量相对较小；而从 I₃ 到 I₄ 出现剧烈突跃（I₄ = 11578 kJ·mol⁻¹，约为 I₃ 的 4.2 倍），说明剥离第 4 个电子时破坏了内层稳定的电子层结构。\n- 结论：元素 X 的基态原子最外层有 3 个价电子，属于主族元素，位于第 IIIA 族（第 13 族），最高正化合价为 +3，基态价电子排布式为 ns² np¹，位于 p 区。\n- 选项判断：A 错误（应为 IIIA 族）；B 正确；C 错误（应为 ns² np¹）；D 错误（属于 p 区，如铝元素）。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
+        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 A（电离能在第4级发生突跃（I₄ > I₃），说明最外层有3个电子，位于第IIIA族（第13族）。），请核对"
+      ],
+      "generated_at": "2026-09-28T10:09:38.084890+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "电离能在第4级发生突跃（I₄ > I₃），说明最外层有3个电子，位于第IIIA族（第13族）。"
+      }
+    },
+    {
+      "id": "chemistry_gen_bcd57528",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap5",
+      "chapter_title": "第五章：元素周期表",
+      "q": "核外电子排布决定了元素在周期表中的位置与分区。下列关于元素周期表与原子结构关系的叙述，何者错误？",
+      "options": [
+        "A. 基态原子价电子排布式为 3d⁵ 4s¹ 的元素，位于周期表的 d 区",
+        "B. 最外层电子排布式为 2s² 2p⁶ 的基态原子，位于周期表的 p 区",
+        "C. 基态原子核外电子排布式为 [Ar] 3d¹⁰ 4s² 4p¹ 的元素，位于第 4 周期第 IIIA 族",
+        "D. 第四周期的过渡金属原子在形成 +2 价阳离子时，优先失去的是 3d 轨域上的电子"
+      ],
+      "answer": 3,
+      "explanation": "考点：核外电子排布式、元素周期表的分区与过渡金属阳离子的形成规律。\n\n- D 选项：第四周期的过渡金属元素（例如铁 Fe：[Ar] 3d⁶ 4s²）在失电子形成 +2 价阳离子时，虽然填充电子时按能量高低充填，但失去电子时最外层（n=4 的 4s 轨域）离核较远，受核束缚力弱，因此会优先失去最外层的 4s 轨域电子，形成 [Ar] 3d⁶（如 Fe²⁺），而不是先失去 (n-1)d 轨域电子，故 D 叙述错误。\n- A 选项：3d⁵ 4s¹ 为铬（Cr）原子，其最后充填的轨域为 d 轨域，属于 d 区元素，故 A 正确。\n- B 选项：最外层电子排布为 2s² 2p⁶（氖 Ne），价电子充实 p 轨域，位于 p 区，故 B 正确。\n- C 选项：[Ar] 3d¹⁰ 4s² 4p¹ 为镓（Ga）原子，最高主量子数为 4（第 4 周期），最外层电子数为 2+1=3（第 IIIA 族），故 C 正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:09:38.085949+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "第四周期过渡金属在形成 +2 价阳离子时，优先失去的是 4s 轨域上的电子而非 3d 轨域。"
+      }
+    },
+    {
+      "id": "chemistry_gen_228f5cb0",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap5",
+      "chapter_title": "第五章：元素周期表",
+      "q": "微粒半径的大小取决于核电荷数、电子层数以及电子数。下列各组微粒半径的比较中，何者正确？",
+      "options": [
+        "A. 原子半径：F > O > N",
+        "B. 离子半径：Na⁺ > Mg²⁺ > Al³⁺",
+        "C. 同种元素的微粒半径：Fe³⁺ > Fe²⁺ > Fe",
+        "D. 微粒半径：Cl > Cl⁻"
+      ],
+      "answer": 1,
+      "explanation": "考点：原子半径与离子半径大小的比较规则（等电子体、同周期趋势、同种元素不同价态）。\n\n- B 选项：Na⁺、Mg²⁺、Al³⁺ 均含有 10 个电子（核外电子层结构相同，属于等电子体）。对于等电子体，核电荷数越大，对核外电子的吸引力越强，离子半径越小。核电荷数：Na (11) < Mg (12) < Al (13)，因此离子半径：Na⁺ > Mg²⁺ > Al³⁺，故 B 正确。\n- A 选项：第二周期主族元素从左到右，原子半径随核电荷数递增而逐渐减小，因此原子半径：N > O > F，故 A 错误。\n- C 选项：同种元素不同价态的微粒，失去的电子越多，核对剩余电子的引力相对增强，半径越小，因此半径：Fe > Fe²⁺ > Fe³⁺，故 C 错误。\n- D 选项：简单阴离子比其对应的中性原子多出电子，电子间的斥力增大导致电子云膨胀，因此半径：Cl⁻ > Cl，故 D 错误。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:09:38.086955+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "核外电子排布相同的微粒，核电荷数越大半径越小，故 Na⁺ > Mg²⁺ > Al³⁺。"
+      }
+    },
+    {
+      "id": "chemistry_gen_0be87fb2",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第六章：化学键与分子间作用力",
+      "q": "下列有关 NH₄Cl、H₃O⁺ 和 BF₄⁻ 三种微粒的叙述，哪项是正确的？",
+      "options": [
+        "A. 它们内部都仅含有极性共价键",
+        "B. 它们结构中均含有配位键",
+        "C. NH₄Cl 晶体中仅存在离子键与非极性共价键",
+        "D. H₃O⁺ 分子的空间构型为平面三角形"
+      ],
+      "answer": 1,
+      "explanation": "【考点】配位键的形成与晶体/分子结构。\n【解析】\n- NH₄⁺ 中由 N 原子的孤电子对提供给 H⁺ 形成配位键；H₃O⁺ 中由 O 原子的孤电子对提供给 H⁺ 形成配位键；BF₄⁻ 中由 F⁻ 离子（或 F 原子）提供孤电子对与缺电子的 B 原子形成配位键。因此三者均含有配位键，B 选项正确。\n- A 选项错误：NH₄Cl 是离子化合物，含有离子键，不仅有共价键。\n- C 选项错误：NH₄⁺ 中的 N-H 键为极性共价键，并非非极性共价键。\n- D 选项错误：H₃O⁺ 的中心原子 O 上有 3 个 σ 键和 1 对孤电子对，价层电子对数为 4，其空间构型为三角锥形（与 NH₃ 类似），而非平面三角形。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:10:00.888820+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "NH₄⁺、H₃O⁺ 和 BF₄⁻ 中均存在由配位键形成的共价键。"
+      }
+    },
+    {
+      "id": "chemistry_gen_75637bf7",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第六章：化学键与分子间作用力",
+      "q": "下列各组分子中，分子内的化学键均属于极性共价键，但分子本身均属于非极性分子的是哪一组？",
+      "options": [
+        "A. CO₂、BF₃、CCl₄",
+        "B. H₂O、NH₃、CH₄",
+        "C. SO₂、PCl₃、SF₆",
+        "D. CH₂Cl₂、BeCl₂、PCl₅"
+      ],
+      "answer": 0,
+      "explanation": "【考点】键的极性与分子极性的判断（分子空间构型与偶极矩）。\n【解析】\n- A 选项：CO₂ 为直线形、BF₃ 为平面三角形、CCl₄ 为正四面体形。三者分子内的化学键都是由不同非金属元素形成的极性共价键，但由于分子空间构型高度对称，正负电荷中心重合（偶极矩为 0），因此均属于非极性分子，符合题意。\n- B 选项：H₂O（折线形/V形）和 NH₃（三角锥形）均为极性分子；只有 CH₄ 是非极性分子。\n- C 选项：SO₂（V形）和 PCl₃（三角锥形）结构不对称，均为极性分子；仅 SF₆（正八面体形）是非极性分子。\n- D 选项：CH₂Cl₂ 中 C-H 键和 C-Cl 键的极性不同且不互相抵消，属于极性分子。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:10:00.889883+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "CO₂、BF₃、CCl₄ 中均含有极性共价键，但分子空间构型对称，属于非极性分子。"
+      }
+    },
+    {
+      "id": "chemistry_gen_2a023cbb",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第六章：化学键与分子间作用力",
+      "q": "关于 VA 族元素氢化物（NH₃、PH₃、AsH₃、SbH₃）沸点高低与分子间作用力的分析，下列哪项是正确的？",
+      "options": [
+        "A. 沸点随相对分子质量增加而单调升高",
+        "B. NH₃ 的沸点反常偏高是因为其分子间范德华力最强",
+        "C. PH₃ 的沸点低于 AsH₃ 是因为两者均靠范德华力维系，而 PH₃ 的相对分子质量较小",
+        "D. SbH₃ 的沸点高于 NH₃ 是因为 SbH₃ 分子间形成了比 NH₃ 更强的氢键"
+      ],
+      "answer": 2,
+      "explanation": "【考点】分子间作用力（范德华力与氢键）对物质物理性质（沸点）的影响。\n【解析】\n- VA 族氢化物的沸点顺序为：PH₃ < AsH₃ < NH₃ < SbH₃。\n- C 选项正确：PH₃ 与 AsH₃ 分子间均不存在氢键，其沸点主要由范德华力（分散力）决定；PH₃ 的相对分子质量比 AsH₃ 小，电子云重叠程度低，范德华力较弱，故沸点较 AsH₃ 低。\n- A 选项错误：NH₃ 由于分子间存在氢键，沸点反常高于 PH₃ 和 AsH₃，因此沸点随相对分子质量并非单调升高。\n- B 选项错误：NH₃ 沸点偏高是因为分子间存在“氢键”，其范德华力在同族氢化物中反而是最小的。\n- D 选项错误：Sb 中原子的电负性不够大且原子半径较大，SbH₃ 分子间不能形成氢键；SbH₃ 沸点高是因为其相对分子质量大、电子数多，导致范德华力极大。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:10:00.891250+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "PH₃ 与 AsH₃ 靠范德华力维系，相对分子质量越大沸点越高，故 PH₃ 低于 AsH₃。"
+      }
+    },
+    {
+      "id": "chemistry_gen_8e60957a",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap6",
+      "chapter_title": "第六章：化学键与分子间作用力",
+      "q": "某种固态物质 X 具有以下物理特征：\nⅠ. 熔点极高（超过 1500 °C）；\nⅡ. 硬度很大；\nⅢ. 在固态和熔融状态下均不导电。\n根据上述特征，物质 X 最可能属于下列哪种晶体类型？",
+      "options": [
+        "A. 离子晶体",
+        "B. 原子晶体（共价晶体）",
+        "C. 分子晶体",
+        "D. 金属晶体"
+      ],
+      "answer": 1,
+      "explanation": "【考点】四大晶体类型（离子晶体、原子晶体、分子晶体、金属晶体）的物理性质差异。\n【解析】\n- 原子晶体（共价晶体，如金刚石、石英 SiO₂）由共价键结合形成三维网状结构，具有极高的熔点、很高的硬度，且因为没有自由移动的电子或离子，在固态和熔融状态下均不导电。符合物质 X 的所有特征，故 B 正确。\n- A 选项（离子晶体）：虽然熔点较高且固态不导电，但在“熔融状态下”可以电离出自由移动的离子，因而能够导电，不符。\n- C 选项（分子晶体）：分子间靠范德华力或氢键结合，熔点通常较低、硬度较小，不符。\n- D 选项（金属晶体）：含有自由电子，在固态和熔融状态下均能良好导电，不符。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:10:00.892781+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "熔点极高、硬度很大且不导电的特征符合原子晶体（如金刚石或二氧化硅）。"
+      }
+    },
+    {
+      "id": "chemistry_gen_8826064f",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap7",
+      "chapter_title": "第七章：氧化还原反应",
+      "q": "在酸性高锰酸钾溶液中加入草酸（H₂C₂O₄）溶液，反应方程式为：\n2MnO₄⁻ + 5H₂C₂O₄ + 6H⁺ → 2Mn²⁺ + 10CO₂ + 8H₂O\n下列有关该反应的说法，正确的是：",
+      "options": [
+        "A. H₂C₂O₄ 是氧化剂，碳元素的氧化数由 +3 升高至 +4",
+        "B. 每生成 1 mol CO₂，反应中转移 2 mol 电子",
+        "C. MnO₄⁻ 在反应中被还原，作还原剂",
+        "D. 若有 0.1 mol MnO₄⁻ 完全反应，则转移的电子物质的量为 0.5 mol"
+      ],
+      "answer": 3,
+      "explanation": "考点：氧化还原反应中氧化剂与还原剂的判断、氧化数变化及电子转移量的计算。\n解析：\n- A项错误：H₂C₂O₄ 中碳元素氧化数为 +3，反应后变为 CO₂ 中的 +4，氧化数升高，发生氧化反应，因此 H₂C₂O₄ 作还原剂，而非氧化剂。\n- B项错误：生成 10 mol CO₂ 转移 10 mol 电子，因此每生成 1 mol CO₂，反应中转移 1 mol 电子。\n- C项错误：MnO₄⁻ 中锰由 +7 降至 +2，氧化数降低被还原，作氧化剂，而非还原剂。\n- D项正确：1 mol MnO₄⁻ 转化为 Mn²⁺ 需得到 5 mol 电子。当有 0.1 mol MnO₄⁻ 完全反应时，转移电子数为 0.1 mol × 5 = 0.5 mol。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:10:49.621843+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "每消耗 1 mol MnO₄⁻ 转移 5 mol 电子，故 0.1 mol MnO₄⁻ 反应转移 0.5 mol 电子。"
+      }
+    },
+    {
+      "id": "chemistry_gen_e5c8ec7f",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap7",
+      "chapter_title": "第七章：氧化还原反应",
+      "q": "已知在酸性溶液中，IO₃⁻ 与 I⁻ 发生反应生成 I₂，其配平后的离子方程式为：\na IO₃⁻ + b I⁻ + c H⁺ → d I₂ + e H₂O\n下列关于该反应系数及相关概念的叙述，正确的是：",
+      "options": [
+        "A. 化学计量数比例 a : b = 1 : 5",
+        "B. IO₃⁻ 被氧化，作为还原剂",
+        "C. 反应中 IO₃⁻ 与 I⁻ 转移的电子数比例为 5 : 1",
+        "D. 若生成 3 mol I₂，反应中共转移 10 mol 电子"
+      ],
+      "answer": 0,
+      "explanation": "考点：氧化还原反应方程式的配平（归中反应）与相关电子转移计算。\n解析：\n配平离子方程式：IO₃⁻ 中 I 的氧化数为 +5，I⁻ 中 I 的氧化数为 -1，生成 I₂ (氧化数为 0)。1 个 IO₃⁻ 降低 5，5 个 I⁻ 共升高 5。配平得：1 IO₃⁻ + 5 I⁻ + 6 H⁺ → 3 I₂ + 3 H₂O。\n- A项正确：a = 1, b = 5，化学计量数比例 a : b = 1 : 5。\n- B项错误：IO₃⁻ 氧化数降低（+5 → 0），发生还原反应，被还原，作为氧化剂。\n- C项错误：还原剂（I⁻）失去的总电子数必然等于氧化剂（IO₃⁻）得到的总电子数，均转移 5 mol 电子，总得失电子数相等。\n- D项错误：生成 3 mol I₂ 时，反应转移的电子数为 5 mol，而非 10 mol。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
+        "⚠️ 答案有疑：出题时给的是 A，AI 复核选 D（IO₃⁻ + 5I⁻ + 6H⁺ → 3I₂ + 3H₂O，生成 3 mol I₂ 时转移 5 mol e⁻？此题根据配平，总共 5 mol I⁻ 失去 5 mol e⁻ 生成 2.5 mol I₂，若生3 mol I₂则需转移 6 mol），请核对"
+      ],
+      "generated_at": "2026-09-28T10:10:49.623958+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "IO₃⁻ + 5I⁻ + 6H⁺ → 3I₂ + 3H₂O，生成 3 mol I₂ 时转移 5 mol e⁻？此题根据配平，总共 5 mol I⁻ 失去 5 mol e⁻ 生成 2.5 mol I₂，若生3 mol I₂则需转移 6 mol"
+      }
+    },
+    {
+      "id": "chemistry_gen_059d84dd",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap7",
+      "chapter_title": "第七章：氧化还原反应",
+      "q": "下列关于氧化还原反应的叙述，何者正确？\nI. 元素的氧化数升高，表示该元素发生氧化反应\nII. 在同一种反应物中，不可能同时存在被氧化和被还原的元素\nIII. 强氧化剂与强还原剂反应后，生成的产物通常是弱还原剂和弱氧化剂\nIV. 歧化反应（Disproportionation）是指同一种元素在反应中既被氧化也被还原",
+      "options": [
+        "A. 仅 I、III 和 IV",
+        "B. 仅 I 和 IV",
+        "C. 仅 II 和 III",
+        "D. I、II、III 和 IV"
+      ],
+      "answer": 0,
+      "explanation": "考点：氧化还原反应的基本概念（氧化数变化、分子内氧化还原、歧化反应与氧化还原强弱规律）。\n解析：\n- I正确：氧化数升高代表失去电子，发生氧化反应。\n- II错误：在同一个反应物分子中，不同元素可以分别发生氧化和还原（例如 KClO₃ 分解生成 KCl 和 O₂，Cl 氧化数降低被还原，O 氧化数升高被氧化，属于分子内氧化还原反应）。\n- III正确：依据“强强生弱弱”规律，强氧化剂与强还原剂反应，生成的氧化产物和还原产物的性质相对较弱。\n- IV正确：歧化反应的定义即为同一种元素的化合价（氧化数）在同一反应中既升高又降低（既被氧化又被还原）。\n因此，正确的叙述为 I、III 和 IV，选项 A 正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:10:49.626860+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "Ⅱ错误，同种反应物中可以发生归中反应或歧化反应，即同种元素既被氧化又被还原。"
+      }
+    },
+    {
+      "id": "chemistry_gen_638b6d73",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap7",
+      "chapter_title": "第七章：氧化还原反应",
+      "q": "某种金属阳离子 Mⁿ⁺ 具有还原性。现用 0.02 mol/L 的酸性 KMnO₄ 溶液滴定 25.00 mL 0.05 mol/L 的 Mⁿ⁺ 溶液，当完全反应时，消耗 KMnO₄ 溶液 25.00 mL。已知反应后 Mn 被还原为 Mn²⁺，且 Mⁿ⁺ 被氧化为 Mⁿ⁺ˣ 离子。则 x 的值为：",
+      "options": [
+        "A. 1",
+        "B. 2",
+        "C. 3",
+        "D. 4"
+      ],
+      "answer": 1,
+      "explanation": "考点：基于电子守恒原理的氧化还原滴定与氧化数变化计算。\n解析：\n1. 计算 KMnO₄ 物质的量：n(KMnO₄) = 0.02 mol/L × 0.02500 L = 0.0005 mol。\n2. 计算 Mn 得到的电子总数：Mn 从 +7 降至 +2，每个 Mn 得到 5 个电子。得到的电子总物质的量 = 0.0005 mol × 5 = 0.0025 mol。\n3. 计算 Mⁿ⁺ 物质的量：n(Mⁿ⁺) = 0.05 mol/L × 0.02500 L = 0.00125 mol。\n4. 设每个 Mⁿ⁺ 失去 x 个电子生成 Mⁿ⁺ˣ。根据电子守恒（失去电子数等于得到电子数）：n(Mⁿ⁺) × x = 得到电子总数，即 0.00125 mol × x = 0.0025 mol，解得 x = 2。\n常见迷思：学生容易误将 Mn 从 +7 变为 +2 的电子转移数记为 7 或 1，或者忘记将浓度和体积相乘以求出物质的量。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
+        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 C（根据得失电子守恒：0.02 L × 0.02 mol/L × 5 = 0.025 L × 0.05 mol/L × x，计算得 x = 3。），请核对"
+      ],
+      "generated_at": "2026-09-28T10:10:49.629677+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "根据得失电子守恒：0.02 L × 0.02 mol/L × 5 = 0.025 L × 0.05 mol/L × x，计算得 x = 3。"
+      }
+    },
+    {
+      "id": "chemistry_gen_778b1e86",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap8",
+      "chapter_title": "第八章：钠和钾",
+      "q": "将一小块金属钠（Na）投入盛有硫酸铜（CuSO₄）水溶液的烧杯中，实验过程中观察到的现象与结论，下列叙述何者正确？",
+      "options": [
+        "A. 钠置换出红棕色的铜单质，并沉淀于烧杯底部",
+        "B. 钠浮于液面熔成闪亮小球并游动，溶液中产生蓝色沉淀与无色气体",
+        "C. 钠沉入溶液底部发生剧烈反应，生成黑色氧化铜沉淀",
+        "D. 反应过程中只产生氢气，溶液的蓝色完全保持不变"
+      ],
+      "answer": 1,
+      "explanation": "考点：钠与水溶液反应的实质及现象。\n极活泼的碱金属钠投入水溶液中时，由于钠与水反应极快，优先与水反应：2Na + 2H₂O → 2NaOH + H₂↑。反应放热使钠熔化成闪亮小球浮于液面游动并发出嘶嘶声；生成的 NaOH 随即与溶液中的 CuSO₄ 发生复分解反应：2NaOH + CuSO₄ → Cu(OH)₂↓ + Na₂SO₄，生成蓝色的氢氧化铜沉淀。\n常见迷思：以为钠能直接从盐溶液中置换出较不活泼的金属（如 Cu），忽略了钠极易先与水反应的化学特性。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:12:37.858326+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "钠与硫酸铜溶液反应，钠先与水反应生成 NaOH 和 H₂，生成的 NaOH 与 Cu²⁺ 反应生成蓝色 Cu(OH)₂ 沉淀。"
+      }
+    },
+    {
+      "id": "chemistry_gen_830ffc77",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap8",
+      "chapter_title": "第八章：钠和钾",
+      "q": "关于碱金属元素钠（Na）与钾（K）的性质比较，下列哪些叙述是正确的？\nI. 钾的原子半径比钠大，因此钾的第一电离能比钠小\nII. 钠与钾皆能浮在水面上，且钾的密度比钠小\nIII. 钾与水反应比钠更剧烈，甚至会发生爆炸并伴随紫色火焰\nIV. 钾的熔点比钠高，因为钾的金属键较强",
+      "options": [
+        "A. 只有 I 和 III",
+        "B. 只有 I、II 和 III",
+        "C. 只有 II 和 IV",
+        "D. I、II、III 和 IV"
+      ],
+      "answer": 1,
+      "explanation": "考点：IA 族元素（钠、钾）的物理与化学性质递变规律。\n叙述 I 正确：钾比钠多一个电子层，原子半径增大，最外层电子受核吸引力较弱，第一电离能较小。\n叙述 II 正确：钠的密度约为 0.97 g/cm³，钾的密度约为 0.86 g/cm³，两者均小于水的密度（1.0 g/cm³）。钾因第 4 周期原子体积增加幅度显著，密度反而比钠小（为 IA 族密度递变中的特例）。\n叙述 III 正确：钾的金属性比钠强，与水反应更剧烈，产生的氢气伴随钾蒸气燃烧呈现紫色火焰。\n叙述 IV 错误：从 Na 到 K，原子半径增大，金属阳离子与自由电子间的金属键变弱，因此熔点降低（钠熔点约 97.8℃ > 钾熔点约 63.5℃）。\n综上所述，正确叙述为 I、II 和 III，故选 B。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
+        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 A（钾的密度比钠大（K会沉于水下某些有机液，但比水小？钾密度 0.86g/cm³ 比水小，但钠密度 0.97g/cm³，两者均浮于水，但 II 说钾密度比钠小错误，钾密度其实比钠大）。），请核对"
+      ],
+      "generated_at": "2026-09-28T10:12:37.861521+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "钾的密度比钠大（K会沉于水下某些有机液，但比水小？钾密度 0.86g/cm³ 比水小，但钠密度 0.97g/cm³，两者均浮于水，但 II 说钾密度比钠小错误，钾密度其实比钠大）。"
+      }
+    },
+    {
+      "id": "chemistry_gen_40e4ee29",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap8",
+      "chapter_title": "第八章：钠和钾",
+      "q": "实验室有两瓶无色溶液，分别为浓度同为 0.1 mol/L 的碳酸钠（Na₂CO₃）与碳酸氢钠（NaHCO₃）溶液。下列哪种试剂或方法**不能**用于鉴别这两瓶溶液？",
+      "options": [
+        "A. 分别滴加适量的氯化钙（CaCl₂）溶液",
+        "B. 用 pH 试纸分别测定两溶液的 pH 值",
+        "C. 分别滴加澄清石灰水 [Ca(OH)₂ 溶液]",
+        "D. 分别滴加同浓度的稀盐酸，观察产生气泡的快慢"
+      ],
+      "answer": 2,
+      "explanation": "考点：碳酸钠（Na₂CO₃）与碳酸氢钠（NaHCO₃）的性质差异与鉴别。\nA 可鉴别：0.1 mol/L 的 Na₂CO₃ 溶液与 CaCl₂ 反应立即产生白色 CaCO₃ 沉淀，而相同浓度的 NaHCO₃ 溶液滴加 CaCl₂ 不会产生沉淀。\nB 可鉴别：CO₃²⁻ 的水解程度大于 HCO₃⁻，同浓度的 Na₂CO₃ 碱性比 NaHCO₃ 强（pH 值更高）。\nC 不可鉴别：澄清石灰水中的 Ca²⁺ 与 OH⁻ 与两溶液均会反应生成白色 CaCO₃ 沉淀：\nNa₂CO₃ + Ca(OH)₂ → CaCO₃↓ + 2NaOH\nNaHCO₃ + Ca(OH)₂ → CaCO₃↓ + NaOH + H₂O，因此无法区分。\nD 可鉴别：NaHCO₃ 与稀盐酸反应直接产生 CO₂ 气体，反应速率明显比 Na₂CO₃ 更快。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
+        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 D（滴加同浓度稀盐酸时，两者产生气泡快慢肉眼难以明显区分瞬时差异，通常用 CaCl₂ 溶液鉴别（沉淀 vs 不沉淀）。），请核对"
+      ],
+      "generated_at": "2026-09-28T10:12:37.863624+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "滴加同浓度稀盐酸时，两者产生气泡快慢肉眼难以明显区分瞬时差异，通常用 CaCl₂ 溶液鉴别（沉淀 vs 不沉淀）。"
+      }
+    },
+    {
+      "id": "chemistry_gen_3493669f",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap8",
+      "chapter_title": "第八章：钠和钾",
+      "q": "进行钾盐的焰色试验（Flame Test）时，正确的操作步骤与观察现象为：",
+      "options": [
+        "A. 用稀硫酸洗净铂丝，在焰心灼烧至无色，再蘸取样品在外焰灼烧，直接观察呈紫色",
+        "B. 用稀盐酸洗净铂丝，在外焰灼烧至无色，再蘸取样品在外焰灼烧，透过蓝色钴玻璃观察呈紫色",
+        "C. 用浓硝酸洗净铂丝，在内焰灼烧至无色，再蘸取样品在焰心灼烧，透过红色滤光片观察呈黄色",
+        "D. 用蒸馏水洗净铂丝，在外焰灼烧至无色，再蘸取样品在外焰灼烧，直接观察呈黄色"
+      ],
+      "answer": 1,
+      "explanation": "考点：焰色试验的操作规范与钾离子的检验。\n1. 洗涤剂选择：洗涤铂丝（或镍铬丝）必须使用“稀盐酸”，因为金属氯化物在高温下易挥发，洗得最干净；若用硫酸或硝酸，残留物难挥发会干扰试验。\n2. 灼烧位置：应在外焰（无色或浅蓝色，温度最高）灼烧至无色。\n3. 现象观察：因样品中常微量掺杂钠元素（钠的黄色火焰极强会掩盖钾的浅紫色），检验钾元素时必须“透过蓝色钴玻璃”过滤掉钠的黄光，才能清晰观察到钾的紫色火焰。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:12:37.864914+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "钾盐焰色试验应用稀盐酸洗净铂丝，在外焰灼烧，透过蓝色钴玻璃观察紫色。"
+      }
+    },
+    {
+      "id": "chemistry_gen_9812ee17",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap9",
+      "chapter_title": "第九章：镁和钙",
+      "q": "下列关于镁（Mg）和钙（Ca）两种碱土金属单质及其性质的比较，何者正确？",
+      "options": [
+        "A. 钙的原子半径比镁大，其第一电离能比镁小，因而钙的金属性比镁强",
+        "B. 镁和钙均能与冷水剧烈反应并产生大量氢气",
+        "C. 镁在空气中点燃燃烧，仅与氧气反应生成氧化镁（MgO）",
+        "D. 镁和钙的熔点均低于同周期的碱金属（Na、K）"
+      ],
+      "answer": 0,
+      "explanation": "本题考查镁与钙的周期性递变规律及化学性质比较。\n\nA 项正确：钙与镁同属于第 IIA 族，钙位于第四周期，镁位于第三周期。钙的原子半径比镁大，最外层电子受原子核约束较小，第一电离能较小，更容易失去电子，因此钙的金属性比镁强。\n\nB 项错误：镁由于表面易形成致密的氧化膜且金属活动性较钙弱，与冷水反应极慢，加热时才能与水发生明显反应；而钙能与冷水进行平稳且明显的反应。\n\nC 项错误：镁性质活泼，在空气中燃烧时不仅能与 O₂ 反应生成 MgO，还能与 N₂ 反应生成 Mg₃N₂，以及与 CO₂ 反应生成 MgO 和 C。\n\nD 项错误：碱土金属（IIA 族）价电子数为 2，且阳离子半径比同周期的碱金属（IA 族）小，金属键较强，因此镁和钙的熔点均高于同周期的碱金属（Na、K）。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:13:22.841545+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "钙的原子半径比镁大，电离能小，金属性比镁强。"
+      }
+    },
+    {
+      "id": "chemistry_gen_bb8579c3",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap9",
+      "chapter_title": "第九章：镁和钙",
+      "q": "将 $0.1\\text{ mol}$ 氧化镁（MgO）和 $0.1\\text{ mol}$ 氧化钙（CaO）的固体混合物，完全溶解于 $500\\text{ mL}$、$1.0\\text{ mol/L}$ 的稀盐酸（HCl）中。若要将溶液中的 $\\text{Mg}^{2+}$ 恰好完全沉淀为 $\\text{Mg(OH)}_2$，至少需加入 $2.0\\text{ mol/L}$ 的氢氧化钠（NaOH）溶液多少 $\\text{mL}$？",
+      "options": [
+        "A. 100 mL",
+        "B. 150 mL",
+        "C. 200 mL",
+        "D. 250 mL"
+      ],
+      "answer": 1,
+      "explanation": "本题考查镁、钙化合物与酸碱反应的化学计量计算以及沉淀选择性。\n\n1. 求解初始盐酸的物质的量：\n$n(\\text{HCl}) = 0.500\\text{ L} \\times 1.0\\text{ mol/L} = 0.5\\text{ mol}$\n\n2. 计算酸碱中和与金属氧化物溶解消耗的 $\\text{H}^+$：\n$0.1\\text{ mol}$ MgO 溶解消耗 $0.2\\text{ mol H}^+$，生成 $0.1\\text{ mol Mg}^{2+}$；\n$0.1\\text{ mol}$ CaO 溶解消耗 $0.2\\text{ mol H}^+$，生成 $0.1\\text{ mol Ca}^{2+}$。\n反应后溶液中剩余未反应的 $\\text{H}^+$ 为 $0.5 - 0.2 - 0.2 = 0.1\\text{ mol}$。\n\n3. 计算沉淀 $\\text{Mg}^{2+}$ 所需的 $\\text{OH}^-$ 物质的量：\n要将溶液中的酸完全中和，需加入 $0.1\\text{ mol OH}^-$；\n由于 $K_{sp}[\\text{Mg(OH)}_2]$ 远小于 $K_{sp}[\\text{Ca(OH)}_2]$，加入 $\\text{NaOH}$ 时，$\\text{OH}^-$ 会优先与 $\\text{Mg}^{2+}$ 结合形成 $\\text{Mg(OH)}_2$ 沉淀。\n将 $0.1\\text{ mol Mg}^{2+}$ 恰好完全沉淀为 $\\text{Mg(OH)}_2$，需要 $\\text{OH}^-$ 的物质的量为 $2 \\times 0.1\\text{ mol} = 0.2\\text{ mol}$。\n\n4. 计算所需 $\\text{NaOH}$ 总量及体积：\n所需 $\\text{OH}^-$ 的总物质的量 $n(\\text{OH}^-) = 0.1\\text{ mol (中和酸)} + 0.2\\text{ mol (沉淀 Mg²⁺)} = 0.3\\text{ mol}$。\n所需 $2.0\\text{ mol/L NaOH}$ 溶液的体积 $V = \\frac{0.3\\text{ mol}}{2.0\\text{ mol/L}} = 0.15\\text{ L} = 150\\text{ mL}$。\n\n常见迷思：忽略了混合物溶于过量盐酸后残余酸需要被中和（误选 A，计 100 mL）；或误以为 $\\text{Ca}^{2+}$ 也会同时完全沉淀（误选 D，计 250 mL）。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
+        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 D（盐酸总物质的量为 0.5 L × 1.0 mol/L = 0.5 mol。MgO 和 CaO 共 0.2 mol，消耗 0.4 mol HCl，剩余 0.1 mol HCl 恰好被 NaOH 中和（消耗 0.1 mol NaOH），而 Mg），请核对"
+      ],
+      "generated_at": "2026-09-28T10:13:22.845952+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "盐酸总物质的量为 0.5 L × 1.0 mol/L = 0.5 mol。MgO 和 CaO 共 0.2 mol，消耗 0.4 mol HCl，剩余 0.1 mol HCl 恰好被 NaOH 中和（消耗 0.1 mol NaOH），而 Mg"
+      }
+    },
+    {
+      "id": "chemistry_gen_060a0381",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap9",
+      "chapter_title": "第九章：镁和钙",
+      "q": "关于第 IIA 族元素（碱土金属：Mg、Ca、Sr、Ba）及其化合物的性质递变规律，下列叙述何者正确？",
+      "options": [
+        "A. 随原子序数的增加，单质与水反应的剧烈程度逐渐减弱",
+        "B. 随原子序数的增加，氢氧化物的溶解度逐渐减小",
+        "C. 随原子序数的增加，硫酸盐的溶解度逐渐减小",
+        "D. 随原子序数的增加，元素的电负性和第一电离能逐渐增大"
+      ],
+      "answer": 2,
+      "explanation": "本题考查第 IIA 族元素（碱土金属）及其化合物的族递变规律。\n\nA 项错误：从上到下（随着原子序数增加），碱土金属失电子能力增强，金属性增强，因此单质与水反应剧烈程度逐渐增强（Mg 与热水反应缓慢，Ca 与冷水平稳反应，Ba 与冷水剧烈反应）。\n\nB 项错误：第 IIA 族氢氧化物的溶解度自上而下逐渐增大：$\\text{Mg(OH)}_2$（难溶）< $\\text{Ca(OH)}_2$（微溶）< $\\text{Sr(OH)}_2$（微溶）< $\\text{Ba(OH)}_2$（易溶）。\n\nC 项正确：第 IIA 族硫酸盐的溶解度自上而下逐渐减小：$\\text{MgSO}_4$（易溶）> $\\text{CaSO}_4$（微溶）> $\\text{SrSO}_4$（难溶）> $\\text{BaSO}_4$（极难溶）。\n\nD 项错误：随原子序数增加，原子半径增大，原子核对最外层电子吸引力减弱，电负性和第一电离能均逐渐减小。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:13:22.847904+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "碱土金属硫酸盐随原子序数增加，溶解度逐渐减小（BaSO₄ 最难溶）。"
+      }
+    },
+    {
+      "id": "chemistry_gen_01bb3c96",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap9",
+      "chapter_title": "第九章：镁和钙",
+      "q": "石膏在建筑、医疗和雕塑等领域有广泛应用。下列关于硫酸钙（CaSO₄）及其结晶水合物的叙述，何者错误？",
+      "options": [
+        "A. 天然生石膏的主要成分是二水合硫酸钙（CaSO₄·2H₂O）",
+        "B. 生石膏加热至约 150 °C 时失去部分结晶水，转化为熟石膏（2CaSO₄·H₂O）",
+        "C. 熟石膏与水混合成浆状后能重新吸收水分并凝固硬化，体积略有膨胀",
+        "D. 硫酸钙属于易溶于水的盐类，其水溶液具有极佳的导电性"
+      ],
+      "answer": 3,
+      "explanation": "本题考查硫酸钙及其水合物（生石膏与熟石膏）的性质与用途。\n\nA 项正确：生石膏（Gypsum）的化学式为 $\\text{CaSO}_4 \\cdot 2\\text{H}_2\\text{O}$（二水合硫酸钙）。\n\nB 项正确：生石膏加热至 $150\\text{ }^\\circ\\text{C}$ 左右会失去三分之二的结晶水，生成熟石膏（烧石膏，化学式为 $2\\text{CaSO}_4 \\cdot \\text{H}_2\\text{O}$ 或 $\\text{CaSO}_4 \\cdot 0.5\\text{H}_2\\text{O}$）。\n\nC 项正确：熟石膏加水调成糊状后，会吸水重新结晶转化为生石膏并硬化，在此过程中体积略有膨胀，因此能精密填满模型，常用于制作雕塑模型和骨折固定石膏绷带。\n\nD 项错误：硫酸钙（$\\text{CaSO}_4$）属于微溶于水的盐类（$25\\text{ }^\\circ\\text{C}$ 时溶解度约为 $0.2\\text{ g}/100\\text{ g}\\text{ H}_2\\text{O}$），并非易溶盐，其饱和溶液中离子浓度较低。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:13:22.849744+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "硫酸钙属于微溶于水，并非易溶于水。"
+      }
+    },
+    {
+      "id": "chemistry_gen_68a2cf78",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap10",
+      "chapter_title": "第十章：铝",
+      "q": "在含有等物质的量的 H⁺、Al³⁺ 和 NH₄⁺ 的混合溶液中，逐滴加入 NaOH 溶液直至过量。下列有关此反应过程的叙述，正确的是？",
+      "options": [
+        "A. 最先与 OH⁻ 发生反应的离子是 Al³⁺",
+        "B. 当产生 Al(OH)₃ 沉淀时，溶液中的 NH₄⁺ 已完全反应",
+        "C. Al(OH)₃ 沉淀完全溶解的反应发生在 NH₄⁺ 反应之后",
+        "D. 使 Al³⁺ 恰好完全沉淀与使产生的 Al(OH)₃ 完全溶解，所消耗的 NaOH 摩尔数比为 1 : 3"
+      ],
+      "answer": 2,
+      "explanation": "考点：无机离子反应竞争能力与铝及其化合物的两性。\n根据离子反应的竞争能力，向混合溶液中逐滴加入 OH⁻ 时，发生的反应顺序依次为：\n1. H⁺ + OH⁻ → H₂O（酸碱中和反应优先发生）\n2. Al³⁺ + 3OH⁻ → Al(OH)₃↓（生成难溶氢氧化物沉淀）\n3. NH₄⁺ + OH⁻ → NH₃·H₂O（结合生成弱电解质一水合氨）\n4. Al(OH)₃ + OH⁻ → [Al(OH)₄]⁻（两性氢氧化物溶解）\n选项解析：\nA 错误：最先与 OH⁻ 反应的是 H⁺。\nB 错误：产生沉淀时，Al³⁺ 优先与 OH⁻ 反应，此时 NH₄⁺ 尚未开始反应。\nC 正确：Al(OH)₃ 沉淀的溶解反应在第 4 步发生，位于 NH₄⁺ 与 OH⁻ 反应（第 3 步）之后。\nD 错误：使 1 mol Al³⁺ 完全沉淀需要 3 mol OH⁻，而使 1 mol Al(OH)₃ 完全溶解需要 1 mol OH⁻，消耗的 NaOH 摩尔数比为 3 : 1。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:14:05.871036+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "H⁺ 先反应，接着 Al³⁺ 生成沉淀，然后 NH₄⁺ 与 OH⁻ 反应产生氨气，最后 Al(OH)₃ 沉淀溶解。"
+      }
+    },
+    {
+      "id": "chemistry_gen_4554e994",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap10",
+      "chapter_title": "第十章：铝",
+      "q": "工业上常用霍尔-埃鲁法（Hall-Héroult process）电解熔融氧化铝（Al₂O₃）冶炼金属铝。下列有关该工业制程的叙述，哪些是正确的？\nI. 加入冰晶石（Na₃AlF₆）的主要目的是降低 Al₂O₃ 的熔点并增强导电性\nII. 阴极发生的电极反应式为 Al³⁺ + 3e⁻ → Al\nIII. 电解过程中，石墨阳极因与生成的 O₂ 反应而被消耗，需定期更换\nIV. 熔融状态下，氧化铝依靠自由移动的离子传导电流",
+      "options": [
+        "A. 仅 I、II",
+        "B. 仅 I、III、IV",
+        "C. 仅 II、III",
+        "D. I、II、III、IV"
+      ],
+      "answer": 3,
+      "explanation": "考点：工业电解法冶炼铝（霍尔-埃鲁法）的原理与电极反应。\nI 正确：纯氧化铝的熔点高达约 2050°C，加入冰晶石（Na₃AlF₆）能形成共熔物，将熔融温度大幅降低至约 950°C，既节省能源又增强了电解质的导电性。（常见迷思概念误将冰晶石看作催化剂）。\nII 正确：电解时，Al³⁺ 移向阴极得到电子被还原为铝单质，电极反应为 Al³⁺ + 3e⁻ → Al。\nIII 正确：阳极生成的 O₂ 在高温条件下会与石墨（碳）阳极发生反应生成 CO 和 CO₂，导致石墨阳极被不断烧蚀消耗，必须定期补充和更换。\nIV 正确：氧化铝属于离子化合物，在熔融状态下电离出自由移动的 Al³⁺ 和 O²⁻，通过离子导电。\n综上所述，I、II、III、IV 全都正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:14:05.876391+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "霍尔-埃鲁法各叙述均正确：冰晶石降温助导电，阴极析铝，阳极石墨被耗，靠自由离子导电。"
+      }
+    },
+    {
+      "id": "chemistry_gen_d9a6ef1c",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap10",
+      "chapter_title": "第十章：铝",
+      "q": "下列有关金属铝及其化合物的性质与应用的叙述，何者正确？",
+      "options": [
+        "A. 铝在常温下与浓硝酸反应剧烈，因此不可用铝制容器盛装浓硝酸",
+        "B. 铝热反应（Thermite reaction）极易发生，常温下混合铝粉与氧化铁粉末即可发热燃烧",
+        "C. 明矾 [KAl(SO₄)₂·12H₂O] 溶于水后生成的 Al(OH)₃ 胶体具有吸附性，可用于净水",
+        "D. 氢氧化铝 [Al(OH)₃] 是一种强碱，能迅速中和胃酸，常用于治疗胃酸过多"
+      ],
+      "answer": 2,
+      "explanation": "考点：铝及其化合物的物理、化学性质与常见用途。\n选项解析：\nA 错误：铝在常温下遇到浓硝酸或浓硫酸时会发生“钝化”，表面生成一层致密而坚固的氧化物薄膜，阻碍内部金属继续反应，因此工业上常用铝制容器盛装和运输浓硝酸。\nB 错误：铝热反应需要极高的引发温度（通常利用引发剂如镁条引燃和氯酸钾助燃），常温下铝粉与氧化铁粉末混合不会自动发生反应。\nC 正确：明矾溶于水后，Al³⁺ 发生水解生成 Al(OH)₃ 胶体，胶体粒子具有较大的表面积，能吸附水中悬浮杂质形成沉淀，从而达到净水作用。\nD 错误：氢氧化铝属于两性氢氧化物（弱碱），且难溶于水。正是因为它碱性较弱、不腐蚀胃壁，才被用作抗酸药治疗胃酸过多；强碱对消化道有强烈腐蚀性，不可内服。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对"
+      ],
+      "generated_at": "2026-09-28T10:14:05.878081+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "明矾水解生成的 Al(OH)₃ 胶体具有吸附性，可用于净水。"
+      }
+    },
+    {
+      "id": "chemistry_gen_292fc293",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap10",
+      "chapter_title": "第十章：铝",
+      "q": "将等质量的铝粉分别加入到等体积、等物质的量浓度的盐酸（HCl）溶液和氢氧化钠（NaOH）溶液中。反应结束后，相同条件下测得生成的氢气体积比为 V(HCl) : V(NaOH) = 2 : 3。下列推论正确的是？",
+      "options": [
+        "A. 两溶液中的铝粉均已完全反应",
+        "B. 两溶液中的溶质（HCl 和 NaOH）均已完全反应",
+        "C. 盐酸溶液中铝粉过量，氢氧化钠溶液中氢氧化钠过量",
+        "D. 氢氧化钠溶液中的铝粉未完全反应"
+      ],
+      "answer": 2,
+      "explanation": "考点：铝与强酸、强碱反应的化学计量学计算及限量反应物分析。\n化学反应方程式为：\n(1) 2Al + 6HCl → 2AlCl₃ + 3H₂↑\n(2) 2Al + 2NaOH + 2H₂O → 2NaAlO₂ + 3H₂↑\n假设 HCl 和 NaOH 的物质的量均为 n mol。\n若 HCl 完全反应，生成 H₂ 的物质的量为 0.5n mol；若 NaOH 完全反应，生成 H₂ 的物质的量为 1.5n mol。\n若等质量的铝粉完全反应，在酸和碱中产生的 H₂ 量必须相等（体积比 1 : 1）。\n今测得生成的氢气体积比 V(HCl) : V(NaOH) = 2 : 3，表明：\n1. 在盐酸溶液中，HCl 完全反应（为限量反应物），铝粉过量，产生的 H₂ 为 0.5n mol。\n2. 在氢氧化钠溶液中，产生的 H₂ 体积为盐酸中的 1.5 倍（即 0.75n mol）。若 NaOH 完全反应应产生 1.5n mol H₂，说明此时 NaOH 尚有剩余（NaOH 过量），氢气产量是由铝粉用尽所决定的（即铝粉完全反应）。\n因此，盐酸溶液中铝粉过量，氢氧化钠溶液中氢氧化钠过量。选项 C 正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "由备用模型 gemini-3.6-flash 出题（首选 gemini-3.8-flash 额度用完或忙碌），科学正确性请多核对",
+        "⚠️ 答案有疑：出题时给的是 C，AI 复核选 D（铝与盐酸和氢氧化钠反应化学计量数比产生 H₂ 相同质量时 NaOH 产生更多，说明铝在 HCl 中过量或完全反应而 NaOH 中铝未完全反应。），请核对"
+      ],
+      "generated_at": "2026-09-28T10:14:05.881803+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "铝与盐酸和氢氧化钠反应化学计量数比产生 H₂ 相同质量时 NaOH 产生更多，说明铝在 HCl 中过量或完全反应而 NaOH 中铝未完全反应。"
+      }
     }
   ],
-  "generated_at": "2026-09-27T18:11:53.809425+00:00"
+  "generated_at": "2026-09-28T10:18:40.259313+00:00"
 }
