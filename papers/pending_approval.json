@@ -1,33 +1,4 @@
 {
-  "items": [
-    {
-      "id": "chemistry_gen_68a2cf78",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap10",
-      "chapter_title": "第十章：铝",
-      "q": "在含有等物质的量的 H⁺、Al³⁺ 和 NH₄⁺ 的混合溶液中，逐滴加入 NaOH 溶液直至过量。下列有关此反应过程的叙述，正确的是？",
-      "options": [
-        "A. 最先与 OH⁻ 发生反应的离子是 Al³⁺",
-        "B. 当产生 Al(OH)₃ 沉淀时，溶液中的 NH₄⁺ 已完全反应",
-        "C. Al(OH)₃ 沉淀完全溶解的反应发生在 NH₄⁺ 反应之后",
-        "D. 使 Al³⁺ 恰好完全沉淀与使产生的 Al(OH)₃ 完全溶解，所消耗的 NaOH 摩尔数比为 1 : 3"
-      ],
-      "answer": 2,
-      "explanation": "考点：无机离子反应竞争能力与铝及其化合物的两性。\n根据离子反应的竞争能力，向混合溶液中逐滴加入 OH⁻ 时，发生的反应顺序依次为：\n1. H⁺ + OH⁻ → H₂O（酸碱中和反应优先发生）\n2. Al³⁺ + 3OH⁻ → Al(OH)₃↓（生成难溶氢氧化物沉淀）\n3. NH₄⁺ + OH⁻ → NH₃·H₂O（结合生成弱电解质一水合氨）\n4. Al(OH)₃ + OH⁻ → [Al(OH)₄]⁻（两性氢氧化物溶解）\n选项解析：\nA 错误：最先与 OH⁻ 反应的是 H⁺。\nB 错误：产生沉淀时，Al³⁺ 优先与 OH⁻ 反应，此时 NH₄⁺ 尚未开始反应。\nC 正确：Al(OH)₃ 沉淀的溶解反应在第 4 步发生，位于 NH₄⁺ 与 OH⁻ 反应（第 3 步）之后。\nD 错误：使 1 mol Al³⁺ 完全沉淀需要 3 mol OH⁻，而使 1 mol Al(OH)₃ 完全溶解需要 1 mol OH⁻，消耗的 NaOH 摩尔数比为 3 : 1。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "审题：答案 C 正确；H⁺、Al³⁺、NH₄⁺ 的反应先后偏大陆高考，可能超出统考范围，你决定要不要采纳"
-      ],
-      "generated_at": "2026-09-28T10:14:05.871036+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "H⁺ 先反应，接着 Al³⁺ 生成沉淀，然后 NH₄⁺ 与 OH⁻ 反应产生氨气，最后 Al(OH)₃ 沉淀溶解。"
-      }
-    }
-  ],
+  "items": [],
   "generated_at": "2026-09-28T10:18:40.259313+00:00"
 }
