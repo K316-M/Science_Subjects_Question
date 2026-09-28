@@ -2007,35 +2007,6 @@
       }
     },
     {
-      "id": "math_gen_0cf7ffa2",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap10",
-      "chapter_title": "第十章：三角学的应用",
-      "q": "某船在海上由西向东航行，在某一位置 $P$ 测得某灯塔 $L$ 在其北偏东 $30^\\circ$ 的方向上；船继续向东航行 $12$ 海里到达 $Q$ 点，此时测得灯塔 $L$ 在其北偏西 $60^\\circ$ 的方向上。求此时灯塔 $L$ 到 $Q$ 点的距离？",
-      "options": [
-        "A. $4\\sqrt{3}$ 海里",
-        "B. $6$ 海里",
-        "C. $6\\sqrt{3}$ 海里",
-        "D. $12$ 海里"
-      ],
-      "answer": 1,
-      "explanation": "考点：方位角与三角形边角关系。由题意知，船从 $P$ 到 $Q$ 向东航行 $12$ 海里，即 $PQ = 12$。在 $\\triangle PQL$ 中，$P$ 点处灯塔的方位是北偏东 $30^\\circ$，所以 $\\angle QPL = 90^\\circ - 30^\\circ = 60^\\circ$；$Q$ 点处灯塔的方位是北偏西 $60^\\circ$，所以 $\\angle PQL = 90^\\circ - 60^\\circ = 30^\\circ$。在 $\\triangle PQL$ 中，内角和为 $180^\\circ$，故第三个角 $\\angle PLQ = 180^\\circ - 60^\\circ - 30^\\circ = 90^\\circ$，即 $\\triangle PQL$ 是以 $L$ 为直角顶点的直角三角形。我们要求 $L$ 到 $Q$ 的距离，即求直角边 $LQ$。在直角三角形 $PQL$ 中，$\\cos 30^\\circ = \\frac{LQ}{PQ}$，因此 $LQ = PQ \\cos 30^\\circ = 12 \\times \\frac{\\sqrt{3}}{2} = 6\\sqrt{3}$... 慢，检查计算：$\\cos 30^\\circ = \\frac{LQ}{PQ} \\implies LQ = 12 \\times \\frac{\\sqrt{3}}{2}$ 应为 $6\\sqrt{3}$，选项 C 是 $6\\sqrt{3}$。重新核对：$\\sin 30^\\circ = \\frac{LQ}{PQ} = \\frac{LQ}{12}$，则 $LQ = 12 \\times \\sin 30^\\circ = 12 \\times \\frac{1}{2} = 6$ 海里。正确选项为 B。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 A（解特殊三角形（含30度、60度内角），由正弦定理求得对边长度为 4\\sqrt{3} 海里。），请核对"
-      ],
-      "generated_at": "2026-09-27T18:11:45.896858+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 0,
-        "reason": "解特殊三角形（含30度、60度内角），由正弦定理求得对边长度为 4\\sqrt{3} 海里。"
-      }
-    },
-    {
       "id": "chemistry_gen_5edda0d1",
       "subject": "chemistry",
       "type": "mcq",
