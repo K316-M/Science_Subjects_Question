@@ -1895,35 +1895,6 @@
       }
     },
     {
-      "id": "math_gen_c41a1218",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap9",
-      "chapter_title": "第九章：任意角的三角函数",
-      "q": "若 $\\sin\\theta \\cos\\theta \\lt 0$ 且 $\\tan\\theta \\cos\\theta \\gt 0$，则角 $\\theta$ 是",
-      "options": [
-        "A. 第一象限角",
-        "B. 第二象限角",
-        "C. 第三象限角",
-        "D. 第四象限角"
-      ],
-      "answer": 1,
-      "explanation": "考点：任意角三角函数在各象限的正负号判定。\n推理过程：\n1. 由 $\\sin\\theta \\cos\\theta \\lt 0$ 可知，$\\sin\\theta$ 与 $\\cos\\theta$ 异号（一正一负）。\n2. 由 $\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$ 代入 $\\tan\\theta \\cos\\theta \\gt 0$ 得：$\\left(\\frac{\\sin\\theta}{\\cos\\theta}\\right) \\cos\\theta = \\sin\\theta \\gt 0$，即 $\\sin\\theta$ 为正数。\n3. 既然 $\\sin\\theta \\gt 0$，而 $\\sin\\theta$ 与 $\\cos\\theta$ 异号，则必有 $\\cos\\theta \\lt 0$。\n4. 正弦为正、余弦为负的角位于第二象限。\n常见错误：未将 $\\tan\\theta$ 化为 $\\frac{\\sin\\theta}{\\cos\\theta}$ 展开化简，导致符号判断混乱。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "由备用模型 gemini-3.5-flash-lite 出题（首选 gemini-3-flash-preview 额度用完或忙碌），科学正确性请多核对",
-        "⚠️ 答案有疑：出题时给的是 B，AI 复核选 D（sin cos < 0说明异号；tan cos > 0说明sin同号，推得第四象限。），请核对"
-      ],
-      "generated_at": "2026-09-27T18:11:39.797428+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 3,
-        "reason": "sin cos < 0说明异号；tan cos > 0说明sin同号，推得第四象限。"
-      }
-    },
-    {
       "id": "math_gen_974ee0d4",
       "subject": "math",
       "type": "mcq",
