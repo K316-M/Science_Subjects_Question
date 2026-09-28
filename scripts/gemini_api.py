@@ -37,7 +37,8 @@ def rank_models(names):
             continue
         version, tier, suffix = m.groups()
         unstable = 1 if suffix and suffix.startswith(("preview", "exp")) else 0
-        key = tuple(-int(n) for n in version.split("."))   # 用整数比，3.10 才会排在 3.9 前面
+        major, _, minor = version.partition(".")
+        key = (-int(major), -int(minor or 0))   # 用整数比，3.10 才会排在 3.9 前面；「3」当成 3.0，不会排到 3.8 前面
         ranked.append(((key, TIER_RANK[tier], unstable, name), name))
     return [name for _, name in sorted(ranked)]
 
@@ -151,8 +152,10 @@ def generate(api_key, parts, temperature=0.4, timeout=300, skip_tiers=()):
         model = resolve_model(api_key)
         if tier_of(model) in skip_tiers and model != os.environ.get("GEMINI_MODEL", "").strip():
             why = f"（{str(last)[:60]}）" if last else ""
-            raise LowTierOnly(f"较强的模型都不能用{why}，只剩 {model}，这次不用它出题。"
-                              "每日额度在马来西亚下午 3～4 点重置，之後到 Actions 手动再跑")
+            busy = last is not None and any(k in str(last).lower() for k in TRANSIENT)
+            when = ("Google 那边忙不过来，过半小时到一小时再到 Actions 手动跑" if busy
+                    else "多半是额度用完：每日额度在马来西亚下午 3～4 点重置，之後到 Actions 手动再跑")
+            raise LowTierOnly(f"较强的模型都不能用{why}，只剩 {model}，这次不用它出题。{when}")
 
         for attempt, wait in enumerate((0,) + BACKOFF):
             if wait:
