@@ -1299,6 +1299,7 @@
 </div>
 
 <script src="/js/scene-assets.js"></script>
+<script src="/js/safe-html.js"></script>
 <script>
   let audioCtx = null;
   let soundEnabled = true;
@@ -2513,7 +2514,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
         <ol class="review-list">${due.map(d => `
           <li><button type="button" class="review-item" onclick="jumpToWrongQuestion(${d.chapterIdx}, ${d.mcqIdx}, true)">
             <span class="review-dot" aria-hidden="true"></span>
-            <span class="review-body"><span class="review-q">${d.question}</span>
+            <span class="review-body"><span class="review-q">${safeHtml(d.question)}</span>
               <span class="review-meta">${d.chapterTitle}${d.overdueDays > 0 ? ` · <em>逾期 ${d.overdueDays} 天</em>` : ''}</span></span>
           </button></li>`).join('')}
         </ol>
@@ -2537,7 +2538,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
         g.items.push(w);
       });
       const row = (w, showChapter) => `<button type="button" class="wrong-row" onclick="jumpToWrongQuestion(${w.chapterIdx}, ${w.mcqIdx})">
-            <span class="wrong-row-body"><span class="wrong-row-q">${w.question}</span>
+            <span class="wrong-row-body"><span class="wrong-row-q">${safeHtml(w.question)}</span>
               <span class="wrong-row-meta">${showChapter ? w.chapterTitle + ' · ' : ''}错过 ${w.lapses} 次${w.okDays >= 1 ? ' · <em>换一天再答对 1 次就移出</em>' : ''}</span></span>
             <span class="wrong-row-go" aria-hidden="true">→</span></button>`;
       area.innerHTML = `<div class="wrong-book">
@@ -2575,27 +2576,28 @@ function openSubject(subject, initialChapterIdx, subMode) {
       const item = sec.mcqs[currentMcqIdx];
       const livePos = sec.mcqs.slice(0, currentMcqIdx + 1).filter(isLive).length;
       let figureHtml = '';
-      if (item.image) {
+      const imagePath = safeImagePath(item.image);
+      if (imagePath) {
         figureHtml = `
-          <div class="figure-container" onclick="openImageModal('${item.image}')">
-            <img src="${item.image}" alt="考题高清图">
+          <div class="figure-container" onclick="openImageModal('${imagePath}')">
+            <img src="${imagePath}" alt="考题高清图">
             <div class="figure-caption"><svg class="ic" aria-hidden="true"><use href="#i-search"></use></svg> 点击查看高清大图</div>
           </div>`;
       } else if (item.figure) {
         figureHtml = `
           <div class="figure-container">
-            ${item.figure}
-            ${item.caption ? `<div class="figure-caption">${item.caption}</div>` : ''}
+            ${safeHtml(item.figure)}
+            ${item.caption ? `<div class="figure-caption">${safeHtml(item.caption)}</div>` : ''}
           </div>`;
       }
 
       area.innerHTML = `
         <div class="flashcard">
-          <div class="mcq-question">${item.q}</div>
+          <div class="mcq-question">${safeHtml(item.q)}</div>
           ${figureHtml}
           <div class="mcq-options" id="optContainer"></div>
           <div class="mcq-verdict" id="mcqVerdict" role="status" aria-live="polite"></div>
-          <div class="explanation" id="expContainer">${item.explanation}</div>
+          <div class="explanation" id="expContainer">${safeHtml(item.explanation)}</div>
           <div class="card-footer">
             <button class="btn-nav" onclick="navMcq(-1)"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"></use></svg>上一题</button>
             <span style="font-size:12px; color:var(--text-muted); font-weight:600;">第 ${livePos} / ${liveCount(sec.mcqs)} 题</span>
@@ -2722,17 +2724,19 @@ function openSubject(subject, initialChapterIdx, subMode) {
       subjs.forEach((q, qIndex) => {
         if (!isLive(q)) return;
         subjPos += 1;
+        const subjImage = safeImagePath(q.image);
+        const subjAnswerId = /^[\w-]+$/.test(String(q.id || '')) ? q.id : 'subj_' + qIndex;
         cardsHtml += `
           <div class="form-question-card" data-idx="${qIndex}">
             <div class="form-card-top-bar"></div>
             <div class="form-card-body">
               <div class="form-q-num">做答题 ${subjPos}<span>／${subjTotal}</span></div>
-              <div class="form-question-text">${q.question}</div>
-              ${q.image ? `
-              <div class="figure-container" onclick="openImageModal('${q.image}')">
-                <img src="${q.image}" alt="题目配图">
+              <div class="form-question-text">${safeHtml(q.question)}</div>
+              ${subjImage ? `
+              <div class="figure-container" onclick="openImageModal('${subjImage}')">
+                <img src="${subjImage}" alt="题目配图">
                 <div class="figure-caption"><svg class="ic" aria-hidden="true"><use href="#i-search"></use></svg> 点击查看高清大图</div>
-              </div>` : q.figure ? `<div class="figure-container">${q.figure}</div>` : ''}
+              </div>` : q.figure ? `<div class="figure-container">${safeHtml(q.figure)}</div>` : ''}
               <div class="subj-attempt" data-idx="${qIndex}">
                 <label class="subj-attempt-label" for="subjAns_${qIndex}"><svg class="ic" aria-hidden="true"><use href="#i-pencil"></use></svg>你的答案</label>
                 <textarea class="subj-attempt-input" id="subjAns_${qIndex}" rows="4" maxlength="3000"
@@ -2748,8 +2752,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
                   <span class="flip-toggle-title"><svg class="ic" aria-hidden="true"><use href="#i-book-open"></use></svg> 参考标准答案与要点</span>
                   <span class="flip-status-pill">点击展开 / 遮挡默背</span>
                 </div>
-                <div class="flip-answer-content" id="${q.id || 'subj_' + qIndex}">
-                  ${q.answer}
+                <div class="flip-answer-content" id="${subjAnswerId}">
+                  ${safeHtml(q.answer)}
                 </div>
               </div>
               <button class="card-note-btn" onclick="openSubjNote(${qIndex})"

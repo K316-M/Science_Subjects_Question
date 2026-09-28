@@ -220,7 +220,7 @@ function setPdfProgress(active, text, sub) {
 
 function figureHtmlForPdf(item) {
   if (item.image) return `<div class="pdf-q-figure"><img src="${escapeArc(item.image)}" crossorigin="anonymous"></div>`;
-  if (item.figure) return `<div class="pdf-q-figure">${item.figure}</div>`;
+  if (item.figure) return `<div class="pdf-q-figure">${safeHtml(item.figure)}</div>`;
   return '';
 }
 
@@ -281,10 +281,10 @@ function buildPdfBlocks(groups) {
   return blocks;
 }
 
+// DOMParser 解析出来的文件不执行程式、不载图；用网页里的 div 转，<img onerror> 就算没放进画面也会执行
 function stripHtml(html) {
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return (tmp.textContent || tmp.innerText || '').trim();
+  const body = new DOMParser().parseFromString(String(html == null ? '' : html), 'text/html').body;
+  return (body.textContent || '').trim();
 }
 
 function addCanvasToPdf(pdf, canvas, state) {

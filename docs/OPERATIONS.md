@@ -764,7 +764,11 @@ node run.js
   检查方法：浏览器打开 `https://science-subjects-question.vercel.app/档案路径`，应该是 404
 - `papers/`（题库）与 `data/`（申诉处理结果）**不能**排除：网站和工作台要读
 - 任何密钥、令牌、密码**只能放在 Vercel／GitHub 的设定页**，绝不能写进档案
-  （就算仓库私有也一样：档案会被部署到公开网站上）
+  （就算仓库私有也一样：档案会被部署到公开网站上）。本机测试用的 `.env` 已列进 `.gitignore`
+- **题目内容先过滤再显示**：题干、解析、参考答案、配图都当网页 HTML 显示，而它们的源头是 AI 录题／出题。
+  学生站显示前一律经过 `js/safe-html.js`：只留排版用的标签（`b`、`strong`、`br`、`span`、`sub`、`sup`…）与 SVG 配图，
+  `<img onerror>`、`<script>`、`on…` 属性、`javascript:` 连结一律删掉。录题、出题和 /dev 的自动检查会把这类标签标出来，
+  这种题不会进「一键采纳」，要你看过再决定
 - Vercel 和 GitHub 两边都建议开两步验证
 
 ---
@@ -802,6 +806,7 @@ css/orbit.css           轨道式学科选择器
 css/night.css           护眼模式
 js/orbit-subjects.js    轨道选择器逻辑（加科目、改转速在这）
 js/scene-assets.js      背景与音乐的装载器（路径规则在这）
+js/safe-html.js         题目内容显示前的过滤（允许哪些网页标签在这）
 js/exam-timetable.js    统考时间表资料
 js/notes.js             笔记画布
 js/archive.js           题目档与 PDF 下载

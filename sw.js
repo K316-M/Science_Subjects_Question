@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uec-science-cache-v19';
+const CACHE_NAME = 'uec-science-cache-v20';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -7,6 +7,7 @@ const APP_SHELL = [
   '/css/orbit.css',
   '/css/night.css',
   '/js/scene-assets.js',
+  '/js/safe-html.js',
   '/js/orbit-subjects.js',
   '/js/notes.js',
   '/js/archive.js',

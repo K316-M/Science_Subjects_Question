@@ -48,6 +48,15 @@ PLAIN_SCRIPTS = [
 ]
 
 
+# 学生站只收这些网页标签，其他的显示时会被删掉（js/safe-html.js）：AI 吐出 <img onerror> 这类就是这样挡住的。
+# 这里先标出来，这种题就不会进 /dev 的一键采纳。🔴 三处要一起改：这里、dev/dev.js 的 SAFE_TAGS、js/safe-html.js 的白名单
+SAFE_TAGS = {"b", "strong", "i", "em", "u", "sub", "sup", "br", "span", "p", "div", "small", "ul", "ol", "li",
+             "table", "thead", "tbody", "tr", "td", "th",
+             "svg", "g", "path", "line", "rect", "circle", "ellipse", "polygon", "polyline", "text", "tspan"}
+HTML_TAG = re.compile(r"</?([A-Za-z][A-Za-z0-9-]*)([^>]*)")   # 「<」後面紧接字母才是标签；「a < b」只是文字
+RISKY_ATTR = re.compile(r"\bon[a-z]+\s*=|javascript:", re.I)
+
+
 def plain_scripts(text):
     """依出现的位置排好；被前面较长的包住的（m/s2 里的 s2）不另外列，重复的也不列"""
     found = sorted(((m.start(2), m.end(2), m.group(2)) for rx in PLAIN_SCRIPTS for m in rx.finditer(text)),
@@ -156,6 +165,18 @@ def text_problems(record):
         if plain:
             out.append(f"{label}有没写成上下标的「{'」「'.join(plain[:3])}」：化学式、物理量的数字要下标（H₂O、v₀），"
                        "离子电荷、单位次方要上标（Fe³⁺、m/s²）")
+    # 参考答案、配图在学生站也当网页显示，一起查
+    extra = [(label, record.get(key)) for label, key in (("参考答案", "answer"), ("配图", "figure"))
+             if isinstance(record.get(key), str)]
+    for label, text in pieces + extra:
+        for m in HTML_TAG.finditer(MATH_SPAN.sub("", str(text))):
+            risky = RISKY_ATTR.search(m.group(2))
+            if m.group(1).lower() not in SAFE_TAGS:
+                out.append(f"{label}有学生站会删掉的网页标签「<{m.group(1).lower()}」：只收 b、strong、br、span、sub、sup 这类排版用的，请改成文字")
+                break
+            if risky:
+                out.append(f"{label}的网页标签带了会执行程式的「{risky.group(0)}」，学生站会删掉，请拿掉")
+                break
     for label, text in pieces:
         m = SELF_TALK.search(str(text))
         if m:
