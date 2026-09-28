@@ -1,34 +1,6 @@
 {
   "items": [
     {
-      "id": "math_gen_089503c2",
-      "subject": "math",
-      "type": "mcq",
-      "chapter_id": "chap5",
-      "chapter_title": "第五章：函数",
-      "q": "设函数 $f(x) = \\frac{\\sqrt{4-x^2}}{\\ln(x-1)}$，则此函数的定义域为",
-      "options": [
-        "A. $(1, 2]$",
-        "B. $(1, 2) \\cup (2, \\infty)$",
-        "C. $[1, 2]$",
-        "D. $[1, \\infty)$"
-      ],
-      "answer": 0,
-      "explanation": "考点：求函数的定义域。解析：要使函数有意义，需同时满足偶次根式被开方数非负、分母不为零以及对数的真数大于零。即：1) $4-x^2 \\geq 0 \\implies -2 \\leq x \\leq 2$；2) $x-1 \\gt 0 \\implies x \\gt 1$；3) 分母 $\\ln(x-1) \\neq 0 \\implies x-1 \\neq 1 \\implies x \\neq 2$。综合上述三个条件，得 $1 \\lt x \\leq 2$ 且 $x \\neq 2$ 的区间为 $(1, 2)$ 与 $(2, \\infty)$ 的交集，但由于 $-2 \\leq x \\leq 2$，最终定义域为 $(1, 2]$。常见错误是忽略了分母不能为零或对数真数必须大于零的条件。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "⚠️ 审题建议退回：定义域应为 (1, 2)（x = 2 时分母为 0），四个选项都不对"
-      ],
-      "generated_at": "2026-09-27T18:11:14.213545+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 0,
-        "reason": "要求4-x^2>=0且x-1>0且ln(x-1)!=0，解得定义域为(1, 2]。"
-      }
-    },
-    {
       "id": "math_gen_443fd7de",
       "subject": "math",
       "type": "mcq",
