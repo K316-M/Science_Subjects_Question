@@ -139,6 +139,10 @@
   padding: 4px 10px; border-radius: 999px;
   background: rgba(255, 255, 255, .92); box-shadow: 0 2px 8px -4px rgba(15, 23, 42, .25);
 }
+/* 不认 color-mix 的旧浏览器：含 var() 的宣告不会退回上一条（会变成没设），要在规则之後另外补（同 css/night.css 最後一段） */
+@supports not (color: color-mix(in oklab, red 50%, blue)) {
+  .orbit-node.is-selected .node-label { color: var(--text-main, #0f172a); }
+}
 /* 首页预览水彩时，底部的山丘在标签後面：实测 4.24:1，调深一档 */
 .has-scene .node-label { color: #1e293b; }
 .node-label em { display: block; font-style: normal; font-size: 11px; font-weight: 500; }

@@ -1288,7 +1288,22 @@ function rejectButton(item) {
   return reject;
 }
 
-function problemCard(item, reasons) {
+// 一次退回勾选的题：rows 是 [{ item, check }]，和「采纳勾选的 N 题」共用同一种勾选框
+function bulkRejectButton(rows) {
+  const btn = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', disabled: !canPublish() }, el('span', {}));
+  const label = () => { btn.lastChild.textContent = `退回勾选的 ${rows.filter(r => r.check.checked).length} 题`; };
+  rows.forEach(r => r.check.addEventListener('change', label));
+  label();
+  btn.addEventListener('click', async () => {
+    const ids = rows.filter(r => r.check.checked).map(r => r.item.id);
+    if (!ids.length) return toast('没有勾选任何题', 'bad');
+    if (!confirm(`把勾选的 ${ids.length} 题退回？退回之後会从待审区移除，且不会进题库。`)) return;
+    await sendApproval(btn, { action: 'reject', ids });
+  });
+  return btn;
+}
+
+function problemCard(item, reasons, rejectCheck) {
   const ed = questionEditor(item, item.type === 'subjective', item.subject);
   const picker = chapterPicker(item);
   const adopt = el('button', { class: 'btn btn-primary btn-sm', type: 'button', disabled: !canPublish() }, icon('check'), el('span', { text: '采纳（连同修改）' }));
@@ -1310,7 +1325,8 @@ function problemCard(item, reasons) {
   });
 
   return el('div', { class: 'issue' },
-    el('div', { class: 'issue-top' }, originPills(item)),
+    el('div', { class: 'issue-top' }, originPills(item),
+      el('label', { class: 'reject-pick' }, rejectCheck, el('span', { text: '勾选退回' }))),
     el('div', { class: 'stack', style: 'gap:4px' },
       reasons.map(f => el('span', { class: 'status status-serious' }, icon('warning'), el('span', { text: f })))),
     ed.node,
@@ -1365,7 +1381,7 @@ function cleanList(items) {
     el('div', { class: 'list-head' },
       el('div', { class: 'card-title', text: `没被标出问题的 ${items.length} 题` }),
       el('div', { class: 'card-sub', text: 'AI 自动检查（格式、和原档逐字比对、不看答案重做一次）都通过。检查抓不到所有错误 —— 请扫过题干与绿色答案，有疑问的取消勾选或按「编辑」。' }),
-      el('div', { class: 'row', style: 'margin-top:8px' }, go)),
+      el('div', { class: 'row', style: 'margin-top:8px' }, go, bulkRejectButton(rows))),
     rows.map(r => r.node));
 }
 
@@ -1398,10 +1414,12 @@ function renderPending(body, actions) {
       canPublish() ? ' 采纳会把题目直接写进正式题库并自动部署；退回只是从待审区移除。' : ` ${NO_PUBLISH_HINT}`)));
 
   if (problems.length) {
+    const picks = problems.map(p => ({ item: p.item, check: el('input', { type: 'checkbox', attrs: { 'aria-label': '勾选退回' } }) }));
     body.appendChild(el('div', { class: 'card list-card' },
       el('div', { class: 'list-head' }, el('div', { class: 'card-title', text: `要处理的 ${problems.length} 题` }),
-        el('div', { class: 'card-sub', text: '直接在下面改文字、换配图，改好按「采纳」一次写进题库。' })),
-      problems.map(p => problemCard(p.item, p.reasons))));
+        el('div', { class: 'card-sub', text: '直接在下面改文字、换配图，改好按「采纳」一次写进题库。不要的题勾「勾选退回」，一起按下面的按钮。' }),
+        el('div', { class: 'row', style: 'margin-top:8px' }, bulkRejectButton(picks))),
+      problems.map((p, i) => problemCard(p.item, p.reasons, picks[i].check))));
   }
   if (clean.length) body.appendChild(cleanList(clean));
 }
@@ -1421,9 +1439,9 @@ async function sendApproval(btn, payload) {
     toast(payload.action === 'adopt'
       ? `已采纳 ${data.handled} 题，正在自动部署，稍後学生就看得到`
       : `已退回 ${data.handled} 题`, 'good');
-    // 重新载入题库与待审区，画面上的数字才会跟著变
+    // 重新载入题库与待审区，画面上的数字才会跟著变；留在原本捲动的位置（从最下面往上审，不用每次滑回去）
     await loadData();
-    navigate();
+    rerender();
   }
 }
 

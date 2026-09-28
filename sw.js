@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uec-science-cache-v18';
+const CACHE_NAME = 'uec-science-cache-v19';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -21,9 +21,32 @@ const APP_SHELL = [
   '/js/math-render.js',
 ];
 
+// 装好之後在背景顺便下载：四科题库，加上数学公式排版（KaTeX，约 550KB）。
+// 这样没打开过的科目、没看过的公式，断网时也读得到；下载失败不影响网站本身（下次上线再补）。
+// 科目背景图（每科约 250KB）与背景音乐（每科约 2MB）只是装饰，不预先下载：看过的才会留着，
+// 没去过的科目离线时背景退回纯色、没有音乐
+const KATEX_FONTS = ['AMS-Regular', 'Caligraphic-Bold', 'Caligraphic-Regular', 'Fraktur-Bold', 'Fraktur-Regular',
+  'Main-Bold', 'Main-BoldItalic', 'Main-Italic', 'Main-Regular', 'Math-BoldItalic', 'Math-Italic',
+  'SansSerif-Bold', 'SansSerif-Italic', 'SansSerif-Regular', 'Script-Regular',
+  'Size1-Regular', 'Size2-Regular', 'Size3-Regular', 'Size4-Regular', 'Typewriter-Regular'];
+const OFFLINE_EXTRAS = [
+  '/papers/biology_question_bank.json',
+  '/papers/chemistry_question_bank.json',
+  '/papers/physics_question_bank.json',
+  '/papers/math_question_bank.json',
+  '/vendor/katex/katex.min.js',
+  '/vendor/katex/katex-swap.min.css',
+  '/vendor/katex/contrib/auto-render.min.js',
+  ...KATEX_FONTS.map(f => `/vendor/katex/fonts/KaTeX_${f}.woff2`),
+];
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) => Promise.all([
+      cache.addAll(APP_SHELL),
+      // 额外的下载失败也不该让网站本身装不起来（要等它下载完，不然浏览器可能中途把 Service Worker 停掉）
+      cache.addAll(OFFLINE_EXTRAS).catch(() => {}),
+    ]))
   );
   self.skipWaiting();
 });
@@ -61,13 +84,16 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(req)
       .then((res) => {
-        // 素材探测本来就会打出 404（代表「这个文件没放」），别把失败结果存进缓存
-        if (res.ok) {
+        // 素材探测本来就会打出 404（代表「这个文件没放」），别把失败结果存进缓存；
+        // 音乐是分段下载（206），快取存不了分段的回应，也不存
+        if (res.status === 200) {
           const resClone = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
         }
         return res;
       })
-      .catch(() => caches.match(req).then((cached) => cached || caches.match('/index.html')))
+      // 快取里没有：只有「打开网页」才回首页。图片、公式程式、音乐也回首页的话，
+      // 浏览器会拿一整份 HTML 当图片、当程式跑 —— 数学公式卡住、不会退回显示原文
+      .catch(() => caches.match(req).then((cached) => cached || (req.mode === 'navigate' ? caches.match('/index.html') : Response.error())))
   );
 });

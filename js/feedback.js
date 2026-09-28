@@ -216,9 +216,9 @@ function showSubmitResult(report) {
         </div>
         <div class="fb-report-text">问题已记录在你的浏览器里，但暂时没能送出（可能是网络问题）。请用下面任一方式发给管理员：</div>
         <div style="display:flex; gap: 8px; margin-top: 12px; flex-wrap:wrap;">
-          <button class="btn-ghost-retro" onclick="copyReportText('${escapeFb(report.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-copy"></use></svg>复制问题内容</button>
+          <button class="btn-ghost-retro" onclick="copyReportText(${fbJsArg(report.id)})"><svg class="ic" aria-hidden="true"><use href="#i-copy"></use></svg>复制问题内容</button>
           <a class="btn-ghost-retro" style="text-decoration:none; display:inline-block;" href="${mailto}">✉️ 用邮件发送</a>
-          <button class="btn-ghost-retro" onclick="resendReport('${escapeFb(report.id)}')">🔁 重新发送</button>
+          <button class="btn-ghost-retro" onclick="resendReport(${fbJsArg(report.id)})">🔁 重新发送</button>
         </div>
       </div>`;
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -264,7 +264,7 @@ function reportItemHtml(r) {
   return `
     <div class="fb-report-item">
       <div class="fb-report-head">
-        <span class="fb-status ${r.status}">${r.status === 'resolved' ? '<svg class="ic" aria-hidden="true"><use href="#i-check-circle"></use></svg>已解决' : '<svg class="ic" aria-hidden="true"><use href="#i-alert"></use></svg>处理中'}</span>
+        <span class="fb-status ${r.status === 'resolved' ? 'resolved' : 'pending'}">${r.status === 'resolved' ? '<svg class="ic" aria-hidden="true"><use href="#i-check-circle"></use></svg>已解决' : '<svg class="ic" aria-hidden="true"><use href="#i-alert"></use></svg>处理中'}</span>
         <span class="fb-report-id">${escapeFb(r.id)}</span>
         <span class="fb-report-id">${new Date(r.createdAt).toLocaleDateString('zh-CN')}</span>
         <span class="fb-report-id">📍 ${escapeFb(describeContext(r.location))}</span>
@@ -273,9 +273,9 @@ function reportItemHtml(r) {
       <div class="fb-report-text">${escapeFb(r.text)}</div>
       ${r.reply ? `<div class="fb-report-reply"><strong>管理员回复：</strong>${escapeFb(r.reply.summary)}</div>` : ''}
       <div style="margin-top: 8px; display:flex; gap: 8px; flex-wrap:wrap;">
-        ${r.sent === false && r.status !== 'resolved' ? `<button class="note-mini-btn" style="flex:0 0 auto;" onclick="resendReport('${escapeFb(r.id)}')">🔁 重新发送</button>` : ''}
-        <button class="note-mini-btn" style="flex:0 0 auto;" onclick="copyReportText('${escapeFb(r.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-copy"></use></svg>复制</button>
-        <button class="note-mini-btn danger" style="flex:0 0 auto;" onclick="deleteReport('${escapeFb(r.id)}')"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>删除</button>
+        ${r.sent === false && r.status !== 'resolved' ? `<button class="note-mini-btn" style="flex:0 0 auto;" onclick="resendReport(${fbJsArg(r.id)})">🔁 重新发送</button>` : ''}
+        <button class="note-mini-btn" style="flex:0 0 auto;" onclick="copyReportText(${fbJsArg(r.id)})"><svg class="ic" aria-hidden="true"><use href="#i-copy"></use></svg>复制</button>
+        <button class="note-mini-btn danger" style="flex:0 0 auto;" onclick="deleteReport(${fbJsArg(r.id)})"><svg class="ic" aria-hidden="true"><use href="#i-trash"></use></svg>删除</button>
       </div>
     </div>`;
 }
@@ -295,6 +295,11 @@ function escapeFb(str) {
   return String(str == null ? '' : str)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// 放进 onclick="fn(…)" 的参数：&#39; 在属性里会先还原成单引号，挡不住跳出 '…'（申诉纪录会跨装置同步）
+function fbJsArg(str) {
+  return escapeFb(JSON.stringify(String(str == null ? '' : str)));
 }
 
 /* ---------- 比对管理员的处理结果 ---------- */

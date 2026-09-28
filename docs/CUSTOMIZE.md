@@ -33,6 +33,7 @@
 | 数学公式的字比内文大多少 | `js/math-render.js` | `KATEX_TUNING` 里的 `font-size` | `1.1em`（KaTeX 预设 `1.21em`） | 太大夹在中文里很抢；题目档「打印版」另有一份，在 `js/archive.js` 搜 `.katex{font-size` | 🟢 |
 | 数学的分数、积分、Σ 排成全尺寸（像试卷） | `js/math-render.js` | `preProcess` | 每条公式前加 `\\displaystyle` | 拿掉就变回 KaTeX 预设的行内小分数，手机上很难看清 | 🟢 |
 | 统考时间表弹出框的宽度 | `index.html` | `.exam-list {` 的 `width` | `min(520px, …)` | 窄於 460px 时名称自动换到下一行 | 🟢 |
+| 换题时题卡左右滑进来的距离 | `index.html` | `slideFromRight`、`slideFromLeft` | `12px` | 不要超过 `16px`（手机的页边） | 🔴 超过的话，滑进来那几格会超出萤幕，手机浏览器把整页撑宽、之後一直能左右晃 |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | /dev 列表（巡检、待审、题目修改）题与题之间的空隙 | `dev/dev.css` | `--list-gap` | `12px` | 每题一张卡；太小又会看起来连在一起 | 🟢 |
 | 字级、行高、间距 | 各 CSS | — | | **只能用阶梯上的值**，见 [OPERATIONS 七·阶梯](OPERATIONS.md#字级行高间距的阶梯) | 🔴 |
@@ -91,6 +92,7 @@
 | 每次自动出题照顾几章、每章几题 | `.github/workflows/generate_questions.yml` | `chapters_per_run`、`questions_per_chapter` 的 `default` | 3 章 × 4 题 | 🟢 手动跑时也可以当场填 |
 | 新题和旧题多像就当成重复丢掉 | `scripts/generate_questions.py` | `SIMILARITY_LIMIT` | `0.82`（0～1） | 🟡 调低会丢掉更多题 |
 | 每周自动出题：待审区还有几道 AI 题没审完就先不出 | `scripts/generate_questions.py` | `PAUSE_WHEN_WAITING` | `1`（有 1 道就不出） | 🟢 `0`＝不管，照样出；手动跑不受影响 |
+| 离线用：网站装好後先下载哪些档案 | `sw.js` | `OFFLINE_EXTRAS` | 四科题库＋数学公式排版（约 550KB） | 🟡 学生第一次打开就会下载；背景图（每科约 250KB）、音乐（每科约 2MB）要加进来前先想想学生的流量 |
 | 出题不用哪一级模型（较强的都用完就停手，不往下退） | `scripts/generate_questions.py` | `GENERATE_SKIP_TIERS` | `("flash-lite",)` | 🟡 `()`＝照样退到最後一级，题目品质差很多；录题不受影响。想固定用某个模型设 `GEMINI_MODEL` |
 | 录题／出题推进待审区时被抢先（/dev 刚采纳）最多重试几次 | `scripts/push_pending.sh` | `TRIES` | `5` | 🟢 通常用不到；全部失败就重跑那个工作流（原档还在 drafts/） |
 | 固定用某个 Gemini 模型（不自动挑） | GitHub → Settings → Actions 变数 | `GEMINI_MODEL` | 不设＝自动挑最高级 | 🟡 |
@@ -139,7 +141,7 @@
 | 换背景音乐 | `source/audio/<科目>/ambient.mp3`（上传就好） | 🟢 「背景音乐自动处理」工作流会剪静音、做无缝循环、调音量，推到 `assets/audio/`；档名一定要叫 `ambient` |
 | 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。分页那两张要先把多余白边裁掉再缩，不然 16px 只剩一团色块。浏览器会快取图标，换完可能要重开分页或清快取才看得到。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是另外重画的 SVG，不会跟著这 5 个档变：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |
-| 数学公式排版程式（KaTeX）换新版 | `vendor/katex/` | 🟡 照 `vendor/katex/README.md` 换掉同名档案；只留 `.woff2` 字型 |
+| 数学公式排版程式（KaTeX）换新版 | `vendor/katex/` | 🟡 照 `vendor/katex/README.md` 换掉同名档案；只留 `.woff2` 字型。字型档有增减的话，`sw.js` 的 `KATEX_FONTS` 也要跟着改（离线下载用） |
 | 小精灵的姿势图 | `source/sprite/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
 | 申诉处理结果 | 网站 `/dev` →「申诉处理」 | 不必手改 `data/resolved_issues.json` |
 
