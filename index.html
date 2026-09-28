@@ -3087,7 +3087,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
   // ---- 题库有更新：学生一直待在做题页、或网站在背景放了好几天，不会自己重新载入 ----
   // 切回前景时，以及停在做题页每隔一段时间，悄悄重抓这一科的题库（没变的话伺服器只回「没变」，几乎不花流量）。
   // 有变就跳提示，学生按了才重新载入，答到一半不会被打断；没按的话，下次换章时顺便套用。测验中不检查
-  const BANK_RECHECK_MS = 10 * 60 * 1000;
+  const BANK_RECHECK_MS = 60 * 1000;
   async function checkBankUpdate() {
     if (document.hidden || bankStale || Date.now() - lastBankCheck < BANK_RECHECK_MS) return;
     lastBankCheck = Date.now();
@@ -3115,7 +3115,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
     document.body.appendChild(tip);
   }
   document.addEventListener('visibilitychange', checkBankUpdate);
-  setInterval(checkBankUpdate, 60 * 1000);   // 每分钟看一次到了没，真的重抓是 BANK_RECHECK_MS 一次
+  setInterval(checkBankUpdate, 15 * 1000);   // 每 15 秒看一次到了没，真的重抓是 BANK_RECHECK_MS 一次（和它一样长的话，差几毫秒没到就会拖成两倍）
 
   function dismissNewTip(now) {
     const tip = document.getElementById('newQuestionTip');

@@ -81,7 +81,7 @@
 | 背景音乐的响度、剪静音的门槛、循环接头的淡接秒数 | `scripts/audio/build.py` | `LUFS`、`SILENCE_DB`、`XFADE` | `-20`、`-50`、`3.0` 秒 | 🟡 改完到 Actions 手动跑「背景音乐自动处理」、科目留空，全部重做；只重做一首会和其他首不一样大声 |
 | 音乐播完接回开头时，头尾交叉叠多久 | `index.html` | `MUSIC_LOOP_XFADE_MS` | `3000` 毫秒 | 🟢 太长会听到结尾和开头叠在一起；曲子短于它的 3 倍就不叠，直接重播 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |
-| 待在做题页、或从背景切回来时，多久检查一次题库有没有更新 | `index.html` | `BANK_RECHECK_MS` | 10 分钟 | 🟢 题库没变时伺服器只回「没变」，几乎不花流量；有变就跳「题库更新了」 |
+| 待在做题页、或从背景切回来时，多久检查一次题库有没有更新 | `index.html` | `BANK_RECHECK_MS` | 1 分钟 | 🟢 题库没变时伺服器只回「没变」（0 bytes），几乎不花流量；有变就跳「题库更新了」。旁边的 `setInterval(checkBankUpdate, …)` 是多久看一次到了没，要比它短 |
 | **统考日期与每场的试卷一／二时间** | `js/exam-timetable.js` | `papers` | 2026 年董总时间表 | 🟡 格式见档案开头注解 |
 | AI 依考纲出题的自动排程 | `.github/workflows/generate_questions.yml` | `cron` | 每周一早上 9 点（马来西亚） | 🟡 cron 是 UTC，马来西亚时间减 8 小时 |
 | 题库体检的自动排程 | `.github/workflows/auto_update.yml` | `cron` | 每周一早上 8 点 | 🟡 同上 |
