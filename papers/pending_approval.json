@@ -1,32 +1,6 @@
 {
   "items": [
     {
-      "id": "chemistry_gen_921085ae",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap1",
-      "chapter_title": "第一章：水和氢",
-      "q": "在工业上，常利用焦炭与水蒸气在高温下反应制取「水煤气」。关于此反应的叙述，下列何者正确？",
-      "options": [
-        "A. 该反应方程式为 C + H2O → CO + H2，属于放热反应",
-        "B. 在此反应中，水蒸气作为氧化剂，其中的氢元素被还原",
-        "C. 水煤气的主要成分是氢气和二氧化碳",
-        "D. 产物中的一氧化碳可通过通入澄清石灰水进行检验"
-      ],
-      "answer": 1,
-      "explanation": "考点为氢气的工业制法（水煤气法）。A项该反应是吸热反应，需要高温维持；B项中水蒸气失去氧给碳，氢元素的化合价从+1降至0，被还原，充当氧化剂，叙述正确；C项水煤气的主要成分是 CO 和 H2；D项一氧化碳不与石灰水反应，二氧化碳才可使石灰水变浑浊。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-27T12:46:17.201644+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 1,
-        "reason": "反应中水蒸气中的氢元素化合价由 +1 降至 0 被还原，水蒸气充当氧化剂。"
-      }
-    },
-    {
       "id": "chemistry_gen_fb2d653a",
       "subject": "chemistry",
       "type": "mcq",
