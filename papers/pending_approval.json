@@ -1541,30 +1541,6 @@
       "syllabus_used": true
     },
     {
-      "id": "chemistry_gen_76762e5b",
-      "subject": "chemistry",
-      "type": "mcq",
-      "chapter_id": "chap28",
-      "chapter_title": "第二十八章：炔烃",
-      "q": "根据系统命名法（IUPAC），有机化合物 $(CH_3)_2CH-C≡C-CH(C_2H_5)CH_2CH_3$ 的正确名称是：",
-      "options": [
-        "A. 2-甲基-5-乙基庚-3-炔",
-        "B. 5-乙基-2-甲基庚-3-炔",
-        "C. 3-乙基-6-甲基庚-4-炔",
-        "D. 5-异丙基庚-3-炔"
-      ],
-      "answer": 1,
-      "explanation": "考点为炔烃的系统命名法。首先确定含有三键的最长碳链为主链，该分子主链有 7 个碳原子，故为庚炔。从距离三键最近的一端开始编号，三键位于第 3 和第 4 碳之间，故为庚-3-炔（若从右往左编则为 4-炔，取小值）。取代基分别为 2 位上的甲基和 5 位上的乙基。根据 IUPAC 规定，不同取代基按字母顺序（或中文拼音/笔画，统考通常遵循英文音序：Ethyl 在 Methyl 之前）排列，故正确名称为 5-乙基-2-甲基庚-3-炔。选项 A 顺序错误，选项 C 编号方向错误，选项 D 未选取最长碳链。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [
-        "审题：答案 B 依 IUPAC 英文字母顺序（乙基在甲基前）。A 和 B 是同一个化合物，只差取代基的排列顺序；若课本用「简单取代基在前」的规则，A 才对。请依课本决定采纳或退回"
-      ],
-      "generated_at": "2026-09-29T08:27:22.164780+00:00",
-      "syllabus_used": true
-    },
-    {
       "id": "chemistry_gen_9eb4a6b2",
       "subject": "chemistry",
       "type": "mcq",
