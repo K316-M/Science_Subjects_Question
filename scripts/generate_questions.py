@@ -282,6 +282,7 @@ def process_subject(subject, report_rows):
                 "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "syllabus_used": bool(syllabus),
             }
+            qa.tidy_record(item)   # 少写的反斜线、字面 \n、**粗体**、$CuSO_4$ 这类先自动修掉
             item["flags"] += qa.text_problems(item)
             new_items.append(item)
             kept += 1

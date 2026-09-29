@@ -7,7 +7,9 @@
 宁可多标，不要少标。
 
   1. text_problems   题干/选项夹英文虚词（「甘油 and 脂肪酸」）、残留转写标记、题号没去掉、
-                     公式的反斜线少写（控制字元）、$ 没成对、$ 外面的 LaTeX 指令、AI 在解析里自言自语
+                     公式的反斜线少写（控制字元）、$ 没成对、$ 外面的 LaTeX 指令、Markdown 粗体星号、
+                     AI 在解析里自言自语
+     （出题存档前先跑 tidy_record 自动修掉能安全修的排版，修不掉的才留给这一步标出来）
   2. source_drift    Word/PPT/文字档：题干与选项要能在原档里一字不差找到，
                      AI 改字、加字、漏字（例如漏掉「不」）都标出来，并写出原档与录入的差异
   3. cross_check     请 Gemini 在看不到答案的情况下重做一次选择题，和已有答案比对
@@ -32,6 +34,7 @@ ROMAN_ONE_LINE = re.compile(r"(?<![A-Za-z])I\s+\S.*?\sII(?![A-Za-z])")
 MATH_SPAN = re.compile(r"\$[^$]*\$")
 CONTROL_CHAR = re.compile(r"[\x08\x0c\t\r]")   # 公式的反斜线少写一个时，\b \f \t \r 会变成这些
 RAW_LATEX = re.compile(r"\\[A-Za-z]+")          # $ 外面的 \sqrt、\gamma：网站只排 $ 里面的，外面的原样显示成程式码
+MARKDOWN_BOLD = re.compile(r"\*\*[^*\n]+\*\*")   # 「**不能**」：网站不认 Markdown，学生会直接看到星号
 # AI 出题／写解析时算到一半发现不对、自己改口留下的话。2026-09 那批：有这些字的题全都要改或退
 # （答案错、题目改到一半、选项对不上），而「答案有疑」反而多半是误报
 SELF_TALK = re.compile(r"等等|哎呀|重新(计算|分析|审题|核对|核算|检查)|让我们?(重新|检查|核对|修正)|"
@@ -79,7 +82,7 @@ def plain_scripts(text):
 # \b \f \n \r \t 开头的字，只有列在这里的才当成公式指令补（\ne、\nu、\ni 可能是「换行＋字母」，不列，提示词要 AI 写 \neq）
 LATEX_ESCAPE_LOOKALIKES = {
     "frac", "forall", "beta", "bar", "begin", "binom", "big", "bigl", "bigr", "boxed", "because", "bmod",
-    "neq", "not", "notin", "nabla", "right", "rightarrow", "rho", "rangle", "rm",
+    "neq", "not", "notin", "nabla", "right", "rightarrow", "rightleftharpoons", "rho", "rangle", "rm",
     "times", "theta", "tan", "tanh", "text", "textbf", "textrm", "tfrac", "to", "tau", "triangle", "therefore", "tilde",
 }
 _BACKSLASH = re.compile(r"\\(u[0-9a-fA-F]{4}|[A-Za-z]+|.)", re.S)
@@ -129,6 +132,58 @@ def extract_json_array(text):
     return data
 
 
+# ---------- 出题存档前自动修的排版 ----------
+# 2026-09 化学 85 题里有 30 处是这几种，每次都要人手改；这些修法不会改到意思，出题脚本存档前先修掉。
+# 修不掉的（$ 没成对、$ 外面的 \sqrt 这类）照样交给 text_problems 标出来。
+_SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
+_SUP = str.maketrans("0123456789+-", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻")
+_CONTROL_BACK = {"\r": "\\r", "\t": "\\t", "\b": "\\b", "\f": "\\f"}
+
+
+def _formula_span(tex):
+    r"""$…$ 里只有化学式／反应式（$CuSO_4$、$2\text{SO}_2(\text{g}) \rightleftharpoons …$）→ 改成 CuSO₄ 这种上下标字，
+    和题库其他化学、物理题一致；有变数、分数、核素左上标的回传 None，保留 LaTeX"""
+    if not re.search(r"\\text|\\mathrm|_\{?\d|\^\{?\d*[+-]|\\right|\\Delta", tex):   # 单独的 $X$、$n$ 是变数
+        return None
+    s = re.sub(r"\\(?:text|mathrm)\{([^{}]*)\}", r"\1", tex)
+    for a, b in ((r"\rightleftharpoons", " ⇌ "), (r"\longrightarrow", " → "), (r"\rightarrow", " → "),
+                 (r"\quad", "\u2003"), (r"\Delta ", "Δ"), (r"\Delta", "Δ"), (r"\lt", "＜"), (r"\gt", "＞"), (r"\cdot", "·")):
+        s = s.replace(a, b)
+    if re.search(r"(^|[^A-Za-z)\]}])[\^_]", s):   # 核素 ^{238}_{92}U：上下标字排不出上下叠
+        return None
+    s = re.sub(r"_\{(\d+)\}|_(\d)", lambda m: (m.group(1) or m.group(2)).translate(_SUB), s)
+    s = re.sub(r"\^\{(\d*[+-])\}|\^([+-])", lambda m: (m.group(1) or m.group(2)).translate(_SUP), s)
+    s = re.sub(r"\s*\u2003\s*", "  ", re.sub(r" {2,}", " ", s)).strip()
+    if not re.fullmatch(r"[A-Za-z0-9₀-₉⁰-⁹⁺⁻()\[\]\s+⇌→·＜＞Δ,.]+", s) or not re.search(r"[A-Z]", s):
+        return None
+    return s
+
+
+def tidy_text(text, subject):
+    for c, back in _CONTROL_BACK.items():   # 少写反斜线：\rightleftharpoons 变成「\r」+ ightleftharpoons
+        text = re.sub(re.escape(c) + r"(?=[a-z])", lambda m: back, text)
+    out, pos = [], 0
+    for m in MATH_SPAN.finditer(text):
+        out.append(re.sub(r"\\n(?![a-z])", "\n", text[pos:m.start()]))   # 字面的「\n」是换行
+        tex = m.group(0)[1:-1]
+        plain = _formula_span(tex) if subject != "math" else None
+        # 核反应式：箭头、加号後面直接接 ^{…}，上标会挂到箭头上
+        out.append(plain if plain is not None else "$" + re.sub(r"(\\rightarrow|\+)(\s*)\^", r"\1\2{}^", tex) + "$")
+        pos = m.end()
+    out.append(re.sub(r"\\n(?![a-z])", "\n", text[pos:]))
+    return MARKDOWN_BOLD.sub(lambda m: m.group(0)[2:-2], "".join(out))
+
+
+def tidy_record(record):
+    """题干、选项、解析就地修好；$ 没成对的整段不动（分不出哪里是公式）"""
+    subject = record.get("subject")
+    for key in ("q", "explanation"):
+        if isinstance(record.get(key), str) and record[key].count("$") % 2 == 0:
+            record[key] = tidy_text(record[key], subject)
+    record["options"] = [tidy_text(o, subject) if o.count("$") % 2 == 0 else o for o in record.get("options") or []]
+    return record
+
+
 def _stem(record):
     return record.get("q") or record.get("question") or ""
 
@@ -159,6 +214,8 @@ def text_problems(record):
             # 标记本身会显示在 /dev：一句里有两个 $ 会被当成公式排掉，所以只能出现一个
             out.append(f"{label}有写在公式外面的 LaTeX 指令「{RAW_LATEX.search(prose).group(0)}」，学生会看到原始码，"
                        "请改成符号（√、γ），或前后加 $ 放进公式")
+        if MARKDOWN_BOLD.search(text):
+            out.append(f"{label}有 Markdown 粗体「**」，网站不认得，学生会看到星号，请拿掉")
         if any(c in span for span in MATH_SPAN.findall(text) for c in "<>"):
             out.append(f"{label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt")
         plain = plain_scripts(prose) if record.get("subject") != "math" else []
