@@ -586,7 +586,7 @@
         "D. I、II、III 与 IV"
       ],
       "answer": 3,
-      "explanation": "考点为通电螺线管的磁场特性。I 正确：长直螺线管内部中心附近的磁感线是平行的直线，可视为匀强磁场；II 正确：根据公式 $B = \\mu_0 nI$，磁感应强度与单位长度匝数 $n$ 成正比；III 正确：软铁芯被磁化后会产生额外的磁场，使总磁场显著增强；IV 正确：螺线管外部磁感线从北极指向南极，分布形状与条形磁铁完全一致。故全选。",
+      "explanation": "考点为通电螺线管的磁场特性。I 正确：长直螺线管内部中心附近的磁感线是平行的直线，可视为匀强磁场；II 正确：根据公式 $B = \\mu_0 nI$，磁感应强度与单位长度匝数 $n$ 成正比；III 正确：软铁芯被磁化后会产生额外的磁场，使总磁场显著增强；IV 正确：螺线管外部磁感线从北极指向南极，分布形状与条形磁铁相似。故全选。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
@@ -716,7 +716,7 @@
         "D. $I = 1.00$ A, $F = 0.40$ N"
       ],
       "answer": 0,
-      "explanation": "考点为动生电动势与安培力计算。首先计算感应电动势 $E = Blv = 0.40 \\times 0.50 \\times 5.0 = 1.0$ V。根据欧姆定律，感应电流 $I = \\frac{E}{R} = \\frac{1.0}{2.0} = 0.50$ A。由于金属杆做匀速运动，外力 $F$ 必须与安培力 $F_{\\text{安}}$ 平衡，即 $F = F_{\\text{安}} = BIl = 0.40 \\times 0.50 \\times 0.50 = 0.10$ N。常见错误是混淆了杆长 $L$ 和速度 $v$ 的数值，或在计算安培力时忘记代入正确的电流值。",
+      "explanation": "考点为动生电动势与安培力计算。首先计算感应电动势 $E = BLv = 0.40 \\times 0.50 \\times 5.0 = 1.0$ V。根据欧姆定律，感应电流 $I = \\frac{E}{R} = \\frac{1.0}{2.0} = 0.50$ A。由于金属杆做匀速运动，外力 $F$ 必须与安培力 $F_{\\text{安}}$ 平衡，即 $F = F_{\\text{安}} = BIL = 0.40 \\times 0.50 \\times 0.50 = 0.10$ N。常见错误是混淆了杆长 $L$ 和速度 $v$ 的数值，或在计算安培力时忘记代入正确的电流值。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
@@ -976,7 +976,7 @@
         "D. I、II、III"
       ],
       "answer": 1,
-      "explanation": "考点为 X 射线的产生原理。根据 Duane-Hunt 定律，$eV = hf_{\\max} = \\frac{hc}{\\lambda_{\\min}}$，得 $\\lambda_{\\min} = \\frac{hc}{eU}$，因此最短波长与加速电压 $U$ 成反比，与靶材无关（特征 X 射线才与靶材有关），故 I 正确，II 错误。X 射线本质是电磁波，在真空中速度为 $c$，故 III 正确。",
+      "explanation": "考点为 X 射线的产生原理。根据 Duane-Hunt 定律，$eU = hf_{\\max} = \\frac{hc}{\\lambda_{\\min}}$，得 $\\lambda_{\\min} = \\frac{hc}{eU}$，因此最短波长与加速电压 $U$ 成反比，与靶材无关（特征 X 射线才与靶材有关），故 I 正确，II 错误。X 射线本质是电磁波，在真空中速度为 $c$，故 III 正确。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
@@ -1077,16 +1077,14 @@
         "A. X 易被斐林试剂氧化",
         "B. X 与氢气在镍催化及加热条件下反应，生成 1-丙醇",
         "C. X 可由 2-丙醇经酸性重铬酸钾溶液氧化制得",
-        "D. X 能与新制的 Cu(OH)₂ 悬浊液共热生成红褐色沉淀"
+        "D. X 能与新制的 Cu(OH)₂ 悬浊液共热生成砖红色沉淀"
       ],
       "answer": 2,
-      "explanation": "本题考查醛和酮的鉴别与化学性质。分子式为 C₃H₆O 的饱和一元羰基化合物有丙醛和丙酮。实验 I 中 X 与托伦试剂无明显现象，说明 X 不含醛基（-CHO），排除丙醛。实验 II 中 X 与碘的氢氧化钠溶液反应产生黄色沉淀（CHI₃），说明 X 具有甲基酮（CH₃CO-）结构，证实 X 为丙酮（CH₃COCH₃）。丙酮属于酮类，不能被斐林试剂或新制 Cu(OH)₂ 氧化，故 A、D 错误；丙酮加氢还原生成仲醇（2-丙醇），而非伯醇（1-丙醇），故 B 错误；仲醇（2-丙醇）可被酸性重铬酸钾溶液氧化为酮（丙酮），故 C 正确。",
+      "explanation": "本题考查醛和酮的鉴别与化学性质。分子式为 C₃H₆O 的饱和一元羰基化合物有丙醛和丙酮。实验 I 中 X 与托伦试剂无明显现象，说明 X 不含醛基（-CHO），排除丙醛。实验 II 中 X 与碘的氢氧化钠溶液反应产生黄色沉淀（CHI₃），说明 X 具有甲基酮结构（CH₃COR，R 为烃基或 H），证实 X 为丙酮（CH₃COCH₃）。丙酮属于酮类，不能被斐林试剂或新制 Cu(OH)₂ 氧化，故 A、D 错误；丙酮加氢还原生成仲醇（2-丙醇），而非伯醇（1-丙醇），故 B 错误；仲醇（2-丙醇）可被酸性重铬酸钾溶液氧化为酮（丙酮），故 C 正确。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析有没写成上下标的「CO-」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:51:32.640709+00:00",
       "syllabus_used": true,
       "review": {
@@ -1230,7 +1228,7 @@
       "type": "mcq",
       "chapter_id": "chap34",
       "chapter_title": "第三十四章：高分子化合物",
-      "q": "某合成纤维的结构简式可表示为：-[NH-(CH₂)₆-NH-CO-(CH₂)₄-CO]-ₙ。关于该高分子的叙述，哪项是不正确的？",
+      "q": "某合成纤维的结构简式可表示为：[—NH—(CH₂)₆—NH—CO—(CH₂)₄—CO—]ₙ。关于该高分子的叙述，哪项是不正确的？",
       "options": [
         "A. 该高分子属于聚酰胺（Polyamide）类化合物",
         "B. 合成该高分子的单体是己二胺和己二酸",
@@ -1238,14 +1236,11 @@
         "D. 该高分子链间无法形成氢键，因此其熔点比聚乙烯低"
       ],
       "answer": 3,
-      "explanation": "考点为高分子结构的识别与性质。该结构为尼龙-66（Nylon-66）。A、C正确，其链节中含有-NH-CO-（酰胺键）。B正确，通过己二胺和己二酸脱水缩合而成。D错误，聚酰胺分子链上的-NH-与另一条链上的-CO-可以形成强烈的分子间氢键，这使得尼龙具有高熔点、高强度和优良的纤维成型性能，其熔点远高于聚乙烯。",
+      "explanation": "考点为高分子结构的识别与性质。该结构为尼龙-66（Nylon-66）。A、C正确，其链节中含有 —NH—CO—（酰胺键）。B正确，通过己二胺和己二酸脱水缩合而成。D错误，聚酰胺分子链上的 N—H 与另一条链上的 C=O 可以形成强烈的分子间氢键，这使得尼龙具有高熔点、高强度和优良的纤维成型性能，其熔点远高于聚乙烯。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "题干有没写成上下标的「NH-」「CO-」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）",
-        "解析有没写成上下标的「CO-」「NH-」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:54:50.006329+00:00",
       "syllabus_used": true,
       "review": {
@@ -1297,9 +1292,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:58:19.918698+00:00",
       "syllabus_used": true
     },
@@ -1317,14 +1310,11 @@
         "D. $8$"
       ],
       "answer": 1,
-      "explanation": "本题考查指数方程式的换元解法。原式可改写为 $(2^x)^2 - 3 \\cdot 2 \\cdot 2^x + 8 = 0$，即 $(2^x)^2 - 6(2^x) + 8 = 0$。令 $t = 2^x$（其中 $t > 0$），得 $t^2 - 6t + 8 = 0$，因式分解得 $(t-2)(t-4) = 0$。解得 $t = 2$ 或 $t = 4$。还原回 $x$：$2^x = 2 \\Rightarrow x = 1$；$2^x = 4 \\Rightarrow x = 2$。所有实数解之和为 $1 + 2 = 3$。若学生误用根与系数关系直接得出 $t_1 + t_2 = 6$ 或 $t_1 t_2 = 8$，则会选错。",
+      "explanation": "本题考查指数方程式的换元解法。原式可改写为 $(2^x)^2 - 3 \\cdot 2 \\cdot 2^x + 8 = 0$，即 $(2^x)^2 - 6(2^x) + 8 = 0$。令 $t = 2^x$（其中 $t \\gt  0$），得 $t^2 - 6t + 8 = 0$，因式分解得 $(t-2)(t-4) = 0$。解得 $t = 2$ 或 $t = 4$。还原回 $x$：$2^x = 2 \\Rightarrow x = 1$；$2^x = 4 \\Rightarrow x = 2$。所有实数解之和为 $1 + 2 = 3$。若学生误用根与系数关系直接得出 $t_1 + t_2 = 6$ 或 $t_1 t_2 = 8$，则会选错。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:58:19.921637+00:00",
       "syllabus_used": true
     },
@@ -1342,14 +1332,11 @@
         "D. $x \\gt 3$"
       ],
       "answer": 2,
-      "explanation": "本题考查对数函数的定义域及其单调性。函数有意义需满足：(1) 真数 $x-2 > 0 \\Rightarrow x > 2$；(2) 分母且根号内式子 $\\log_{0.5}(x-2) > 0$。由于对数底数 $0.5$ 介于 $0$ 与 $1$ 之间，该对数函数为减函数。由 $\\log_{0.5}(x-2) > \\log_{0.5} 1$ 得 $x-2 < 1$，即 $x < 3$。综合上述条件，定义域为 $2 < x < 3$。常见错误是忽略底数小于 1 时不等号需变向，或忽略真数必须大于 0 的条件。",
+      "explanation": "本题考查对数函数的定义域及其单调性。函数有意义需满足：(1) 真数 $x-2 \\gt  0 \\Rightarrow x \\gt  2$；(2) 分母且根号内式子 $\\log_{0.5}(x-2) \\gt  0$。由于对数底数 $0.5$ 介于 $0$ 与 $1$ 之间，该对数函数为减函数。由 $\\log_{0.5}(x-2) \\gt  \\log_{0.5} 1$ 得 $x-2 \\lt  1$，即 $x \\lt  3$。综合上述条件，定义域为 $2 \\lt  x \\lt  3$。常见错误是忽略底数小于 1 时不等号需变向，或忽略真数必须大于 0 的条件。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:58:19.924342+00:00",
       "syllabus_used": true
     },
@@ -1371,9 +1358,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:58:19.928619+00:00",
       "syllabus_used": true
     },
@@ -1395,9 +1380,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:58:39.780366+00:00",
       "syllabus_used": true
     },
@@ -1409,23 +1392,17 @@
       "chapter_title": "第十三章：数列与级数",
       "q": "求级数 $\\sum_{r=1}^{20} \\frac{2}{4r^2 - 1}$ 的值。",
       "options": [
-        "A. \\frac{20}{21}",
-        "B. \\frac{40}{41}",
-        "C. \\frac{1}{41}",
-        "D. \\frac{80}{41}"
+        "A. $\\frac{20}{21}$",
+        "B. $\\frac{40}{41}$",
+        "C. $\\frac{1}{41}$",
+        "D. $\\frac{80}{41}$"
       ],
       "answer": 1,
       "explanation": "考点：裂项相消法（Telescoping Series）。\n1. 通项公式变形：$\\frac{2}{4r^2 - 1} = \\frac{2}{(2r-1)(2r+1)}$。\n2. 利用部分分式分解：$\\frac{2}{(2r-1)(2r+1)} = \\frac{1}{2r-1} - \\frac{1}{2r+1}$。\n3. 展开求和：\n   $S_{20} = (\\frac{1}{1} - \\frac{1}{3}) + (\\frac{1}{3} - \\frac{1}{5}) + (\\frac{1}{5} - \\frac{1}{7}) + \\dots + (\\frac{1}{39} - \\frac{1}{41})$。\n4. 中间项全部抵消，剩下首尾两项：$S_{20} = 1 - \\frac{1}{41} = \\frac{40}{41}$。\n常见错误：选项 A 是当分母为 $r(r+1)$ 时的常见结果；选项 C 是只剩下最后一项的错误结果。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "选项A有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "选项B有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "选项C有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "选项D有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:58:39.783248+00:00",
       "syllabus_used": true
     },
@@ -1437,21 +1414,17 @@
       "chapter_title": "第十三章：数列与级数",
       "q": "已知数列 $\\{a_n\\}$ 的所有项均为正数，且满足 $\\log_2 a_1, \\log_2 a_2, \\dots, \\log_2 a_n$ 是一个首项为 1、公差为 2 的等差数列。求数列 $\\{a_n\\}$ 的前 $n$ 项和 $S_n$。",
       "options": [
-        "A. 2(2^n - 1)",
-        "B. \\frac{2}{3}(4^n - 1)",
-        "C. 2^n - 1",
-        "D. \\frac{1}{3}(4^n - 1)"
+        "A. $2(2^n - 1)$",
+        "B. $\\frac{2}{3}(4^n - 1)$",
+        "C. $2^n - 1$",
+        "D. $\\frac{1}{3}(4^n - 1)$"
       ],
       "answer": 1,
       "explanation": "考点：对数运算与等比数列的转换。\n1. 设 $b_n = \\log_2 a_n$，由题意 $b_n = 1 + (n-1)2 = 2n-1$。\n2. 根据对数定义，$a_n = 2^{b_n} = 2^{2n-1}$。\n3. 检查 $\\{a_n\\}$ 的性质：\n   $a_1 = 2^{2(1)-1} = 2^1 = 2$；\n   $a_2 = 2^{2(2)-1} = 2^3 = 8$；\n   公比 $r = \\frac{a_2}{a_1} = \\frac{8}{2} = 4$。\n4. $\\{a_n\\}$ 是首项为 2，公比为 4 的等比数列。\n5. 求和：$S_n = \\frac{a(r^n - 1)}{r - 1} = \\frac{2(4^n - 1)}{4 - 1} = \\frac{2}{3}(4^n - 1)$。\n常见错误：误以为公比是 2（选项 A）；或者计算首项时出错（选项 D）；或者直接将等差数列求和公式套用在对数上。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "选项B有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "选项D有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:58:39.789650+00:00",
       "syllabus_used": true
     },
@@ -1473,9 +1446,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:59:07.138293+00:00",
       "syllabus_used": true
     },
@@ -1497,9 +1468,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:59:07.144840+00:00",
       "syllabus_used": true
     },
@@ -1521,9 +1490,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:59:07.153786+00:00",
       "syllabus_used": true
     },
@@ -1537,19 +1504,15 @@
       "options": [
         "A. 0",
         "B. 1",
-        "C. \\frac{\\sqrt{2}}{2}",
-        "D. \\sin(A+B+C)"
+        "C. $\\frac{\\sqrt{2}}{2}$",
+        "D. $\\sin(A+B+C)$"
       ],
       "answer": 0,
       "explanation": "本题结合三角恒等式考察行列式的性质。利用和角公式 $\\sin(x+45^\\circ) = \\sin x \\cos 45^\\circ + \\cos x \\sin 45^\\circ = \\frac{\\sqrt{2}}{2} \\sin x + \\frac{\\sqrt{2}}{2} \\cos x$。观察行列式的第三列 $C_3$，其每个元素都可以表示为第一列 $C_1$ 与第二列 $C_2$ 对应元素的线性组合，即 $C_3 = \\frac{\\sqrt{2}}{2} C_1 + \\frac{\\sqrt{2}}{2} C_2$。根据行列式的性质，若有一列是其他列的线性组合，则该行列式的值为 0。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "选项C有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "选项D有写在公式外面的 LaTeX 指令「\\sin」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T13:59:07.161392+00:00",
       "syllabus_used": true
     }
