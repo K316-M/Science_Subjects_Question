@@ -256,6 +256,9 @@
     tip.style.setProperty('--arrow-x', `${Math.round(Math.min(tw - 20, Math.max(20, cx - x)))}px`);
   }
   const schedulePlace = () => { if (!rafId) rafId = requestAnimationFrame(place); };
+  // 目标有进场动画时（小精灵从右下方飞进来；新浏览器还没载好图，会先停在动画第一格等图），
+  // 量到的是动画途中的位置：页面上任何动画、过渡一结束就重新对一次。导览自己的亮框、提示框不算
+  const onMotionEnd = e => { if (e.target !== spot && e.target !== tip) schedulePlace(); };
 
   function render() {
     const s = steps[index];
@@ -355,6 +358,8 @@
     block = spot = tip = null; target = null;
     removeEventListener('resize', schedulePlace);
     removeEventListener('scroll', schedulePlace, true);
+    removeEventListener('animationend', onMotionEnd, true);
+    removeEventListener('transitionend', onMotionEnd, true);
     if (returnTo && typeof returnTo.focus === 'function') returnTo.focus({ preventScroll: true });
     returnTo = null;
   }
@@ -370,6 +375,8 @@
     document.body.append(block, spot, tip);
     addEventListener('resize', schedulePlace);
     addEventListener('scroll', schedulePlace, true);
+    addEventListener('animationend', onMotionEnd, true);
+    addEventListener('transitionend', onMotionEnd, true);
   }
 
   function trapTab(e) {
