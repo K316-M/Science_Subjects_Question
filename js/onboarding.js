@@ -22,6 +22,10 @@
   // 做题页现在是哪一种练法（index.html 的 markSubTab 发出 uec:submode）
   const SUB_TO_TOUR = { mcq: 'study', subj: 'subj', wrong: 'wrong', review: 'review' };
   let subMode = 'mcq';
+  // 从单题分享链接进来（index.html 的 openSharedLink）：做题页的导览先不自动跳，免得挡住同学要看的那一题。
+  // 离开做题页再回来就照常介绍；右上角「引导」随时能手动打开
+  const landingSkip = new Set();
+  const skipLanding = () => { landingSkip.add('study'); landingSkip.add('subj'); };
 
   // 「加到主画面」怎么加：iPhone／iPad 在分享选单里，Android 等其他浏览器在右上角选单里
   const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -380,7 +384,7 @@
   // 画面的内容常常是非同步画出来的（题库要先载入），等第一个目标出现再开始，最多等 2.5 秒
   function startWhenReady(name, force) {
     const tour = TOURS[name];
-    if (!tour || (!force && readSeen()[name])) return;
+    if (!tour || (!force && (readSeen()[name] || landingSkip.has(name)))) return;
     const firstTarget = (tour.find(s => s.target && !s.before) || {}).target;
     const t0 = Date.now();
     (function poll() {
@@ -408,6 +412,7 @@
 
     // 换画面时（index.html 的 showView 会发出 uec:view）
     addEventListener('uec:view', e => {
+      if (e.detail !== 'viewStudy') landingSkip.clear();
       if (tourName) finish(true);
       setTimeout(() => { startWhenReady(currentTourName(), false); maybeInstallTip(); }, 700);
     });
@@ -438,5 +443,5 @@
     if (didQuestions) setTimeout(() => { if (currentTourName() === 'home') once('install'); }, 1200);
   }
 
-  window.UECOnboarding = { start: name => start(name || currentTourName(), true), once, finish, KEY, TOURS };
+  window.UECOnboarding = { start: name => start(name || currentTourName(), true), once, finish, skipLanding, KEY, TOURS };
 })();

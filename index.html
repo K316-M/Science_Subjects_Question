@@ -2503,6 +2503,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
     history.replaceState(null, '', location.pathname + location.search + (rest ? '#' + rest : ''));
     const [, subject, chapterId, kind, idxText] = m;
     const idx = Number(idxText);
+    // 第一次来的同学：先让他看到题目，做题页的导览等他之後自己逛进来再说（js/onboarding.js）
+    if (window.UECOnboarding && window.UECOnboarding.skipLanding) window.UECOnboarding.skipLanding();
     await openSubject(subject, undefined, kind === 's' ? 'subj' : 'mcq');
     if (loadedSubject !== subject) return;   // 题库载入失败，或学生已经切到别科
     const sections = fullDatabase.sections || [];

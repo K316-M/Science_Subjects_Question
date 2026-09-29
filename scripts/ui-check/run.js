@@ -277,6 +277,13 @@ async function run() {
     check('单题分享', '下架的题：进到那一章，并说明已下架', hidden < 0 || /下架/.test(tip), tip);
     check('单题分享', '没有 JS 错误', errors.length === 0, errors[0]);
     await ctx.close();
+    // 第一次来的同学：先看到题目，做题页的导览不自动跳
+    const fresh = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
+    const p2 = await fresh.newPage();
+    await p2.goto(`${origin}/#q=biology/${CH3.id}/m${target}`); await p2.waitForTimeout(4000);
+    const tour = await p2.evaluate(() => (document.querySelector('.tour-tip.is-shown') || {}).innerText || '');
+    check('单题分享', '第一次来的同学点链接：不自动跳做题页导览', !tour, tour.slice(0, 40));
+    await fresh.close();
   });
 
   await section('版面', async () => {
