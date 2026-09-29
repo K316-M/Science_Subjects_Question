@@ -1065,7 +1065,220 @@
         "ai_answer": 2,
         "reason": "隐性基因型频率 q² = 0.04，得 q = 0.2，p = 0.8，杂合子频率 2pq = 2 × 0.8 × 0.2 = 32%。"
       }
+    },
+    {
+      "id": "chemistry_gen_fc4f1d74",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap32",
+      "chapter_title": "第三十二章：醛和酮",
+      "q": "某无色液体有机化合物 X，其分子式为 C₃H₆O。进行下列实验：\nI. 加入托伦试剂并温热，无明显现象。\nII. 加入碘的氢氧化钠溶液并温热，产生黄色沉淀。\n\n根据上述实验结果，下列关于 X 的叙述，哪项是正确的？",
+      "options": [
+        "A. X 易被斐林试剂氧化",
+        "B. X 与氢气在镍催化及加热条件下反应，生成 1-丙醇",
+        "C. X 可由 2-丙醇经酸性重铬酸钾溶液氧化制得",
+        "D. X 能与新制的 Cu(OH)₂ 悬浊液共热生成红褐色沉淀"
+      ],
+      "answer": 2,
+      "explanation": "本题考查醛和酮的鉴别与化学性质。分子式为 C₃H₆O 的饱和一元羰基化合物有丙醛和丙酮。实验 I 中 X 与托伦试剂无明显现象，说明 X 不含醛基（-CHO），排除丙醛。实验 II 中 X 与碘的氢氧化钠溶液反应产生黄色沉淀（CHI₃），说明 X 具有甲基酮（CH₃CO-）结构，证实 X 为丙酮（CH₃COCH₃）。丙酮属于酮类，不能被斐林试剂或新制 Cu(OH)₂ 氧化，故 A、D 错误；丙酮加氢还原生成仲醇（2-丙醇），而非伯醇（1-丙醇），故 B 错误；仲醇（2-丙醇）可被酸性重铬酸钾溶液氧化为酮（丙酮），故 C 正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "解析有没写成上下标的「CO-」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）"
+      ],
+      "generated_at": "2026-09-29T13:51:32.640709+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "X为丙酮，可由仲醇2-丙醇经酸性重铬酸钾氧化制备。"
+      }
+    },
+    {
+      "id": "chemistry_gen_4eb1f0b6",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap32",
+      "chapter_title": "第三十二章：醛和酮",
+      "q": "甲醛和苯甲醛都是不含 α-氢原子的醛。若将苯甲醛与浓氢氧化钠溶液共热，下列叙述中哪些是正确的？\nI. 该反应属于歧化反应\nII. 反应产物为苯甲醇和苯甲酸钠\nIII. 苯甲醛能与 2,4-二硝基苯肼反应生成黄色或橙红色沉淀\nIV. 苯甲醛能使酸性高锰酸钾溶液褪色",
+      "options": [
+        "A. 只有 I 和 II",
+        "B. 只有 I、II 和 III",
+        "C. 只有 II、III 和 IV",
+        "D. I、II、III 和 IV"
+      ],
+      "answer": 3,
+      "explanation": "本题考查不含 α-氢原子的醛的特殊反应（康尼查罗反应）以及醛的通性。不含 α-氢的苯甲醛在浓强碱（NaOH）作用下，一分子被氧化为苯甲酸钠，另一分子被还原为苯甲醇，这种同一物质中同一元素发生氧化还原的反应属于歧化反应，因此 I 和 II 正确；苯甲醛含有羰基，能与 2,4-二硝基苯肼发生亲核加成-消除反应，生成黄色或橙红色的 2,4-二硝基苯腙沉淀，这是醛、酮的特征鉴定反应，因此 III 正确；苯甲醛含有醛基，具有较强的还原性，能被强氧化剂如酸性高锰酸钾溶液氧化为苯甲酸，使溶液褪色，因此 IV 正确。综上所述，I、II、III、IV 均正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:51:32.650847+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "苯甲醛发生歧化反应生成苯甲醇与苯甲酸钠，且具醛基可与2,4-DNP加聚沉淀并使酸性高锰酸钾褪色。"
+      }
+    },
+    {
+      "id": "chemistry_gen_a05f6aff",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap32",
+      "chapter_title": "第三十二章：醛和酮",
+      "q": "在稀硫酸和硫酸汞（HgSO₄）的催化作用下，丙炔（CH₃C≡CH）与水发生加成反应，主要产物为有机物 Y。下列关于 Y 的叙述，哪项是错误的？",
+      "options": [
+        "A. Y 的同分异构体包括丙醛",
+        "B. Y 能够与新制的斐林试剂反应，产生砖红色沉淀",
+        "C. Y 与 LiAlH₄ 反应，可被还原为 2-丙醇",
+        "D. Y 能与 HCN 发生亲核加成反应，生成 2-羟基-2-甲基丙腈"
+      ],
+      "answer": 1,
+      "explanation": "本题考查炔烃的水合反应及其产物（酮）的性质。丙炔与水在 Hg²⁺/H⁺ 催化下发生加成反应，根据马氏规则，水中的羟基加在含氢较少的炔碳上，生成不稳定的烯醇式中间体 [CH₃C(OH)=CH₂]，随后互变异构为更稳定的酮，即主要产物 Y 为丙酮（CH₃COCH₃）。丙酮与丙醛分子式均为 C₃H₆O，互为官能团异构体，A 正确；丙酮是酮类，不具有还原性，不能与斐林试剂反应，故 B 错误（符合题意）；丙酮可被 LiAlH₄ 还原为仲醇（2-丙醇），C 正确；丙酮与 HCN 发生亲核加成反应，氰基和氢分别加在羰基的碳和氧上，生成 2-羟基-2-甲基丙腈，D 正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:51:32.657963+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "主要产物Y为丙酮，属于酮类，不能还原斐林试剂。"
+      }
+    },
+    {
+      "id": "chemistry_gen_97a02116",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap33",
+      "chapter_title": "第三十三章：羧酸及其衍生物",
+      "q": "甲酸（HCOOH）在结构上具有特殊性，下列有关甲酸性质的叙述中，哪项是错误的？",
+      "options": [
+        "A. 1 mol 甲酸与足量钠反应可生成 1 mol H₂",
+        "B. 能与银氨溶液反应产生银镜",
+        "C. 能使酸性高锰酸钾溶液褪色",
+        "D. 1 mol 甲酸与足量 NaOH 溶液反应，消耗 1 mol NaOH"
+      ],
+      "answer": 0,
+      "explanation": "本题考查甲酸的结构与特殊性质。甲酸分子中既含有羧基（-COOH）又含有醛基（-CHO）。A 项：1 mol 羧基与钠反应生成 0.5 mol H₂，故 A 错误。B 项：由于含有醛基，甲酸及其盐、酯均可发生银镜反应，正确。C 项：醛基具有还原性，能被酸性 KMnO₄ 氧化，正确。D 项：甲酸是一元酸，只有羧基上的氢具有酸性，1 mol HCOOH 消耗 1 mol NaOH，正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:54:34.417675+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "1 mol 甲酸仅含 1 mol 可被置换的氢原子，与足量钠反应生成 0.5 mol H₂。"
+      }
+    },
+    {
+      "id": "chemistry_gen_9ae3648a",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap33",
+      "chapter_title": "第三十三章：羧酸及其衍生物",
+      "q": "某有机化合物 X 的分子式为 C₄H₈O₂，在酸性条件下水解生成 Y 和 Z。已知 Y 在催化剂作用下能被氧化成 Z。下列关于 X 的叙述中，正确的是：",
+      "options": [
+        "A. X 的名称为乙酸乙酯",
+        "B. X 的名称为甲酸丙酯",
+        "C. Y 是乙酸，Z 是乙醇",
+        "D. X 属于饱和一元羧酸"
+      ],
+      "answer": 0,
+      "explanation": "本题考查酯的水解规律。C₄H₈O₂ 属于酯或羧酸，但题干指出其可水解，说明 X 是酯。酯水解生成醇（Y）和羧酸（Z）。已知 Y 可氧化成 Z，说明醇和羧酸具有相同的碳原子数且碳骨架结构一致。总碳数为 4，则 Y 为乙醇（CH₃CH₂OH），Z 为乙酸（CH₃COOH）。因此，原酯 X 为乙酸乙酯（CH₃COOCH₂CH₃），故 A 正确。B 项甲酸丙酯水解生成甲酸和丙醇，丙醇氧化后为丙酸，不符合题意。C 项 Y 应该是醇，Z 应该是酸。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:54:34.424673+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "乙醇(Y)氧化得到乙酸(Z)，因此该酯(X)为乙酸乙酯。"
+      }
+    },
+    {
+      "id": "chemistry_gen_e4f8fd35",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap34",
+      "chapter_title": "第三十四章：高分子化合物",
+      "q": "下列关于加成聚合反应（Addition Polymerization）与缩合聚合反应（Condensation Polymerization）的叙述，哪项是正确的？",
+      "options": [
+        "A. 加成聚合反应的单体通常含有碳碳双键等不饱和键",
+        "B. 缩合聚合反应过程中，产物的总质量等于所有单体的总质量之和",
+        "C. 聚乙烯（PE）是通过缩合聚合反应制得的典型高分子化合物",
+        "D. 只有含有一种官能团的单体才能进行缩合聚合反应"
+      ],
+      "answer": 0,
+      "explanation": "考点为聚合反应的分类与特征。A正确，加成聚合通常涉及双键或三键的断裂与连接。B错误，缩合聚合会产生水、氯化氢或氨等小分子副产物，因此高分子的质量小于单体总质量。C错误，聚乙烯是由乙烯（CH₂=CH₂）通过加成聚合制得的。D错误，缩合聚合要求单体必须含有至少两个官能团（如-OH与-COOH，或-NH₂与-COOH），可以是同种单体含有两种官能团，也可以是两种不同的单体各含有一种官能团。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:54:50.000100+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "加成聚合反应的单体通常含有碳碳双键等不饱和键。"
+      }
+    },
+    {
+      "id": "chemistry_gen_1e6f37dd",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap34",
+      "chapter_title": "第三十四章：高分子化合物",
+      "q": "某合成纤维的结构简式可表示为：-[NH-(CH₂)₆-NH-CO-(CH₂)₄-CO]-ₙ。关于该高分子的叙述，哪项是不正确的？",
+      "options": [
+        "A. 该高分子属于聚酰胺（Polyamide）类化合物",
+        "B. 合成该高分子的单体是己二胺和己二酸",
+        "C. 该高分子的链节（Repeating unit）中含有酰胺键",
+        "D. 该高分子链间无法形成氢键，因此其熔点比聚乙烯低"
+      ],
+      "answer": 3,
+      "explanation": "考点为高分子结构的识别与性质。该结构为尼龙-66（Nylon-66）。A、C正确，其链节中含有-NH-CO-（酰胺键）。B正确，通过己二胺和己二酸脱水缩合而成。D错误，聚酰胺分子链上的-NH-与另一条链上的-CO-可以形成强烈的分子间氢键，这使得尼龙具有高熔点、高强度和优良的纤维成型性能，其熔点远高于聚乙烯。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "题干有没写成上下标的「NH-」「CO-」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）",
+        "解析有没写成上下标的「CO-」「NH-」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）"
+      ],
+      "generated_at": "2026-09-29T13:54:50.006329+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "聚酰胺分子链间能形成大量氢键，因此熔点远高于聚乙烯。"
+      }
+    },
+    {
+      "id": "chemistry_gen_4b3d271e",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap34",
+      "chapter_title": "第三十四章：高分子化合物",
+      "q": "高分子化合物的结构决定了其物理性质。下列关于高分子结构与性质的对应关系，哪项是错误的？",
+      "options": [
+        "A. 线型结构的聚氯乙烯（PVC）受热易软化，具有热塑性",
+        "B. 体型网状结构的酚醛树脂受热不熔化，具有热固性",
+        "C. 线型结构的高分子完全不溶于任何有机溶剂，只能发生溶胀",
+        "D. 高分子的平均相对分子质量通常很大，且同一批产品中各分子的质量不均一"
+      ],
+      "answer": 2,
+      "explanation": "考点为高分子的溶解性与结构关系。A、B正确，线型或支链型结构具有热塑性，而交联的体型结构具有热固性。C错误，线型结构的高分子虽然溶解速度较慢，但在合适的溶剂中是可以溶解的（先溶胀后溶解）；而体型网状结构的高分子由于分子间有化学键交联，溶剂分子无法将其分开，因此只能发生溶胀而不能溶解。D正确，这是高分子化合物的多分散性特征。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:54:50.011651+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "线型高分子在适当溶剂中通常可溶解，体型高分子才只能溶胀而不溶解。"
+      }
     }
   ],
-  "generated_at": "2026-09-29T13:46:24.125165+00:00"
+  "generated_at": "2026-09-29T13:54:57.792405+00:00"
 }
