@@ -383,7 +383,199 @@
       ],
       "generated_at": "2026-09-29T12:05:00.585741+00:00",
       "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_bb540085",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap4",
+      "chapter_title": "第四章：静力学",
+      "q": "一个质量为 $m$ 的物体静止在倾角为 $\\theta$ 的光滑斜面上。现施加一个水平方向的推力 $F$ 使物体保持平衡。求斜面对物体的支持力 $N$ 的大小为何？",
+      "options": [
+        "A. $mg \\cos\\theta$",
+        "B. $mg \\sin\\theta$",
+        "C. $\\frac{mg}{\\cos\\theta}$",
+        "D. $mg \\tan\\theta$"
+      ],
+      "answer": 2,
+      "explanation": "考点：共点力平衡与力的分解。物体受重力 $mg$、支持力 $N$ 和水平推力 $F$。沿平行斜面方向：$F \\cos\\theta = mg \\sin\\theta$，可得 $F = mg \\tan\\theta$。沿垂直斜面方向：$N = mg \\cos\\theta + F \\sin\\theta$。将 $F$ 代入得：$N = mg \\cos\\theta + (mg \\tan\\theta) \\sin\\theta = mg (\\cos\\theta + \\frac{\\sin^2\\theta}{\\cos\\theta}) = mg (\\frac{\\cos^2\\theta + \\sin^2\\theta}{\\cos\\theta}) = \\frac{mg}{\\cos\\theta}$。常见错误是直接套用无推力时的公式 $N = mg \\cos\\theta$，忽略了水平推力在垂直斜面方向的分量。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T12:11:56.710810+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_a517ac94",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap4",
+      "chapter_title": "第四章：静力学",
+      "q": "一个质点在三个共点力 $F_1$、$F_2$ 及 $F_3$ 的作用下处于静止状态。已知 $F_1$ 与 $F_2$ 之间的夹角为 $120^\\circ$，$F_2$ 与 $F_3$ 之间的夹角为 $150^\\circ$。求这三个力的大小之比 $F_1:F_2:F_3$ 为何？",
+      "options": [
+        "A. $1:2:\\sqrt{3}$",
+        "B. $1:\\sqrt{3}:2$",
+        "C. $\\sqrt{3}:2:1$",
+        "D. $2:1:\\sqrt{3}$"
+      ],
+      "answer": 0,
+      "explanation": "考点：拉密定理（Lami's Theorem）。处于平衡状态的三个共点力，每个力的大小与其对应夹角（另外两个力之间的夹角）的正弦值成正比。已知 $\\theta_{12} = 120^\\circ$、$\\theta_{23} = 150^\\circ$，则第三个夹角 $\\theta_{31} = 360^\\circ - 120^\\circ - 150^\\circ = 90^\\circ$。根据定理：$F_1/\\sin\\theta_{23} = F_2/\\sin\\theta_{31} = F_3/\\sin\\theta_{12}$。代入数值：$F_1/\\sin 150^\\circ = F_2/\\sin 90^\\circ = F_3/\\sin 120^\\circ$，即 $F_1/0.5 = F_2/1 = F_3/(\\sqrt{3}/2)$。整理比例得 $F_1:F_2:F_3 = 1:2:\\sqrt{3}$。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T12:11:56.717206+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_6d510c7c",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap4",
+      "chapter_title": "第四章：静力学",
+      "q": "一根质量为 $m$、长度为 $L$ 的均匀梯子斜靠在光滑的竖直墙壁上，梯子底端与粗糙水平地面间的静摩擦系数为 $\\mu$。若梯子刚好不向外滑动，此时梯子与水平地面之夹角为 $\\theta$。下列关于 $\\mu$ 的表达式何者正确？",
+      "options": [
+        "A. $\\mu = \\tan\\theta$",
+        "B. $\\mu = \\frac{1}{2}\\tan\\theta$",
+        "C. $\\mu = \\frac{1}{2}\\cot\\theta$",
+        "D. $\\mu = \\cot\\theta$"
+      ],
+      "answer": 2,
+      "explanation": "考点：平面力系的平衡（力矩平衡）。选取梯子底端为转轴，合力矩为零：$mg \\cdot \\frac{L}{2} \\cos\\theta = N_{\\text{墙}} \\cdot L \\sin\\theta$，由此得墙壁支持力 $N_{\\text{墙}} = \\frac{1}{2} mg \\cot\\theta$。在水平方向，地面摩擦力 $f = N_{\\text{墙}}$；在竖直方向，地面支持力 $N_{\\text{地}} = mg$。当处于临界滑动状态时，$f = \\mu N_{\\text{地}}$，代入得 $\\frac{1}{2} mg \\cot\\theta = \\mu mg$，即 $\\mu = \\frac{1}{2} \\cot\\theta$。常见错误是忘记梯子重心在其中点（$L/2$）而导致系数错误。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T12:11:56.723315+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_1d159b30",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap4",
+      "chapter_title": "第四章：静力学",
+      "q": "下列关于静力学的叙述，何者正确？\nI. 两个力的合力大小随这两个力之间夹角的增大而逐渐减小\nII. 一个力可以分解为两个比原力更大的分力\nIII. 处于平衡状态的物体，一定处于静止状态\nIV. 任何物体的重心一定在物体本身之上",
+      "options": [
+        "A. I、II",
+        "B. II、III",
+        "C. I、IV",
+        "D. III、IV"
+      ],
+      "answer": 0,
+      "explanation": "考点：静力学基本概念辨析。I 正确：由余弦定理可知，当夹角从 $0^\\circ$ 增大到 $180^\\circ$ 时，合力逐渐减小。II 正确：当两个分力方向接近相反且与合力方向夹角很大时，分力的大小可以远大于合力。III 错误：平衡状态指合力与合力矩均为零，物体可以处于静止或匀速直线运动状态。IV 错误：重心是质量分布的平均位置，可以在物体之外，如圆环或空心球的重心在其几何中心（空处）。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T12:11:56.728829+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_19c51584",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第十四章：气体分子运动论与热力学",
+      "q": "关于处于热平衡状态下的氢气（H₂）与氦气（He），下列叙述何者正确？",
+      "options": [
+        "A. 氢分子的平均平动动能等于氦分子的平均平动动能",
+        "B. 氢分子的平均速率等于氦分子的平均速率",
+        "C. 氢气的摩尔内能等于氦气的摩尔内能",
+        "D. 氢分子的方均根速率小于氦分子的方均根速率"
+      ],
+      "answer": 0,
+      "explanation": "考点：温度的微观意义。根据气体分子运动论，温度是分子平均平动动能的唯一量度。由于两气体处于热平衡，即温度 $T$ 相同，故分子的平均平动动能 $\\frac{3}{2}kT$ 必然相等，A 正确。由于氢气的摩尔质量（约 2 g/mol）小于氦气（约 4 g/mol），在相同温度下，氢分子的方均根速率 $v_{\\text{rms}} = \\sqrt{\\frac{3RT}{M}}$ 较大，B、D 错误。内能与分子的自由度有关，氢气是双原子分子（5个自由度），氦气是单原子分子（3个自由度），相同温度下氢气的摩尔内能较高，C 错误。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T12:12:41.142246+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_b9f1a342",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第十四章：气体分子运动论与热力学",
+      "q": "在一个绝热气缸内，用活塞迅速压缩一定质量的理想气体。在此过程中，关于该气体的物理量变化，下列叙述正确的是：\nI. 外界对气体做功\nII. 气体的内能保持不变\nIII. 气体的温度升高\nIV. 气体向外界放热",
+      "options": [
+        "A. 只有 I、II",
+        "B. 只有 I、III",
+        "C. 只有 II、IV",
+        "D. 只有 III、IV"
+      ],
+      "answer": 1,
+      "explanation": "考点：热力学第一定律 $\\Delta U = Q + W$。绝热过程意味着气体与外界没有热交换，即 $Q = 0$（IV 错误）。压缩气体意味着外界对气体做功，$W \\gt 0$（I 正确）。根据热力学第一定律，$\\Delta U = 0 + W \\gt 0$，即气体的内能增加（II 错误）。对于理想气体，内能增加意味着温度升高（III 正确）。学生常误认为绝热过程就是等温过程，这是典型的迷思概念。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T12:12:41.148329+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_6aa2971a",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第十四章：气体分子运动论与热力学",
+      "q": "对于一定质量的理想气体，在等压升温过程中吸收的热量为 $Q_{\\text{p}}$，在等容升温过程中吸收的热量为 $Q_{\\text{V}}$。若两次过程升高的温度 $\\Delta T$ 相同，则下列关系式及其原因正确的是：",
+      "options": [
+        "A. $Q_{\\text{p}} = Q_{\\text{V}}$，因为两次过程的内能增量相同",
+        "B. $Q_{\\text{p}} \\gt Q_{\\text{V}}$，因为等压过程气体对外做功，需吸收更多热量",
+        "C. $Q_{\\text{p}} \\lt Q_{\\text{V}}$，因为等容过程气体不做功，热量全部用于增加内能",
+        "D. $Q_{\\text{p}} \\gt Q_{\\text{V}}$，因为等压摩尔热容量 $C_{\\text{p}}$ 小于等容摩尔热容量 $C_{\\text{V}}$"
+      ],
+      "answer": 1,
+      "explanation": "考点：理想气体的摩尔热容量与热力学第一定律。对于一定质量的理想气体，内能增量 $\\Delta U$ 仅由温度变化 $\\Delta T$ 决定，因此两过程的 $\\Delta U$ 相同。等容过程不计体积功（$W = 0$），故 $Q_{\\text{V}} = \\Delta U$。等压升温过程中，气体体积膨胀对外做功（$W_{\\text{外}} \\gt 0$），根据 $Q = \\Delta U + W_{\\text{外}}$，吸收的热量除了增加内能还要抵消对外做的功，故 $Q_{\\text{p}} \\gt Q_{\\text{V}}$。这也从微观上解释了为何 $C_{\\text{p}} \\gt C_{\\text{V}}$。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T12:12:41.154862+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "physics_gen_d1725e75",
+      "subject": "physics",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第十四章：气体分子运动论与热力学",
+      "q": "根据理想气体的微观模型，若容器内气体的体积减小为原来的一半，且气体分子的平均平动动能增加为原来的 2 倍，则气体的压强 $P$ 将变为原来的多少倍？",
+      "options": [
+        "A. 1 倍",
+        "B. 2 倍",
+        "C. 4 倍",
+        "D. 8 倍"
+      ],
+      "answer": 2,
+      "explanation": "考点：理想气体的压强微观公式。压强公式可表示为 $P = \\frac{2}{3} \\frac{N}{V} E_{\\text{k}}$，其中 $N$ 是分子总数，$V$ 是体积，$E_{\\text{k}}$ 是分子的平均平动动能。当体积 $V$ 变为 $0.5V$ 时，单位体积内的分子数 $N/V$ 变为原来的 2 倍；同时 $E_{\\text{k}}$ 变为原来的 2 倍。因此，压强 $P$ 将变为原来的 $2 \\times 2 = 4$ 倍。常见错误是只考虑到动能增加或体积减小其中一个因素。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T12:12:41.159650+00:00",
+      "syllabus_used": true
     }
   ],
-  "generated_at": "2026-09-29T12:05:01.532218+00:00"
+  "generated_at": "2026-09-29T12:12:42.080732+00:00"
 }
