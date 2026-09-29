@@ -370,9 +370,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:11:56.710810+00:00",
       "syllabus_used": true
     },
@@ -382,7 +380,7 @@
       "type": "mcq",
       "chapter_id": "chap4",
       "chapter_title": "第四章：静力学",
-      "q": "一个质点在三个共点力 $F_1$、$F_2$ 及 $F_3$ 的作用下处于静止状态。已知 $F_1$ 与 $F_2$ 之间的夹角为 $120^\\circ$，$F_2$ 与 $F_3$ 之间的夹角为 $150^\\circ$。求这三个力的大小之比 $F_1:F_2:F_3$ 为何？",
+      "q": "一个质点在三个共点力 F₁、F₂ 及 F₃ 的作用下处于静止状态。已知 F₁ 与 F₂ 之间的夹角为 $120^\\circ$，F₂ 与 F₃ 之间的夹角为 $150^\\circ$。求这三个力的大小之比 $F_1:F_2:F_3$ 为何？",
       "options": [
         "A. $1:2:\\sqrt{3}$",
         "B. $1:\\sqrt{3}:2$",
@@ -394,9 +392,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:11:56.717206+00:00",
       "syllabus_used": true
     },
@@ -418,9 +414,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:11:56.723315+00:00",
       "syllabus_used": true
     },
@@ -442,9 +436,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:11:56.728829+00:00",
       "syllabus_used": true
     },
@@ -466,9 +458,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:12:41.142246+00:00",
       "syllabus_used": true
     },
@@ -490,9 +480,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:12:41.148329+00:00",
       "syllabus_used": true
     },
@@ -502,7 +490,7 @@
       "type": "mcq",
       "chapter_id": "chap14",
       "chapter_title": "第十四章：气体分子运动论与热力学",
-      "q": "对于一定质量的理想气体，在等压升温过程中吸收的热量为 $Q_{\\text{p}}$，在等容升温过程中吸收的热量为 $Q_{\\text{V}}$。若两次过程升高的温度 $\\Delta T$ 相同，则下列关系式及其原因正确的是：",
+      "q": "对于一定质量的理想气体，在等压升温过程中吸收的热量为 $Q_{\\text{p}}$，在等容升温过程中吸收的热量为 $Q_{\\text{V}}$。若两次过程升高的温度 ΔT 相同，则下列关系式及其原因正确的是：",
       "options": [
         "A. $Q_{\\text{p}} = Q_{\\text{V}}$，因为两次过程的内能增量相同",
         "B. $Q_{\\text{p}} \\gt Q_{\\text{V}}$，因为等压过程气体对外做功，需吸收更多热量",
@@ -510,13 +498,11 @@
         "D. $Q_{\\text{p}} \\gt Q_{\\text{V}}$，因为等压摩尔热容量 $C_{\\text{p}}$ 小于等容摩尔热容量 $C_{\\text{V}}$"
       ],
       "answer": 1,
-      "explanation": "考点：理想气体的摩尔热容量与热力学第一定律。对于一定质量的理想气体，内能增量 $\\Delta U$ 仅由温度变化 $\\Delta T$ 决定，因此两过程的 $\\Delta U$ 相同。等容过程不计体积功（$W = 0$），故 $Q_{\\text{V}} = \\Delta U$。等压升温过程中，气体体积膨胀对外做功（$W_{\\text{外}} \\gt 0$），根据 $Q = \\Delta U + W_{\\text{外}}$，吸收的热量除了增加内能还要抵消对外做的功，故 $Q_{\\text{p}} \\gt Q_{\\text{V}}$。这也从微观上解释了为何 $C_{\\text{p}} \\gt C_{\\text{V}}$。",
+      "explanation": "考点：理想气体的摩尔热容量与热力学第一定律。对于一定质量的理想气体，内能增量 ΔU 仅由温度变化 ΔT 决定，因此两过程的 ΔU 相同。等容过程不计体积功（$W = 0$），故 $Q_{\\text{V}} = \\Delta U$。等压升温过程中，气体体积膨胀对外做功（$W_{\\text{外}} \\gt 0$），根据 $Q = \\Delta U + W_{\\text{外}}$，吸收的热量除了增加内能还要抵消对外做的功，故 $Q_{\\text{p}} \\gt Q_{\\text{V}}$。这也从微观上解释了为何 $C_{\\text{p}} \\gt C_{\\text{V}}$。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:12:41.154862+00:00",
       "syllabus_used": true
     },
@@ -538,9 +524,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:12:41.159650+00:00",
       "syllabus_used": true
     }
