@@ -167,6 +167,8 @@ Vercel 与 GitHub 的环境变数、金钥放哪里，见 [OPERATIONS 四](OPERA
 这几轮新增、需要你设的：
 
 - **Vercel `GEMINI_API_KEY`**：做答题「交给 AI 批改」与选择题「AI 讲给我听」都要用；没设就显示「还没开启」。
+- **GitHub Actions `GEMINI_API_KEY2`**：AI 录题、AI 出题用这把；没设才退回 Actions 的 `GEMINI_API_KEY`。
+  要换名字，改 `.github/workflows/generate_questions.yml` 与 `.github/workflows/ingest_paper.yml` 里的 `GEMINI_API_KEY2`（🟡 两个档一起改）。
 - **Vercel `GITHUB_TOKEN`**：/dev 的采纳、改题、上传配图要用（Contents: Read and write）。
 
 ---

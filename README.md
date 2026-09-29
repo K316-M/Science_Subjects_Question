@@ -87,7 +87,7 @@ docs/                                           文件（见下面）
 | Vercel | `GITHUB_TOKEN` | /dev 的采纳、改题、上传配图、发布申诉结果 |
 | Vercel | `GEMINI_API_KEY` | 做答题的 AI 批改、选择题的 AI 讲解 |
 | Vercel | `UPSTASH_REDIS_REST_URL` `UPSTASH_REDIS_REST_TOKEN` | 跨装置同步、AI 的次数限制 |
-| GitHub Actions | `GEMINI_API_KEY` | AI 录题与 AI 出题 |
+| GitHub Actions | `GEMINI_API_KEY2`（没设就用 `GEMINI_API_KEY`） | AI 录题与 AI 出题 |
 
 ## 本机预览
 

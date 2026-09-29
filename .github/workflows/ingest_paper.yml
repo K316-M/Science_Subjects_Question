@@ -7,7 +7,7 @@ name: AI 自动录题流水线 (Ingest Drafts)
 # 录题报告在这次执行的摘要（Actions → 点这次执行）；有档案处理失败（例如旧版 .doc）另开 Issue。
 #
 # 使用前请先在仓库 Settings -> Secrets and variables -> Actions 中添加：
-#   GEMINI_API_KEY  你的 Gemini API Key
+#   GEMINI_API_KEY2  出题、录题专用的 Gemini API Key（没设就退回用 GEMINI_API_KEY）
 
 on:
   push:
@@ -48,8 +48,11 @@ jobs:
       - name: 运行 AI 自动录题脚本
         id: ingest
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # 同 generate_questions.yml：优先 GEMINI_API_KEY2，没设才用旧的 GEMINI_API_KEY
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 || secrets.GEMINI_API_KEY }}
+          GEMINI_KEY_NAME: ${{ secrets.GEMINI_API_KEY2 && 'GEMINI_API_KEY2' || 'GEMINI_API_KEY（没设 GEMINI_API_KEY2，用旧的那把）' }}
         run: |
+          echo "🔑 这次用的金钥：$GEMINI_KEY_NAME"
           python scripts/ingest_drafts.py
           if [ -f has_new_ingest.txt ] && [ "$(cat has_new_ingest.txt)" = "true" ]; then
             echo "has_new=true" >> "$GITHUB_OUTPUT"
