@@ -26,6 +26,9 @@ API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 # 新模型上架就自动用上，旧模型下架也不会整条流水线跟着坏。
 TIER_RANK = {"pro": 0, "flash": 1, "flash-lite": 2}
 MODEL_RE = re.compile(r"^gemini-(\d+(?:\.\d+)?)-(pro|flash-lite|flash)(?:-(latest|\d{3}|preview[\w.-]*|exp[\w.-]*))?$")
+# 名字里有这些字的是语音、图片、嵌入等特殊用途的模型，不会回文字（preview-tts 也会被上面那条收进来）：
+# 2026-09 出题时轮到 *-preview-tts 回 HTTP 400，报告还因此把「Google 忙」误写成「额度用完」。api/_lib/ai.js 的 NON_TEXT_MODEL 同一份
+NON_TEXT_MODEL = ("tts", "image", "audio", "live", "embedding", "customtools", "computer-use", "robotics")
 
 
 def rank_models(names):
@@ -33,7 +36,7 @@ def rank_models(names):
     ranked = []
     for name in names:
         m = MODEL_RE.match(name)
-        if not m:
+        if not m or any(k in name for k in NON_TEXT_MODEL):
             continue
         version, tier, suffix = m.groups()
         unstable = 1 if suffix and suffix.startswith(("preview", "exp")) else 0
@@ -180,7 +183,8 @@ def generate(api_key, parts, temperature=0.4, timeout=300, skip_tiers=()):
                 _resolved = model = alt
         if tier_of(model) in skip_tiers and model != os.environ.get("GEMINI_MODEL", "").strip():
             why = f"（{str(last)[:60]}）" if last else ""
-            busy = last is not None and any(k in str(last).lower() for k in TRANSIENT)
+            # 较强的模型里只要有「忙」被跳过的，就是 Google 那边忙：等一下就好，不必等到额度重置
+            busy = bool(_busy) or (last is not None and any(k in str(last).lower() for k in TRANSIENT))
             when = ("Google 那边忙不过来，过半小时到一小时再到 Actions 手动跑" if busy
                     else "多半是额度用完：每日额度在马来西亚下午 3～4 点重置，之後到 Actions 手动再跑")
             raise LowTierOnly(f"较强的模型都不能用{why}，只剩 {model}，这次不用它出题。{when}")

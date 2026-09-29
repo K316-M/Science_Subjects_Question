@@ -73,6 +73,8 @@ function findQuestion(subject, chapterId, index, type = 'subjective') {
 // ---------- 模型：批改要等得起，所以新版本的 flash 优先（录题那边才是 pro 优先） ----------
 const TIER = { flash: 0, 'flash-lite': 1, pro: 2 };
 const MODEL_RE = /^gemini-(\d+(?:\.\d+)?)-(pro|flash-lite|flash)(?:-(latest|\d{3}|preview[\w.-]*|exp[\w.-]*))?$/;
+// 语音、图片、嵌入等特殊用途的模型不会回文字（preview-tts 也会被上面那条收进来）；同 scripts/gemini_api.py 的 NON_TEXT_MODEL
+const NON_TEXT_MODEL = ['tts', 'image', 'audio', 'live', 'embedding', 'customtools', 'computer-use', 'robotics'];
 let models = null;
 async function rankedModels(key) {
   if (models) return models;
@@ -82,7 +84,7 @@ async function rankedModels(key) {
     .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
     .map(m => m.name.replace('models/', ''));
   const ver = v => v.split('.').map(Number);
-  models = names.map(n => [n, MODEL_RE.exec(n)]).filter(([, m]) => m).sort(([an, a], [bn, b]) => {
+  models = names.map(n => [n, MODEL_RE.exec(n)]).filter(([n, m]) => m && !NON_TEXT_MODEL.some(k => n.includes(k))).sort(([an, a], [bn, b]) => {
     const [va, vb] = [ver(a[1]), ver(b[1])];
     for (let i = 0; i < Math.max(va.length, vb.length); i++) if ((va[i] || 0) !== (vb[i] || 0)) return (vb[i] || 0) - (va[i] || 0);
     const unstable = m => (m[3] && /^(preview|exp)/.test(m[3]) ? 1 : 0);
