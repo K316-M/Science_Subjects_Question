@@ -1015,7 +1015,85 @@
         "ai_answer": 1,
         "reason": "连续 X 射线谱的最短波长与加速电压成反比，且 X 射线在真空中以光速传播。"
       }
+    },
+    {
+      "id": "biology_gen_61f7ff1a",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap19",
+      "chapter_title": "第19章：演化",
+      "q": "关于现代综合演化论（Modern Synthesis）对生物演化的解释，下列叙述何者正确？",
+      "options": [
+        "A. 环境的变化会诱导生物产生适应性的定向变异",
+        "B. 生物演化的基本单位是生物个体而非种群",
+        "C. 自然选择作用于个体的表现型，进而改变种群的基因频率",
+        "D. 变异的产生是定向的，其方向由自然选择所决定"
+      ],
+      "answer": 2,
+      "explanation": "考点：演化的基本单位与自然选择的机制。A 错误，变异是不定向的，环境只起选择作用；B 错误，演化的基本单位是种群（Population）；C 正确，自然选择直接作用于表现型，导致种群基因库中等位基因频率的改变；D 错误，变异是不定向的，自然选择决定了演化的方向。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:45:31.674207+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "现代综合演化论认为变异是不定向的，种群是演化的基本单位，自然选择直接作用于个体的表现型，从而改变种群的基因频率。"
+      }
+    },
+    {
+      "id": "biology_gen_e257bc0c",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap19",
+      "chapter_title": "第19章：演化",
+      "q": "比较不同生物的解剖结构是支持演化的重要证据。下列有关同源器官（Homologous organs）与同功器官（Analogous organs）的叙述，何者正确？",
+      "options": [
+        "A. 鸟的翅膀与蝴蝶的翅膀属于同源器官，因为它们的功能相同",
+        "B. 鲸的胸鳍与人的前肢属于同源器官，说明它们具有共同的原始祖先",
+        "C. 同功器官的结构来源相同，是在不同环境压力下趋同演化的结果",
+        "D. 痕迹器官在现代生物体内已失去功能，因此不能作为演化的证据"
+      ],
+      "answer": 1,
+      "explanation": "考点：解剖学证据。A 错误，鸟翅与蝶翅来源不同，属于同功器官；B 正确，鲸鳍与人手解剖结构相似、来源相同，属于同源器官，是趋异演化的证据；C 错误，同功器官结构来源不同；D 错误，痕迹器官的存在证明了生物在演化过程中结构的退化与改变，是重要的演化证据。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:45:31.680841+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "鲸的胸鳍与人的前肢具有相同的骨骼排列和胚胎起源，属于同源器官，证明两者源自共同祖先。"
+      }
+    },
+    {
+      "id": "biology_gen_ce52c545",
+      "subject": "biology",
+      "type": "mcq",
+      "chapter_id": "chap19",
+      "chapter_title": "第19章：演化",
+      "q": "在一个处于哈代-温伯格平衡（Hardy-Weinberg equilibrium）的某种植物种群中，红花（显性，由等位基因 R 控制）对白花（隐性，由等位基因 r 控制）为完全显性。若该种群中白花植株占总数的 4%，则该种群中杂合子（Rr）植株所占的百分比为何？",
+      "options": [
+        "A. 4%",
+        "B. 16%",
+        "C. 32%",
+        "D. 64%"
+      ],
+      "answer": 2,
+      "explanation": "考点：哈代-温伯格平衡计算。已知隐性性状（rr）频率 $q^2 = 0.04$，则隐性基因频率 $q = \\sqrt{0.04} = 0.2$。显性基因频率 $p = 1 - q = 0.8$。杂合子（Rr）的频率为 $2pq = 2 \\times 0.8 \\times 0.2 = 0.32$，即 32%。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-09-29T13:45:31.690336+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "隐性基因型频率 q² = 0.04，得 q = 0.2，p = 0.8，杂合子频率 2pq = 2 × 0.8 × 0.2 = 32%。"
+      }
     }
   ],
-  "generated_at": "2026-09-29T13:39:49.527672+00:00"
+  "generated_at": "2026-09-29T13:46:24.125165+00:00"
 }
