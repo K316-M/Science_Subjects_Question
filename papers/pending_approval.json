@@ -18,9 +18,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:19:04.746423+00:00",
       "syllabus_used": true
     },
@@ -42,9 +40,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:19:04.749456+00:00",
       "syllabus_used": true
     },
@@ -54,7 +50,7 @@
       "type": "mcq",
       "chapter_id": "chap1",
       "chapter_title": "第一章：水和氢",
-      "q": "工业上常用“水煤气法”生产氢气，其主要反应原理如下：\n反应①：C(s) + H₂O(g) ⇌ CO(g) + H₂(g)  ΔH ＞ 0\n反应②：CO(g) + H₂O(g) ⇌ CO₂(g) + H₂(g)  ΔH ＜ 0\n为了提高氢气（H₂）的产率并符合工业生产的经济效益，下列操作或分析中，哪项是**不合理**的？",
+      "q": "工业上常用“水煤气法”生产氢气，其主要反应原理如下：\n反应①：C(s) + H₂O(g) ⇌ CO(g) + H₂(g)  ΔH ＞ 0\n反应②：CO(g) + H₂O(g) ⇌ CO₂(g) + H₂(g)  ΔH ＜ 0\n为了提高氢气（H₂）的产率并符合工业生产的经济效益，下列操作或分析中，哪项是不合理的？",
       "options": [
         "A. 反应①在高温下进行，有利于提高碳的转化率和 H₂ 的平衡产率",
         "B. 反应②在较低温度下进行可提高 CO 的转化率，但为了保证反应速率，实际工业上通常会使用催化剂并在适宜的温度（约 400 ℃）下进行",
@@ -66,9 +62,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:19:04.753132+00:00",
       "syllabus_used": true
     },
@@ -90,9 +84,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:19:04.755941+00:00",
       "syllabus_used": true
     },
@@ -102,7 +94,7 @@
       "type": "mcq",
       "chapter_id": "chap11",
       "chapter_title": "第十一章：碳和硅",
-      "q": "下列关于碳的同素异形体的叙述，哪些是正确的？\nⅠ. 金刚石中碳原子以 $sp^3$ 杂化轨道成键，形成空间网状结构\nⅡ. 石墨具有层状结构，层间存在范德华力，故质地较软且有润滑性\nⅢ. $C_{60}$ 分子属于原子晶体，其熔、沸点极高\nⅣ. 石墨中的碳原子以 $sp^2$杂化轨道成键，层内存在离域 $\\pi$ 键，故能导电",
+      "q": "下列关于碳的同素异形体的叙述，哪些是正确的？\nⅠ. 金刚石中碳原子以 $sp^3$ 杂化轨道成键，形成空间网状结构\nⅡ. 石墨具有层状结构，层间存在范德华力，故质地较软且有润滑性\nⅢ. C₆₀ 分子属于原子晶体，其熔、沸点极高\nⅣ. 石墨中的碳原子以 $sp^2$杂化轨道成键，层内存在离域 $\\pi$ 键，故能导电",
       "options": [
         "A. Ⅰ、Ⅱ、Ⅲ",
         "B. Ⅰ、Ⅱ、Ⅳ",
@@ -110,13 +102,11 @@
         "D. Ⅰ、Ⅲ、Ⅳ"
       ],
       "answer": 1,
-      "explanation": "本题考查碳的同素异形体的结构与性质。叙述Ⅰ正确，金刚石是典型的原子晶体，碳原子间以共价单键结合；叙述Ⅱ正确，石墨层与层之间作用力微弱，容易滑动；叙述Ⅲ错误，$C_{60}$ 是由分子组成的分子晶体，其熔、沸点远低于金刚石和石墨等原子晶体；叙述Ⅳ正确，石墨每个碳原子有一个未参与杂化的 p 轨道电子，在层内形成大 $\\pi$ 键，电子可自由移动。因此正确组合为 B。",
+      "explanation": "本题考查碳的同素异形体的结构与性质。叙述Ⅰ正确，金刚石是典型的原子晶体，碳原子间以共价单键结合；叙述Ⅱ正确，石墨层与层之间作用力微弱，容易滑动；叙述Ⅲ错误，C₆₀ 是由分子组成的分子晶体，其熔、沸点远低于金刚石和石墨等原子晶体；叙述Ⅳ正确，石墨每个碳原子有一个未参与杂化的 p 轨道电子，在层内形成大 $\\pi$ 键，电子可自由移动。因此正确组合为 B。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:21:27.243315+00:00",
       "syllabus_used": true
     },
@@ -138,9 +128,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:21:27.244941+00:00",
       "syllabus_used": true
     },
@@ -162,9 +150,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:21:27.247015+00:00",
       "syllabus_used": true
     },
@@ -186,9 +172,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:21:27.248760+00:00",
       "syllabus_used": true
     },
@@ -210,9 +194,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:21:58.418097+00:00",
       "syllabus_used": true
     },
@@ -234,9 +216,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:21:58.419822+00:00",
       "syllabus_used": true
     },
@@ -258,9 +238,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:21:58.423555+00:00",
       "syllabus_used": true
     },
@@ -282,9 +260,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:14.878545+00:00",
       "syllabus_used": true
     },
@@ -306,9 +282,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:14.880758+00:00",
       "syllabus_used": true
     },
@@ -330,9 +304,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:14.883051+00:00",
       "syllabus_used": true
     },
@@ -354,9 +326,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:14.885302+00:00",
       "syllabus_used": true
     },
@@ -378,9 +348,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:34.927192+00:00",
       "syllabus_used": true
     },
@@ -402,9 +370,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:34.930969+00:00",
       "syllabus_used": true
     },
@@ -414,7 +380,7 @@
       "type": "mcq",
       "chapter_id": "chap14",
       "chapter_title": "第十四章：卤素",
-      "q": "向含有 NaBr 和 NaI 的混合溶液中通入过量的氯气（Cl₂），充分反应后将溶液蒸干，并在 $500\\text{ ℃}$ 下充分灼烧。最后得到的固体残渣是：",
+      "q": "向含有 NaBr 和 NaI 的混合溶液中通入过量的氯气（Cl₂），充分反应后将溶液蒸干，并在 500 ℃ 下充分灼烧。最后得到的固体残渣是：",
       "options": [
         "A. NaCl、NaBr、NaI",
         "B. NaCl、I₂",
@@ -426,9 +392,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:34.934704+00:00",
       "syllabus_used": true
     },
@@ -450,9 +414,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:34.937528+00:00",
       "syllabus_used": true
     },
@@ -474,9 +436,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:48.636459+00:00",
       "syllabus_used": true
     },
@@ -498,9 +458,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:48.643109+00:00",
       "syllabus_used": true
     },
@@ -515,16 +473,14 @@
         "A. 加入 KSCN 溶液后溶液变血红色，证明原溶液中一定含有 Fe²⁺",
         "B. 加入 NaOH 溶液产生红褐色沉淀，证明原溶液中含有 Fe³⁺",
         "C. 先加入 KSCN 溶液无明显现象，再滴加氯水后变血红色，证明原溶液中一定含有 Fe³⁺",
-        "D. 加入 $K_3[Fe(CN)_6]$ 溶液产生蓝色沉淀，证明原溶液中含有 Fe³⁺"
+        "D. 加入 K₃[Fe(CN)₆] 溶液产生蓝色沉淀，证明原溶液中含有 Fe³⁺"
       ],
       "answer": 1,
-      "explanation": "考点为铁离子的鉴定。A项：KSCN 是检验 Fe³⁺ 的灵敏试剂，变红证明有 Fe³⁺，不能证明 Fe²⁺；B项：Fe³⁺ 与 OH⁻ 反应生成 Fe(OH)₃ 红褐色沉淀，正确；C项：先加 KSCN 无现象说明无 Fe³⁺，后加氯水变红说明氯水将 Fe²⁺ 氧化成了 Fe³⁺，故证明原溶液含有 Fe²⁺ 而非 Fe³⁺；D项：赤血盐 $K_3[Fe(CN)_6]$ 用于检验 Fe²⁺，生成的蓝色沉淀称为滕氏蓝（Turnbull's Blue）。",
+      "explanation": "考点为铁离子的鉴定。A项：KSCN 是检验 Fe³⁺ 的灵敏试剂，变红证明有 Fe³⁺，不能证明 Fe²⁺；B项：Fe³⁺ 与 OH⁻ 反应生成 Fe(OH)₃ 红褐色沉淀，正确；C项：先加 KSCN 无现象说明无 Fe³⁺，后加氯水变红说明氯水将 Fe²⁺ 氧化成了 Fe³⁺，故证明原溶液含有 Fe²⁺ 而非 Fe³⁺；D项：赤血盐 K₃[Fe(CN)₆] 用于检验 Fe²⁺，生成的蓝色沉淀称为滕氏蓝（Turnbull's Blue）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:48.647046+00:00",
       "syllabus_used": true
     },
@@ -538,17 +494,15 @@
       "options": [
         "A. 铜在潮湿的空气中长期放置会生成一层绿色的铜锈，其主要成分是碱式碳酸铜",
         "B. 铜与浓硝酸反应产生红棕色气体，而与稀硝酸反应产生无色气体",
-        "C. 向 $CuSO_4$ 溶液中加入过量的氨水，最初产生的沉淀会溶解并形成深蓝色溶液",
-        "D. 氧化铜（CuO）属于碱性氧化物，它能与水直接反应生成 $Cu(OH)_2$"
+        "C. 向 CuSO₄ 溶液中加入过量的氨水，最初产生的沉淀会溶解并形成深蓝色溶液",
+        "D. 氧化铜（CuO）属于碱性氧化物，它能与水直接反应生成 Cu(OH)₂"
       ],
       "answer": 3,
-      "explanation": "考点为铜及其化合物的化学性质。A项：铜锈（铜绿）是 $Cu_2(OH)_2CO_3$，由铜与空气中的氧气、水和二氧化碳反应生成；B项：铜与浓硝酸反应还原产物是 NO₂（红棕色），与稀硝酸反应还原产物是 NO（无色）；C项：$Cu^{2+}$ 先与氨水生成 $Cu(OH)_2$ 蓝色沉淀，氨水过量时沉淀溶解生成 $[Cu(NH_3)_4]^{2+}$ 四氨合铜(II)络离子，溶液呈深蓝色；D项错误：虽然 CuO 是碱性氧化物，但它不溶于水，也不与水反应。氢氧化铜是不溶性碱，必须通过可溶性铜盐与强碱溶液反应（复分解反应）来制取。",
+      "explanation": "考点为铜及其化合物的化学性质。A项：铜锈（铜绿）是 Cu₂(OH)₂CO₃，由铜与空气中的氧气、水和二氧化碳反应生成；B项：铜与浓硝酸反应还原产物是 NO₂（红棕色），与稀硝酸反应还原产物是 NO（无色）；C项：$Cu^{2+}$ 先与氨水生成 Cu(OH)₂ 蓝色沉淀，氨水过量时沉淀溶解生成 $[Cu(NH_3)_4]^{2+}$ 四氨合铜(II)络离子，溶液呈深蓝色；D项错误：虽然 CuO 是碱性氧化物，但它不溶于水，也不与水反应。氢氧化铜是不溶性碱，必须通过可溶性铜盐与强碱溶液反应（复分解反应）来制取。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:22:48.649805+00:00",
       "syllabus_used": true
     },
@@ -566,13 +520,11 @@
         "D. 80"
       ],
       "answer": 2,
-      "explanation": "考点：格雷姆扩散定律（Graham's Law of Effusion）。\n根据定律，在同温同压下，气体的扩散速率（r）与气体的摩尔质量（M）的平方根成反比，而扩散时间（t）与速率成反比，因此扩散时间与摩尔质量的平方根成正比：\n$\\frac{t_1}{t_2} = \\sqrt{\\frac{M_1}{M_2}}$\n设未知气体为 1，氧气为 2。已知 $t_1 = \\sqrt{2} t_2$，且 $M_{\\text{O}_2} = 32$。\n代入公式：$\\frac{\\sqrt{2} t_2}{t_2} = \\sqrt{\\frac{M_1}{32}}$\n$\\sqrt{2} = \\sqrt{\\frac{M_1}{32}}$\n两边平方得：$2 = \\frac{M_1}{32} \\Rightarrow M_1 = 64$。\n常见错误：学生可能混淆扩散速率与扩散时间的关系，误将时间与摩尔质量成反比（选 D）或直接与摩尔质量成正比（选 B）。",
+      "explanation": "考点：格雷姆扩散定律（Graham's Law of Effusion）。\n根据定律，在同温同压下，气体的扩散速率（r）与气体的摩尔质量（M）的平方根成反比，而扩散时间（t）与速率成反比，因此扩散时间与摩尔质量的平方根成正比：\n$\\frac{t_1}{t_2} = \\sqrt{\\frac{M_1}{M_2}}$\n设未知气体为 1，氧气为 2。已知 $t_1 = \\sqrt{2} t_2$，且 $M_{\\text{O}_2} = 32$。\n代入公式：$\\frac{\\sqrt{2} t_2}{t_2} = \\sqrt{\\frac{M_1}{32}}$\n$\\sqrt{2} = \\sqrt{\\frac{M_1}{32}}$\n两边平方得：$2 = \\frac{M_1}{32} \\Rightarrow M_1 = 64$。\n常见错误：学生可能混淆扩散速率与扩散时间的关系，误将时间与摩尔质量的平方根成反比（选 A）或直接与摩尔质量成正比（选 B）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:06.071253+00:00",
       "syllabus_used": true
     },
@@ -582,22 +534,19 @@
       "type": "mcq",
       "chapter_id": "chap16",
       "chapter_title": "第十六章：气体",
-      "q": "在 27 °C 及 0.821 atm 的压力下，某理想气体的密度为 1.40 g/L。该气体最可能是下列哪一种？\n（已知：$R = 0.0821 \\text{ L}\\cdot\\text{atm}\\cdot\\text{K}^{-1}\\cdot\\text{mol}^{-1}$）",
+      "q": "在 27 °C 及 0.821 atm 的压力下，某理想气体的密度为 1.47 g/L。该气体最可能是下列哪一种？\n（已知：$R = 0.0821 \\text{ L}\\cdot\\text{atm}\\cdot\\text{K}^{-1}\\cdot\\text{mol}^{-1}$）",
       "options": [
         "A. N₂",
         "B. O₂",
         "C. CO₂",
         "D. Cl₂"
       ],
-      "answer": 1,
-      "explanation": "考点：理想气体状态方程式的变形应用（$PM = \\rho RT$）。\n根据理想气体方程 $PV = nRT = \\frac{m}{M}RT$，可推导出 $M = \\frac{mRT}{PV} = \\frac{\\rho RT}{P}$。\n已知：$\\rho = 1.40 \\text{ g/L}$，$R = 0.0821 \\text{ L}\\cdot\\text{atm}\\cdot\\text{K}^{-1}\\cdot\\text{mol}^{-1}$，$T = 27 + 273 = 300 \\text{ K}$，$P = 0.821 \\text{ atm}$。\n$M = \\frac{1.40 \\times 0.0821 \\times 300}{0.821} = 1.40 \\times 300 \\times \\frac{0.0821}{0.821} = 1.40 \\times 300 \\times 0.1 = 42.0 \\text{ g/mol}$。\n计算结果 $M = 42$ 接近常见气体的分子量。选项中：N₂=28, O₂=32, CO₂=44, Cl₂=71。最接近的选项应为 CO₂（44）。\n注：在此题模拟中，若计算值与选项有微小偏差，需选最接近者，或检查计算过程。重新核对：$1.4 \\times 0.0821 \\times 300 / 0.821 = 42$。在统考中，此类题型旨在考察公式熟练度。选项 C（44）为最接近气体。",
+      "answer": 2,
+      "explanation": "考点：理想气体状态方程式的变形应用（$PM = \\rho RT$）。\n由 $PV = nRT = \\frac{m}{M}RT$ 可得 $M = \\frac{\\rho RT}{P}$。\n已知 $\\rho = 1.47 \\text{ g/L}$，$T = 27 + 273 = 300 \\text{ K}$，$P = 0.821 \\text{ atm}$。\n$M = \\frac{1.47 \\times 0.0821 \\times 300}{0.821} = 1.47 \\times 300 \\times 0.1 \\approx 44.1 \\text{ g/mol}$。\n选项的摩尔质量：N₂ = 28、O₂ = 32、CO₂ = 44、Cl₂ = 71，故该气体是 CO₂，选 C。\n常见错误：温度忘了换成开氏温度（用 27 代入），或把 $\\rho$ 与 $P$ 的位置放反。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "⚠️ 解析里有 AI 自言自语「重新核对」：这种题多半算错或中途改过题，答案、选项、解析都要核对",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:06.076043+00:00",
       "syllabus_used": true
     },
@@ -607,7 +556,7 @@
       "type": "mcq",
       "chapter_id": "chap16",
       "chapter_title": "第十六章：气体",
-      "q": "关于气体分子运动论（Kinetic Molecular Theory of Gases）对理想气体的假设，下列叙述何者正确？\nI. 气体分子的平均动能随温度升高而增大\nII. 气体分子间的碰撞为完全弹性碰撞，无能量损失\nIII. 气体分子本身的体积相对于容器体积而言可忽略不计\nIV. 分子之间除了相互碰撞外，不存在任何相互作用力",
+      "q": "关于气体分子运动论对理想气体的假设，下列叙述何者正确？\nI. 气体分子的平均动能随温度升高而增大\nII. 气体分子间的碰撞为完全弹性碰撞，无能量损失\nIII. 气体分子本身的体积相对于容器体积而言可忽略不计\nIV. 分子之间除了相互碰撞外，不存在任何相互作用力",
       "options": [
         "A. 仅 I、III",
         "B. 仅 II、IV",
@@ -619,10 +568,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "题干夹了英文「of」，疑似转写错误",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:06.083364+00:00",
       "syllabus_used": true
     },
@@ -644,9 +590,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:06.088045+00:00",
       "syllabus_used": true
     },
@@ -668,9 +612,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:21.877648+00:00",
       "syllabus_used": true
     },
@@ -688,13 +630,11 @@
         "D. 0.0895 g"
       ],
       "answer": 1,
-      "explanation": "【考点】分配定律（2.2.4）。\n【推理】设残留在水中的碘质量为 $x$ g，则进入 CCl₄ 层的碘质量为 $(0.100 - x)$ g。\n根据分配定律：$K = \\frac{c(CCl_4)}{c(H_2O)} = \\frac{(0.100 - x) / 10.0}{x / 100.0} = 85.0$。\n整理得：$\\frac{0.100 - x}{x} \\times \\frac{100.0}{10.0} = 85.0 \\Rightarrow \\frac{0.100 - x}{x} \\times 10 = 85.0$。\n$\\frac{0.100 - x}{x} = 8.5 \\Rightarrow 0.100 - x = 8.5x \\Rightarrow 9.5x = 0.100 \\Rightarrow x \\approx 0.01053 \\text{ g}$。\n【常见错误】选项 C 是计算时体积比写反；选项 D 是萃取出来的碘质量（0.100 - 0.0105）；选项 A 是两次萃取（每次 5mL）后的理论残余量。",
+      "explanation": "【考点】分配定律（2.2.4）。\n【推理】设残留在水中的碘质量为 $x$ g，则进入 CCl₄ 层的碘质量为 $(0.100 - x)$ g。\n根据分配定律：$K = \\frac{c(CCl_4)}{c(H_2O)} = \\frac{(0.100 - x) / 10.0}{x / 100.0} = 85.0$。\n整理得：$\\frac{0.100 - x}{x} \\times \\frac{100.0}{10.0} = 85.0 \\Rightarrow \\frac{0.100 - x}{x} \\times 10 = 85.0$。\n$\\frac{0.100 - x}{x} = 8.5 \\Rightarrow 0.100 - x = 8.5x \\Rightarrow 9.5x = 0.100 \\Rightarrow x \\approx 0.01053 \\text{ g}$。\n【常见错误】选项 A 是没考虑两层体积不同，直接把质量比当成浓度比（$\\frac{0.100 - x}{x} = 85.0$）；选项 C 是解方程时漏了 $x$（把 $0.100 - x = 8.5x$ 当成 $0.100 = 8.5x$）；选项 D 是萃取到 CCl₄ 层的碘质量（0.100 − 0.0105）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:21.884015+00:00",
       "syllabus_used": true
     },
@@ -712,13 +652,11 @@
         "D. 16.4 kPa"
       ],
       "answer": 1,
-      "explanation": "【考点】拉乌尔定律与理想溶液（2.2.7）。\n【推理】根据拉乌尔定律 $P_{\\text{总}} = P_{\\text{苯}}^0 X_{\\text{苯}} + P_{\\text{甲苯}}^0 X_{\\text{甲苯}}$。其中 $X$ 为摩尔分数。\n1. 分子量：$M_{\\text{苯}} = 78.0$，$M_{\\text{甲苯}} = 92.0$。\n2. 设质量均为 $m$。$n_{\\text{苯}} = m/78.0$，$n_{\\text{甲苯}} = m/92.0$。\n3. $X_{\\text{苯}} = \\frac{m/78}{m/78 + m/92} = \\frac{92}{78+92} = \\frac{92}{170} \\approx 0.541$。\n4. $X_{\\text{甲苯}} = 1 - 0.541 = 0.459$。\n5. $P_{\\text{总}} = 12.7 \\times 0.541 + 3.70 \\times 0.459 = 6.87 + 1.70 = 8.57 \\text{ kPa}$。\n【常见错误】选项 A 是直接取蒸气压的算术平均值（误以为摩尔分数各 0.5）；选项 C 是误用质量分数直接计算。",
+      "explanation": "【考点】拉乌尔定律与理想溶液（2.2.7）。\n【推理】根据拉乌尔定律 $P_{\\text{总}} = P_{\\text{苯}}^0 X_{\\text{苯}} + P_{\\text{甲苯}}^0 X_{\\text{甲苯}}$。其中 $X$ 为摩尔分数。\n1. 分子量：$M_{\\text{苯}} = 78.0$，$M_{\\text{甲苯}} = 92.0$。\n2. 设质量均为 $m$。$n_{\\text{苯}} = m/78.0$，$n_{\\text{甲苯}} = m/92.0$。\n3. $X_{\\text{苯}} = \\frac{m/78}{m/78 + m/92} = \\frac{92}{78+92} = \\frac{92}{170} \\approx 0.541$。\n4. $X_{\\text{甲苯}} = 1 - 0.541 = 0.459$。\n5. $P_{\\text{总}} = 12.7 \\times 0.541 + 3.70 \\times 0.459 = 6.87 + 1.70 = 8.57 \\text{ kPa}$。\n【常见错误】选项 A 是把等质量当成等物质的量（摩尔分数各 0.5），等于直接取两个蒸气压的平均值；选项 D 是把两个蒸气压直接相加。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:21.889747+00:00",
       "syllabus_used": true
     },
@@ -740,9 +678,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:21.895288+00:00",
       "syllabus_used": true
     },
@@ -752,7 +688,7 @@
       "type": "mcq",
       "chapter_id": "chap18",
       "chapter_title": "第十八章：化学反应和能量",
-      "q": "下列哪一个热化学方程式能正确表示 $CO_2(g)$ 的标准摩尔生成焓（$\\Delta H_f^\\circ$）？",
+      "q": "下列哪一个热化学方程式能正确表示 CO₂(g) 的标准摩尔生成焓（$\\Delta H_f^\\circ$）？",
       "options": [
         "A. C(金刚石, s) + O₂(g) → CO₂(g)  $\\Delta H = -395.4$ kJ/mol",
         "B. C(石墨, s) + O₂(g) → CO₂(g)  $\\Delta H = -393.5$ kJ/mol",
@@ -764,9 +700,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:46.198780+00:00",
       "syllabus_used": true
     },
@@ -776,7 +710,7 @@
       "type": "mcq",
       "chapter_id": "chap18",
       "chapter_title": "第十八章：化学反应和能量",
-      "q": "关于中和热（Heat of Neutralization），下列叙述哪些是正确的？\nⅠ. 中和热是以生成 1 mol H₂O(l) 为标准的反应热\nⅡ. 强酸与强碱稀溶液反应的中和热约为 -57.3 kJ/mol\nⅢ. 稀醋酸（CH₃COOH）与稀氢氧化钠溶液反应释放的热量大于 57.3 kJ",
+      "q": "关于中和热，下列叙述哪些是正确的？\nⅠ. 中和热是以生成 1 mol H₂O(l) 为标准的反应热\nⅡ. 强酸与强碱稀溶液反应的中和热约为 -57.3 kJ/mol\nⅢ. 稀醋酸（CH₃COOH）与稀氢氧化钠溶液反应释放的热量大于 57.3 kJ",
       "options": [
         "A. 只有 Ⅰ",
         "B. 只有 Ⅰ 和 Ⅱ",
@@ -784,14 +718,11 @@
         "D. Ⅰ、Ⅱ 和 Ⅲ"
       ],
       "answer": 1,
-      "explanation": "考查中和热的概念。Ⅰ 正确，中和热的定义核心是生成 1 mol 水；Ⅱ 正确，强酸强碱在稀溶液中完全电离，其实质都是 H⁺ + OH⁻ → H₂O，放出的热量基本恒定；Ⅲ 错误，醋酸是弱酸，在反应过程中需要吸收能量进行电离，因此最终释放的总热量会小于 57.3 kJ（即 $\\Delta H$ 会大于 -57.3 kJ/mol）。",
+      "explanation": "考查中和热的概念。Ⅰ 正确，中和热的定义核心是生成 1 mol 水；Ⅱ 正确，强酸强碱在稀溶液中完全电离，其实质都是 H⁺ + OH⁻ → H₂O，放出的热量基本恒定；Ⅲ 错误，醋酸是弱酸，在反应过程中需要吸收能量进行电离，因此最终释放的总热量会小于 57.3 kJ（即 ΔH 会大于 -57.3 kJ/mol）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "题干夹了英文「of」，疑似转写错误",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:46.205773+00:00",
       "syllabus_used": true
     },
@@ -801,7 +732,7 @@
       "type": "mcq",
       "chapter_id": "chap18",
       "chapter_title": "第十八章：化学反应和能量",
-      "q": "已知下列热化学方程式：\n(1) 2Fe(s) + $\\frac{3}{2}$O₂(g) → Fe₂O₃(s)  $\\Delta H_1$ = -824 kJ/mol\n(2) 2Al(s) + $\\frac{3}{2}$O₂(g) → Al₂O₃(s)  $\\Delta H_2$ = -1676 kJ/mol\n求铝热反应 Fe₂O₃(s) + 2Al(s) → Al₂O₃(s) + 2Fe(s) 的反应热 $\\Delta H$ 是多少？",
+      "q": "已知下列热化学方程式：\n(1) 2Fe(s) + $\\frac{3}{2}$O₂(g) → Fe₂O₃(s)  ΔH₁ = -824 kJ/mol\n(2) 2Al(s) + $\\frac{3}{2}$O₂(g) → Al₂O₃(s)  ΔH₂ = -1676 kJ/mol\n求铝热反应 Fe₂O₃(s) + 2Al(s) → Al₂O₃(s) + 2Fe(s) 的反应热 ΔH 是多少？",
       "options": [
         "A. -2500 kJ/mol",
         "B. -852 kJ/mol",
@@ -813,9 +744,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:46.214127+00:00",
       "syllabus_used": true
     },
@@ -825,7 +754,7 @@
       "type": "mcq",
       "chapter_id": "chap18",
       "chapter_title": "第十八章：化学反应和能量",
-      "q": "已知化学键的平均键能（Bond Energy）如下：H-H 为 436 kJ/mol，Cl-Cl 为 243 kJ/mol，H-Cl 为 432 kJ/mol。则反应 H₂(g) + Cl₂(g) → 2HCl(g) 的反应热 $\\Delta H$ 为：",
+      "q": "已知化学键的平均键能（Bond Energy）如下：H-H 为 436 kJ/mol，Cl-Cl 为 243 kJ/mol，H-Cl 为 432 kJ/mol。则反应 H₂(g) + Cl₂(g) → 2HCl(g) 的反应热 ΔH 为：",
       "options": [
         "A. -185 kJ/mol",
         "B. +185 kJ/mol",
@@ -837,9 +766,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:23:46.220463+00:00",
       "syllabus_used": true
     },
@@ -861,9 +788,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:14.709776+00:00",
       "syllabus_used": true
     },
@@ -885,9 +810,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:14.718695+00:00",
       "syllabus_used": true
     },
@@ -909,9 +832,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:14.724980+00:00",
       "syllabus_used": true
     },
@@ -933,9 +854,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:14.728422+00:00",
       "syllabus_used": true
     },
@@ -945,7 +864,7 @@
       "type": "mcq",
       "chapter_id": "chap20",
       "chapter_title": "第二十章：化学平衡的移动",
-      "q": "在恒温恒容的条件下，向已达平衡的反应体系 $2\\text{SO}_2(\\text{g}) + \\text{O}_2(\\text{g}) \rightleftharpoons 2\\text{SO}_3(\\text{g})$ 中充入一定量的氦气（He），下列叙述何者正确？",
+      "q": "在恒温恒容的条件下，向已达平衡的反应体系 2SO₂(g) + O₂(g) ⇌ 2SO₃(g) 中充入一定量的氦气（He），下列叙述何者正确？",
       "options": [
         "A. 体系的总压强增大，平衡向右移动",
         "B. 反应物的分压增大，正反应速率加快",
@@ -953,14 +872,11 @@
         "D. 单位时间内碰撞次数增多，反应速率同时增大"
       ],
       "answer": 2,
-      "explanation": "考点为勒沙特列原理中“惰性气体对平衡的影响”。在“恒温恒容”条件下，充入不参与反应的氦气，虽然容器内的总压强增大，但反应体系中各组分（$\\text{SO}_2$、$\\text{O}_2$、$\\text{SO}_3$）的物质的量及容器体积均未改变，因此各组分的浓度（分压）保持不变。根据速率方程式，反应速率不变，平衡不移动。常见错误是看到压强增大就误认为平衡向气体分子数减少的方向移动，忽略了“分压不变”的前提。",
+      "explanation": "考点为勒沙特列原理中“惰性气体对平衡的影响”。在“恒温恒容”条件下，充入不参与反应的氦气，虽然容器内的总压强增大，但反应体系中各组分（SO₂、O₂、SO₃）的物质的量及容器体积均未改变，因此各组分的浓度（分压）保持不变。根据速率方程式，反应速率不变，平衡不移动。常见错误是看到压强增大就误认为平衡向气体分子数减少的方向移动，忽略了“分压不变”的前提。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "题干有看不见的控制字元，多半是公式的反斜线少写一个（\\frac、\\theta 这类），请检查公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:33.350979+00:00",
       "syllabus_used": true
     },
@@ -970,7 +886,7 @@
       "type": "mcq",
       "chapter_id": "chap20",
       "chapter_title": "第二十章：化学平衡的移动",
-      "q": "已知可逆反应 $\\text{A}(\\text{g}) + \\text{B}(\\text{g}) \rightleftharpoons 2\\text{C}(\\text{g})$ 的平衡常数 $K_c$ 随温度升高而增大。关于该反应的下列叙述，哪些是正确的？\nI. 该反应的 $\\Delta H \\gt 0$\nII. 升高温度，正反应速率增加的倍数大于逆反应速率增加的倍数\nIII. 增大压强，平衡向右移动，$\\text{C}$ 的产率提高\nIV. 升高温度，平衡向正反应方向移动",
+      "q": "已知可逆反应 A(g) + B(g) ⇌ 2C(g) 的平衡常数 $K_c$ 随温度升高而增大。关于该反应的下列叙述，哪些是正确的？\nI. 该反应的 ΔH ＞ 0\nII. 升高温度，正反应速率增加的倍数大于逆反应速率增加的倍数\nIII. 增大压强，平衡向右移动，C 的产率提高\nIV. 升高温度，平衡向正反应方向移动",
       "options": [
         "A. 只有 I、IV",
         "B. 只有 II、III",
@@ -978,14 +894,11 @@
         "D. I、II、III、IV"
       ],
       "answer": 2,
-      "explanation": "考点为温度对平衡常数及平衡移动的影响。$K_c$ 随温度升高而增大，说明升温使平衡向右移动（IV对），因此正反应是吸热反应，$\\Delta H \\gt 0$（I对）。根据勒沙特列原理，升温时正、逆反应速率均增大，但平衡右移意味着 $v_{\\text{正}}$ 增加得更多（II对）。对于该反应，反应前后气体分子总数相等（$1+1=2$），因此增大压强平衡不移动，$\\text{C}$ 的产率不变（III错）。",
+      "explanation": "考点为温度对平衡常数及平衡移动的影响。$K_c$ 随温度升高而增大，说明升温使平衡向右移动（IV对），因此正反应是吸热反应，ΔH ＞ 0（I对）。根据勒沙特列原理，升温时正、逆反应速率均增大，但平衡右移意味着 $v_{\\text{正}}$ 增加得更多（II对）。对于该反应，反应前后气体分子总数相等（$1+1=2$），因此增大压强平衡不移动，C 的产率不变（III错）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "题干有看不见的控制字元，多半是公式的反斜线少写一个（\\frac、\\theta 这类），请检查公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:33.363067+00:00",
       "syllabus_used": true
     },
@@ -995,22 +908,19 @@
       "type": "mcq",
       "chapter_id": "chap20",
       "chapter_title": "第二十章：化学平衡的移动",
-      "q": "在恒温条件下，将盛有二氧化氮（$\\text{NO}_2$，红棕色）与四氧化二氮（$\\text{N}_2\\text{O}_4$，无色）混合气体的注射器体积迅速压缩至原来的一半，待平衡重新达成后，与原平衡状态相比，下列叙述正确的是：",
+      "q": "在恒温条件下，将盛有二氧化氮（NO₂，红棕色）与四氧化二氮（N₂O₄，无色）混合气体的注射器体积迅速压缩至原来的一半，待平衡重新达成后，与原平衡状态相比，下列叙述正确的是：",
       "options": [
         "A. 混合气体的颜色比压缩前浅",
-        "B. $\\text{NO}_2$ 的体积分数（percentage by volume）减小",
+        "B. NO₂ 的体积分数（percentage by volume）减小",
         "C. 混合气体的平均摩尔质量减小",
         "D. 逆反应速率 $v_{\\text{逆}}$ 较压缩瞬间减小"
       ],
       "answer": 1,
-      "explanation": "考点为压强对平衡移动的影响。反应为 $2\\text{NO}_2(\\text{g}) \rightleftharpoons \\text{N}_2\\text{O}_4(\\text{g})$。压缩体积使压强增大，平衡向右移动。A项：压缩瞬间 $\\text{NO}_2$ 浓度加倍使颜色变深，随后平衡右移虽使颜色变浅，但最终浓度仍高于初始状态，故颜色比原平衡深（常见迷思）；B项：平衡右移，$\\text{NO}_2$ 含量减少，体积分数减小（正确）；C项：平衡右移，总物质的量 $n$ 减小，而总质量 $m$ 不变，根据 $M = m/n$，平均摩尔质量增大；D项：压缩瞬间压强增大，正逆速率均增大，随后平衡移动过程中 $v_{\\text{逆}}$ 会随生成物浓度增加而继续增大直到新平衡。",
+      "explanation": "考点为压强对平衡移动的影响。反应为 2NO₂(g) ⇌ N₂O₄(g)。压缩体积使压强增大，平衡向右移动。A项：压缩瞬间 NO₂ 浓度加倍使颜色变深，随后平衡右移虽使颜色变浅，但最终浓度仍高于初始状态，故颜色比原平衡深（常见迷思）；B项：平衡右移，NO₂ 含量减少，体积分数减小（正确）；C项：平衡右移，总物质的量 $n$ 减小，而总质量 $m$ 不变，根据 $M = m/n$，平均摩尔质量增大；D项：压缩瞬间压强增大，正逆速率均增大，随后平衡移动过程中 $v_{\\text{逆}}$ 会随生成物浓度增加而继续增大直到新平衡。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析有看不见的控制字元，多半是公式的反斜线少写一个（\\frac、\\theta 这类），请检查公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:33.370672+00:00",
       "syllabus_used": true
     },
@@ -1020,22 +930,19 @@
       "type": "mcq",
       "chapter_id": "chap20",
       "chapter_title": "第二十章：化学平衡的移动",
-      "q": "对于已达平衡的放热反应：$2\\text{X}(\\text{g}) + \\text{Y}(\\text{g}) \rightleftharpoons 2\\text{Z}(\\text{g}) \\quad \\Delta H \\lt 0$，若要同时实现“提高反应速率”与“提高反应物 $\\text{X}$ 的平衡转化率”这两个目标，应采取的措施是：",
+      "q": "对于已达平衡的放热反应：2X(g) + Y(g) ⇌ 2Z(g)  ΔH ＜ 0，若要同时实现“提高反应速率”与“提高反应物 X 的平衡转化率”这两个目标，应采取的措施是：",
       "options": [
         "A. 升高温度",
         "B. 增大压强",
         "C. 使用高效催化剂",
-        "D. 增大反应物 $\\text{X}$ 的起始浓度"
+        "D. 增大反应物 X 的起始浓度"
       ],
       "answer": 1,
-      "explanation": "考点为平衡移动与转化率的综合应用。A项：升温虽能提高速率，但平衡向吸热方向（左）移动，$\\text{X}$ 的转化率降低；B项：增大压强能提高速率，且平衡向气体分子数减少的方向（右）移动，$\\text{X}$ 的转化率提高（符合题意）；C项：催化剂仅提高速率，不改变量，平衡不移动，转化率不变；D项：增大 $\\text{X}$ 的浓度能提高反应速率，虽然能提高 $\\text{Y}$ 的转化率，但 $\\text{X}$ 自身的平衡转化率反而会降低。",
+      "explanation": "考点为平衡移动与转化率的综合应用。A项：升温虽能提高速率，但平衡向吸热方向（左）移动，X 的转化率降低；B项：增大压强能提高速率，且平衡向气体分子数减少的方向（右）移动，X 的转化率提高（符合题意）；C项：催化剂仅提高速率，不改变平衡，平衡不移动，转化率不变；D项：增大 X 的浓度能提高反应速率，虽然能提高 Y 的转化率，但 X 自身的平衡转化率反而会降低。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "题干有看不见的控制字元，多半是公式的反斜线少写一个（\\frac、\\theta 这类），请检查公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:33.380364+00:00",
       "syllabus_used": true
     },
@@ -1057,9 +964,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:57.474265+00:00",
       "syllabus_used": true
     },
@@ -1081,9 +986,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:57.486173+00:00",
       "syllabus_used": true
     },
@@ -1105,9 +1008,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:57.491488+00:00",
       "syllabus_used": true
     },
@@ -1129,9 +1030,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:24:57.501630+00:00",
       "syllabus_used": true
     },
@@ -1153,9 +1052,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:11.276581+00:00",
       "syllabus_used": true
     },
@@ -1177,9 +1074,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:11.283006+00:00",
       "syllabus_used": true
     },
@@ -1201,9 +1096,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:11.287885+00:00",
       "syllabus_used": true
     },
@@ -1225,9 +1118,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:11.292571+00:00",
       "syllabus_used": true
     },
@@ -1237,7 +1128,7 @@
       "type": "mcq",
       "chapter_id": "chap23",
       "chapter_title": "第二十三章：电化学",
-      "q": "已知下列半反应的标准电极电势：\nZn²⁺ + 2e⁻ → Zn ($E^\\circ = -0.76$ V)\nSn²⁺ + 2e⁻ → Sn ($E^\\circ = -0.14$ V)\nCu²⁺ + 2e⁻ → Cu ($E^\\circ = +0.34$ V)\nAg⁺ + e⁻ → Ag ($E^\\circ = +0.80$ V)\n在标准状态下，下列哪一个氧化还原反应**不能**自发进行？",
+      "q": "已知下列半反应的标准电极电势：\nZn²⁺ + 2e⁻ → Zn ($E^\\circ = -0.76$ V)\nSn²⁺ + 2e⁻ → Sn ($E^\\circ = -0.14$ V)\nCu²⁺ + 2e⁻ → Cu ($E^\\circ = +0.34$ V)\nAg⁺ + e⁻ → Ag ($E^\\circ = +0.80$ V)\n在标准状态下，下列哪一个氧化还原反应不能自发进行？",
       "options": [
         "A. Zn + Sn²⁺ → Zn²⁺ + Sn",
         "B. Sn + Cu²⁺ → Sn²⁺ + Cu",
@@ -1249,9 +1140,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:34.210002+00:00",
       "syllabus_used": true
     },
@@ -1269,13 +1158,11 @@
         "D. 4"
       ],
       "answer": 1,
-      "explanation": "本题考查法拉第电解定律的应用。串联电路中通过各电解池的电量（电子的物质的量）相等。\n甲池：$n(\\text{Ag}) = \\frac{2.16}{108} = 0.02$ mol。由于 Ag⁺ + e⁻ → Ag，转移电子 $n(e⁻) = 0.02$ mol。\n乙池：$n(\\text{X}) = \\frac{0.64}{64} = 0.01$ mol。金属 X 离子的还原反应为 Xⁿ⁺ + ne⁻ → X。\n根据电子守恒：$n \\times n(\\text{X}) = n(e⁻)$\n$n \\times 0.01 = 0.02$\n解得 $n = 2$。学生常犯错误是直接用质量比进行计算而忽略了电子转移数的比例关系。",
+      "explanation": "本题考查法拉第电解定律的应用。串联电路中通过各电解池的电量（电子的物质的量）相等。\n甲池：$n(\\text{Ag}) = \\frac{2.16}{108} = 0.02$ mol。由于 Ag⁺ + e⁻ → Ag，转移电子 $n(e^-) = 0.02$ mol。\n乙池：$n(\\text{X}) = \\frac{0.64}{64} = 0.01$ mol。金属 X 离子的还原反应为 Xⁿ⁺ + ne⁻ → X。\n根据电子守恒：$n \\times n(\\text{X}) = n(e^-)$\n$n \\times 0.01 = 0.02$\n解得 $n = 2$。学生常犯错误是直接用质量比进行计算而忽略了电子转移数的比例关系。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:34.218131+00:00",
       "syllabus_used": true
     },
@@ -1297,9 +1184,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:34.227723+00:00",
       "syllabus_used": true
     },
@@ -1317,13 +1202,11 @@
         "D. Z = 92, A = 238"
       ],
       "answer": 2,
-      "explanation": "考点是核衰变方程式的电荷数与质量数守恒。1. $\\alpha$ 衰变：放出 $^{4}_{2}\\text{He}$，质量数减少 4，原子序数减少 2。$^{238}_{92}\\text{U} \\rightarrow ^{234}_{90}\\text{Th} + \\alpha$。2. $\\beta^-$ 衰变：中子转变为质子并放出电子（$^{0}_{-1}\\text{e}$），质量数不变，原子序数增加 1。经历两次 $\\beta^-$ 衰变后，原子序数增加 2。最终子核：质量数 A = 234，原子序数 Z = 90 + 2 = 92。常见错误是误以为 $\\beta$ 衰变会减少原子序数，或忘记 $\\beta$ 衰变不改变质量数。",
+      "explanation": "考点是核衰变方程式的电荷数与质量数守恒。1. $\\alpha$ 衰变：放出 $^{4}_{2}\\text{He}$，质量数减少 4，原子序数减少 2。$^{238}_{92}\\text{U} \\rightarrow {}^{234}_{90}\\text{Th} + \\alpha$。2. $\\beta^-$ 衰变：中子转变为质子并放出电子（$^{0}_{-1}\\text{e}$），质量数不变，原子序数增加 1。经历两次 $\\beta^-$ 衰变后，原子序数增加 2。最终子核：质量数 A = 234，原子序数 Z = 90 + 2 = 92。常见错误是误以为 $\\beta$ 衰变会减少原子序数，或忘记 $\\beta$ 衰变不改变质量数。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:54.960257+00:00",
       "syllabus_used": true
     },
@@ -1345,9 +1228,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:54.967881+00:00",
       "syllabus_used": true
     },
@@ -1365,13 +1246,11 @@
         "D. I、II、III、IV"
       ],
       "answer": 2,
-      "explanation": "考点是核裂变与核聚变的基本概念。I 正确：这是裂变的定义。II 正确：核聚变需要克服质子间的库仑斥力，因此需要极高的动能（高温）。III 正确：氢弹属于二相弹，先通过核裂变产生高温高压触发聚变。IV 错误：核反应中存在质量亏损（Mass defect），减少的质量转化为能量（$E=mc^2$），因此质量不守恒，而是质能守恒。这是学生最容易混淆的物理化学基本定律区别。",
+      "explanation": "考点是核裂变与核聚变的基本概念。I 正确：这是裂变的定义。II 正确：核聚变需要克服质子间的库仑斥力，因此需要极高的动能（高温）。III 正确：氢弹先以核裂变产生的高温高压来引发核聚变。IV 错误：核反应中存在质量亏损（Mass defect），减少的质量转化为能量（$E=mc^2$），因此质量不守恒，而是质能守恒。这是学生最容易混淆的物理化学基本定律区别。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:54.981260+00:00",
       "syllabus_used": true
     },
@@ -1389,13 +1268,11 @@
         "D. $^{31}_{15}\\text{P}$"
       ],
       "answer": 0,
-      "explanation": "考点是正电子发射（$\\beta^+$ 衰变）的核反应方程式。反应式为：$^{30}_{15}\\text{P} \\rightarrow ^{A}_{Z}\\text{X} + ^{0}_{+1}\\text{e}$。根据质量数守恒：$30 = A + 0$，得 A = 30。根据电荷数守恒：$15 = Z + 1$，得 Z = 14。原子序数为 14 的元素是硅（Si）。常见迷思是将正电子发射与电子俘获或普通的 $\\beta^-$ 衰变弄混，导致原子序数计算错误。",
+      "explanation": "考点是正电子发射（$\\beta^+$ 衰变）的核反应方程式。反应式为：$^{30}_{15}\\text{P} \\rightarrow {}^{A}_{Z}\\text{X} + {}^{0}_{+1}\\text{e}$。根据质量数守恒：$30 = A + 0$，得 A = 30。根据电荷数守恒：$15 = Z + 1$，得 Z = 14。原子序数为 14 的元素是硅（Si）。常见迷思是将正电子发射与电子俘获或普通的 $\\beta^-$ 衰变弄混，导致原子序数计算错误。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:25:54.992023+00:00",
       "syllabus_used": true
     },
@@ -1413,14 +1290,11 @@
         "D. I、II、III、IV"
       ],
       "answer": 1,
-      "explanation": "考点：同分异构体、烯烃与环烷烃的通式及其性质。\\nI 正确：C₄H₈ 的烯烃异构体包括丁-1-烯、顺-丁-2-烯、反-丁-2-烯及 2-甲基丙烯，共 4 种。\\nII 错误：C₄H₈ 也可以是环烷烃（如环丁烷、甲基环丙烷），环烷烃不能使酸性高锰酸钾溶液褪色。\\nIII 正确：2-甲基丙烯是 C₄H₈ 的支链烯烃异构体。\\nIV 正确：环烷烃与单烯烃互为官能团异构，分子式均为 CₙH₂ₙ。",
+      "explanation": "考点：同分异构体、烯烃与环烷烃的通式及其性质。\nI 正确：C₄H₈ 的烯烃异构体包括丁-1-烯、顺-丁-2-烯、反-丁-2-烯及 2-甲基丙烯，共 4 种。\nII 错误：C₄H₈ 也可以是环烷烃（如环丁烷、甲基环丙烷），环烷烃不能使酸性高锰酸钾溶液褪色。\nIII 正确：2-甲基丙烯是 C₄H₈ 的支链烯烃异构体。\nIV 正确：环烷烃与单烯烃互为官能团异构，分子式均为 CₙH₂ₙ。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析有写在公式外面的 LaTeX 指令「\\nI」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:26:14.350208+00:00",
       "syllabus_used": true
     },
@@ -1438,14 +1312,11 @@
         "D. 苯酚 (C₆H₅OH)"
       ],
       "answer": 2,
-      "explanation": "考点：官能团的特征反应。\\n能与 Na₂CO₃ 反应产生气泡（CO₂），说明该物质具有酸性且酸性强于碳酸，通常含有羧基（-COOH）；能发生银镜反应，说明分子中含有醛基（-CHO）。\\n甲酸（HCOOH）的结构特殊，既含有羧基又含有醛基，因此同时具备这两个性质。乙醛只有醛基，乙酸只有羧基，苯酚酸性极弱（不能与 Na₂CO₃ 反应）且无醛基。",
+      "explanation": "考点：官能团的特征反应。\n能与 Na₂CO₃ 反应产生气泡（CO₂），说明该物质具有酸性且酸性强于碳酸，通常含有羧基（-COOH）；能发生银镜反应，说明分子中含有醛基（-CHO）。\n甲酸（HCOOH）的结构特殊，既含有羧基又含有醛基，因此同时具备这两个性质。乙醛只有醛基，乙酸只有羧基，苯酚酸性极弱（不能与 Na₂CO₃ 反应）且无醛基。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析有写在公式外面的 LaTeX 指令「\\n」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:26:14.355753+00:00",
       "syllabus_used": true
     },
@@ -1463,14 +1334,11 @@
         "D. 乙醇分子中羟基上的氢原子比水分子中的氢原子更活泼，因此与金属钠反应更剧烈"
       ],
       "answer": 3,
-      "explanation": "考点：醇的化学性质。\\nA、B、C 均为乙醇的典型化学性质。\\nD 错误：乙醇分子中的乙基（-C₂H₅）是推电子基团，使得羟基中的 O-H 键极性比水分子中的 O-H 键弱，因此乙醇的酸性比水弱，与金属钠反应的剧烈程度不如水与钠的反应。",
+      "explanation": "考点：醇的化学性质。\nA、B、C 均为乙醇的典型化学性质。\nD 错误：乙醇分子中的乙基（-C₂H₅）是推电子基团，使得羟基中的 O-H 键极性比水分子中的 O-H 键弱，因此乙醇的酸性比水弱，与金属钠反应的剧烈程度不如水与钠的反应。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析有写在公式外面的 LaTeX 指令「\\nA」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:26:14.359957+00:00",
       "syllabus_used": true
     },
@@ -1488,14 +1356,11 @@
         "D. 甲苯分子中由于苯环的影响，侧链甲基变得比甲烷中的氢更难被氧化"
       ],
       "answer": 1,
-      "explanation": "考点：芳香烃的结构与性质。\\nA 错误：苯环非常稳定，不能被酸性高锰酸钾氧化，而甲苯的侧链甲基受苯环影响易被氧化成羧基。\\nB 正确：两者在催化剂作用下都能发生苯环上的亲电取代反应。\\nC 错误：苯分子中的碳碳键是介于单键和双键之间的特殊大 π 键，并非单双键交替，且苯环非常稳定，加成反应比烯烃困难得多。\\nD 错误：由于苯环对侧链的影响，甲苯的侧链甲基比甲烷中的氢更容易被氧化。",
+      "explanation": "考点：芳香烃的结构与性质。\nA 错误：苯环非常稳定，不能被酸性高锰酸钾氧化，而甲苯的侧链甲基受苯环影响易被氧化成羧基。\nB 正确：两者在催化剂作用下都能发生苯环上的亲电取代反应。\nC 错误：苯分子中的碳碳键是介于单键和双键之间的特殊大 π 键，并非单双键交替，且苯环非常稳定，加成反应比烯烃困难得多。\nD 错误：由于苯环对侧链的影响，甲苯的侧链甲基比甲烷中的氢更容易被氧化。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析有写在公式外面的 LaTeX 指令「\\nA」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:26:14.364188+00:00",
       "syllabus_used": true
     },
@@ -1517,9 +1382,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:26:41.366270+00:00",
       "syllabus_used": true
     },
@@ -1541,9 +1404,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:26:41.372233+00:00",
       "syllabus_used": true
     },
@@ -1565,9 +1426,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:26:41.377114+00:00",
       "syllabus_used": true
     },
@@ -1589,9 +1448,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:26:41.390166+00:00",
       "syllabus_used": true
     },
@@ -1613,9 +1470,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:02.755567+00:00",
       "syllabus_used": true
     },
@@ -1637,9 +1492,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:02.762192+00:00",
       "syllabus_used": true
     },
@@ -1661,9 +1514,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:02.769446+00:00",
       "syllabus_used": true
     },
@@ -1673,7 +1524,7 @@
       "type": "mcq",
       "chapter_id": "chap27",
       "chapter_title": "第二十七章：烯烃",
-      "q": "关于烯烃的化学性质，下列哪些叙述是正确的？\nI. 烯烃能使酸性 KMnO₄ 溶液褪色，体现了烯烃的还原性\nII. 乙烯与溴水反应生成的产物是 1,2-二溴乙烷\nIII. 在过氧化物（Peroxides）存在下，丙烯与 HBr 反应依然严格遵循马氏规则\nIV. 烯烃在一定条件下可发生加聚反应生成高分子化合物",
+      "q": "关于烯烃的化学性质，下列哪些叙述是正确的？\nI. 烯烃能使酸性 KMnO₄ 溶液褪色，体现了烯烃的还原性\nII. 乙烯与溴的四氯化碳溶液反应，生成 1,2-二溴乙烷\nIII. 在过氧化物（Peroxides）存在下，丙烯与 HBr 反应依然严格遵循马氏规则\nIV. 烯烃在一定条件下可发生加聚反应生成高分子化合物",
       "options": [
         "A. 仅 I、II",
         "B. 仅 I、II、IV",
@@ -1685,9 +1536,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:02.782238+00:00",
       "syllabus_used": true
     },
@@ -1710,7 +1559,7 @@
       "answer_source": "generated",
       "needs_expert_check": true,
       "flags": [
-        "答案未经 AI 复核"
+        "审题：答案 B 依 IUPAC 英文字母顺序（乙基在甲基前）。A 和 B 是同一个化合物，只差取代基的排列顺序；若课本用「简单取代基在前」的规则，A 才对。请依课本决定采纳或退回"
       ],
       "generated_at": "2026-09-29T08:27:22.164780+00:00",
       "syllabus_used": true
@@ -1733,9 +1582,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:22.168923+00:00",
       "syllabus_used": true
     },
@@ -1757,9 +1604,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:22.173587+00:00",
       "syllabus_used": true
     },
@@ -1781,9 +1626,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:35.431533+00:00",
       "syllabus_used": true
     },
@@ -1793,7 +1636,7 @@
       "type": "mcq",
       "chapter_id": "chap29",
       "chapter_title": "第二十九章：芳香烃",
-      "q": "下列哪一种芳香烃与酸性 KMnO₄ 溶液共热后，由于其结构特征而**不能**被氧化成苯甲酸（C₆H₅COOH）？",
+      "q": "下列哪一种芳香烃与酸性 KMnO₄ 溶液共热后，由于其结构特征而不能被氧化成苯甲酸（C₆H₅COOH）？",
       "options": [
         "A. 乙苯",
         "B. 异丙苯",
@@ -1805,9 +1648,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:35.437247+00:00",
       "syllabus_used": true
     },
@@ -1829,9 +1670,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:35.442430+00:00",
       "syllabus_used": true
     },
@@ -1853,9 +1692,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:27:35.449876+00:00",
       "syllabus_used": true
     },
@@ -1877,9 +1714,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:28:03.441957+00:00",
       "syllabus_used": true
     },
@@ -1901,9 +1736,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:28:03.447313+00:00",
       "syllabus_used": true
     },
@@ -1925,9 +1758,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:28:03.451196+00:00",
       "syllabus_used": true
     },
@@ -1949,9 +1780,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:28:03.462529+00:00",
       "syllabus_used": true
     },
@@ -1973,9 +1802,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:28:19.366121+00:00",
       "syllabus_used": true
     },
@@ -1993,14 +1820,11 @@
         "D. (CH₃)₂CHCH₂OH"
       ],
       "answer": 1,
-      "explanation": "考点为醇的分类与鉴定。①能与 Na 反应放氢气，说明 X 是醇。②与卢卡斯试剂反应需加热数分钟才浑浊，说明 X 是仲醇（二级醇）；叔醇是立即浑浊，伯醇在室温下不反应。③能发生碘仿反应（与 I₂/NaOH 反应生成黄色沉淀 CHI₃），说明结构中含有 CH₃CH(OH)- 基团。选项 A 是正丁醇（伯醇），选项 C 是叔丁醇（叔醇），选项 D 是异丁醇（伯醇），只有选项 B 仲丁醇既是仲醇又符合碘仿反应的结构要求。",
+      "explanation": "考点为醇的分类与鉴定。①能与 Na 反应放氢气，说明 X 是醇。②与卢卡斯试剂反应需加热数分钟才浑浊，说明 X 是仲醇（二级醇）；叔醇是立即浑浊，伯醇在室温下不反应。③能发生碘仿反应（与 I₂/NaOH 反应生成黄色沉淀 CHI₃），说明结构中含有 CH₃CH(OH)R 结构（R 为烃基或 H）。选项 A 是正丁醇（伯醇），选项 C 是叔丁醇（叔醇），选项 D 是异丁醇（伯醇），只有选项 B 仲丁醇既是仲醇又符合碘仿反应的结构要求。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "解析有没写成上下标的「CH(OH)-」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:28:19.378924+00:00",
       "syllabus_used": true
     },
@@ -2022,9 +1846,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:28:19.392182+00:00",
       "syllabus_used": true
     },
@@ -2046,9 +1868,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:28:19.398149+00:00",
       "syllabus_used": true
     },
@@ -2070,9 +1890,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:38:26.749073+00:00",
       "syllabus_used": true
     },
@@ -2094,9 +1912,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:38:26.752641+00:00",
       "syllabus_used": true
     },
@@ -2118,9 +1934,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:38:26.756200+00:00",
       "syllabus_used": true
     },
@@ -2130,7 +1944,7 @@
       "type": "mcq",
       "chapter_id": "chap4",
       "chapter_title": "第四章：无理式",
-      "q": "化简分式 $\\frac{1}{1 + \\sqrt{2} + \\sqrt{3}}$ 的分母后，可得下列哪一个选项？",
+      "q": "将分式 $\\frac{1}{1 + \\sqrt{2} + \\sqrt{3}}$ 的分母有理化，结果是下列哪一个？",
       "options": [
         "A. $\\frac{2 - \\sqrt{2} + \\sqrt{6}}{4}$",
         "B. $\\frac{\\sqrt{2} + \\sqrt{6} - 2}{4}$",
@@ -2142,9 +1956,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:38:26.758409+00:00",
       "syllabus_used": true
     },
@@ -2162,13 +1974,11 @@
         "D. $\\frac{\\sqrt{73}}{9}$"
       ],
       "answer": 0,
-      "explanation": "【考点】二倍角公式、同角三角函数关系、三角函数在各象限的正负号讨论。\n【解析】\n1. 将已知等式两边平方：\n$(\\sin \\theta - \\cos \\theta)^2 = \\left(\\frac{1}{3}\\right)^2$\n$\\sin^2 \\theta - 2\\sin \\theta \\cos \\theta + \\cos^2 \\theta = \\frac{1}{9}$\n利用平方关系 $\\sin^2 \\theta + \\cos^2 \\theta = 1$ 与二倍角公式 $\\sin 2\\theta = 2\\sin \\theta \\cos \\theta$，可得：\n$1 - \\sin 2\\theta = \\frac{1}{9} \\implies \\sin 2\\theta = \\frac{8}{9}$。\n\n2. 确定 $2\\theta$ 的范围：\n已知 $\\frac{\\pi}{4} \\lt \\theta \\lt \\frac{\\pi}{2}$，不等式各项乘以 $2$ 得 $\\frac{\\pi}{2} \\lt 2\\theta \\lt \\pi$。\n这表明角 $2\\theta$ 落在第二象限。在第二象限中，余弦函数值为负，即 $\\cos 2\\theta \\lt 0$。\n\n3. 求 $\\cos 2\\theta$ 的值：\n$\\cos 2\\theta = -\\sqrt{1 - \\sin^2 2\\theta} = -\\sqrt{1 - \\left(\\frac{8}{9}\\right)^2} = -\\sqrt{1 - \\frac{64}{81}} = -\\sqrt{\\frac{17}{81}} = -\\frac{\\sqrt{17}}{9}$。\n\n【常见迷思】\n部分考生会忽略角 $2\\theta$ 的范围讨论，直接取正值，从而误选 B；或者在平方展开时记错公式，误将减号变加号导致计算出 C 或 D。",
+      "explanation": "【考点】二倍角公式、同角三角函数关系、三角函数在各象限的正负号讨论。\n【解析】\n1. 将已知等式两边平方：\n$(\\sin \\theta - \\cos \\theta)^2 = \\left(\\frac{1}{3}\\right)^2$\n$\\sin^2 \\theta - 2\\sin \\theta \\cos \\theta + \\cos^2 \\theta = \\frac{1}{9}$\n利用平方关系 $\\sin^2 \\theta + \\cos^2 \\theta = 1$ 与二倍角公式 $\\sin 2\\theta = 2\\sin \\theta \\cos \\theta$，可得：\n$1 - \\sin 2\\theta = \\frac{1}{9} \\implies \\sin 2\\theta = \\frac{8}{9}$。\n\n2. 确定 $2\\theta$ 的范围：\n已知 $\\frac{\\pi}{4} \\lt \\theta \\lt \\frac{\\pi}{2}$，不等式各项乘以 $2$ 得 $\\frac{\\pi}{2} \\lt 2\\theta \\lt \\pi$。\n这表明角 $2\\theta$ 落在第二象限。在第二象限中，余弦函数值为负，即 $\\cos 2\\theta \\lt 0$。\n\n3. 求 $\\cos 2\\theta$ 的值：\n$\\cos 2\\theta = -\\sqrt{1 - \\sin^2 2\\theta} = -\\sqrt{1 - \\left(\\frac{8}{9}\\right)^2} = -\\sqrt{1 - \\frac{64}{81}} = -\\sqrt{\\frac{17}{81}} = -\\frac{\\sqrt{17}}{9}$。\n\n【常见迷思】\n部分考生会忽略角 $2\\theta$ 的范围讨论，直接取正值，从而误选 B；或者把 $\\left(\\frac{8}{9}\\right)^2$ 误算成 $\\frac{8}{81}$，得到 $\\frac{\\sqrt{73}}{9}$（C 或 D）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:40:22.120597+00:00",
       "syllabus_used": true
     },
@@ -2190,9 +2000,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:40:22.123232+00:00",
       "syllabus_used": true
     },
@@ -2214,9 +2022,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:40:22.126197+00:00",
       "syllabus_used": true
     },
@@ -2238,9 +2044,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T08:40:22.128920+00:00",
       "syllabus_used": true
     }
