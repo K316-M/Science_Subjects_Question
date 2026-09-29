@@ -270,7 +270,8 @@ https://science-subjects-question.vercel.app/dev/#pending
 
 | 变数 | 必填 | 用途 |
 |---|---|---|
-| `GEMINI_API_KEY` | ✅ | 拍题录入与依考纲出题都要用。没设的话脚本会直接跳过，不会报错 |
+| `GEMINI_API_KEY2` | ✅ | 拍题录入与依考纲出题都用这把（建议放另一个 Google 专案的金钥，额度和 Vercel 学生站分开）。执行记录的录题／出题步骤第一行会写「这次用的金钥」 |
+| `GEMINI_API_KEY` | 选填 | 旧的那把：没设 `GEMINI_API_KEY2` 时才用它。两个都没设，脚本会直接跳过，不会报错 |
 | `GEMINI_MODEL` | 选填 | **通常不用填**。脚本会自己问 Google 有哪些模型可用再挑一个；若被回「这个模型对新用户已关闭」，会自动读取 Google 建议的替代型号再试。只有想锁定特定模型时才填 |
 
 

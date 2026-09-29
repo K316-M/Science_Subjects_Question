@@ -9,7 +9,8 @@ name: AI 依考纲出题 (Generate Questions)
 #   ingest_paper.yml      → 把你拍的真题照片转写成题目
 #   generate_questions.yml → 依考纲生成全新的原创练习题（必须人工核对科学正确性）
 #
-# 使用前请在 Settings → Secrets and variables → Actions 添加 GEMINI_API_KEY。
+# 使用前请在 Settings → Secrets and variables → Actions 添加 GEMINI_API_KEY2（出题、录题专用的那把）；
+# 没有 GEMINI_API_KEY2 就退回用 GEMINI_API_KEY。这次用了哪一把，执行记录的出题步骤第一行会写。
 
 on:
   schedule:
@@ -59,11 +60,14 @@ jobs:
       - name: 依考纲生成原创题并自动检查
         id: generate
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # 脚本一律读 GEMINI_API_KEY 这个环境变数；值优先取 secret GEMINI_API_KEY2，没设才用旧的 GEMINI_API_KEY
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY2 || secrets.GEMINI_API_KEY }}
+          GEMINI_KEY_NAME: ${{ secrets.GEMINI_API_KEY2 && 'GEMINI_API_KEY2' || 'GEMINI_API_KEY（没设 GEMINI_API_KEY2，用旧的那把）' }}
           ONLY_SUBJECT: ${{ inputs.subject }}
           CHAPTERS_PER_RUN: ${{ inputs.chapters_per_run || '3' }}
           QUESTIONS_PER_CHAPTER: ${{ inputs.questions_per_chapter || '4' }}
         run: |
+          echo "🔑 这次用的金钥：$GEMINI_KEY_NAME"
           python scripts/generate_questions.py
           if [ -f has_new_generated.txt ] && [ "$(cat has_new_generated.txt)" = "true" ]; then
             echo "has_new=true" >> "$GITHUB_OUTPUT"
