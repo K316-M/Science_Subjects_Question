@@ -18,9 +18,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:00:32.340244+00:00",
       "syllabus_used": true
     },
@@ -42,9 +40,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:00:32.343006+00:00",
       "syllabus_used": true
     },
@@ -66,9 +62,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:00:32.345711+00:00",
       "syllabus_used": true
     },
@@ -90,9 +84,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:00:32.348829+00:00",
       "syllabus_used": true
     },
@@ -114,9 +106,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:04:27.189630+00:00",
       "syllabus_used": true
     },
@@ -134,13 +124,11 @@
         "D. Ⅰ、Ⅱ 和 Ⅲ"
       ],
       "answer": 1,
-      "explanation": "考点为减数分裂与生物变异的关系。遗传多样性主要源于基因重组。叙述 Ⅰ（交叉互换）和叙述 Ⅱ（非同源染色体自由组合）均发生在减数第一次分裂，是产生不同基因型配子的主要机制。叙述 Ⅲ 虽然是减数分裂的一个步骤，但姐妹染色单体在未发生交叉互换的前提下是完全相同的，其分离本身不产生新的遗传组合。统考考纲中通常强调 Ⅰ 和 Ⅱ 为变异的主要来源。",
+      "explanation": "考点为减数分裂与生物变异的关系。遗传多样性主要源于基因重组。叙述 Ⅰ（交叉互换）和叙述 Ⅱ（非同源染色体自由组合）均发生在减数第一次分裂，是产生不同基因型配子的主要机制。叙述 Ⅲ 虽然是减数分裂的一个步骤，但姐妹染色单体在未发生交叉互换的前提下是完全相同的，其分离本身不产生新的遗传组合。所以正确的是 Ⅰ 和 Ⅱ。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:04:27.194194+00:00",
       "syllabus_used": true
     },
@@ -154,17 +142,15 @@
       "options": [
         "A. 抑癌基因的主要功能是促进细胞周期的运行以修复受损组织",
         "B. 癌细胞因失去接触抑制（Contact Inhibition）而能在培养基上堆积生长",
-        "C. 处于 $G_0$ 期的细胞代谢活动停止，且不再具有分裂能力",
+        "C. 处于 G₀ 期的细胞代谢活动停止，且不再具有分裂能力",
         "D. 癌细胞内端粒酶（Telomerase）活性受到抑制是其能无限增殖的原因"
       ],
       "answer": 1,
-      "explanation": "考点为细胞周期调控与癌症。A 错误，抑癌基因的作用是抑制细胞过度生长和分裂；B 正确，正常细胞有接触抑制，接触后停止分裂，癌细胞失去此特性故可堆积；C 错误，$G_0$ 期细胞（如神经细胞或暂时离开周期的细胞）代谢依然活跃，只是不进行 DNA 复制和分裂，部分细胞在受刺激后可重回周期；D 错误，癌细胞通常具有高活性的端粒酶来维持端粒长度，从而实现无限增殖，而非被抑制。",
+      "explanation": "考点为细胞周期调控与癌症。A 错误，抑癌基因的作用是抑制细胞过度生长和分裂；B 正确，正常细胞有接触抑制，接触后停止分裂，癌细胞失去此特性故可堆积；C 错误，G₀ 期细胞（如神经细胞或暂时离开周期的细胞）代谢依然活跃，只是不进行 DNA 复制和分裂，部分细胞在受刺激后可重回周期；D 错误，癌细胞通常具有高活性的端粒酶来维持端粒长度，从而实现无限增殖，而非被抑制。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:04:27.196576+00:00",
       "syllabus_used": true
     },
@@ -182,13 +168,11 @@
         "D. 后者的染色体数是前者的一半，且后期会发生同源染色体分离"
       ],
       "answer": 2,
-      "explanation": "考点为有丝分裂与减数分裂的区别。该动物 $2n = 12$。有丝分裂中期：染色体 12 条，有同源染色体，DNA 24 个。减数第二次分裂中期：染色体 6 条（已减半），无同源染色体，DNA 12 个。A 错误（数目不同）；B 错误（DNA 数不同）；C 正确（12 对比 6，且有丝分裂始终有同源染色体）；D 错误（减二后期发生的是姐妹染色单体分离，同源染色体分离发生在减一后期）。",
+      "explanation": "考点为有丝分裂与减数分裂的区别。该动物 $2n = 12$。有丝分裂中期：染色体 12 条，有同源染色体，DNA 24 个。减数第二次分裂中期：染色体 6 条（已减半），无同源染色体，DNA 12 个。A 错误（数目不同）；B 错误（DNA 数不同）；C 正确（12 条比 6 条，且有丝分裂始终有同源染色体）；D 错误（减二后期发生的是姐妹染色单体分离，同源染色体分离发生在减一后期）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:04:27.199131+00:00",
       "syllabus_used": true
     },
@@ -210,9 +194,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:04:42.505778+00:00",
       "syllabus_used": true
     },
@@ -234,9 +216,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:04:42.508242+00:00",
       "syllabus_used": true
     },
@@ -258,9 +238,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:04:42.510190+00:00",
       "syllabus_used": true
     },
@@ -278,13 +256,11 @@
         "D. I、II、III、IV"
       ],
       "answer": 0,
-      "explanation": "考点为生物技术的应用与安全性。I 正确：基因治疗通过引入功能正常的基因来补偿缺陷基因。II 正确：这是转基因生物安全性的主要担忧之一，即水平基因转移导致的生态风险。III 错误：克隆人在技术上仍存在极高风险（如畸形、早衰），且面临严峻的伦理挑战，并非技术完全成熟。IV 错误：转基因食品的初衷可能是抗虫、抗除草剂或提高产量，不一定是为了提升营养成分，且其安全性仍需长期评价。",
+      "explanation": "考点为生物技术的应用与安全性。I 正确：基因治疗通过引入功能正常的基因来补偿缺陷基因。II 正确：这是转基因生物安全性的主要担忧之一，即转基因经花粉杂交流入野生近缘种（基因漂流）造成的生态风险。III 错误：克隆人在技术上仍存在极高风险（如畸形、早衰），且面临严峻的伦理挑战，并非技术完全成熟。IV 错误：转基因食品的初衷可能是抗虫、抗除草剂或提高产量，不一定是为了提升营养成分，且其安全性仍需长期评价。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:04:42.516596+00:00",
       "syllabus_used": true
     },
@@ -306,9 +282,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:05:00.572802+00:00",
       "syllabus_used": true
     },
@@ -330,9 +304,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:05:00.580271+00:00",
       "syllabus_used": true
     },
@@ -354,9 +326,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:05:00.582895+00:00",
       "syllabus_used": true
     },
@@ -378,9 +348,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-29T12:05:00.585741+00:00",
       "syllabus_used": true
     }
