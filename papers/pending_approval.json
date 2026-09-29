@@ -1278,7 +1278,281 @@
         "ai_answer": 2,
         "reason": "线型高分子在适当溶剂中通常可溶解，体型高分子才只能溶胀而不溶解。"
       }
+    },
+    {
+      "id": "math_gen_382b1e94",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap12",
+      "chapter_title": "第十二章：指数与对数",
+      "q": "若方程式 $\\log_x 2 + \\log_2 x = \\frac{5}{2}$ 的两个实数根为 $x_1$ 与 $x_2$，求 $x_1 x_2$ 的值。",
+      "options": [
+        "A. $4$",
+        "B. $4\\sqrt{2}$",
+        "C. $5$",
+        "D. $2\\sqrt{2}$"
+      ],
+      "answer": 1,
+      "explanation": "本题考查对数换底公式与对数方程式的解法。令 $u = \\log_2 x$，则 $\\log_x 2 = \\frac{1}{\\log_2 x} = \\frac{1}{u}$。原方程化为 $\\frac{1}{u} + u = \\frac{5}{2}$。整理得 $2u^2 - 5u + 2 = 0$，解得 $u = 2$ 或 $u = \\frac{1}{2}$。当 $\\log_2 x = 2$ 时，$x_1 = 2^2 = 4$；当 $\\log_2 x = \\frac{1}{2}$ 时，$x_2 = 2^{\\frac{1}{2}} = \\sqrt{2}$。因此 $x_1 x_2 = 4\\sqrt{2}$。常见错误是直接将 $u$ 的两根之积当成 $x$ 的积，或在换元后忘记还原回 $x$。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:58:19.918698+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_d1efca70",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap12",
+      "chapter_title": "第十二章：指数与对数",
+      "q": "求方程式 $4^x - 3 \\cdot 2^{x+1} + 8 = 0$ 所有实数解之和。",
+      "options": [
+        "A. $2$",
+        "B. $3$",
+        "C. $6$",
+        "D. $8$"
+      ],
+      "answer": 1,
+      "explanation": "本题考查指数方程式的换元解法。原式可改写为 $(2^x)^2 - 3 \\cdot 2 \\cdot 2^x + 8 = 0$，即 $(2^x)^2 - 6(2^x) + 8 = 0$。令 $t = 2^x$（其中 $t > 0$），得 $t^2 - 6t + 8 = 0$，因式分解得 $(t-2)(t-4) = 0$。解得 $t = 2$ 或 $t = 4$。还原回 $x$：$2^x = 2 \\Rightarrow x = 1$；$2^x = 4 \\Rightarrow x = 2$。所有实数解之和为 $1 + 2 = 3$。若学生误用根与系数关系直接得出 $t_1 + t_2 = 6$ 或 $t_1 t_2 = 8$，则会选错。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "解析的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt",
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:58:19.921637+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_5c995bb2",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap12",
+      "chapter_title": "第十二章：指数与对数",
+      "q": "求函数 $f(x) = \\frac{1}{\\sqrt{\\log_{0.5}(x-2)}}$ 的定义域。",
+      "options": [
+        "A. $x \\gt 2$",
+        "B. $x \\lt 3$",
+        "C. $2 \\lt x \\lt 3$",
+        "D. $x \\gt 3$"
+      ],
+      "answer": 2,
+      "explanation": "本题考查对数函数的定义域及其单调性。函数有意义需满足：(1) 真数 $x-2 > 0 \\Rightarrow x > 2$；(2) 分母且根号内式子 $\\log_{0.5}(x-2) > 0$。由于对数底数 $0.5$ 介于 $0$ 与 $1$ 之间，该对数函数为减函数。由 $\\log_{0.5}(x-2) > \\log_{0.5} 1$ 得 $x-2 < 1$，即 $x < 3$。综合上述条件，定义域为 $2 < x < 3$。常见错误是忽略底数小于 1 时不等号需变向，或忽略真数必须大于 0 的条件。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "解析的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt",
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:58:19.924342+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_bb0b37b9",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap12",
+      "chapter_title": "第十二章：指数与对数",
+      "q": "已知 $\\log_a b = p$ 且 $\\log_b c = q$，其中 $a, b, c$ 均为大于 1 的实数，求 $\\log_{\\sqrt{c}} (a^2)$ 的值。",
+      "options": [
+        "A. $\\frac{4}{pq}$",
+        "B. $\\frac{1}{pq}$",
+        "C. $pq$",
+        "D. $4pq$"
+      ],
+      "answer": 0,
+      "explanation": "本题考查对数的性质与换底公式。首先利用对数恒等式：$\\log_a c = \\log_a b \\cdot \\log_b c = pq$。目标表达式为 $\\log_{\\sqrt{c}} (a^2)$。根据换底公式或性质 $\\log_{x^m} y^n = \\frac{n}{m} \\log_x y$，可得 $\\log_{\\sqrt{c}} (a^2) = \\log_{c^{1/2}} (a^2) = \\frac{2}{1/2} \\log_c a = 4 \\log_c a$。由于 $\\log_c a = \\frac{1}{\\log_a c} = \\frac{1}{pq}$，故原式 $= \\frac{4}{pq}$。常见错误在于系数处理不当，如将 $\\frac{2}{1/2}$ 算成 1 或 4 以外的数值。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:58:19.928619+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_d6b2fb91",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap13",
+      "chapter_title": "第十三章：数列与级数",
+      "q": "一个无穷等比级数的所有项之和为 4，而其各项的平方所构成的无穷等比级数之和为 8，求该级数的首项 $a$。",
+      "options": [
+        "A. $a = 2$",
+        "B. $a = \\frac{4}{3}$",
+        "C. $a = \\frac{8}{3}$",
+        "D. $a = 3$"
+      ],
+      "answer": 2,
+      "explanation": "考点：无穷等比级数公式 $S_{\\infty} = \\frac{a}{1-r}$（其中 $|r| \\lt 1$）。\n1. 设原级数为 $a, ar, ar^2, \\dots$，则 $\\frac{a}{1-r} = 4 \\Rightarrow a = 4(1-r)$ —— (1)。\n2. 平方后的级数为 $a^2, a^2r^2, a^2r^4, \\dots$，其首项为 $a^2$，公比为 $r^2$。\n3. 则 $\\frac{a^2}{1-r^2} = 8 \\Rightarrow \\frac{a^2}{(1-r)(1+r)} = 8$ —— (2)。\n4. 将 (1) 代入 (2)：$\\frac{16(1-r)^2}{(1-r)(1+r)} = 8 \\Rightarrow \\frac{16(1-r)}{1+r} = 8 \\Rightarrow 2(1-r) = 1+r \\Rightarrow 2-2r = 1+r \\Rightarrow 3r = 1 \\Rightarrow r = \\frac{1}{3}$。\n5. 代回 (1) 求 $a$：$a = 4(1 - \\frac{1}{3}) = 4 \\times \\frac{2}{3} = \\frac{8}{3}$。\n常见错误：学生容易忘记平方后公比也需平方（误用 $r$），或者在联立方程时发生代数运算错误。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:58:39.780366+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_1a592ea8",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap13",
+      "chapter_title": "第十三章：数列与级数",
+      "q": "求级数 $\\sum_{r=1}^{20} \\frac{2}{4r^2 - 1}$ 的值。",
+      "options": [
+        "A. \\frac{20}{21}",
+        "B. \\frac{40}{41}",
+        "C. \\frac{1}{41}",
+        "D. \\frac{80}{41}"
+      ],
+      "answer": 1,
+      "explanation": "考点：裂项相消法（Telescoping Series）。\n1. 通项公式变形：$\\frac{2}{4r^2 - 1} = \\frac{2}{(2r-1)(2r+1)}$。\n2. 利用部分分式分解：$\\frac{2}{(2r-1)(2r+1)} = \\frac{1}{2r-1} - \\frac{1}{2r+1}$。\n3. 展开求和：\n   $S_{20} = (\\frac{1}{1} - \\frac{1}{3}) + (\\frac{1}{3} - \\frac{1}{5}) + (\\frac{1}{5} - \\frac{1}{7}) + \\dots + (\\frac{1}{39} - \\frac{1}{41})$。\n4. 中间项全部抵消，剩下首尾两项：$S_{20} = 1 - \\frac{1}{41} = \\frac{40}{41}$。\n常见错误：选项 A 是当分母为 $r(r+1)$ 时的常见结果；选项 C 是只剩下最后一项的错误结果。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "选项A有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
+        "选项B有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
+        "选项C有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
+        "选项D有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:58:39.783248+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_37eeb829",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap13",
+      "chapter_title": "第十三章：数列与级数",
+      "q": "已知数列 $\\{a_n\\}$ 的所有项均为正数，且满足 $\\log_2 a_1, \\log_2 a_2, \\dots, \\log_2 a_n$ 是一个首项为 1、公差为 2 的等差数列。求数列 $\\{a_n\\}$ 的前 $n$ 项和 $S_n$。",
+      "options": [
+        "A. 2(2^n - 1)",
+        "B. \\frac{2}{3}(4^n - 1)",
+        "C. 2^n - 1",
+        "D. \\frac{1}{3}(4^n - 1)"
+      ],
+      "answer": 1,
+      "explanation": "考点：对数运算与等比数列的转换。\n1. 设 $b_n = \\log_2 a_n$，由题意 $b_n = 1 + (n-1)2 = 2n-1$。\n2. 根据对数定义，$a_n = 2^{b_n} = 2^{2n-1}$。\n3. 检查 $\\{a_n\\}$ 的性质：\n   $a_1 = 2^{2(1)-1} = 2^1 = 2$；\n   $a_2 = 2^{2(2)-1} = 2^3 = 8$；\n   公比 $r = \\frac{a_2}{a_1} = \\frac{8}{2} = 4$。\n4. $\\{a_n\\}$ 是首项为 2，公比为 4 的等比数列。\n5. 求和：$S_n = \\frac{a(r^n - 1)}{r - 1} = \\frac{2(4^n - 1)}{4 - 1} = \\frac{2}{3}(4^n - 1)$。\n常见错误：误以为公比是 2（选项 A）；或者计算首项时出错（选项 D）；或者直接将等差数列求和公式套用在对数上。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "选项B有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
+        "选项D有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:58:39.789650+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_4d87df7f",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第十四章：行列式",
+      "q": "已知行列式 $\\Delta = \\begin{vmatrix} a & b & c \\\\ d & e & f \\\\ g & h & i \\end{vmatrix} = 5$，求行列式 $D = \\begin{vmatrix} 2a & 2b & 2c \\\\ d-3a & e-3b & f-3c \\\\ 4g & 4h & 4i \\end{vmatrix}$ 的值。",
+      "options": [
+        "A. 10",
+        "B. 20",
+        "C. 40",
+        "D. -40"
+      ],
+      "answer": 2,
+      "explanation": "本题考察行列式的性质。根据行列式的性质：(1) 若行列式的某一行乘以常数 $k$，则行列式的值变为原来的 $k$ 倍。从 $D$ 的第一行提取因子 2，从第三行提取因子 4，得 $D = 2 \\times 4 \\times \\begin{vmatrix} a & b & c \\\\ d-3a & e-3b & f-3c \\\\ g & h & i \\end{vmatrix}$。(2) 若将行列式的某一行的 $k$ 倍加到另一行，行列式的值不变。令 $R_2 \\to R_2 + 3R_1$，得 $D = 8 \\times \\begin{vmatrix} a & b & c \\\\ d & e & f \\\\ g & h & i \\end{vmatrix} = 8 \\times 5 = 40$。常见错误是忽略了倍数关系或错误地认为 $R_2-3R_1$ 会改变行列式的值。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:59:07.138293+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_cfad634d",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第十四章：行列式",
+      "q": "若线性方程组 $\\begin{cases} x + y + z = 6 \\\\ x + 2y + 3z = 10 \\\\ x + 2y + \\lambda z = \\mu \\end{cases}$ 有无穷多组解，则 $\\lambda$ 与 $\\mu$ 的值分别为：",
+      "options": [
+        "A. $\\lambda=3, \\mu=10$",
+        "B. $\\lambda=3, \\mu=6$",
+        "C. $\\lambda=1, \\mu=10$",
+        "D. $\\lambda=1, \\mu=6$"
+      ],
+      "answer": 0,
+      "explanation": "本题考察克兰姆法则（Cramer's Rule）中关于方程组解的判定。方程组有无穷多组解的必要条件是系数行列式 $\\Delta = 0$。计算 $\\Delta = \\begin{vmatrix} 1 & 1 & 1 \\\\ 1 & 2 & 3 \\\\ 1 & 2 & \\lambda \\end{vmatrix} = 1(2\\lambda - 6) - 1(\\lambda - 3) + 1(2 - 2) = \\lambda - 3$。令 $\\Delta = 0$ 得 $\\lambda = 3$。当 $\\lambda = 3$ 时，方程(2)为 $x+2y+3z=10$，方程(3)为 $x+2y+3z=\\mu$。为了使系统相容并有无穷多解，这两个方程必须表示同一个平面（即重合），因此 $\\mu$ 必须等于 10。若 $\\mu \\neq 10$，则两平面平行且不相交，方程组无解。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:59:07.144840+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_3e94ca24",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第十四章：行列式",
+      "q": "已知行列式 $D = \\begin{vmatrix} 1 & 2 & 3 \\\\ 0 & 4 & 5 \\\\ 1 & 0 & 6 \\end{vmatrix}$，设 $C_{ij}$ 为元素 $a_{ij}$ 的代数余子式 (Cofactor)，求 $a_{21}C_{21} + a_{22}C_{22} + a_{23}C_{23}$ 的值。",
+      "options": [
+        "A. 0",
+        "B. 12",
+        "C. 22",
+        "D. 34"
+      ],
+      "answer": 2,
+      "explanation": "本题考察行列式按行展开的定义。根据行列式的展开性质，行列式任一行的元素与其对应的代数余子式乘积之和等于该行列式的值，即 $\\sum_{j=1}^3 a_{ij}C_{ij} = \\det(D)$。题目要求的是行列式按第二行展开的表达式。计算 $D$ 的值：按第一列展开较简便，$D = 1 \\times \\begin{vmatrix} 4 & 5 \\\\ 0 & 6 \\end{vmatrix} - 0 \\times \\begin{vmatrix} 2 & 3 \\\\ 0 & 6 \\end{vmatrix} + 1 \\times \\begin{vmatrix} 2 & 3 \\\\ 4 & 5 \\end{vmatrix} = (24 - 0) + (10 - 12) = 24 - 2 = 22$。因此所求表达式的值为 22。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:59:07.153786+00:00",
+      "syllabus_used": true
+    },
+    {
+      "id": "math_gen_3f2e7275",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap14",
+      "chapter_title": "第十四章：行列式",
+      "q": "计算行列式 $\\begin{vmatrix} \\sin A & \\cos A & \\sin(A+45^\\circ) \\\\ \\sin B & \\cos B & \\sin(B+45^\\circ) \\\\ \\sin C & \\cos C & \\sin(C+45^\\circ) \\end{vmatrix}$ 的值。",
+      "options": [
+        "A. 0",
+        "B. 1",
+        "C. \\frac{\\sqrt{2}}{2}",
+        "D. \\sin(A+B+C)"
+      ],
+      "answer": 0,
+      "explanation": "本题结合三角恒等式考察行列式的性质。利用和角公式 $\\sin(x+45^\\circ) = \\sin x \\cos 45^\\circ + \\cos x \\sin 45^\\circ = \\frac{\\sqrt{2}}{2} \\sin x + \\frac{\\sqrt{2}}{2} \\cos x$。观察行列式的第三列 $C_3$，其每个元素都可以表示为第一列 $C_1$ 与第二列 $C_2$ 对应元素的线性组合，即 $C_3 = \\frac{\\sqrt{2}}{2} C_1 + \\frac{\\sqrt{2}}{2} C_2$。根据行列式的性质，若有一列是其他列的线性组合，则该行列式的值为 0。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [
+        "选项C有写在公式外面的 LaTeX 指令「\\frac」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
+        "选项D有写在公式外面的 LaTeX 指令「\\sin」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式",
+        "答案未经 AI 复核"
+      ],
+      "generated_at": "2026-09-29T13:59:07.161392+00:00",
+      "syllabus_used": true
     }
   ],
-  "generated_at": "2026-09-29T13:54:57.792405+00:00"
+  "generated_at": "2026-09-29T13:59:08.262054+00:00"
 }
