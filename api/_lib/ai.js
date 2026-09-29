@@ -97,7 +97,7 @@ async function rankedModels(key) {
 // 解析前补成两个。规则与清单同 scripts/qa.py 的 repair_latex_backslashes、LATEX_ESCAPE_LOOKALIKES（两边要一起改）
 const LATEX_ESCAPE_LOOKALIKES = new Set([
   'frac', 'forall', 'beta', 'bar', 'begin', 'binom', 'big', 'bigl', 'bigr', 'boxed', 'because', 'bmod',
-  'neq', 'not', 'notin', 'nabla', 'right', 'rightarrow', 'rho', 'rangle', 'rm',
+  'neq', 'not', 'notin', 'nabla', 'right', 'rightarrow', 'rightleftharpoons', 'rho', 'rangle', 'rm',
   'times', 'theta', 'tan', 'tanh', 'text', 'textbf', 'textrm', 'tfrac', 'to', 'tau', 'triangle', 'therefore', 'tilde',
 ]);
 function repairLatexBackslashes(text) {

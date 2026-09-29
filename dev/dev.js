@@ -213,6 +213,7 @@ const ROMAN_ONE_LINE = /(^|[^A-Za-z])I\s+\S.*?\sII(?![A-Za-z])/;
 const MATH_SPAN = /\$[^$]*\$/g;
 const CONTROL_CHAR = /[\x08\x0c\t\r]/;
 const RAW_LATEX = /\\[A-Za-z]+/;
+const MARKDOWN_BOLD = /\*\*[^*\n]+\*\*/;   // 「**不能**」：网站不认 Markdown，学生会直接看到星号
 const SELF_TALK = /等等|哎呀|重新(计算|分析|审题|核对|核算|检查)|让我们?(重新|检查|核对|修正)|修正选项|与选项不符|若题目改为|重写(此|这)题|慢，检查/;
 // 该写成上下标却写成一般数字的（H2O、Fe3+、v0、m/s2）：同 qa.py 的 PLAIN_SCRIPTS，第 2 组是要标出来的字
 const ELEM = '(?:[A-Z][a-z]?[0-9]*|\\((?:[A-Z][a-z]?[0-9]*)+\\)[0-9]*)';
@@ -258,6 +259,7 @@ function textLint(item, subject = item.subject) {
     const latex = prose.match(RAW_LATEX);
     if ((text.match(/\$/g) || []).length % 2) out.push(`${label}的公式 $ 没有成对，显示会乱掉`);
     else if (latex) out.push(`${label}有写在公式外面的 LaTeX 指令「${latex[0]}」，学生会看到原始码，请改成符号（√、γ），或前后加 $ 放进公式`);
+    if (MARKDOWN_BOLD.test(text)) out.push(`${label}有 Markdown 粗体「**」，网站不认得，学生会看到星号，请拿掉`);
     if ((text.match(MATH_SPAN) || []).some(span => /[<>]/.test(span))) out.push(`${label}的公式里有 < 或 >，网页会当成 HTML 标签，请改成 \\lt、\\gt`);
     const plain = subject !== 'math' ? plainScripts(prose) : [];
     if (plain.length) out.push(`${label}有没写成上下标的「${plain.slice(0, 3).join('」「')}」：化学式、物理量的数字要下标（H₂O、v₀），离子电荷、单位次方要上标（Fe³⁺、m/s²）`);
