@@ -55,6 +55,7 @@
 | **每个画面的导览（聚光灯）文字** | `js/onboarding.js` | `TOURS` —— 每一步有 title（标题）和 body（内文），内文可以用 `<strong>` | 🟢 |
 | 「加到主画面」提示：怎么加（iPhone／Android 各一句）、什么时候跳 | `js/onboarding.js` | `INSTALL_HOW`、`maybeInstallTip` | 🟢 现在是做过题、回到首页、手机或平板、还没装好才跳一次 |
 | 同步：提醒只接自己的码（输入框下方、打开同步链结时） | `js/sync-ui.js`、`js/sync.js` | `只贴你自己的`、`只接你自己装置的链结` | 🟢 |
+| 单题分享：附在链接前的文字（「生物科 · 章名 · 选择题第 N 题」）、复制後与题目下架时的提示 | `index.html` | `shareQuestion`、`openSharedLink` | 🟢 |
 | 小精灵说的「谢谢！」 | `js/feedback.js` | `bubble.textContent` | 🟢 |
 | 小精灵通知面板的标题 | `js/feedback.js` | `spritePanelTitle` | 🟡 保留 `${…}` 那段，那是自动填的修复内容 |
 | 做答题作答框的提示字 | `index.html` | `subj-attempt-input` 的 `placeholder` | 🟢 |
@@ -135,6 +136,7 @@
 | 错几次标成「顽固」 | `js/review.js` | `STUBBORN_LAPSES` | `3` | 🟢 |
 | 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～5，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
 | 申诉要寄到哪个信箱 | `js/feedback.js` | `FEEDBACK_ENDPOINT` | Formspree 表单 | 🟡 换成你自己的 Formspree 网址 |
+| 单题分享链接的网址格式 | `index.html` | `SHARE_LINK` | `网址/#q=科目/章节id/m题号`（做答题是 `s题号`），题号是题库里的位置 | 🔴 改了格式，以前分享出去的链接全都打不开；题号靠「题目只下架、不删」才不会指错题 |
 | 暂时关掉某一科（首页那颗球变灰、点不进去） | `js/orbit-subjects.js` | `SUBJECTS` 里那一科的 `enabled` | 四科都是 `true`（数学已开放） | 🟡 改 `false` 时 `note` 写「尚未开放」；要打开的科目，`papers/<科目>_question_bank.json` 要先有章节 |
 
 ---

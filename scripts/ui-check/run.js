@@ -253,6 +253,32 @@ async function run() {
     await ctx.close();
   });
 
+  await section('单题分享', async () => {
+    // 同学点「网址/#q=科目/章节id/m题号」：直接到那一题（题号是题库里的位置，前面有下架的题也对得上）；
+    // 按分享：没有系统分享选单就复制链接；下架的题要说明，不是停在别题上装没事
+    const CH3 = bank.sections[2];
+    const target = liveIdx(CH3)[1];
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', permissions: ['clipboard-read', 'clipboard-write'] });
+    await ctx.addInitScript(() => localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1, explain: 1 })));
+    const page = await ctx.newPage();
+    const errors = []; page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
+    const origin = new URL(URL_).origin;
+    await page.goto(`${origin}/#q=biology/${CH3.id}/m${target}`); await page.waitForTimeout(2500);
+    const r = await page.evaluate(() => ({ view: document.querySelector('.view.active').id, pos: (document.querySelector('.card-footer span') || {}).innerText, hash: location.hash }));
+    check('单题分享', '打开链接：直接到那一章的那一题', r.view === 'viewStudy' && /^第 2 \//.test(r.pos || ''), JSON.stringify(r));
+    check('单题分享', '#q= 马上从网址列拿掉', r.hash === '', r.hash);
+    await page.evaluate(() => { delete Navigator.prototype.share; });
+    await page.click('.card-share-btn'); await page.waitForTimeout(400);
+    const clip = await page.evaluate(() => navigator.clipboard.readText());
+    check('单题分享', '按分享（没有系统分享选单）：复制这一题的链接', clip === `${origin}/#q=biology/${CH3.id}/m${target}`, clip);
+    const hidden = CH1.mcqs.findIndex(q => q && q.hidden);
+    await page.evaluate(h => { location.hash = h; }, `q=biology/${CH1.id}/m${hidden}`); await page.waitForTimeout(1800);
+    const tip = await page.evaluate(() => (document.querySelector('.achieve-toast') || {}).innerText || '');
+    check('单题分享', '下架的题：进到那一章，并说明已下架', hidden < 0 || /下架/.test(tip), tip);
+    check('单题分享', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('版面', async () => {
     for (const w of [320, 360, 390, 768, 1440]) {
       const { ctx, page } = await open({ width: w, height: 844 });
