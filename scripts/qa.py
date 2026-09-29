@@ -134,6 +134,7 @@ def extract_json_array(text):
 
 # ---------- 出题存档前自动修的排版 ----------
 # 2026-09 化学 85 题里有 30 处是这几种，每次都要人手改；这些修法不会改到意思，出题脚本存档前先修掉。
+# 数学另有两种常见的：选项整个是公式却没包 $、公式里直接写 < >。
 # 修不掉的（$ 没成对、$ 外面的 \sqrt 这类）照样交给 text_problems 标出来。
 _SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
 _SUP = str.maketrans("0123456789+-", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻")
@@ -165,7 +166,7 @@ def tidy_text(text, subject):
     out, pos = [], 0
     for m in MATH_SPAN.finditer(text):
         out.append(re.sub(r"\\n(?![a-z])", "\n", text[pos:m.start()]))   # 字面的「\n」是换行
-        tex = m.group(0)[1:-1]
+        tex = m.group(0)[1:-1].replace("<", "\\lt ").replace(">", "\\gt ")   # 公式里的 < >：网页会当成 HTML 标签
         plain = _formula_span(tex) if subject != "math" else None
         # 核反应式：箭头、加号後面直接接 ^{…}，上标会挂到箭头上
         out.append(plain if plain is not None else "$" + re.sub(r"(\\rightarrow|\+)(\s*)\^", r"\1\2{}^", tex) + "$")
@@ -174,13 +175,22 @@ def tidy_text(text, subject):
     return MARKDOWN_BOLD.sub(lambda m: m.group(0)[2:-2], "".join(out))
 
 
+def _wrap_option(opt):
+    r"""「B. \frac{40}{41}」：选项整个是公式却没包 $，学生会看到原始码 → 补上 $（有中文、已经有 $ 的不动）"""
+    m = re.fullmatch(r"(\s*[A-D][.．]\s*)(.+)", opt, re.S)
+    if not m or "$" in opt or CJK.search(m.group(2)) or not re.search(r"\\[A-Za-z]+|[\^_]", m.group(2)):
+        return opt
+    return f"{m.group(1)}${m.group(2).strip()}$"
+
+
 def tidy_record(record):
     """题干、选项、解析就地修好；$ 没成对的整段不动（分不出哪里是公式）"""
     subject = record.get("subject")
     for key in ("q", "explanation"):
         if isinstance(record.get(key), str) and record[key].count("$") % 2 == 0:
             record[key] = tidy_text(record[key], subject)
-    record["options"] = [tidy_text(o, subject) if o.count("$") % 2 == 0 else o for o in record.get("options") or []]
+    options = [_wrap_option(o) for o in record.get("options") or []]
+    record["options"] = [tidy_text(o, subject) if o.count("$") % 2 == 0 else o for o in options]
     return record
 
 

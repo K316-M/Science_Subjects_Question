@@ -199,6 +199,8 @@ async function run() {
   await section('画面导览', async () => {
     // 不预设「看过」：模拟第一次来的学生
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+    // 新浏览器还没有小精灵的图：故意晚 1.5 秒才给，它会停在飞进来动画的第一格等图
+    await ctx.route('**/assets/sprite/*.webp', async r => { await new Promise(res => setTimeout(res, 1500)); await r.continue(); });
     const page = await ctx.newPage();
     const errors = []; page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
     await page.goto(URL_); await page.waitForTimeout(1800);
@@ -226,9 +228,13 @@ async function run() {
     check('画面导览', '按 Esc 跳过：关掉，也算看过', !esc.open && esc.seen === 1, JSON.stringify(esc));
 
     await page.evaluate(() => openFeedbackView()); await page.waitForTimeout(1800);
-    await next(); await page.waitForTimeout(700);
-    const sprite = await page.evaluate(() => ({ title: document.querySelector('.tour-tip .tour-title').textContent,
-      shown: document.getElementById('spriteWrap').classList.contains('active') }));
+    await next(); await page.waitForTimeout(2500);   // 图载到 + 飞进来的 0.5 秒
+    const sprite = await page.evaluate(() => {
+      const s = document.querySelector('.tour-spot').getBoundingClientRect(), c = document.getElementById('spriteChar').getBoundingClientRect();
+      return { title: document.querySelector('.tour-tip .tour-title').textContent, shown: document.getElementById('spriteWrap').classList.contains('active'),
+        dx: Math.round((s.left + s.width / 2) - (c.left + c.width / 2)), dy: Math.round((s.top + s.height / 2) - (c.top + c.height / 2)) };
+    });
+    check('画面导览', '小精灵的图晚到：飞进来之後亮框仍对准它', Math.abs(sprite.dx) <= 2 && Math.abs(sprite.dy) <= 2, `亮框中心偏 ${sprite.dx}, ${sprite.dy} px`);
     await next(); await page.waitForTimeout(500);
     const after = await page.evaluate(() => document.getElementById('spriteWrap').classList.contains('active'));
     check('画面导览', '申诉页介绍小精灵：它会出现；导览结束後退场', sprite.title === '这是小精灵' && sprite.shown && !after, `${JSON.stringify(sprite)}，结束後 ${after}`);
