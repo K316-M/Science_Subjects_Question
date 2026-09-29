@@ -1920,8 +1920,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
     <button type="button" class="breadcrumb-item" onclick="navigateHome()">主页</button> &gt;
     <span class="breadcrumb-item active" aria-current="page">${SUBJECT_LABELS[subject] || subject}</span>
   `;
-  // 动态载入对应题库并渲染（loadSubjectData 会在加载后调用 render）
-  loadSubjectData(subject, initialChapterIdx);
+  // 动态载入对应题库并渲染（loadSubjectData 会在加载后调用 render）；回传载入完成的 Promise（分享链接要等它）
+  return loadSubjectData(subject, initialChapterIdx);
 }
 
   function showView(viewId) {
@@ -2438,6 +2438,90 @@ function openSubject(subject, initialChapterIdx, subMode) {
     renderActiveContent();
   }
 
+  // ---- 单题分享链接 ----
+  // 网址/#q=科目/章节id/m题号（做答题是 s题号）：同学点开直接到那一题。
+  // 题号是题库阵列里的位置：下架的题留在原位、不删（见 docs/OPERATIONS.md），位置不会变。
+  // 放在 # 後面：和同步链结一样不会送到伺服器，也不会碰到 service worker 的快取。
+  const SHARE_LINK = /(?:^#|&)q=(biology|chemistry|physics|math)\/([\w-]+)\/([ms])(\d{1,4})(?=&|$)/;
+
+  function addShareButton(card, sec, kind, idx, pos) {
+    if (!card || card.querySelector('.card-share-btn')) return;
+    // 和「做笔记」放在同一组（js/notes.js 会把笔记按钮收进右下角的 .card-note-actions）
+    let group = card.querySelector('.card-note-actions');
+    if (!group) {
+      const note = card.querySelector('.card-note-btn');
+      if (!note) return;
+      group = document.createElement('div');
+      group.className = 'card-note-actions';
+      note.replaceWith(group);
+      group.appendChild(note);
+    }
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'card-note-btn card-share-btn';
+    setBtnLabel(btn, 'link', '分享');
+    btn.onclick = () => shareQuestion(sec, kind, idx, pos);
+    group.prepend(btn);
+  }
+
+  async function shareQuestion(sec, kind, idx, pos) {
+    playSound('pop');
+    const url = `${location.origin}/#q=${currentSubject}/${sec.id}/${kind}${idx}`;
+    const text = `${SUBJECT_LABELS[currentSubject]} · ${sec.title} · ${kind === 's' ? '做答题' : '选择题'}第 ${pos} 题`;
+    // 手机：叫出系统的分享选单（WhatsApp、Telegram…）；电脑没有就复制到剪贴簿
+    if (navigator.share) {
+      try { await navigator.share({ text, url }); return; }
+      catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      showTip('链接已复制，贴给同学就能直接打开这一题');
+    } catch (e) {
+      prompt('复制这个链接，贴给同学：', url);
+    }
+  }
+
+  function showTip(text) {
+    document.querySelectorAll('.achieve-toast.is-tip').forEach(t => t.remove());   // 上一句还没消失就换掉，不要叠在同一处
+    const toast = document.createElement('div');
+    toast.className = 'achieve-toast is-tip';
+    toast.setAttribute('role', 'status');
+    toast.textContent = text;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }, 2600);
+  }
+
+  async function openSharedLink() {
+    const m = location.hash.match(SHARE_LINK);
+    if (!m) return;
+    // 马上从网址列拿掉：重新整理、之後再分享都不会又跳回这一题；同一个 # 里的其他参数（同步链结）留着
+    const rest = location.hash.slice(1).split('&').filter(p => !p.startsWith('q=')).join('&');
+    history.replaceState(null, '', location.pathname + location.search + (rest ? '#' + rest : ''));
+    const [, subject, chapterId, kind, idxText] = m;
+    const idx = Number(idxText);
+    // 第一次来的同学：先让他看到题目，做题页的导览等他之後自己逛进来再说（js/onboarding.js）
+    if (window.UECOnboarding && window.UECOnboarding.skipLanding) window.UECOnboarding.skipLanding();
+    await openSubject(subject, undefined, kind === 's' ? 'subj' : 'mcq');
+    if (loadedSubject !== subject) return;   // 题库载入失败，或学生已经切到别科
+    const sections = fullDatabase.sections || [];
+    const chapterIdx = sections.findIndex(sec => sec.id === chapterId);
+    const list = chapterIdx >= 0 ? (kind === 's' ? sections[chapterIdx].subjectives : sections[chapterIdx].mcqs) || [] : [];
+    if (!isLive(list[idx])) {
+      if (chapterIdx >= 0) selectChapter(chapterIdx);
+      showTip(chapterIdx >= 0 ? '这一题已经下架了，先看看这一章的其他题' : '找不到这一题，可能是题库改过章节');
+      return;
+    }
+    if (kind === 'm') { jumpToWrongQuestion(chapterIdx, idx); return; }
+    activeChapterIdx = chapterIdx;
+    renderChapterRail();
+    renderActiveContent();
+    goToNewSubj(idx);
+  }
+
   // 空状态：让「还没有内容」看起来是设计过的，而不是页面坏了
   // actions：[[文字, onclick 字串, 是否主按钮], ...]。只接本档案写死的字串。
   function emptyState(icon, title, hint, actions) {
@@ -2613,6 +2697,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
       const cardEl = area.querySelector('.flashcard');
       if (cardEl) cardEl.classList.add(panNext ? (lastNavDir < 0 ? 'pan-left' : 'pan-right') : (lastNavDir < 0 ? 'from-left' : 'from-right'));
       if (panNext) { cardEl.style.setProperty('--pan-ms', `${NEW_TIP_PAN_MS}ms`); panNext = false; }
+      addShareButton(cardEl, sec, 'm', currentMcqIdx, livePos);
 
       const optBox = document.getElementById('optContainer');
       const expBox = document.getElementById('expContainer');
@@ -2777,6 +2862,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
       `;
       loadAllHighlights();
       ensureSubjNoteButtons(sec);
+      area.querySelectorAll('.form-question-card').forEach((card, n) => addShareButton(card, sec, 's', Number(card.dataset.idx), n + 1));
       setupSubjAttempts(sec);
     }
   }
@@ -3293,7 +3379,9 @@ function openSubject(subject, initialChapterIdx, subMode) {
     document.getElementById('imgModal').classList.remove('active');
   }
 
-  document.addEventListener('DOMContentLoaded', () => { renderResumeCard(); renderExamNext(); });
+  document.addEventListener('DOMContentLoaded', () => { renderResumeCard(); renderExamNext(); openSharedLink(); });
+  // 网站已经开着（或装成 App）时点另一个分享链接，常常只换掉 # 後面、不会重新载入
+  window.addEventListener('hashchange', openSharedLink);
 
   // 键盘可达性：让所有 role="button" 的自定义卡片也能用 Enter / 空格触发
   document.addEventListener('keydown', (e) => {
