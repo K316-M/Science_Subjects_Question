@@ -11,6 +11,7 @@ Gemini 呼叫的共用层
 2. 失败时把 API 回传的实际错误讯息抓出来，而不是只丢一句「呼叫失败」
 """
 
+import http.client
 import json
 import os
 import re
@@ -234,6 +235,10 @@ def _post(api_key, model, parts, temperature, timeout):
             result = json.loads(resp.read().decode("utf-8"))
     except (urllib.error.URLError, ValueError) as e:
         raise GeminiError(_read_error(e))
+    except (http.client.HTTPException, OSError) as e:
+        # 连线被 Google 切断、回应读到一半逾时：和「忙碌」一样等一下再试、再不行换模型。
+        # 以前没接住：09-30 的数学批次在最後的答案复核断线，整个程式崩掉，已经出好的题全部没存
+        raise GeminiError(f"连线中断，temporarily unavailable（{type(e).__name__}：{e}）")
 
     candidates = result.get("candidates") or []
     if not candidates:
