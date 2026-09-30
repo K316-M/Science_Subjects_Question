@@ -1534,9 +1534,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:33:22.024019+00:00",
       "syllabus_used": true
     },
@@ -1558,9 +1556,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:33:22.027594+00:00",
       "syllabus_used": true
     },
@@ -1582,9 +1578,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:33:22.030783+00:00",
       "syllabus_used": true
     },
@@ -1606,9 +1600,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:33:22.032888+00:00",
       "syllabus_used": true
     },
@@ -1626,13 +1618,11 @@
         "D. $\\frac{3\\vec{a}+\\vec{b}}{4}$"
       ],
       "answer": 0,
-      "explanation": "考点为分比公式（定比分点）的向量形式。由题意，点 $P$ 在 $AB$ 的延长线上且 $|\\vec{AP}| = 3|\\vec{BP}|$，可得 $B$ 点内分线段 $AP$。设 $AB:BP = k:1$，由于 $AP = AB + BP$，则 $3BP = AB + BP$，即 $AB = 2BP$。因此 $B$ 分线段 $AP$ 的比为 $2:1$。根据内分点公式：$\\vec{b} = \\frac{1\\vec{a} + 2\\vec{p}}{1+2} = \\frac{\\vec{a} + 2\\vec{p}}{3}$。解得 $3\\vec{b} = \\vec{a} + 2\\vec{p}$，即 $\\vec{p} = \\frac{3\\vec{b}-\\vec{a}}{2}$。常见错误是误用外分点公式或比例看错成 $3:1$。",
+      "explanation": "考点为分比公式（定比分点）的向量形式。由题意，点 $P$ 在 $AB$ 的延长线上且 $|\\vec{AP}| = 3|\\vec{BP}|$，可得 $B$ 点内分线段 $AP$。由于 $AP = AB + BP$，则 $3BP = AB + BP$，即 $AB = 2BP$。因此 $B$ 分线段 $AP$ 的比为 $2:1$。根据内分点公式：$\\vec{b} = \\frac{1\\vec{a} + 2\\vec{p}}{1+2} = \\frac{\\vec{a} + 2\\vec{p}}{3}$。解得 $3\\vec{b} = \\vec{a} + 2\\vec{p}$，即 $\\vec{p} = \\frac{3\\vec{b}-\\vec{a}}{2}$。常见错误是误用外分点公式或比例看错成 $3:1$。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:33:39.997149+00:00",
       "syllabus_used": true
     },
@@ -1654,9 +1644,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:33:40.003478+00:00",
       "syllabus_used": true
     },
@@ -1666,7 +1654,7 @@
       "type": "mcq",
       "chapter_id": "chap17",
       "chapter_title": "第十七章：平面向量",
-      "q": "已知向量 $\\vec{a} = (k-2)\\mathbf{i} + 3\\mathbf{j}$ 与 $\\vec{b} = 4\\mathbf{i} + (k+2)\\mathbf{j}$。若 $\\vec{a}$ 与 $\\vec{b}$ 平行，则实数 $k$ 的可能取值为？",
+      "q": "已知向量 $\\vec{a} = (k-2)\\mathbf{i} + 3\\mathbf{j}$ 与 $\\vec{b} = 4\\mathbf{i} + (k+2)\\mathbf{j}$。若 $\\vec{a}$ 与 $\\vec{b}$ 平行，则实数 $k$ 的所有可能取值为？",
       "options": [
         "A. $4$",
         "B. $-4$",
@@ -1678,9 +1666,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:33:40.010770+00:00",
       "syllabus_used": true
     },
@@ -1702,9 +1688,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:33:40.017102+00:00",
       "syllabus_used": true
     },
@@ -1726,9 +1710,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:34:15.980655+00:00",
       "syllabus_used": true
     },
@@ -1750,9 +1732,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:34:15.985113+00:00",
       "syllabus_used": true
     },
@@ -1774,9 +1754,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:34:15.994581+00:00",
       "syllabus_used": true
     },
@@ -1798,9 +1776,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:34:15.999880+00:00",
       "syllabus_used": true
     },
@@ -1822,9 +1798,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:34:40.776953+00:00",
       "syllabus_used": true
     },
@@ -1846,9 +1820,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:34:40.779107+00:00",
       "syllabus_used": true
     },
@@ -1866,13 +1838,11 @@
         "D. 2880"
       ],
       "answer": 0,
-      "explanation": "本题考查环形排列。首先让 4 名女生围坐圆桌，其排列数为 $(4-1)! = 3! = 6$ 种。此时，女生之间产生了 4 个间隔。因为圆桌排列中，首尾相接，这 4 个间隔是固定的位置，再将 4 名男生安排在这 4 个间隔中，其排列数为 $4! = 24$ 种（注意：第二批人进入已定标系的圆桌时，不再使用 $(n-1)!$ 公式）。根据乘法原理，总坐法为 $6 \\times 24 = 144$ 种。选项 B 错误在于将女生也当成线性排列（$4! \\times 4!$）；选项 C 错误在于两边都用了环形公式（$3! \\times 3!$）。",
+      "explanation": "本题考查环形排列。首先让 4 名女生围坐圆桌，其排列数为 $(4-1)! = 3! = 6$ 种。此时，女生之间产生了 4 个间隔。因为圆桌排列中，首尾相接，这 4 个间隔是固定的位置，再将 4 名男生安排在这 4 个间隔中，其排列数为 $4! = 24$ 种（注意：女生坐好后，圆桌上的座位已经有了参照，男生入座时不再使用 $(n-1)!$ 公式）。根据乘法原理，总坐法为 $6 \\times 24 = 144$ 种。选项 B 错误在于将女生也当成线性排列（$4! \\times 4!$）；选项 C 错误在于两边都用了环形公式（$3! \\times 3!$）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:34:40.781096+00:00",
       "syllabus_used": true
     },
@@ -1882,7 +1852,7 @@
       "type": "mcq",
       "chapter_id": "chap19",
       "chapter_title": "第十九章：排列与组合",
-      "q": "从 10 名学生中选出 4 人组成参加数学竞赛的队伍。若学生 $A$ 与学生 $B$ 两人中至少有一人拒绝与另一人同队（即 $A$ 与 $B$ 不同时入选），则共有多少种不同的选法？",
+      "q": "从 10 名学生中选出 4 人组成参加数学竞赛的队伍。若学生 $A$ 与学生 $B$ 不能同时入选，则共有多少种不同的选法？",
       "options": [
         "A. 182",
         "B. 210",
@@ -1894,9 +1864,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:34:40.785700+00:00",
       "syllabus_used": true
     },
@@ -1918,9 +1886,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:35:39.846793+00:00",
       "syllabus_used": true
     },
@@ -1942,9 +1908,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:35:39.851022+00:00",
       "syllabus_used": true
     },
@@ -1962,13 +1926,11 @@
         "D. 10.01001"
       ],
       "answer": 2,
-      "explanation": "考点为二项式定理在近似计算中的应用。$\\sqrt[3]{1003} = (10^3 + 3)^{1/3} = 10(1 + \\frac{3}{1000})^{1/3} = 10(1 + 0.003)^{1/3}$。令 $x = 0.003, n = \\frac{1}{3}$，展开得 $10 [1 + \\frac{1}{3}(0.003) + \\frac{(1/3)(-2/3)}{2}(0.003)^2 + \\dots] = 10 [1 + 0.001 - \\frac{1}{9}(0.000009)] = 10 [1 + 0.001 - 0.000001] = 10 [1.000999] = 10.00999$。选项 A 仅计算了前两项，选项 D 在第二项符号上出错。计算需精确到小数点后 5 位，后续项对第 5 位无影响。",
+      "explanation": "考点为二项式定理在近似计算中的应用。$\\sqrt[3]{1003} = (10^3 + 3)^{1/3} = 10(1 + \\frac{3}{1000})^{1/3} = 10(1 + 0.003)^{1/3}$。令 $x = 0.003, n = \\frac{1}{3}$，展开得 $10 [1 + \\frac{1}{3}(0.003) + \\frac{(1/3)(-2/3)}{2}(0.003)^2 + \\dots] = 10 [1 + 0.001 - \\frac{1}{9}(0.000009)] = 10 [1 + 0.001 - 0.000001] = 10 [1.000999] = 10.00999$。选项 A 仅计算了前两项，选项 D 漏掉了 $x^2$ 项的负号。计算需精确到小数点后 5 位，后续项对第 5 位无影响。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:35:39.854370+00:00",
       "syllabus_used": true
     },
@@ -1990,9 +1952,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:36:03.244555+00:00",
       "syllabus_used": true
     },
@@ -2014,9 +1974,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:36:03.248970+00:00",
       "syllabus_used": true
     },
@@ -2038,9 +1996,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:36:03.256259+00:00",
       "syllabus_used": true
     },
@@ -2062,9 +2018,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:36:03.263394+00:00",
       "syllabus_used": true
     },
@@ -2086,9 +2040,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:37:05.722988+00:00",
       "syllabus_used": true
     },
@@ -2110,9 +2062,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:37:05.726748+00:00",
       "syllabus_used": true
     },
@@ -2134,9 +2084,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:37:05.733908+00:00",
       "syllabus_used": true
     },
@@ -2158,9 +2106,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:37:05.742238+00:00",
       "syllabus_used": true
     },
@@ -2182,9 +2128,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:38:24.160590+00:00",
       "syllabus_used": true
     },
@@ -2206,9 +2150,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:38:24.163342+00:00",
       "syllabus_used": true
     },
@@ -2230,9 +2172,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:38:24.166362+00:00",
       "syllabus_used": true
     },
@@ -2254,9 +2194,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:38:24.173081+00:00",
       "syllabus_used": true
     },
@@ -2278,9 +2216,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:39:40.612303+00:00",
       "syllabus_used": true
     },
@@ -2302,9 +2238,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:39:40.616346+00:00",
       "syllabus_used": true
     },
@@ -2326,9 +2260,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:39:40.623135+00:00",
       "syllabus_used": true
     },
@@ -2350,9 +2282,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:39:40.629310+00:00",
       "syllabus_used": true
     },
@@ -2374,9 +2304,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:41:46.400427+00:00",
       "syllabus_used": true
     },
@@ -2398,9 +2326,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:41:46.410984+00:00",
       "syllabus_used": true
     },
@@ -2410,7 +2336,7 @@
       "type": "mcq",
       "chapter_id": "chap25",
       "chapter_title": "第二十五章：统计学",
-      "q": "甲、乙两组学生参加数学测试，甲组的平均分为 $70$ 分，标准差为 $7$ 分；乙组的平均分为 $60$ 分，标准差为 $9$ 分。下列叙述何者正确？\nI. 甲组的变异系数（Coefficient of Variation）为 $10\\%$\nII. 乙组数据的离散程度（相对而言）比甲组大\nIII. 若将甲组每个学生的分数都增加 $5$ 分，其标准差仍为 $7$ 分",
+      "q": "甲、乙两组学生参加数学测试，甲组的平均分为 $70$ 分，标准差为 $7$ 分；乙组的平均分为 $60$ 分，标准差为 $9$ 分。下列叙述何者正确？\nI. 甲组的变异系数为 $10\\%$\nII. 乙组数据的离散程度（相对而言）比甲组大\nIII. 若将甲组每个学生的分数都增加 $5$ 分，其标准差仍为 $7$ 分",
       "options": [
         "A. 只有 I",
         "B. 只有 I 和 II",
@@ -2422,10 +2348,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "题干夹了英文「of」，疑似转写错误",
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:41:46.421823+00:00",
       "syllabus_used": true
     },
@@ -2447,9 +2370,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:41:46.428358+00:00",
       "syllabus_used": true
     },
@@ -2471,9 +2392,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:42:06.304373+00:00",
       "syllabus_used": true
     },
@@ -2495,9 +2414,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:42:06.313161+00:00",
       "syllabus_used": true
     },
@@ -2519,9 +2436,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:42:06.318165+00:00",
       "syllabus_used": true
     },
@@ -2531,7 +2446,7 @@
       "type": "mcq",
       "chapter_id": "chap26",
       "chapter_title": "第二十六章：概率",
-      "q": "已知随机变量 $X$ 服从正态分布 $N(\\mu, \\sigma^2)$。若 $P(X \\lt 40) = 0.2$ 且 $P(X \\gt 60) = 0.2$，则下列关于 $\\mu$ 与 $P(40 \\lt X \\lt 60)$ 的叙述何者正确？",
+      "q": "已知随机变量 $X$ 服从常态分布 $N(\\mu, \\sigma^2)$。若 $P(X \\lt 40) = 0.2$ 且 $P(X \\gt 60) = 0.2$，则下列关于 $\\mu$ 与 $P(40 \\lt X \\lt 60)$ 的叙述何者正确？",
       "options": [
         "A. $\\mu = 50, P(40 \\lt X \\lt 60) = 0.6$",
         "B. $\\mu = 50, P(40 \\lt X \\lt 60) = 0.8$",
@@ -2539,13 +2454,11 @@
         "D. $\\mu = 50, P(40 \\lt X \\lt 60) = 0.4$"
       ],
       "answer": 0,
-      "explanation": "本题考查正态分布的对称性。正态分布曲线关于 $x = \\mu$ 对称。已知 $X \\lt 40$ 与 $X \\gt 60$ 的概率相等（均为 $0.2$），说明 40 与 60 关于 $\\mu$ 对称，故 $\\mu = \\frac{40+60}{2} = 50$。根据概率总和为 1 的性质，$P(40 \\lt X \\lt 60) = 1 - P(X \\leq 40) - P(X \\geq 60) = 1 - 0.2 - 0.2 = 0.6$。选项 B 错误地将单侧概率当成排除概率，选项 D 计算错误。",
+      "explanation": "本题考查常态分布的对称性。常态分布曲线关于 $x = \\mu$ 对称。已知 $X \\lt 40$ 与 $X \\gt 60$ 的概率相等（均为 $0.2$），说明 40 与 60 关于 $\\mu$ 对称，故 $\\mu = \\frac{40+60}{2} = 50$。根据概率总和为 1 的性质，$P(40 \\lt X \\lt 60) = 1 - P(X \\leq 40) - P(X \\geq 60) = 1 - 0.2 - 0.2 = 0.6$。选项 B 错误地将单侧概率当成排除概率，选项 D 计算错误。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:42:06.327408+00:00",
       "syllabus_used": true
     },
@@ -2567,9 +2480,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:43:01.934934+00:00",
       "syllabus_used": true
     },
@@ -2591,9 +2502,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:43:01.949855+00:00",
       "syllabus_used": true
     },
@@ -2615,9 +2524,7 @@
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
-      "flags": [
-        "答案未经 AI 复核"
-      ],
+      "flags": [],
       "generated_at": "2026-09-30T09:43:01.962179+00:00",
       "syllabus_used": true
     }
