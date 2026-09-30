@@ -237,6 +237,25 @@ https://science-subjects-question.vercel.app/dev/#pending
 
 ---
 
+## 三之三、更新日志（加了新功能就发一篇）
+
+学生在首页工具列按「日志」看每一版加了什么（做题页不放，免得键盘多按一下才到题目）；有还没看过的新版，按钮会亮红点，打开看过就熄。资料在 `data/devlog.json`（新的在最前面）。
+
+**发一篇新的**（新功能上线後，你决定什么时候让学生知道）：
+
+1. GitHub → **Actions** → 左边「发布更新日志」→ **Run workflow**
+2. 填两格：
+   - **版本号**：例如 `1.2`（前面的 v 可写可不写），要比现在最新的一版新
+   - **内容**：每一点之间用 `||` 隔开（输入框只有一行），例如 `错题本可以按章节筛选 || 模拟统考可以暂停`
+3. 按 Run workflow。跑完约一分钟，Vercel 部署好，学生的「日志」就亮红点。日期自动填马来西亚的今天
+
+版本号怎么跳：加新功能 +0.1（1.1 → 1.2）；整个改版 +1（1.x → 2.0）。只是修错字、改小地方（没有新功能）不用发。
+Claude 每次做了新功能，PR 说明最後会附一段「更新日志草稿」（版本号＋用 `||` 隔开的内容），直接贴进这两格就好。
+
+**改已经发出去的**：直接改 `data/devlog.json`（版本号、日期 `YYYY-MM-DD`、内容）。格式写错的话，合并前检查会挡下来（规则在 `scripts/publish_devlog.py` 的 `problems_in`）。
+
+---
+
 ## 四、设定：环境变数（两个地方，别放错）
 
 这是最容易搞错的一件事。**两套系统，互相看不到对方的变数。**
@@ -256,6 +275,7 @@ https://science-subjects-question.vercel.app/dev/#pending
 | `UPSTASH_REDIS_REST_URL` | 选填 | 跨装置同步要用，见下方 |
 | `UPSTASH_REDIS_REST_TOKEN` | 选填 | 同上 |
 | `GEMINI_API_KEY` | 选填 | 做答题的「交给 AI 批改」与选择题的「AI 讲给我听」要用（和 GitHub Actions 那把可以是同一把）。没设就显示「还没开启」，其他功能照常 |
+| `ALARM_CRON_SECRET` | 选填 | 统考闹钟「网站关着也会提醒」要用，随便一串够长的随机字；另外要设 cron-job.org，见下方「设定统考闹钟」。没设的话，闹钟只在开着网站时响 |
 
 > **AI 的额度**：每台装置每小时最多批改 20 次、讲解 30 次；同一个网络（全校共用的 Wi-Fi 对外是同一个 IP）另有合计上限 200／300 次，挡有人换装置码刷额度。AI 没答出来的那次不扣。有设 Upstash 才能跨服务器准确计数，没设只能各台服务器各算。
 > **AI 讲解全班共用**（要有 Upstash）：同一题、选同一个答案，第一个人问过之後，其他人直接拿同一份，不扣次数、不呼叫 Gemini，存半年。
@@ -315,6 +335,43 @@ https://science-subjects-question.vercel.app/dev/#pending
 什么时候会自动同步：打开网站时拉一次；离开分页时有变动就推；回到分页时再拉一次（手机上网页一直开著，电脑做的题也会过来）；有变动每分钟推一次。背景同步带回另一台装置的新资料时，画面上的数字会跟著更新。
 
 链结里的同步码放在 `#` 後面：浏览器不会把它送到伺服器，所以不会留在主机的请求纪录里；网站读到之後也会马上从网址列拿掉。**这个码就是钥匙**——面板上有写「只传给自己，不要贴到群组里」。
+
+
+### 设定统考闹钟（网站关着也会提醒）
+
+学生在首页日历旁边的闹钟设提醒（例如「物理，每天 21:00」），时间到装置跳出「物理还有 3 天 5 小时就要考了~」。
+**网站开着时不用任何设定就会响**；要**网站关着也响**，需要「推播」＋一个每分钟叫醒伺服器的定时器：
+
+- 推播的资料存在跨装置同步用的那个 Upstash（上一节），不用另外建
+- 定时器借 [cron-job.org](https://cron-job.org)（免费、可以每分钟一次）。Vercel 免费版自己的排程一天只能跑一次、还会差到一小时，当不了闹钟
+
+**设定三步：**
+
+1. 产生一串随机密钥（32 个字以上，例如密码管理器产生的，或终端机 `openssl rand -hex 24`）。
+   Vercel → Settings → Environment Variables 加 **`ALARM_CRON_SECRET`**＝这串字（勾 Production）→ Deployments → Redeploy
+2. 到 <https://cron-job.org> 注册（免费）→ **Create cronjob**：
+   - Title：`统考闹钟`
+   - URL：`https://science-subjects-question.vercel.app/api/alarm-tick?key=你的ALARM_CRON_SECRET`
+   - Execution schedule：**Every 1 minute** → Create
+3. 确认有在跑：
+   - cron-job.org 那个工作的 History 是 `200 OK`（`401`＝网址里的 key 和 Vercel 的不一样；`503`＝Vercel 没设 `ALARM_CRON_SECRET` 或 Upstash，或还没 Redeploy）
+   - 浏览器打开 `https://science-subjects-question.vercel.app/api/alarm`：`"configured":true`，`"tickAge"` 小于 `60000`（毫秒，一分钟内跑过）
+   - 网站首页 → 闹钟 → 加一个闹钟、允许通知 → 按「试一下」，几秒内跳出「闹钟通知正常 ✓」
+
+**学生那边要知道的：**
+
+- Android、电脑的 Chrome／Edge／Firefox：允许通知就好，网站关着也会响
+- **iPhone／iPad**：要 iOS 16.4 以上，先「加入主画面」、**从主画面打开**再设闹钟（Safari 分页收不到网站的通知）。面板上会写
+- 网站关着时响的是装置自己的通知声；学生选的四种音效只在开着网站时播（浏览器不让网页替通知指定声音）
+- 闹钟存在那台装置，不跟同步码走；换手机要重设
+- 面板上写「网站的定时提醒还没开」＝伺服器超过 10 分钟没被 cron-job.org 叫醒（没设好、或 cron-job.org 停了）。这时网站开着照样会响
+
+**注意：**
+
+- 额度：每分钟检查用 2 次 Upstash 命令，一个月约 8.6 万次（免费 50 万次）；每个响的闹钟另外 3～4 次
+- 推播用的伺服器身分（VAPID 钥匙）第一次用到时自动产生，存在 Upstash 的 `uec:push:vapid`。🔴 **不要删**：删了会换一把新的，学生要再打开一次网站才会接上，那之前的闹钟都送不到
+- `ALARM_CRON_SECRET` 外泄的话换一串新的（Vercel 和 cron-job.org 的网址一起换）。外泄的影响只是别人能多叫几次「送出已到期的闹钟」，看不到任何资料
+- 伺服器也读 `js/exam-timetable.js` 算「还有多久」：时间表改了，下次部署伺服器就跟上
 
 ---
 
@@ -613,6 +670,8 @@ python scripts/scene/build_scene.py night assets/visual/biology   # 四科各跑
   理科一份当作 40 题（`index.html` 的 `MOCK_QUESTIONS`），数学照评量规格 15 题（`MOCK_QUESTIONS_BY_SUBJECT`），分高数Ⅰ、高数Ⅱ 两个按钮：
   标了卷别的题只进那一份；没标的，高数Ⅱ都收，高数Ⅰ不收第 30、31、33、34、35 章（《高级数学》才有，`MATH_ADVANCED_CHAPTERS`）。
 - **题库覆盖**：做题页章节卡上面那一行，直接从题库算出来（`依考纲共 N 章 · 目前 M 章有题目，合计 K 道选择题`），不必手动维护；题库加了题目，这行自己会变。
+- **统考闹钟**：日历气泡右边的卡通闹钟（`js/exam-alarm.js`）。学生选科目、时间、每天或只响一次，还有四种音效；右上角的小圆点是设了几个。
+  「还有多久」与通知的文字在 `js/alarm-common.js`（网站和伺服器共用）。网站关着也要响，见[第四节「设定统考闹钟」](#设定统考闹钟网站关着也会提醒)。
 
 ---
 
@@ -792,6 +851,8 @@ node run.js
 | `UEC_LAST_VISIT_v1` | 上次读到哪（继续上次的卡片） |
 | `UEC_SCENE_MUSIC_v1` | 音乐开关状态 |
 | `UEC_BIO_HL_STORE_OFFICIAL_19` | 简答题的划重点 |
+| `UEC_ALARMS_v1` | 统考闹钟：设了哪些闹钟、选的音效、有没有交给伺服器（不跟同步码走） |
+| `UEC_DEVLOG_SEEN_v1` | 更新日志看到哪一版（决定「日志」按钮亮不亮红点） |
 
 ```js
 localStorage.removeItem('UEC_PROGRESS_v1');   // 只清做题记录
@@ -811,7 +872,10 @@ css/night.css           护眼模式
 js/orbit-subjects.js    轨道选择器逻辑（加科目、改转速在这）
 js/scene-assets.js      背景与音乐的装载器（路径规则在这）
 js/safe-html.js         题目内容显示前的过滤（允许哪些网页标签在这）
-js/exam-timetable.js    统考时间表资料
+js/exam-timetable.js    统考时间表资料（伺服器的统考闹钟也读这份）
+js/exam-alarm.js        统考闹钟：首页闹钟按钮、设定面板、音效、开着网站时自己响
+js/alarm-common.js      统考闹钟的「还有多久」与通知文字（网站和伺服器共用）
+js/devlog.js            更新日志：工具列「日志」按钮与面板
 js/notes.js             笔记画布
 js/archive.js           题目档与 PDF 下载
 js/feedback.js          申诉与通知小精灵
@@ -823,7 +887,8 @@ images/<科目>/          题目配图
 papers/*.json           各科正式题库
 papers/pending_approval.json   待审区（AI 产物先进这里）
 data/resolved_issues.json      申诉处理结果（由工作台写入）
-api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改与讲解、同步）
+data/devlog.json        更新日志（「发布更新日志」工作流写入）
+api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改与讲解、同步、统考闹钟）
 dev/                    开发者工作台（独立的深色网站）
 
 ── 你放东西的地方（不部署）──

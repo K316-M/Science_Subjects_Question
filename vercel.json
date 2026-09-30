@@ -55,6 +55,13 @@
     "api/explain.js": {
       "includeFiles": "papers/*_question_bank.json",
       "maxDuration": 60
+    },
+    "api/alarm.js": {
+      "includeFiles": "js/{exam-timetable,alarm-common}.js"
+    },
+    "api/alarm-tick.js": {
+      "includeFiles": "js/{exam-timetable,alarm-common}.js",
+      "maxDuration": 60
     }
   }
 }

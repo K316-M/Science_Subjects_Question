@@ -65,7 +65,7 @@
       parts: [[FILL_O, '13:55', '14:00'], ['试卷一 · 选择题', '14:00', '15:00'], [FILL_2, '15:00', '15:15'], ['试卷二 · 作答题', '15:15', '16:45']] },
   ];
 
-  window.UEC_EXAM = {
+  const table = {
     title: '2026 年度第 52 届高中统考',
     // 时间表第三页的注
     rules: '除美术外，两卷之间有 15 分钟暂停：前 5 分钟填好试卷二积分表，并准备作答试卷二；作答试卷二时不可再翻阅试卷一。',
@@ -75,4 +75,7 @@
       end: p.parts.reduce((max, part) => (part[2] > max ? part[2] : max), p.parts[0][2]),
     })),
   };
+  // 网页读 window.UEC_EXAM；伺服器的统考闹钟（api/_lib/alarms.js）用 require 读同一份，日期不必抄两遍
+  if (typeof window !== 'undefined') window.UEC_EXAM = table;
+  if (typeof module === 'object' && module.exports) module.exports = table;
 })();

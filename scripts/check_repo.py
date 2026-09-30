@@ -10,6 +10,7 @@
   3. 待审区：每题有 id、科目、题型，id 不重复
   4. 语法：scripts/ 底下的 Python、网站与 API 的 JS（含 index.html 里内嵌的 <script>）
   5. docs/CUSTOMIZE.md：每一列「搜这个名字」都要在那一列写的档案里搜得到（CLAUDE.md 第 5 条）
+  6. 更新日志 data/devlog.json：版本号、日期、内容的格式，新的在前（规则在 scripts/publish_devlog.py）
 
   python3 scripts/check_repo.py      # 有问题就列出来并 exit 1
 """
@@ -189,6 +190,13 @@ def check_customize():
                 problems.append(f"docs/CUSTOMIZE.md「{row.get(cols[0], '')[:30]}」：`{name}` 在 {'、'.join(paths)} 里搜不到")
 
 
+def check_devlog():
+    from publish_devlog import problems_in
+    data = load_json(os.path.join(ROOT, 'data', 'devlog.json'))
+    if data is not None:
+        problems.extend(f'data/devlog.json：{p}' for p in problems_in(data))
+
+
 def main():
     check_json_files()
     banks = sorted(glob.glob(os.path.join(ROOT, 'papers', '*_question_bank.json')))
@@ -198,6 +206,7 @@ def main():
     check_python()
     check_js()
     check_customize()
+    check_devlog()
 
     lines = ['## ✅ 合并前检查：全部通过'] if not problems else \
         [f'## ❌ 合并前检查：{len(problems)} 个问题', ''] + [f'- {p}' for p in problems]
