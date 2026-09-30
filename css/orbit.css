@@ -8,7 +8,10 @@
   /* 轨道半径：手机上尽量放大，让中央的空心装得下确认面板（上限是小球外圈的装饰不出屏幕） */
   --orbit-radius: clamp(108px, calc(36vw - 8px), 200px);
   --node-size: clamp(54px, 14.5vw, 72px);      /* 小球直径 */
-  --deco-size: calc(var(--node-size) * 1.8);   /* 小球外圈动态插图的范围 */
+  --deco-size: calc(var(--node-size) * 1.8);   /* 小球外圈留的空间（标签、选中时的光晕与涟漪） */
+  --motif-ink: #3e4b52;                        /* 球里科目图案的墨线，和网站图标同色（--logo-ink） */
+  --motif-paper: #ffffff;
+  --motif-spark: #e9cf63;                      /* 原子的电子 */
   --ring: 0;                                   /* 轨道角度，由 JS 每帧写入 */
   position: relative;
   width: 100%;
@@ -42,18 +45,14 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
   display: grid; place-items: center;
-  background: radial-gradient(circle at 34% 28%, #ffffff 4%, var(--core-soft, #a7f3d0) 58%, var(--core-deep, #059669) 100%);
-  box-shadow: 0 0 0 10px rgba(5, 150, 105, 0.05), 0 14px 32px -12px var(--core-deep, #059669);
-  transition: background .55s ease, box-shadow .55s ease, opacity .35s ease, transform .55s cubic-bezier(.22, 1, .36, 1);
-  animation: coreBreath 7s ease-in-out infinite;
+  /* 单色纸面＋细墨线，和网站图标同一套；指到哪一科，外框与外圈就染成那一科的颜色（JS 写 --core-deep／--core-soft） */
+  background: #fffdf8;
+  border: 1.5px solid var(--core-deep, rgba(62, 75, 82, .8));
+  box-shadow: 0 0 0 8px var(--core-soft, rgba(62, 75, 82, .06)), 0 14px 30px -14px rgba(15, 23, 42, .5);
+  transition: box-shadow .55s ease, border-color .55s ease, opacity .35s ease, transform .55s cubic-bezier(.22, 1, .36, 1);
   pointer-events: none;
 }
-/* 网站图标放在球心的浅色区，不碰外缘会跟著科目变色的那圈 */
-.orbit-core .brand-logo { width: 68%; height: 68%; }
-@keyframes coreBreath {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50%      { transform: translate(-50%, -50%) scale(1.045); }
-}
+.orbit-core .brand-logo { width: 86%; height: 86%; }
 .orbit-stage.has-selection .orbit-core { opacity: 0; transform: translate(-50%, -50%) scale(.72); }
 
 /* ---------- 小球 ---------- */
@@ -70,13 +69,11 @@
   transition: opacity .45s ease;
   /* 注意：transform 不加 transition —— 它由 JS 每帧驱动，加了会打架 */
 }
-/* 其他球退後，但只淡化球体与装饰：标签整颗淡到 .3 会掉到 1.5:1，而它们仍然可以点 */
-.orbit-stage.has-selection .orbit-node:not(.is-selected) .node-disc,
-.orbit-stage.has-selection .orbit-node:not(.is-selected) .node-deco { opacity: .3; }
+/* 其他球退後，但只淡化球体：标签整颗淡到 .3 会掉到 1.5:1，而它们仍然可以点 */
+.orbit-stage.has-selection .orbit-node:not(.is-selected) .node-disc { opacity: .3; }
 .orbit-node[aria-disabled="true"] { cursor: default; }
-/* 还没有题的科目：球与装饰淡一点，还是点得到（点开会说明整理中）。有题的科目自然成为第一眼 */
+/* 还没有题的科目：球淡一点，还是点得到（点开会说明整理中）。有题的科目自然成为第一眼 */
 .orbit-node.is-empty:not(.is-selected) .node-disc { opacity: .62; }
-.orbit-node.is-empty:not(.is-selected) .node-deco { opacity: .4; }
 .orbit-node.is-empty:not(.is-selected):hover .node-disc,
 .orbit-node.is-empty:not(.is-selected):focus-visible .node-disc { opacity: 1; }
 
@@ -85,8 +82,8 @@
   display: grid; place-items: center;
   width: 100%; height: 100%;
   border-radius: 50%;
-  background: var(--card-bg, rgba(255, 255, 255, .94));
-  border: 1px solid var(--card-border, rgba(226, 232, 240, .95));
+  background: color-mix(in oklab, var(--accent-color) 9%, #fff);   /* 单色：一点点科目色 */
+  border: 1.5px solid rgba(62, 75, 82, .55);
   box-shadow: 0 8px 20px -10px rgba(15, 23, 42, .45);
   transition: transform .5s cubic-bezier(.22, 1, .36, 1), box-shadow .4s ease, border-color .4s ease, opacity .45s ease;
 }
@@ -109,8 +106,67 @@
   100% { transform: scale(1.62); opacity: 0; }
 }
 
-.node-glyph { width: 46%; height: 46%; color: var(--accent-color); display: block; }
-.node-glyph svg { width: 100%; height: 100%; display: block; }
+.node-glyph {
+  width: 64%; height: 64%; display: block;
+  --m-deep: color-mix(in oklab, var(--accent-color) 78%, #000);   /* 图案里的深科目色 */
+  --m-soft: color-mix(in oklab, var(--accent-color) 28%, #fff);   /* 图案里的浅科目色（车身、矩形的填色） */
+}
+.node-glyph svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+/* ---------- 球里的科目图案（js/orbit-subjects.js 的 MOTIFS） ----------
+ * 平常静止；指到、键盘移到、选中时才动起来（选中时更快），减少动态时不动 */
+.m-strand { fill: none; stroke-width: 2.6; stroke-linecap: round; }
+.m-a { stroke: var(--m-deep); }
+.m-b { stroke: var(--m-soft); }
+.m-rung { fill: none; stroke: var(--motif-ink); stroke-width: 1.6; stroke-linecap: round; opacity: .5; transform-box: fill-box; transform-origin: center; }
+.m-orbit { transform-box: view-box; transform-origin: 24px 24px; }
+.m-orbit ellipse { fill: none; stroke: var(--accent-color); stroke-width: 1.8; }
+.m-e { fill: var(--motif-spark); stroke: var(--motif-ink); stroke-width: 1; }
+.m-nucleus { fill: var(--accent-color); stroke: var(--motif-ink); stroke-width: 1.2; }
+.m-wire { fill: none; stroke: var(--motif-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
+.m-current { fill: none; stroke: var(--accent-color); stroke-width: 1.9; stroke-linecap: round; stroke-dasharray: 1.6 3.2; opacity: 0; transition: opacity .3s ease; }
+.m-battery { fill: none; stroke: var(--motif-ink); stroke-width: 1.8; stroke-linecap: round; }
+.m-lamp { fill: var(--motif-paper); stroke: var(--motif-ink); stroke-width: 1.4; transition: fill .3s ease; }
+.m-lamp-x { fill: none; stroke: var(--motif-ink); stroke-width: 1.1; stroke-linecap: round; }
+.m-force { fill: none; stroke: var(--m-deep); stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; transform-box: fill-box; transform-origin: left center; }
+.m-f { fill: var(--m-deep); font: italic 700 6.5px Georgia, "Times New Roman", serif; }
+.m-body { fill: var(--m-soft); stroke: var(--motif-ink); stroke-width: 1.8; stroke-linejoin: round; }
+.m-window { fill: var(--motif-paper); stroke: var(--motif-ink); stroke-width: 1.4; stroke-linejoin: round; }
+.m-wheel { transform-box: fill-box; transform-origin: center; }
+.m-wheel circle { fill: var(--motif-ink); }
+.m-wheel .m-hub { fill: var(--motif-paper); }
+.m-rect { fill: var(--m-soft); stroke: var(--motif-ink); stroke-width: 1.6; }
+.m-grid { fill: none; stroke: var(--motif-ink); stroke-width: 1; opacity: .5; }
+.m-spiral { fill: none; stroke: var(--m-deep); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; }
+
+@keyframes mTwist { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(.12); } }
+@keyframes mSpin { to { transform: rotate(360deg); } }
+@keyframes mDrive { 0%, 100% { transform: translateX(-1.2px); } 50% { transform: translateX(1.6px); } }
+@keyframes mFlow { to { stroke-dashoffset: -4.8; } }
+@keyframes mPull { 0%, 100% { transform: scaleX(.78); } 50% { transform: scaleX(1.08); } }
+@keyframes mDraw { 0% { stroke-dashoffset: 1; } 55%, 100% { stroke-dashoffset: 0; } }
+
+.orbit-node:hover .m-rung, .orbit-node:focus-visible .m-rung, .orbit-node.is-selected .m-rung { animation: mTwist 1.4s ease-in-out infinite; }
+.orbit-node .m-rung:nth-of-type(2n) { animation-delay: -.7s; }
+.orbit-node:hover .m-o0, .orbit-node:focus-visible .m-o0, .orbit-node.is-selected .m-o0 { animation: mSpin 3.2s linear infinite; }
+.orbit-node:hover .m-o1, .orbit-node:focus-visible .m-o1, .orbit-node.is-selected .m-o1 { animation: mSpin 4.4s linear infinite reverse; }
+.orbit-node:hover .m-o2, .orbit-node:focus-visible .m-o2, .orbit-node.is-selected .m-o2 { animation: mSpin 5.6s linear infinite; }
+.orbit-node:hover .m-car, .orbit-node:focus-visible .m-car, .orbit-node.is-selected .m-car { animation: mDrive .7s ease-in-out infinite; }
+.orbit-node:hover .m-wheel, .orbit-node:focus-visible .m-wheel, .orbit-node.is-selected .m-wheel { animation: mSpin .6s linear infinite; }
+.orbit-node:hover .m-current, .orbit-node:focus-visible .m-current, .orbit-node.is-selected .m-current { opacity: 1; animation: mFlow .8s linear infinite; }
+.orbit-node:hover .m-lamp, .orbit-node:focus-visible .m-lamp, .orbit-node.is-selected .m-lamp { fill: var(--motif-spark); }
+.orbit-node:hover .m-force, .orbit-node:focus-visible .m-force, .orbit-node.is-selected .m-force { animation: mPull .7s ease-in-out infinite; }
+.orbit-node:hover .m-spiral, .orbit-node:focus-visible .m-spiral, .orbit-node.is-selected .m-spiral { animation: mDraw 2.4s cubic-bezier(.22, 1, .36, 1) infinite; }
+/* 点下去（选中）：同样的动作快一倍，当作「点中了」的反馈 */
+.orbit-node.is-selected .m-rung { animation-duration: .8s; }
+.orbit-node.is-selected .m-o0 { animation-duration: 1.4s; }
+.orbit-node.is-selected .m-o1 { animation-duration: 1.9s; }
+.orbit-node.is-selected .m-o2 { animation-duration: 2.4s; }
+.orbit-node.is-selected .m-car { animation-duration: .4s; }
+.orbit-node.is-selected .m-wheel { animation-duration: .3s; }
+.orbit-node.is-selected .m-current { animation-duration: .4s; }
+.orbit-node.is-selected .m-force { animation-duration: .4s; }
+.orbit-node.is-selected .m-spiral { animation-duration: 1.4s; }
 
 /* 进度圆弧（每颗球随时显示已掌握比例） */
 .node-arc { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); transform: rotate(-90deg); }
@@ -146,59 +202,6 @@
 /* 首页预览水彩时，底部的山丘在标签後面：实测 4.24:1，调深一档 */
 .has-scene .node-label { color: #1e293b; }
 .node-label em { display: block; font-style: normal; font-size: 11px; font-weight: 500; }
-
-/* ---------- 每颗球周围的动态插图 ---------- */
-.node-deco {
-  position: absolute; left: 50%; top: 50%;
-  width: var(--deco-size); height: var(--deco-size);
-  margin: calc(var(--deco-size) / -2) 0 0 calc(var(--deco-size) / -2);
-  pointer-events: none; opacity: .62;
-  transition: opacity .4s ease;
-  color: var(--accent-color);
-}
-.orbit-node.is-selected .node-deco { opacity: 1; }
-.node-deco svg { width: 100%; height: 100%; overflow: visible; }
-.node-deco .spin-a, .node-deco .spin-b, .node-deco .spin-c,
-.node-deco .arm, .node-deco .tri, .node-deco .strand { transform-origin: 50% 50%; }
-
-@keyframes orbitSpin { to { transform: rotate(360deg); } }
-@keyframes orbitDash { to { stroke-dashoffset: -60; } }
-@keyframes orbitSwing {
-  0%, 100% { transform: rotate(19deg); }
-  50%      { transform: rotate(-19deg); }
-}
-@keyframes orbitPulse {
-  0%, 100% { opacity: .35; transform: scale(.94); }
-  50%      { opacity: .9;  transform: scale(1.06); }
-}
-
-/* 生物：双螺旋两条链不断流动 */
-.deco-dna .strand { stroke-dasharray: 7 7; animation: orbitDash 3.6s linear infinite; }
-.deco-dna .strand.b { animation-duration: 4.4s; animation-direction: reverse; }
-.deco-dna .rung { animation: orbitPulse 2.8s ease-in-out infinite; }
-.deco-dna .rung:nth-of-type(2n) { animation-delay: -1.4s; }
-
-/* 化学：电子绕核公转 */
-.deco-atom .spin-a { animation: orbitSpin 9s linear infinite; }
-.deco-atom .spin-b { animation: orbitSpin 12s linear infinite reverse; }
-.deco-atom .spin-c { animation: orbitSpin 15s linear infinite; }
-
-/* 物理：单摆来回摆动 */
-.deco-pendulum .arm { transform-origin: 50% 16%; animation: orbitSwing 3.2s ease-in-out infinite; }
-.deco-pendulum .wave { stroke-dasharray: 5 6; animation: orbitDash 4s linear infinite; }
-
-/* 数学：三角形与黄金螺旋缓慢旋转 */
-.deco-geometry .tri { animation: orbitSpin 18s linear infinite; }
-.deco-geometry .spiral { stroke-dasharray: 6 8; animation: orbitDash 5s linear infinite; }
-
-/* 被选中后插图转快一点，作为「点中了」的反馈 */
-.is-selected .deco-atom .spin-a { animation-duration: 3.4s; }
-.is-selected .deco-atom .spin-b { animation-duration: 4.6s; }
-.is-selected .deco-atom .spin-c { animation-duration: 5.6s; }
-.is-selected .deco-dna .strand { animation-duration: 1.5s; }
-.is-selected .deco-dna .strand.b { animation-duration: 1.9s; }
-.is-selected .deco-pendulum .arm { animation-duration: 1.5s; }
-.is-selected .deco-geometry .tri { animation-duration: 7s; }
 
 /* ---------- 中央确认面板 ---------- */
 .orbit-panel {
@@ -261,7 +264,12 @@
 
 /* ---------- 无障碍：尊重「减少动态效果」 ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .orbit-core { animation: none; }
-  .node-deco *, .orbit-node.is-selected .node-disc::after { animation: none !important; }
+  .node-glyph *, .orbit-node.is-selected .node-disc::after { animation: none !important; }
   .node-disc, .orbit-panel, .node-arc .arc-fg, .panel-bar i { transition-duration: .01ms !important; }
+}
+
+/* 不认 color-mix 的旧浏览器：含 var() 的宣告会整个变成「没设」（图案会变全黑），这里补上不混色的版本 */
+@supports not (color: color-mix(in oklab, red 50%, blue)) {
+  .node-disc { background: #fff; }
+  .node-glyph { --m-deep: var(--accent-color); --m-soft: var(--accent-soft); }
 }

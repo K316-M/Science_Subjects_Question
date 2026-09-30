@@ -699,14 +699,18 @@ const SNAP_MS = 760;     // 点击后转到正上方的时间
 
 const SUBJECTS = [
   { key:'biology', name:'生物', en:'Biology', accent:'#059669',
-    deco:'dna', glyph:'leaf', enabled:true, note:'…' },
+    motif:'dna', enabled:true, note:'…' },
   …
 ];
 ```
 
 - **加一科**：数组里加一行，角度自动重新均分，不用改其他代码
 - **暂时关掉一科**：那行的 `enabled` 改成 `false`、`note` 写「尚未开放」（四科目前都开着；科目有章节框架但还没题目时，球照样能点，面板写「题库整理中」）
-- **换配色**：改 `accent`，球的边框、涟漪、进度弧、按钮全部跟着变
+- **换配色**：改 `accent`，球的底色、图案、涟漪、进度弧、按钮全部跟着变
+- **球里的图案**：`motif` 对到同一个档案的 `MOTIFS`（DNA、原子、电路＋小车、黄金螺线），和网站图标同一套笔触。
+  平常静止，指到、键盘移到、点下去才动（点下去更快）；各部位的颜色与动法在 `css/orbit.css`「球里的科目图案」那一段
+- **网站图标（学士帽）**：导航列中间与球心用 `index.html` 的 `<symbol id="i-logo">`；/dev 与手机桌面图示用 `assets/icons/logo.svg`（同一份图形、固定颜色）。
+  改了形状两边都要改，五张 PNG 图示也要从 logo.svg 重新输出（16／32 透明底，180／192／512 纸色底 `#fffdf8`）
 
 ---
 

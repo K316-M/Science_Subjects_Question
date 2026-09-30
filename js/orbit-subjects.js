@@ -16,47 +16,26 @@
   const PROGRESS_KEY = 'UEC_PROGRESS_v1';   // 与 index.html 的做题记录同一份
 
   const SUBJECTS = [
-    { key: 'biology',   name: '生物',     en: 'Biology',     accent: '#059669', deco: 'dna',       glyph: 'leaf',     enabled: true,  note: '光合呼吸 · 神经调节 · 遗传育种' },
-    { key: 'chemistry', name: '化学',     en: 'Chemistry',   accent: '#7c3aed', deco: 'atom',      glyph: 'flask',    enabled: true,  note: '化学键 · 化学平衡 · 有机化学' },
-    { key: 'physics',   name: '物理',     en: 'Physics',     accent: '#0284c7', deco: 'pendulum',  glyph: 'wave',     enabled: true,  note: '力学 · 电磁学 · 光学' },
-    { key: 'math',      name: '高级数学', en: 'Adv. Maths',  accent: '#d97706', deco: 'geometry',  glyph: 'graph',    enabled: true,  note: '高数Ⅰ · 高数Ⅱ · 函数到微积分' },
+    { key: 'biology',   name: '生物',     en: 'Biology',     accent: '#059669', motif: 'dna',    enabled: true,  note: '光合呼吸 · 神经调节 · 遗传育种' },
+    { key: 'chemistry', name: '化学',     en: 'Chemistry',   accent: '#7c3aed', motif: 'atom',   enabled: true,  note: '化学键 · 化学平衡 · 有机化学' },
+    { key: 'physics',   name: '物理',     en: 'Physics',     accent: '#0284c7', motif: 'car',    enabled: true,  note: '力学 · 电磁学 · 光学' },
+    { key: 'math',      name: '高级数学', en: 'Adv. Maths',  accent: '#d97706', motif: 'golden', enabled: true,  note: '高数Ⅰ · 高数Ⅱ · 函数到微积分' },
   ];
   /* ======================================== */
 
   const ARC_LENGTH = 282.74;   // 2πr，r=45，与 orbit.css 里的 stroke-dasharray 对应
 
-  const GLYPHS = {
-    leaf: '<path d="M12 21c0-6.5 3.2-10.6 9-12.4-.7 7.6-4.2 11.6-9 12.4Z"/><path d="M12 21C7.7 17.3 4.8 12.8 4 6.4c6.2 1.3 8 6.3 8 14.6Z"/>',
-    flask: '<path d="M9.5 3h5M10.5 3v6.2L5.6 18a2.2 2.2 0 0 0 1.9 3.3h9a2.2 2.2 0 0 0 1.9-3.3l-4.9-8.8V3"/><path d="M7.8 15h8.4"/>',
-    wave: '<path d="M2.5 12c2.6-6.5 5.2 6.5 7.8 0s5.2-6.5 7.8 0 3.4 3 3.4 3"/>',
-    // 座标轴 + 抛物线。原本是三角形，缩小後看起来像 ⚠️ 警告标志，第一次来的学生会以为网站坏了
-    graph: '<path d="M4.5 3.5v16h16"/><path d="M7.5 6.5c1.8 10 8.4 10 10.5 0"/>',
-  };
-
-  const DECOS = {
-    dna: `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <path class="strand a" d="M34 0 Q72 25 34 50 Q-4 75 34 100"/>
-      <path class="strand b" d="M66 0 Q28 25 66 50 Q104 75 66 100"/>
-      <line class="rung" x1="40" y1="13" x2="60" y2="13"/>
-      <line class="rung" x1="43" y1="37" x2="57" y2="37"/>
-      <line class="rung" x1="43" y1="63" x2="57" y2="63"/>
-      <line class="rung" x1="40" y1="87" x2="60" y2="87"/>
-    </svg>`,
-    atom: `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8">
-      <g transform="rotate(0 50 50)"><g class="spin-a"><ellipse cx="50" cy="50" rx="48" ry="17"/><circle cx="98" cy="50" r="3.6" fill="currentColor" stroke="none"/></g></g>
-      <g transform="rotate(60 50 50)"><g class="spin-b"><ellipse cx="50" cy="50" rx="48" ry="17"/><circle cx="2" cy="50" r="3.2" fill="currentColor" stroke="none"/></g></g>
-      <g transform="rotate(120 50 50)"><g class="spin-c"><ellipse cx="50" cy="50" rx="48" ry="17"/><circle cx="98" cy="50" r="3" fill="currentColor" stroke="none"/></g></g>
-    </svg>`,
-    pendulum: `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <circle cx="50" cy="16" r="2.6" fill="currentColor" stroke="none"/>
-      <g class="arm"><line x1="50" y1="16" x2="50" y2="84"/><circle cx="50" cy="88" r="5.5" fill="currentColor" stroke="none"/></g>
-      <path class="wave" d="M6 50c6-11 12 11 18 0s12-11 18 0"/>
-      <path class="wave" d="M58 50c6-11 12 11 18 0s12-11 18 0"/>
-    </svg>`,
-    geometry: `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
-      <g class="tri"><polygon points="50,4 95,80 5,80"/></g>
-      <path class="spiral" d="M50 50a14 14 0 0 1 14-14 23 23 0 0 1 23 23 37 37 0 0 1-37 37"/>
-    </svg>`,
+  // 球里的科目图案（48×48），和网站图标（学士帽）同一套：深色墨线＋科目色。各部位的颜色、动法在 css/orbit.css「球里的科目图案」
+  // 平常静止；指到、键盘移到、选中时才动：DNA 扭转、电子绕核、电流流动＋灯泡亮＋小车开动、黄金螺线画出来
+  const MOTIFS = {
+    // 生物：DNA 双螺旋
+    dna: '<path class="m-strand m-b" d="M24,5 L21.9,6 L19.9,7 L18.2,8 L16.8,9 L15.9,10 L15.5,11 L15.7,12 L16.3,13 L17.5,14 L19,15 L20.9,16 L22.9,17 L25.1,18 L27.1,19 L29,20 L30.5,21 L31.7,22 L32.3,23 L32.5,24 L32.1,25 L31.2,26 L29.8,27 L28.1,28 L26.1,29 L24,30 L21.9,31 L19.9,32 L18.2,33 L16.8,34 L15.9,35 L15.5,36 L15.7,37 L16.3,38 L17.5,39 L19,40 L20.9,41 L22.9,42 L25.1,43"/><path class="m-rung" d="M19.5,8.5 H28.5"/><path class="m-rung" d="M21,15 H27"/><path class="m-rung" d="M18.8,21.5 H29.2"/><path class="m-rung" d="M21.5,27.8 H26.5"/><path class="m-rung" d="M18.6,34.2 H29.4"/><path class="m-rung" d="M22.1,40.6 H25.9"/><path class="m-strand m-a" d="M24,5 L26.1,6 L28.1,7 L29.8,8 L31.2,9 L32.1,10 L32.5,11 L32.3,12 L31.7,13 L30.5,14 L29,15 L27.1,16 L25.1,17 L22.9,18 L20.9,19 L19,20 L17.5,21 L16.3,22 L15.7,23 L15.5,24 L15.9,25 L16.8,26 L18.2,27 L19.9,28 L21.9,29 L24,30 L26.1,31 L28.1,32 L29.8,33 L31.2,34 L32.1,35 L32.5,36 L32.3,37 L31.7,38 L30.5,39 L29,40 L27.1,41 L25.1,42 L22.9,43"/>',
+    // 化学：原子
+    atom: '<g class="m-orbit m-o0"><ellipse cx="24" cy="24" rx="19" ry="7" transform="rotate(0 24 24)"/><circle class="m-e" cx="43" cy="24" r="2.6"/></g><g class="m-orbit m-o1"><ellipse cx="24" cy="24" rx="19" ry="7" transform="rotate(60 24 24)"/><circle class="m-e" cx="33.5" cy="40.5" r="2.6"/></g><g class="m-orbit m-o2"><ellipse cx="24" cy="24" rx="19" ry="7" transform="rotate(120 24 24)"/><circle class="m-e" cx="14.5" cy="40.5" r="2.6"/></g><circle class="m-nucleus" cx="24" cy="24" r="4"/>',
+    // 物理：基本电路当边框（电阻、灯泡、电池），中间小车与牵引力 F 的方向（网站图标左半那台车）
+    car: '<path class="m-wire" d="M21.5,41 H8 Q3,41 3,36 V12 Q3,7 8,7 H17 L19.3,4.3 L21.7,9.7 L24,4.3 L26.3,9.7 L28.6,4.3 L31,7 H40 Q45,7 45,12 V19.8 M45,28.2 V36 Q45,41 40,41 H26"/><path class="m-current" d="M21.5,41 H8 Q3,41 3,36 V12 Q3,7 8,7 H17 L19.3,4.3 L21.7,9.7 L24,4.3 L26.3,9.7 L28.6,4.3 L31,7 H40 Q45,7 45,12 V19.8 M45,28.2 V36 Q45,41 40,41 H26"/><path class="m-battery" d="M21.5,36.5 V45.5 M26,38.6 V43.4"/><circle class="m-lamp" cx="45" cy="24" r="4.2"/><path class="m-lamp-x" d="M42.1,21.1 L47.9,26.9 M47.9,21.1 L42.1,26.9"/><g class="m-car"><path class="m-body" d="M9 29.5V26.2q0-1.6 1.6-1.9l2.6-.6 3-3.6q.7-.8 1.8-.8h5q1.1 0 1.8.9l2.3 3.1q2.2.4 2.2 2.4v3.8z"/><path class="m-window" d="M16.9 23.4l1.8-2.3h4.3l1.7 2.3z"/><g class="m-wheel"><circle cx="13" cy="29.8" r="2.8"/><circle class="m-hub" cx="13" cy="28.9" r=".9"/></g><g class="m-wheel"><circle cx="25.6" cy="29.8" r="2.8"/><circle class="m-hub" cx="25.6" cy="28.9" r=".9"/></g></g><path class="m-force" d="M30.8 26H38M35.4 23.4 38.2 26 35.4 28.6"/><text class="m-f" x="32.4" y="21.6">F</text>',
+    // 数学：黄金矩形与螺线
+    golden: '<rect class="m-rect" x="5" y="12.3" width="38" height="23.5" rx="1.5"/><path class="m-grid" d="M5,12.3h23.5v23.5h-23.5zM28.5,12.3h14.5v14.5h-14.5zM34,26.8h9v9h-9zM28.5,30.2h5.5v5.5h-5.5zM28.5,26.8h3.4v3.4h-3.4zM31.9,26.8h2.1v2.1h-2.1z"/><path class="m-spiral" pathLength="1" d="M5,35.7 A23.5,23.5 0 0 1 28.5,12.3 A14.5,14.5 0 0 1 43,26.8 A9,9 0 0 1 34,35.7 A5.5,5.5 0 0 1 28.5,30.2 A3.4,3.4 0 0 1 31.9,26.8 A2.1,2.1 0 0 1 34,28.9 A1.3,1.3 0 0 1 32.7,30.2"/>',
   };
 
   const stage = document.getElementById('orbitStage');
@@ -73,9 +52,8 @@
   const baseAngle = i => i * (360 / SUBJECTS.length);
 
   /* ---------- 建立 DOM ---------- */
-  function svgGlyph(name) {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-      stroke-linecap="round" stroke-linejoin="round">${GLYPHS[name] || ''}</svg>`;
+  function svgMotif(name) {
+    return `<svg viewBox="0 0 48 48">${MOTIFS[name] || ''}</svg>`;
   }
 
   function buildNode(subject, i) {
@@ -90,13 +68,12 @@
     if (!subject.enabled) btn.setAttribute('aria-disabled', 'true');
     btn.setAttribute('aria-expanded', 'false');
     btn.innerHTML =
-      `<span class="node-deco deco-${subject.deco}" aria-hidden="true">${DECOS[subject.deco] || ''}</span>` +
       `<span class="node-disc">` +
         `<svg class="node-arc" viewBox="0 0 100 100" aria-hidden="true">` +
           `<circle class="arc-bg" cx="50" cy="50" r="45"/>` +
           `<circle class="arc-fg" cx="50" cy="50" r="45"/>` +
         `</svg>` +
-        `<span class="node-glyph" aria-hidden="true">${svgGlyph(subject.glyph)}</span>` +
+        `<span class="node-glyph" aria-hidden="true">${svgMotif(subject.motif)}</span>` +
       `</span>` +
       `<span class="node-label">${subject.name}<em class="node-sub">${subject.en}</em></span>`;
     return btn;
