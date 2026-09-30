@@ -125,7 +125,7 @@ async function run() {
     for (const w of [320, 360, 390]) {
       const { ctx, page } = await open({ width: w, height: 800, mobile: true });
       const rows = await page.evaluate(() => new Set([...document.querySelectorAll('.util-actions .sound-toggle')].map(b => Math.round(b.getBoundingClientRect().top))).size);
-      check('首页轨道', `${w}px：工具列五颗按钮排成一行`, rows === 1, `${rows} 行`);
+      check('首页轨道', `${w}px：工具列的按钮排成一行`, rows === 1, `${rows} 行`);
       await page.evaluate(() => document.querySelectorAll('.orbit-node')[0].click());
       await page.waitForTimeout(900);
       // 确认面板摆在轨道的空心里；伸出去就会盖住旁边的球，那些球还要能点
@@ -193,6 +193,115 @@ async function run() {
     const total = bank.sections.reduce((n, s) => n + live(s.mcqs).length, 0);
     check('统考时间表与题库覆盖', '做题页写明题库覆盖了考纲几章', cov === `依考纲共 ${bank.sections.length} 章 · 目前 ${withQ} 章有题目，合计 ${total} 道选择题`, cov);
     check('统考时间表与题库覆盖', '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
+  await section('统考闹钟与更新日志', async () => {
+    // 马来西亚时区，时间固定在统考前（10/14 晚上 8:58）。伺服器的定时提醒没开：这里测「开着网站自己响」那条路；
+    // 推播那条（加密、伺服器身分、每分钟检查）要真的推播服务，另外用假伺服器测
+    const G = '统考闹钟与更新日志';
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true,
+      timezoneId: 'Asia/Kuala_Lumpur', serviceWorkers: 'block', permissions: ['notifications'] });
+    await ctx.addInitScript(() => localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1, explain: 1 })));
+    await ctx.route('**/api/alarm', r => r.fulfill({ json: { ok: true, configured: false } }));
+    const page = await ctx.newPage();
+    const errors = []; page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
+    await page.clock.install({ time: new Date('2026-10-14T20:58:00+08:00') });
+    await page.goto(URL_); await page.waitForTimeout(1200);
+
+    const btn = await page.evaluate(() => {
+      const b = document.getElementById('alarmToggle'), row = document.querySelector('#examNext .exam-row');
+      return { inRow: !!(b && row && row.contains(b)), exp: b && b.getAttribute('aria-expanded'), sr: b && b.querySelector('.sr-only').textContent };
+    });
+    check(G, '日历旁边有闹钟按钮，读屏念得出是做什么的', btn.inRow && btn.exp === 'false' && /统考闹钟/.test(btn.sr), JSON.stringify(btn));
+
+    // 时间表开着时按闹钟：时间表收起，只开闹钟
+    await page.click('#examNext .exam-toggle');
+    await page.click('#alarmToggle'); await page.waitForTimeout(400);
+    const opened = await page.evaluate(() => {
+      const now = Date.now();
+      const upcoming = [...new Set(window.UEC_EXAM.papers.filter(p => Date.parse(`${p.date}T${p.start}:00+08:00`) > now).map(p => p.subject))];
+      const opts = [...document.querySelectorAll('#alarmSubject option')].map(o => o.value);
+      return { list: document.getElementById('examList').hidden, panel: !document.getElementById('alarmPanel').hidden,
+        exp: document.getElementById('alarmToggle').getAttribute('aria-expanded'), sameSubjects: opts.length === upcoming.length && opts.every(o => upcoming.includes(o)),
+        time: document.getElementById('alarmTime').value, status: document.querySelector('.alarm-status-text').textContent };
+    });
+    check(G, '点开闹钟：时间表收起；科目只列还没开考的；预设晚上 9 点', opened.list && opened.panel && opened.exp === 'true' && opened.sameSubjects && opened.time === '21:00', JSON.stringify(opened));
+    check(G, '伺服器的定时提醒没开：说清楚现在只有开着网站时会响', /定时提醒还没开/.test(opened.status), opened.status);
+    await contrast(page, 'mobile 闹钟面板', '#alarmPanel', R);
+
+    // 加一个「物理，每天 20:59」（一分钟後）
+    await page.selectOption('#alarmSubject', '物理');
+    await page.fill('#alarmTime', '20:59');
+    await page.click('.alarm-add'); await page.waitForTimeout(200);
+    const items = () => page.evaluate(() => [...document.querySelectorAll('.alarm-list li:not(.alarm-empty)')].map(li => li.innerText.replace(/\s+/g, ' ').trim()));
+    const count = () => page.evaluate(() => { const c = document.querySelector('#alarmToggle .alarm-count'); return c.hidden ? '' : c.textContent; });
+    const it1 = await items();
+    check(G, '加「物理，每天 20:59」：清单多一项、写出开考时间，闹钟上显示 1',
+      it1.length === 1 && /物理/.test(it1[0]) && /每天 20:59/.test(it1[0]) && /10 月 21 日 下午 1:55 开考/.test(it1[0]) && await count() === '1', JSON.stringify(it1));
+    await page.click('.alarm-add'); await page.waitForTimeout(150);
+    const dup = await page.textContent('.alarm-error');
+    await page.check('input[name="alarmRepeat"][value="once"]');
+    await page.fill('#alarmDate', '2026-10-21'); await page.fill('#alarmTime', '14:30');
+    await page.click('.alarm-add'); await page.waitForTimeout(150);
+    const after = await page.textContent('.alarm-error');
+    await page.fill('#alarmDate', '2026-10-14'); await page.fill('#alarmTime', '20:00');
+    await page.click('.alarm-add'); await page.waitForTimeout(150);
+    const past = await page.textContent('.alarm-error');
+    check(G, '挡掉重复的、开考之後的、已经过了的时间，并说原因',
+      /已经有了/.test(dup) && /要设在开考（10 月 21 日 下午 1:55）之前/.test(after) && /已经过了/.test(past) && (await items()).length === 1, [dup, after, past].join(' / '));
+
+    await page.click('.alarm-sound:has-text("闹铃")'); await page.waitForTimeout(150);
+    check(G, '选音效：记住选了「闹铃」（一种音效用在全部闹钟）', await page.evaluate(() => JSON.parse(localStorage.getItem('UEC_ALARMS_v1')).sound) === 'bell');
+
+    // 时间到：网页自己响（提醒条＋闹钟摇一摇），同一次不重复响
+    await page.clock.fastForward(90e3); await page.waitForTimeout(300);
+    const rang = await page.evaluate(() => { const b = document.getElementById('alarmRing');
+      return b && { show: b.classList.contains('show'), title: b.querySelector('strong').textContent, body: b.querySelector('.alarm-ring-text span').textContent }; });
+    check(G, '时间到：跳出「物理还有 6 天 17 小时就要考了~」与进场时间',
+      rang && rang.show && rang.title === '物理还有 6 天 17 小时就要考了~' && rang.body === '10 月 21 日（周三）下午 1:55 进场', JSON.stringify(rang));
+    await contrast(page, 'mobile 闹钟提醒条', '#alarmRing', R);
+    await shot(page, 'alarm-ring-mobile');
+    await page.clock.fastForward(60e3); await page.waitForTimeout(200);
+    await page.reload(); await page.waitForTimeout(1200);
+    await page.clock.fastForward(30e3); await page.waitForTimeout(200);
+    const again = await page.evaluate(() => { const b = document.getElementById('alarmRing'); return b ? b.classList.contains('show') : false; });
+    check(G, '重新整理：闹钟还在；同一次不会再响', await count() === '1' && !again, `数字 ${await count()}，又响 ${again}`);
+
+    // 护眼模式的面板
+    await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'night'));
+    await page.click('#alarmToggle'); await page.waitForTimeout(400);
+    await contrast(page, 'night mobile 闹钟面板', '#alarmPanel', R);
+    await shot(page, 'alarm-panel-night-mobile');
+    await page.click('.alarm-del'); await page.waitForTimeout(200);
+    const del = await page.evaluate(() => ({ empty: (document.querySelector('.alarm-empty') || {}).textContent, focus: document.activeElement.id }));
+    check(G, '删掉闹钟：清单空了、数字消失，焦点移到科目栏', /还没有闹钟/.test(del.empty || '') && await count() === '' && del.focus === 'alarmSubject', JSON.stringify(del));
+    await page.evaluate(() => document.documentElement.removeAttribute('data-theme'));
+
+    // 更新日志：红点 → 打开列出每一版 → 看过就熄；有新的一版又亮
+    const log = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'devlog.json'), 'utf8')).entries;
+    const dot = () => page.evaluate(() => !document.querySelector('#devlogBtn .devlog-dot').hidden);
+    const lit = await dot();
+    await page.click('#devlogBtn'); await page.waitForTimeout(500);
+    const box = await page.evaluate(() => ({ open: document.querySelector('.devlog-mask').classList.contains('is-open'),
+      vers: [...document.querySelectorAll('.devlog-ver b')].map(b => b.textContent), news: document.querySelectorAll('.devlog-new').length,
+      focus: document.activeElement.className }));
+    check(G, '「日志」亮红点；打开列出每一版（新的在前），最新那版标「新」',
+      lit && box.open && box.vers.join() === log.map(e => 'v' + e.version).join() && box.news === 1 && box.focus === 'devlog-close' && !(await dot()), JSON.stringify(box));
+    await contrast(page, 'mobile 更新日志', '.devlog-box', R);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+    const closed = await page.evaluate(() => ({ open: document.querySelector('.devlog-mask').classList.contains('is-open'), focus: document.activeElement.id }));
+    await page.reload(); await page.waitForTimeout(1000);
+    check(G, '按 Esc 关掉、焦点回到按钮；重新整理後红点还是熄的', !closed.open && closed.focus === 'devlogBtn' && !(await dot()), JSON.stringify(closed));
+    await page.route('**/data/devlog.json', r => r.fulfill({ json: { entries: [{ version: '9.9', date: '2026-10-14', items: ['测试'] }, ...log] } }));
+    await page.reload(); await page.waitForTimeout(1000);
+    check(G, '发了新的一版：红点又亮', await dot());
+    await enter(page);
+    const inStudy = await page.evaluate(() => document.getElementById('devlogBtn').hidden);
+    await page.evaluate(() => navHome()); await page.waitForTimeout(500);
+    const atHome = await page.evaluate(() => !document.getElementById('devlogBtn').hidden);
+    check(G, '「日志」只在首页：做题页的工具列不多一站 Tab', inStudy && atHome, `做题页藏起来 ${inStudy}，回首页出现 ${atHome}`);
+    check(G, '没有 JS 错误', errors.length === 0, errors[0]);
     await ctx.close();
   });
 

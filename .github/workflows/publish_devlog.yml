@@ -1,0 +1,56 @@
+name: 发布更新日志 (Publish Devlog)
+
+# 网站工具列的「日志」列出每一版加了什么（data/devlog.json）。新功能上线、想让学生知道时：
+#   Actions → 这个工作流 → Run workflow → 填版本号和内容 → 加到日志最前面、推到 main，
+#   Vercel 几十秒後部署好，学生的「日志」按钮会亮红点。
+# 内容每一点之间用 || 隔开（输入框只有一行）。只是修小错、改文字，不用发。
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号，例如 1.2（要比现在最新的一版新）'
+        required: true
+      content:
+        description: '内容：每一点之间用 || 隔开，例如「错题本可以按章节筛选 || 模拟统考可以暂停」'
+        required: true
+
+concurrency:
+  group: devlog
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出 main
+        uses: actions/checkout@v5
+        with:
+          ref: main   # 不管从哪个分支按 Run workflow，都只改 main 上的日志
+
+      - name: 加到更新日志最前面
+        id: add
+        env:
+          VERSION: ${{ inputs.version }}
+          CONTENT: ${{ inputs.content }}
+        run: python3 scripts/publish_devlog.py
+
+      - name: 推到 main（Vercel 自动部署）
+        env:
+          VERSION: ${{ steps.add.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/devlog.json
+          git commit -q -m "📰 更新日志 v$VERSION"
+          for i in 1 2 3; do
+            if git push -q origin HEAD:main; then echo "✅ 已推到 main"; exit 0; fi
+            echo "⏳ main 刚被改动，重取再推（第 $i 次）"
+            sleep $((i * 3))
+            git pull -q --rebase origin main
+          done
+          echo "❌ 推不上去，重跑这个工作流就好"
+          exit 1

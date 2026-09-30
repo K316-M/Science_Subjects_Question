@@ -172,6 +172,27 @@
 [data-theme="night"] .exam-cal .cal-paper { fill: #e0d8c6; }
 [data-theme="night"] .exam-cal .cal-head { fill: #b34a37; }
 [data-theme="night"] .exam-cal .cal-ring { fill: #cfc6b2; }
+/* 统考闹钟：钟面和日历一样压暗；面板、输入框、音效按钮换成暗纸 */
+[data-theme="night"] .alarm-clock .clk-body { fill: #e0d8c6; }
+[data-theme="night"] .alarm-clock .clk-bell { fill: #b34a37; }
+[data-theme="night"] .alarm-count { background: #9c4a3a; border-color: var(--n-page); color: var(--n-btn-text); }
+[data-theme="night"] .alarm-panel, [data-theme="night"] .alarm-ring { background: var(--n-raised); border-color: var(--n-border-strong); }
+[data-theme="night"] .alarm-title, [data-theme="night"] .alarm-field, [data-theme="night"] .alarm-sounds-label { color: var(--n-text-2); }
+[data-theme="night"] .alarm-hint, [data-theme="night"] .alarm-item-exam, [data-theme="night"] .alarm-empty,
+[data-theme="night"] .alarm-sounds-label em, [data-theme="night"] .alarm-ring-text span { color: var(--n-text-2); }
+[data-theme="night"] .alarm-list li, [data-theme="night"] .alarm-repeat, [data-theme="night"] .alarm-status,
+[data-theme="night"] .alarm-ring-text strong { color: var(--n-text); }
+[data-theme="night"] .alarm-list li, [data-theme="night"] .alarm-form, [data-theme="night"] .alarm-sounds-head { border-color: var(--n-border-strong); }
+[data-theme="night"] .alarm-status { background: var(--n-red-bg); }
+[data-theme="night"] .alarm-status.is-ok { background: var(--n-green-bg); }
+[data-theme="night"] .alarm-field select, [data-theme="night"] .alarm-field input, [data-theme="night"] #alarmDate,
+[data-theme="night"] .alarm-sound span { background: var(--n-sunken); border-color: var(--n-border-strong); color: var(--n-text); }
+[data-theme="night"] .alarm-sound input:checked + span { background: var(--n-btn); border-color: var(--n-btn); color: var(--n-btn-text); }
+[data-theme="night"] .alarm-repeat input[type="radio"] { accent-color: var(--n-green); }
+[data-theme="night"] .alarm-del, [data-theme="night"] .alarm-ring-close { color: var(--n-text-2); }
+[data-theme="night"] .alarm-del:hover { color: var(--n-red); background: var(--n-red-bg); }
+[data-theme="night"] .alarm-ring-close:hover { color: var(--n-text); background: var(--n-hover); }
+[data-theme="night"] .alarm-error { color: var(--n-red); }
 
 /* ---------- 章节卡、分页 ---------- */
 [data-theme="night"] #syncBtn { border-color: rgba(134, 195, 230, .4); }
@@ -318,6 +339,16 @@
 [data-theme="night"] .ob-mask, [data-theme="night"] .sync-mask, [data-theme="night"] .note-modal { background: rgba(8, 8, 7, .62); }
 [data-theme="night"] .ob-box, [data-theme="night"] .sync-box { background: rgba(36, 34, 30, .98); border-color: var(--n-border); box-shadow: inset 0 1px 0 rgba(255, 244, 224, .05), 0 28px 70px -28px rgba(0, 0, 0, .85); }
 [data-theme="night"] .ob-title, [data-theme="night"] .sync-title { color: var(--n-text); }
+/* 更新日志（js/devlog.js）：和同步面板同一种暗纸 */
+[data-theme="night"] .devlog-mask { background: rgba(8, 8, 7, .62); }
+[data-theme="night"] .devlog-box { background: rgba(36, 34, 30, .98); border-color: var(--n-border); box-shadow: inset 0 1px 0 rgba(255, 244, 224, .05), 0 28px 70px -28px rgba(0, 0, 0, .85); }
+[data-theme="night"] .devlog-title, [data-theme="night"] .devlog-items { color: var(--n-text); }
+[data-theme="night"] .devlog-ver, [data-theme="night"] .devlog-sub, [data-theme="night"] .devlog-empty, [data-theme="night"] .devlog-close { color: var(--n-text-2); }
+[data-theme="night"] .devlog-ver b { color: var(--primary); }
+[data-theme="night"] .devlog-entry { border-top-color: var(--n-border-strong); }
+[data-theme="night"] .devlog-close:hover { background: var(--n-hover); color: var(--n-text); }
+[data-theme="night"] .devlog-new { background: #9c4a3a; color: var(--n-btn-text); }
+[data-theme="night"] .devlog-dot { background: #e2685f; border-color: var(--n-page); }
 [data-theme="night"] .ob-body { color: var(--n-text-2); }
 [data-theme="night"] .ob-dot { background: var(--n-border-strong); }
 [data-theme="night"] .ob-btn.ghost { color: var(--n-text-2); }

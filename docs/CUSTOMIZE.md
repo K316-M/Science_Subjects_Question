@@ -33,6 +33,8 @@
 | 数学公式的字比内文大多少 | `js/math-render.js` | `KATEX_TUNING` 里的 `font-size` | `1.1em`（KaTeX 预设 `1.21em`） | 太大夹在中文里很抢；题目档「打印版」另有一份，在 `js/archive.js` 搜 `.katex{font-size` | 🟢 |
 | 数学的分数、积分、Σ 排成全尺寸（像试卷） | `js/math-render.js` | `preProcess` | 每条公式前加 `\\displaystyle` | 拿掉就变回 KaTeX 预设的行内小分数，手机上很难看清 | 🟢 |
 | 统考时间表弹出框的宽度 | `index.html` | `.exam-list {` 的 `width` | `min(520px, …)` | 窄於 460px 时名称自动换到下一行 | 🟢 |
+| 统考闹钟面板的宽度 | `index.html` | `.alarm-panel {` 的 `width` | `min(520px, …)`（和时间表一样宽） | | 🟢 |
+| 首页闹钟图示（日历右边）的样子 | `js/exam-alarm.js`（形状）、`index.html`（颜色） | `CLOCK_SVG`；颜色搜 `.alarm-clock .clk-body`（钟面）、`.alarm-clock .clk-bell`（铃）；护眼的在 `css/night.css` 搜 `.alarm-clock` | 卡通闹钟，和日历同一套笔触 | | 🟢 |
 | 换题时题卡左右滑进来的距离 | `index.html` | `slideFromRight`、`slideFromLeft` | `12px` | 不要超过 `16px`（手机的页边） | 🔴 超过的话，滑进来那几格会超出萤幕，手机浏览器把整页撑宽、之後一直能左右晃 |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | /dev 列表（巡检、待审、题目修改）题与题之间的空隙 | `dev/dev.css` | `--list-gap` | `12px` | 每题一张卡；太小又会看起来连在一起 | 🟢 |
@@ -64,6 +66,10 @@
 | AI 讲解、AI 批改等待时按钮上的字（「AI 老师在想…10～20 秒」「批改中…约 10 秒」） | `index.html` | `AI 老师在想`、`批改中…` | 🟡 写实际要等的时间，写短了学生会以为卡住；讲解那颗在 320px 手机上最多约 12 个中文字宽，再长会断成两行 |
 | 统考时间表最上面的两行说明 | `js/exam-timetable.js` | `rules`；`index.html` 搜 `exam-list-hint` | 🟢 |
 | 时间表的考试名称（「2026 年度第 52 届高中统考」） | `js/exam-timetable.js` | `title` | 🟢 |
+| 统考闹钟的通知文字（「物理还有 3 天 5 小时就要考了~」、第二行「10 月 21 日（周三）下午 1:55 进场」） | `js/alarm-common.js` | `message`（整句）、`countdown`（「3 天 5 小时」怎么写） | 🟡 网站和伺服器共用这一支，改一次两边都变；保留 `${…}` 那段（自动填的科目与时间）；太长的话手机通知会截断 |
+| 统考闹钟面板的说明与状态（「网站关着也会准时提醒」「iPhone 要先加入主画面」…） | `js/exam-alarm.js` | `alarm-hint`、`renderStatus` | 🟢 |
+| 闹钟「试一下」的测试通知文字（「闹钟通知正常 ✓」） | `api/_lib/alarms.js` | `sendTest` | 🟢 |
+| 更新日志面板的标题与下面那行说明 | `js/devlog.js` | `devlogTitle`、`devlog-sub` | 🟢 |
 | 离线或连不上时按「立即同步」的提示 | `js/sync.js` | `目前没有网络` | 🟢 |
 | 章节多了新题时，底部提示框的字（「这一章多了 N 道新题，点我去看」） | `index.html` | `道新题，点我去看` | 🟡 保留 `${…}` 那段，那是自动填的题数；太长在 320px 手机上会断成两行 |
 | 巡检 Issue 的标题 | `.github/workflows/auto_update.yml` | `title:`，以及「找还开着的巡检 Issue」那步的 `startswith("🚨 题库巡检")` | 🔴 两处要一起改：标题开头对不上，每次巡检都会另开一个新的 Issue |
@@ -84,7 +90,14 @@
 | 音乐播完接回开头时，头尾交叉叠多久 | `index.html` | `MUSIC_LOOP_XFADE_MS` | `3000` 毫秒 | 🟢 太长会听到结尾和开头叠在一起；曲子短于它的 3 倍就不叠，直接重播 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |
 | 待在做题页、或从背景切回来时，多久检查一次题库有没有更新 | `index.html` | `BANK_RECHECK_MS` | 1 分钟 | 🟢 题库没变时伺服器只回「没变」（0 bytes），几乎不花流量；有变就跳「题库更新了」。旁边的 `setInterval(checkBankUpdate, …)` 是多久看一次到了没，要比它短 |
-| **统考日期与每场的试卷一／二时间** | `js/exam-timetable.js` | `papers` | 2026 年董总时间表 | 🟡 格式见档案开头注解 |
+| **统考日期与每场的试卷一／二时间** | `js/exam-timetable.js` | `papers` | 2026 年董总时间表 | 🟡 格式见档案开头注解；伺服器的统考闹钟也读这一份（`module.exports`），下次部署就跟上 |
+| 统考闹钟的四种音效（叮咚、闹铃、木琴、电子） | `js/exam-alarm.js` | `ALARM_SOUNDS` | 每种一段，写著怎么合成 | 🟡 `id` 不要改（学生选的音效存的是它，改了会退回第一种）；照格式多加一段，面板就多一个选项 |
+| 新增闹钟时预设的时间 | `js/exam-alarm.js` | `DEFAULT_TIME` | `21:00` | 🟢 |
+| 闹钟响时，网页上的提醒条停多久 | `js/exam-alarm.js` | `RING_SHOW_MS` | 15 秒 | 🟢 |
+| 开着网站时，多久检查一次闹钟该不该响 | `js/exam-alarm.js` | `CHECK_EVERY_MS` | 20 秒 | 🟢 |
+| 闹钟晚了多久就不补响（定时器停过、装置关机太久） | `js/exam-alarm.js`、`api/_lib/alarms.js` | `LATE_LIMIT_MS` | 30 分钟 | 🟡 两个档写一样；伺服器那边也决定推播服务替关机的装置留多久（`PUSH_TTL_SECONDS`） |
+| 伺服器的每分钟检查多久没跑，网站就改成自己响 | `js/exam-alarm.js` | `TICK_STALE_MS` | 10 分钟 | 🟡 要比 cron-job.org 的间隔长，不然正常运作时也会误判 |
+| 统考闹钟伺服器多久检查一次 | cron-job.org 上那个工作 | — | 每 1 分钟 | 🟡 拉长多少，闹钟就可能晚多少；设定见 [OPERATIONS 四·设定统考闹钟](OPERATIONS.md#设定统考闹钟网站关着也会提醒) |
 | AI 依考纲出题的自动排程 | `.github/workflows/generate_questions.yml` | `cron` | 每周一早上 9 点（马来西亚） | 🟡 cron 是 UTC，马来西亚时间减 8 小时 |
 | 题库体检的自动排程 | `.github/workflows/auto_update.yml` | `cron` | 每周一早上 8 点 | 🟡 同上 |
 
@@ -113,6 +126,13 @@
 | AI 讲解在装置上最多存几则 | `index.html` | `EXPLAIN_KEEP` | `300` | 🟢 超过就丢最旧的 |
 | **AI 讲解的讲法**（多长、先讲什么） | `api/explain.js` | `buildPrompt` 里的「要求」1～4 | | 🔴 第 4 条（不可推翻正确答案）不要删 |
 | 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS`；个别科目在 `MOCK_QUESTIONS_BY_SUBJECT` | 理科 `40`；数学 `15`（高数Ⅰ、Ⅱ 评量规格） | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
+| 时间表的科目名称（统考闹钟、模拟统考都靠它对应） | `js/exam-timetable.js` | `subject` | 「物理」「高级数学（Ⅰ）」… | 🔴 学生设的闹钟存的是科目名称：改了名，那一科已设的闹钟会失效、要重设；`index.html` 的 `EXAM_SUBJECT` 也要跟着改 |
+| 一台装置最多几个闹钟 | `js/exam-alarm.js`、`api/_lib/alarms.js` | `MAX_ALARMS` | 网站 `10`、伺服器 `20` | 🔴 网站的不能大于伺服器的：超过的话伺服器把那台装置的整批闹钟拒收，只剩开着网站时会响 |
+| 闹钟资料在伺服器存多久（那台装置一直没再打开网站） | `api/_lib/alarms.js` | `DEVICE_TTL_SECONDS` | 60 天 | 🟢 统考一年一次，考完就没用了 |
+| 同一个网络每分钟最多登记几次闹钟 | `api/alarm.js` | `MAX_PER_WINDOW` | `30` | 🟢 |
+| 推播只送到哪几家推播服务 | `api/_lib/webpush.js` | `PUSH_HOSTS`、`PUSH_HOST_SUFFIXES` | Google（Chrome、Android）、Mozilla（Firefox）、Apple（iPhone、Mac）、Microsoft（电脑版 Edge） | 🔴 只加推播服务的网址：这份清单挡的是有人拿假订阅叫伺服器去打任意网址。学生回报某个浏览器收不到、记录里是被挡时才加 |
+| 更新日志内容的分点符号 | `scripts/publish_devlog.py` | `SEPARATOR` | `\|\|` | 🟡 改了要一起改 `.github/workflows/publish_devlog.yml` 输入框的说明 |
+| 更新日志一点最多几个字 | `scripts/publish_devlog.py` | `MAX_ITEM_CHARS` | `200` | 🟢 再长多半是忘了分点 |
 | 模拟统考对到时间表的哪一科 | `index.html` | `EXAM_SUBJECT` | 数学用 `'math:I'`→`高级数学（Ⅰ）`、`'math:II'`→`高级数学（Ⅱ）` | 🔴 右边要和 `js/exam-timetable.js` 的 `subject` 一字不差（全形括号、罗马数字 Ⅰ Ⅱ），对不上按钮就不出现 |
 | 没标卷别的数学题，哪几章不进高数Ⅰ | `index.html` | `MATH_ADVANCED_CHAPTERS` | 第 30、31、33、34、35 章（《高级数学》才有） | 🔴 写章节 `id`（`chap30`），不是章名；课程标准改版才动 |
 | 数学卷别的代号 | `api/_lib/questions.js`、`scripts/ingest_drafts.py`、`scripts/check_repo.py` | `PAPERS` | `'I'`、`'II'` | 🔴 三处一起改；题库里存的就是这两个字，改了，已经标好的题全部对不上 |
@@ -135,7 +155,7 @@
 | 错题要在几个不同的日子答对才移出错题本 | `js/review.js` | `WEAK_EXIT_DAYS` | `2` | 🟢 |
 | 删掉的笔记要记住多久（防止另一台装置同步回来） | `js/sync.js` | `NOTE_TOMBSTONE_DAYS` | `365` | 🟢 |
 | 错几次标成「顽固」 | `js/review.js` | `STUBBORN_LAPSES` | `3` | 🟢 |
-| 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～5，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
+| 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～6，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize`、`check_devlog` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
 | 申诉要寄到哪个信箱 | `js/feedback.js` | `FEEDBACK_ENDPOINT` | Formspree 表单 | 🟡 换成你自己的 Formspree 网址 |
 | 单题分享链接的网址格式 | `index.html` | `SHARE_LINK` | `网址/#q=科目/章节id/m题号`（做答题是 `s题号`），题号是题库里的位置 | 🔴 改了格式，以前分享出去的链接全都打不开；题号靠「题目只下架、不删」才不会指错题 |
 | 暂时关掉某一科（首页那颗球变灰、点不进去） | `js/orbit-subjects.js` | `SUBJECTS` 里那一科的 `enabled` | 四科都是 `true`（数学已开放） | 🟡 改 `false` 时 `note` 写「尚未开放」；要打开的科目，`papers/<科目>_question_bank.json` 要先有章节 |
@@ -158,6 +178,7 @@
 | 题目档下载 PDF 的程式（html2canvas、jsPDF）换新版 | `vendor/pdf/` | 🟢 照 `vendor/pdf/README.md` 换掉同名档案、改里面写的版本号；档名不变的话 `js/archive.js` 的 `PDF_LIBS` 不用动 |
 | 小精灵的姿势图 | `source/sprite/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
 | 申诉处理结果 | 网站 `/dev` →「申诉处理」 | 不必手改 `data/resolved_issues.json` |
+| 发一篇更新日志（有新功能时） | GitHub → Actions →「发布更新日志」 | 🟢 填版本号＋内容（每一点之间用 `\|\|` 隔开），见 [OPERATIONS 三之三](OPERATIONS.md#三之三更新日志加了新功能就发一篇)；改已经发出去的，直接改 `data/devlog.json` |
 
 ---
 
@@ -170,6 +191,8 @@ Vercel 与 GitHub 的环境变数、金钥放哪里，见 [OPERATIONS 四](OPERA
 - **GitHub Actions `GEMINI_API_KEY2`**：AI 录题、AI 出题用这把；没设才退回 Actions 的 `GEMINI_API_KEY`。
   要换名字，改 `.github/workflows/generate_questions.yml` 与 `.github/workflows/ingest_paper.yml` 里的 `GEMINI_API_KEY2`（🟡 两个档一起改）。
 - **Vercel `GITHUB_TOKEN`**：/dev 的采纳、改题、上传配图要用（Contents: Read and write）。
+- **Vercel `ALARM_CRON_SECRET` ＋ cron-job.org**：统考闹钟在网站关着时也会响要用；没设的话只在开着网站时响。
+  步骤见 [OPERATIONS 四·设定统考闹钟](OPERATIONS.md#设定统考闹钟网站关着也会提醒)。
 
 ---
 

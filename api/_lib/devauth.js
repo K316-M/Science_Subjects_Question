@@ -224,6 +224,7 @@ function clearLoginFailures(req) {
 }
 
 module.exports = {
+  cleanEnv,
   authConfig,
   setupStatus,
   publishingConfig,

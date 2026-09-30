@@ -299,6 +299,95 @@
     @media (max-width: 480px) { .exam-cal { width: 40px; height: 40px; } }
     @media (prefers-reduced-motion: reduce) { .exam-caret { transition: none; } .exam-list { animation: none; } }
 
+    /* 统考闹钟（js/exam-alarm.js）：日历气泡右边一颗卡通闹钟，点开设提醒；面板和时间表同一种纸 */
+    .exam-row { display: flex; align-items: center; gap: 10px; max-width: 100%; }
+    .alarm-toggle { position: relative; flex: 0 0 auto; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: none; background: none; cursor: pointer; border-radius: 14px; }
+    .alarm-toggle:focus-visible { outline: 2px solid var(--retro-teal-dark); outline-offset: 4px; }
+    .alarm-clock { width: 44px; height: 44px; transform: rotate(6deg); overflow: visible; transition: transform .2s ease; }
+    .alarm-toggle:hover .alarm-clock { transform: rotate(6deg) translateY(-2px); }
+    .alarm-clock .clk-body { fill: var(--retro-cream); }
+    .alarm-clock .clk-bell { fill: var(--retro-coral); }
+    .alarm-clock .clk-ink { stroke: var(--retro-dark); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .alarm-clock .clk-line { fill: none; }
+    .alarm-clock .clk-face { fill: var(--retro-dark); }
+    .alarm-clock .clk-smile { fill: none; stroke: var(--retro-dark); stroke-width: 2; stroke-linecap: round; }
+    .alarm-clock .clk-blush { fill: var(--retro-coral); opacity: .45; }
+    /* 设了几个闹钟：右上角的小圆点 */
+    .alarm-count { position: absolute; top: -3px; right: -5px; min-width: 20px; height: 20px; padding: 0 4px; border-radius: 10px; border: 2px solid var(--retro-cream); background: var(--retro-coral-deep); color: #fff; font-size: 11px; font-weight: 800; line-height: 16px; text-align: center; font-variant-numeric: tabular-nums; }
+    .alarm-count[hidden] { display: none; }
+    /* 响的时候摇一摇 */
+    @keyframes alarmWiggle { 0%, 100% { transform: rotate(6deg); } 20% { transform: rotate(-10deg); } 40% { transform: rotate(14deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(10deg); } }
+    .alarm-toggle.is-ringing .alarm-clock { animation: alarmWiggle .45s ease-in-out 3; }
+    .alarm-panel {
+      width: min(520px, calc(100vw - 32px));
+      background: var(--retro-cream); border: 2px solid var(--retro-teal-dark); border-radius: 14px;
+      padding: 12px 16px 14px; text-align: left; animation: softFadeIn .2s ease;
+    }
+    .alarm-panel[hidden] { display: none; }
+    .alarm-title { font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); }
+    .alarm-hint { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin: 2px 0 0; }
+    .alarm-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 4px; padding: 8px 10px; border-radius: 10px; background: rgba(225, 97, 76, .1); font-size: 13px; line-height: 1.6; color: var(--retro-dark); }
+    .alarm-status.is-ok { background: rgba(5, 150, 105, .1); }
+    .alarm-status-text { flex: 1 1 14em; }
+    .alarm-status .btn-ghost-retro { padding: 6px 12px; font-size: 13px; }
+    .alarm-permit[hidden] { display: none; }
+    .alarm-list { list-style: none; margin: 6px 0 0; padding: 0; }
+    .alarm-list li { display: flex; flex-wrap: wrap; align-items: center; column-gap: 10px; padding: 6px 0; border-top: 1px dashed rgba(77, 129, 137, .35); font-size: 14px; line-height: 1.6; color: var(--retro-dark); }
+    .alarm-list li:first-child { border-top: none; }
+    .alarm-item-main { display: flex; flex-wrap: wrap; column-gap: 8px; }
+    .alarm-item-subj { font-weight: 800; }
+    .alarm-item-when { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .alarm-item-exam { flex-basis: 100%; order: 3; font-size: 12px; color: var(--text-muted); }
+    .alarm-del { margin-left: auto; display: grid; place-items: center; width: 40px; height: 40px; border: none; border-radius: 10px; background: none; color: var(--text-muted); cursor: pointer; }
+    .alarm-del:hover { color: var(--retro-coral-deep); background: rgba(225, 97, 76, .1); }
+    .alarm-del:focus-visible { outline: 2px solid var(--retro-teal-dark); outline-offset: 1px; }
+    .alarm-del .ic { width: 20px; height: 20px; }
+    .alarm-empty { color: var(--text-muted); }
+    .alarm-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; margin-top: 10px; padding-top: 12px; border-top: 1px dashed rgba(77, 129, 137, .35); }
+    .alarm-form[hidden] { display: none; }
+    .alarm-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); }
+    .alarm-field select, .alarm-field input, #alarmDate {
+      min-height: 42px; min-width: 0; padding: 8px 10px; border-radius: 10px; border: 1.5px solid rgba(77, 129, 137, .55);
+      background: #fff; color: var(--retro-dark); font: inherit; font-size: 16px; font-weight: 600;
+    }
+    .alarm-repeat { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; font-size: 14px; color: var(--retro-dark); }
+    .alarm-repeat label { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; cursor: pointer; }
+    .alarm-repeat input[type="radio"] { width: 18px; height: 18px; accent-color: var(--retro-teal-dark); }
+    #alarmDate:disabled { opacity: .45; }
+    .alarm-error { grid-column: 1 / -1; margin: -4px 0 0; font-size: 12px; font-weight: 700; color: var(--retro-coral-deep); }
+    .alarm-error:empty { display: none; }
+    .alarm-add { grid-column: 1 / -1; justify-self: start; }
+    .alarm-sounds-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(77, 129, 137, .35); }
+    .alarm-sounds-head .btn-ghost-retro { padding: 6px 14px; font-size: 13px; }
+    .alarm-sounds { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .alarm-sounds-label { font-size: 12px; font-weight: 700; color: var(--retro-teal-dark); }
+    .alarm-sounds-label em { font-style: normal; font-weight: 400; color: var(--text-muted); }
+    .alarm-sound { position: relative; }
+    .alarm-sound input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+    .alarm-sound span { display: inline-block; padding: 8px 14px; border-radius: 999px; border: 1.5px solid rgba(77, 129, 137, .55); font-size: 14px; font-weight: 700; color: var(--retro-dark); background: #fff; }
+    .alarm-sound input:checked + span { background: var(--retro-teal-dark); border-color: var(--retro-teal-dark); color: #fff; }
+    .alarm-sound input:focus-visible + span { outline: 2px solid var(--retro-teal-dark); outline-offset: 2px; }
+    /* 时间到了，网页上的提醒条（没开通知权限也看得到） */
+    .alarm-ring {
+      position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: 1500;
+      display: flex; align-items: center; gap: 12px; width: min(460px, calc(100vw - 32px)); padding: 12px 12px 12px 14px;
+      background: var(--retro-cream); border: 2px solid var(--retro-teal-dark); border-radius: 16px; box-shadow: 0 10px 30px -10px rgba(15, 23, 42, .45);
+      opacity: 0; visibility: hidden; transform: translate(-50%, 16px); transition: opacity .25s ease, transform .3s cubic-bezier(.16, 1, .3, 1), visibility .25s;
+    }
+    .alarm-ring.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+    .alarm-ring .alarm-clock { flex: 0 0 auto; width: 40px; height: 40px; }
+    .alarm-ring-text { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.4; }
+    .alarm-ring-text strong { font-size: 16px; font-weight: 800; color: var(--retro-dark); text-wrap: balance; }   /* 断成两行时平均分，不会剩一个「~」掉到第二行 */
+    .alarm-ring-text span { font-size: 13px; color: var(--text-muted); }
+    .alarm-ring-close { flex: 0 0 auto; width: 40px; height: 40px; border: none; border-radius: 10px; background: none; color: var(--text-muted); font-size: 23px; line-height: 1; cursor: pointer; }
+    .alarm-ring-close:hover { background: rgba(77, 129, 137, .12); color: var(--retro-dark); }
+    @media (max-width: 480px) {
+      .alarm-toggle { width: 44px; height: 44px; }
+      .alarm-clock { width: 38px; height: 38px; }
+      .alarm-form { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) { .alarm-toggle.is-ringing .alarm-clock { animation: none; } .alarm-panel { animation: none; } .alarm-ring { transition: none; } }
+
     /* 题库覆盖：这一科依考纲有几章、其中几章已经有题目。学生有权知道题库还缺多少 */
     .bank-coverage { font-size: 12px; color: var(--text-muted); margin: 0 4px 8px; }
     .page-hint { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
@@ -1009,6 +1098,7 @@
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
   <symbol id="i-sync" viewBox="0 0 24 24"><path d="M6.5 15.5a3.7 3.7 0 0 1 .4-7.4 6 6 0 0 1 11.3 1.5 3.4 3.4 0 0 1 .4 6"/><path d="M10 13.5v6.5M8 18l2 2 2-2"/><path d="M14 20.5V14M12 16l2-2 2 2"/></symbol>
   <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.6A2.4 2.4 0 1 1 12.8 12c-.6.3-1 .9-1 1.6v.4"/><circle cx="11.9" cy="17" r=".2"/></symbol>
+  <symbol id="i-devlog" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="12" height="16" rx="2"/><path d="M8 9.5h5M8 13h5M8 16.5h3"/><path d="M19.5 2.5v5M17 5h5"/></symbol>
   <symbol id="i-cards" viewBox="0 0 24 24"><rect x="9" y="3.5" width="11" height="15" rx="2.5"/><path d="M6 7v11a2.5 2.5 0 0 0 2.5 2.5H15"/></symbol>
   <symbol id="i-doc-lines" viewBox="0 0 24 24"><path d="M6 3.5h7l5 5v12H6a1.5 1.5 0 0 1-1.5-1.5V5a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M12.5 3.5V9H18"/><path d="M8 13h7M8 16.5h5"/></symbol>
   <symbol id="i-book-x" viewBox="0 0 24 24"><path d="M4.5 5.5A2 2 0 0 1 6.5 3.5h13v17h-13a2 2 0 0 1-2-2z"/><path d="M8 3.5v17"/><path d="M12 9l4 4M16 9l-4 4"/></symbol>
@@ -1074,6 +1164,7 @@
       <button class="sound-toggle" id="themeBtn" type="button" aria-pressed="false" title="深夜读书用的深色画面"><svg class="ic" aria-hidden="true"><use href="#i-moon"></use></svg><span class="theme-txt">护眼：关</span></button>
       <button class="sound-toggle" id="syncBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-sync"></use></svg><span class="btn-txt">同步</span></button>
       <button class="sound-toggle" id="guideBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-help"></use></svg><span class="btn-txt">引导</span></button>
+      <button class="sound-toggle" id="devlogBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-devlog"></use></svg><span class="btn-txt">日志</span></button>
     </div>
   </div>
 
@@ -2295,12 +2386,16 @@ function openSubject(subject, initialChapterIdx, subMode) {
       label = `最靠近的统考科目：${paper.subjects.join('、')}，${y} 年 ${Number(m)} 月 ${Number(d)} 日${paper.half}${paper.start ? ' ' + clock(paper.start, paper.half) + ' 开始' : ''}`;
     }
     box.innerHTML = `
-      <button type="button" class="exam-toggle" aria-expanded="${wasOpen}" aria-controls="examList">
-        ${CAL_SVG}
-        <span class="exam-bubble" aria-hidden="true">${bubble}<span class="exam-caret"></span></span>
-        <span class="sr-only">${label}。按一下${wasOpen ? '收起' : '展开'}全部场次</span>
-      </button>
+      <div class="exam-row">
+        <button type="button" class="exam-toggle" aria-expanded="${wasOpen}" aria-controls="examList">
+          ${CAL_SVG}
+          <span class="exam-bubble" aria-hidden="true">${bubble}<span class="exam-caret"></span></span>
+          <span class="sr-only">${label}。按一下${wasOpen ? '收起' : '展开'}全部场次</span>
+        </button>
+      </div>
       <div class="exam-list" id="examList" ${wasOpen ? '' : 'hidden'}>${examListHtml(table, paper, now)}</div>`;
+    // 统考闹钟（js/exam-alarm.js）：每次重画都把同一颗按钮、同一个面板搬回来；考完了就不放
+    if (window.UECAlarm && paper) window.UECAlarm.attach(box.querySelector('.exam-row'), box);
     const toggle = box.querySelector('.exam-toggle');
     const list = box.querySelector('.exam-list');
     const setOpen = open => {
@@ -2309,9 +2404,11 @@ function openSubject(subject, initialChapterIdx, subMode) {
       toggle.querySelector('.sr-only').textContent = `${label}。按一下${open ? '收起' : '展开'}全部场次`;
     };
     toggle.addEventListener('click', () => {
+      if (list.hidden && window.UECAlarm) window.UECAlarm.close();   // 时间表与闹钟只开一个
       setOpen(list.hidden);
       if (typeof playSound === 'function') playSound('pop');
     });
+    window.closeExamList = () => setOpen(false);
     const onEsc = e => {
       if (e.key === 'Escape' && !list.hidden) { setOpen(false); toggle.focus(); }
     };
@@ -3493,6 +3590,8 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
 </script>
 <script src="/js/exam-timetable.js"></script>
+<script src="/js/alarm-common.js"></script>
+<script src="/js/exam-alarm.js"></script>
 <script src="/js/orbit-subjects.js"></script>
 <script src="/js/theme.js"></script>
 <script src="/js/notes.js"></script>
@@ -3503,6 +3602,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
 <script src="/js/chapter-test.js"></script>
 <script src="/js/sync.js"></script>
 <script src="/js/sync-ui.js"></script>
+<script src="/js/devlog.js"></script>
 <script src="/js/math-render.js"></script>
 </body>
 </html>

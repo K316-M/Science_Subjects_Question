@@ -22,10 +22,12 @@
 | 荧光笔 | 在做答题的题干与参考答案上划重点 |
 | 题目档 | 勾选章节或题目，整理成 PDF 下载或打印 |
 | 统考时间表 | 首页显示最近的一科；点开有全部场次与试卷一／试卷二的时间 |
+| 统考闹钟 | 日历旁的闹钟：替任一科设提醒（每天或只响一次），时间到装置跳出「物理还有 3 天 5 小时就要考了~」，网站关着也会响；四种音效可选 |
 | 护眼模式 | 深夜读书用的暖色深色主题，跟随系统或手动切换 |
 | 同步码 | 不用帐号，用一组同步码（可扫 QR）在手机与电脑之间同步进度与笔记；两边的笔记会合并，不会互相盖掉 |
 | 单题分享 | 每题右下角「分享」：手机叫出 WhatsApp 这类分享选单，电脑复制链接；同学点开直接到那一题 |
 | 网页问题申诉 | 发现题目或画面有错可以回报；处理好之後，小精灵会飞出来通知 |
+| 更新日志 | 首页工具列「日志」列出每一版加了什么，有新版会亮红点（你在 Actions 跑「发布更新日志」发新的一篇） |
 
 ## 题目怎么进来
 
@@ -53,7 +55,7 @@ AI 产出的每一题都要经过你按「采纳」才会上线。已上线的�
 ```
 index.html · js/ · css/ · assets/ · images/     网站本体（会部署）
 papers/ · data/                                 题库与申诉处理结果（网站会读）
-api/                                            Vercel 接口：登录、审题、改题、AI 批改与讲解、同步
+api/                                            Vercel 接口：登录、审题、改题、AI 批改与讲解、同步、统考闹钟
 dev/                                            开发者工作台
 
 drafts/                                         ← 你放要录的题目档
@@ -86,7 +88,8 @@ docs/                                           文件（见下面）
 | Vercel | `DEV_USERNAME` `DEV_PASSWORD` `DEV_SESSION_SECRET` | 开发者工作台登录（必填） |
 | Vercel | `GITHUB_TOKEN` | /dev 的采纳、改题、上传配图、发布申诉结果 |
 | Vercel | `GEMINI_API_KEY` | 做答题的 AI 批改、选择题的 AI 讲解 |
-| Vercel | `UPSTASH_REDIS_REST_URL` `UPSTASH_REDIS_REST_TOKEN` | 跨装置同步、AI 的次数限制 |
+| Vercel | `UPSTASH_REDIS_REST_URL` `UPSTASH_REDIS_REST_TOKEN` | 跨装置同步、AI 的次数限制、统考闹钟 |
+| Vercel | `ALARM_CRON_SECRET`（另外要设 cron-job.org） | 统考闹钟在网站关着时也会响 |
 | GitHub Actions | `GEMINI_API_KEY2`（没设就用 `GEMINI_API_KEY`） | AI 录题与 AI 出题 |
 
 ## 本机预览

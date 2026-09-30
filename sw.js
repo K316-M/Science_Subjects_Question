@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uec-science-cache-v20';
+const CACHE_NAME = 'uec-science-cache-v21';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -16,8 +16,11 @@ const APP_SHELL = [
   '/js/review.js',
   '/js/chapter-test.js',
   '/js/exam-timetable.js',
+  '/js/alarm-common.js',
+  '/js/exam-alarm.js',
   '/js/sync.js',
   '/js/sync-ui.js',
+  '/js/devlog.js',
   '/js/theme.js',
   '/js/math-render.js',
 ];
@@ -97,4 +100,33 @@ self.addEventListener('fetch', (event) => {
       // 浏览器会拿一整份 HTML 当图片、当程式跑 —— 数学公式卡住、不会退回显示原文
       .catch(() => caches.match(req).then((cached) => cached || (req.mode === 'navigate' ? caches.match('/index.html') : Response.error())))
   );
+});
+
+// 统考闹钟（api/alarm-tick.js 推播过来的）：跳出通知，网站关着也会。
+// 网站正开着、看得到的话，系统通知不出声，改由网页（js/exam-alarm.js）播学生选的音效
+self.addEventListener('push', (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch (e) {}
+  const title = data.title || '统考闹钟';
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    // 只叫一个分页播音效（开了好几个分页也只响一次），优先正在看的那个
+    const page = list.find((c) => c.visibilityState === 'visible') || list[0];
+    if (page) page.postMessage({ type: 'uec-alarm', title, body: data.body || '', tag: data.tag });
+    return self.registration.showNotification(title, {
+      body: data.body || '',
+      tag: data.tag || 'uec-alarm',
+      renotify: true,
+      icon: '/assets/icons/android-chrome-192x192.png',
+      silent: list.some((c) => c.visibilityState === 'visible'),
+    });
+  }));
+});
+
+// 点通知：网站开着就切过去，没开就打开首页
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    const open = list.find((c) => 'focus' in c);
+    return open ? open.focus() : self.clients.openWindow('/');
+  }));
 });
