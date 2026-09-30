@@ -209,32 +209,6 @@
       }
     },
     {
-      "id": "physics_gen_8590f5c7",
-      "subject": "physics",
-      "type": "mcq",
-      "chapter_id": "chap17",
-      "chapter_title": "第十七章：棱镜与透镜",
-      "q": "一个焦距为 20 cm 的凸透镜与一个焦距为 50 cm 的凹透镜紧贴组合在一起。关于这个透镜组的性质，下列叙述何者正确？",
-      "options": [
-        "A. 该透镜组为发散透镜，总焦距为 33.3 cm",
-        "B. 该透镜组为会聚透镜，总焦距为 70.0 cm",
-        "C. 该透镜组的光焦度（屈光度）为 +3.0 D",
-        "D. 该透镜组的光焦度（屈光度）为 -3.0 D"
-      ],
-      "answer": 2,
-      "explanation": "考点：薄透镜组合的焦距与光焦度计算。根据公式 $\\frac{1}{F} = \\frac{1}{f_1} + \\frac{1}{f_2}$，注意凹透镜焦距取负值。$\\frac{1}{F} = \\frac{1}{20} - \\frac{1}{50} = \\frac{5-2}{100} = \\frac{3}{100} \\text{ cm}^{-1}$。因此组合焦距 $F = +\\frac{100}{3} \\text{ cm} \\approx +33.3 \\text{ cm}$。由于 $F$ 为正值，它是会聚透镜（凸透镜性质）。光焦度 $P = \\frac{1}{F(\\text{m})} = \\frac{1}{0.333 \\text{ m}} = +3.0 \\text{ D}$。选项 A 错在透镜性质，B 错在焦距算法（不能直接相加），D 错在正负号。",
-      "origin": "ai_generated",
-      "answer_source": "generated",
-      "needs_expert_check": true,
-      "flags": [],
-      "generated_at": "2026-09-29T13:29:58.079450+00:00",
-      "syllabus_used": true,
-      "review": {
-        "ai_answer": 2,
-        "reason": "凸透镜与凹透镜紧贴组合，总光焦度为两透镜光焦度之和，即 +5.0 D - 2.0 D = +3.0 D。"
-      }
-    },
-    {
       "id": "physics_gen_0d24a0b5",
       "subject": "physics",
       "type": "mcq",
