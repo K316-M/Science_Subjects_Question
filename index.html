@@ -10,10 +10,10 @@
   <meta property="og:type" content="website">
 
   <link rel="manifest" href="/manifest.json">
-  <!-- 网页图标：分页用的 16／32 是从 512 那张裁掉白边再缩的（原图的白边占四成，16px 时只剩一团蓝）；
-       装到手机桌面用 apple-touch-icon（iPhone）和 manifest.json 的 192／512（Android）。档案都在 assets/icons/ -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <!-- 网页图标：分页用的 16／32 与桌面用的 apple-touch-icon（iPhone）、manifest.json 的 192／512（Android）
+       都从 assets/icons/logo.svg 输出。分页图标的 ?v= 是 FAVICON_VERSION：换图後三个 html 一起加一，浏览器才不会一直拿快取的旧图 -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png?v=2">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png?v=2">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
   <meta name="theme-color" content="#059669">
   <script>
