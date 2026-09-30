@@ -26,7 +26,10 @@
 | 各科背景光团的颜色 | `index.html` | `SUBJECT_THEME` 的 `blobA` `blobB` | | | 🟢 |
 | 背景插画的浓淡 | `index.html` | `.custom-photo-layer` | | 见 [OPERATIONS 七·背景的浓淡](OPERATIONS.md#背景的浓淡) | 🟢 |
 | 护眼模式背景水彩的亮度 | `scripts/scene/build_scene.py` | `NIGHT_K` | `0.32` | 改完要重跑脚本，见 [OPERATIONS 七](OPERATIONS.md#护眼模式的颜色) | 🟡 |
-| 网站图标（原子＋书）的颜色：导航列中间的徽章、首页轨道中心 | `index.html`（白天）、`css/night.css`（护眼） | `--logo-orbit`（轨道、电子）`--logo-core`（原子核）`--logo-page`（书页）`--logo-cover`（封面） | 白天 `#0c88ea` `#fbaa1c` `#65b9fc` `#114889`；护眼 `#8bbbe6` `#e2ab54` `#6c9bcc` `#4a7ab0` | 护眼那组别用白天的深蓝，封面会在深底上看不见；首页球心会跟著科目变色（物理是蓝的），改完看一下物理 | 🟢 |
+| 网站图标（学士帽）的颜色：导航列中间的徽章、首页轨道中心 | `index.html`（白天）、`css/night.css`（护眼） | `--logo-ink`（线条）`--logo-paper`（帽身、车轮、灯泡）`--logo-phys`（帽板左半）`--logo-math`（帽板右半）`--logo-bio` `--logo-bio2`（DNA）`--logo-chem`（原子）`--logo-spark`（电子） | 白天 `#3e4b52` `#ffffff` `#93c2c1` `#efe6a3` `#3f9a66` `#8fd0a4` `#8a78c8` `#e9cf63`；护眼线条换米白 `#e6dfd1`、帽身 `#34302a`，其他压暗一档 | 单色、不用渐层。/dev 与手机桌面图示用的 `assets/icons/logo.svg` 是固定颜色，要一起换的话见「五、换网页图标」 | 🟢 |
+| 首页轨道中心的底色与框 | `css/orbit.css` | `.orbit-core {` | 纸色 `#fffdf8`＋细墨线框；指到哪一科，框与外圈染成那一科的颜色 | 护眼的在 `css/night.css` 搜 `.orbit-core` | 🟢 |
+| 轨道球里的四科图案（DNA、原子、电路＋小车、黄金螺线） | `js/orbit-subjects.js` | `MOTIFS` | 48×48 的 SVG，和网站图标同一套笔触 | 各部位的颜色在 `css/orbit.css`「球里的科目图案」那一段（`.m-` 开头） | 🟢 |
+| 轨道球图案的墨线颜色 | `css/orbit.css`（白天）、`css/night.css`（护眼） | `--motif-ink` | 白天 `#3e4b52`、护眼 `#e6dfd1` | 和网站图标的 `--logo-ink` 同色 | 🟢 |
 | 护眼模式的笔记画布颜色 | `css/night.css` | `--n-note-paper` | `#2c2924`（深色纸） | 调亮要重算下面五支笔的对比，别低於 4.5:1 | 🟡 |
 | 护眼模式的五支笔颜色 | `js/notes.js` | `NIGHT_INK` | 黑→米白、红→`#fb7185`、蓝→`#7cb4ff`、绿→`#4fd1a5`、橙→`#f7c35c` | 只改右边（夜间色）就好 | 🔴 左边要跟 `index.html` 五个色点的 `data-ink` 一样；以後改白天笔色时，旧颜色那一列要留著（旧笔记存的是旧颜色，删掉的话夜里会变回深色、看不见） |
 | 直式背景（手机、平板、iPad 横放）底图最多露出多宽 | `js/scene-assets.js` | `TALL_PLATE_SPAN` | `0.62`（底图中间 62%） | 调大：iPad 横放、5:4 屏幕会冒出第二个透镜／分子团；调小：底图放大变糊、下方山丘变大。改完要看 1024×768 和 1280×1024 | 🟡 |
@@ -82,6 +85,7 @@
 |---|---|---|---|---|
 | **小精灵的所有动作时间**（多久打瞌睡、多久眨一次眼、挥手多久、说谢谢後停多久…） | `js/feedback.js` | `SPRITE_TIMING` | 全部集中在这一块，每项都有注解 | 🟢 |
 | 首页轨道绕圈速度 | `js/orbit-subjects.js` | `IDLE_SPEED` | `4`（度/秒，约 90 秒一圈） | 🟢 |
+| 轨道球图案指到／点下去时动多快 | `css/orbit.css` | `mTwist`（DNA）`mSpin`（电子、车轮）`mDrive`（小车）`mFlow`（电流）`mPull`（牵引力箭头）`mDraw`（螺线）；`.orbit-node.is-selected .m-` 开头那几行是点下去时的速度 | 指到：DNA 1.4 秒、电子 3.2–5.6 秒一圈、电流 0.8 秒、螺线 2.4 秒；点下去约快一倍 | 🟢 平常不动；开了「减少动态」的装置一直不动 |
 | 点圆球後转到正上方的时间 | `js/orbit-subjects.js` | `SNAP_MS` | `760` 毫秒 | 🟢 |
 | 点「有新题」提示框後，题卡从远处滑到定位的时间 | `index.html` | `NEW_TIP_PAN_MS` | `450` 毫秒 | 🟢 太长会像卡住；开了「减少动态」的装置不滑 |
 | 背景音乐音量 | `index.html` | `MUSIC_VOLUME` | `0.35`（0～1，iPhone／iPad 也照这个） | 🟢 |
@@ -172,7 +176,7 @@
 | 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](../syllabus/README.md) |
 | 换背景图 | `assets/visual/<科目>/` | [assets/README.md](../assets/README.md) |
 | 换背景音乐 | `source/audio/<科目>/ambient.mp3`（上传就好） | 🟢 「背景音乐自动处理」工作流会剪静音、做无缝循环、调音量，推到 `assets/audio/`；档名一定要叫 `ambient` |
-| 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。分页那两张要先把多余白边裁掉再缩，不然 16px 只剩一团色块。浏览器会快取图标，换完可能要重开分页或清快取才看得到。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是另外重画的 SVG，不会跟著这 5 个档变：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
+| 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。现在这五张是从 `assets/icons/logo.svg` 输出的：16／32 透明底、铺满；180／192／512 纸色底 `#fffdf8`、图占 84%（iPhone 会把透明的地方填黑）。学士帽的车子、电路在 16px 只剩一顶彩色帽子的轮廓，是尺寸限制。浏览器会快取图标，换完可能要重开分页或清快取才看得到。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是 SVG：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |
 | 数学公式排版程式（KaTeX）换新版 | `vendor/katex/` | 🟡 照 `vendor/katex/README.md` 换掉同名档案；只留 `.woff2` 字型。字型档有增减的话，`sw.js` 的 `KATEX_FONTS` 也要跟着改（离线下载用） |
 | 题目档下载 PDF 的程式（html2canvas、jsPDF）换新版 | `vendor/pdf/` | 🟢 照 `vendor/pdf/README.md` 换掉同名档案、改里面写的版本号；档名不变的话 `js/archive.js` 的 `PDF_LIBS` 不用动 |
