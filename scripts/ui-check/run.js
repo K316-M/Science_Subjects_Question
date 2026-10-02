@@ -368,6 +368,42 @@ async function run() {
     await ctx.close();
   });
 
+  await section('申诉', async () => {
+    // 申诉先送本站的 /api/feedback（伺服器挡洗版後才转寄 Formspree），浏览器不直接打 Formspree；
+    // 伺服器说这一小时送太多则时，要把原因告诉学生，不是只说「网络问题」
+    const G = '申诉';
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    await ctx.addInitScript(() => localStorage.setItem('UEC_TOUR_v1', JSON.stringify({ home: 1, study: 1, test: 1, notes: 1, archive: 1, feedback: 1, explain: 1 })));
+    const posts = []; let reply = { status: 200, json: { ok: true } };
+    await ctx.route('**/api/feedback', r => { posts.push({ body: r.request().postDataJSON(), device: r.request().headers()['x-uec-device'] }); r.fulfill(reply); });
+    const page = await ctx.newPage();
+    const errors = []; page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
+    const outside = []; page.on('request', q => { if (/formspree\.io/.test(q.url())) outside.push(q.url()); });
+    await page.goto(URL_); await page.waitForTimeout(800);
+    await page.evaluate(() => openFeedbackView()); await page.waitForTimeout(300);
+    const limits = await page.evaluate(() => ({ text: document.getElementById('fbText').maxLength, contact: document.getElementById('fbContact').maxLength,
+      sprite: document.getElementById('spriteIssueText').maxLength }));
+    check(G, '文字框有字数上限（和伺服器一样 2000、联络方式 100）', limits.text === 2000 && limits.sprite === 2000 && limits.contact === 100, JSON.stringify(limits));
+
+    await page.fill('#fbText', '第三章错题本打开是空白的');
+    await page.click('#fbSubmitBtn'); await page.waitForTimeout(400);
+    const p1 = posts[0] || {};
+    const ok1 = await page.evaluate(() => document.getElementById('fbSubmitResult').innerText);
+    check(G, '送到本站 /api/feedback，带装置码与处理码', posts.length === 1 && /^[A-Za-z0-9_-]{16,64}$/.test(p1.device || '') && /^UECFB:/.test((p1.body || {}).devCode || '')
+      && (p1.body || {}).text === '第三章错题本打开是空白的', JSON.stringify(p1));
+    check(G, '送达後显示「已送达管理员」', /已送达管理员/.test(ok1), ok1);
+
+    reply = { status: 429, json: { ok: false, error: 'rate_limited', message: '这一小时已经送出 3 则申诉了，40 分钟後再按「重新发送」。' } };
+    await page.fill('#fbText', '另一个问题：笔记页按钮没反应');
+    await page.click('#fbSubmitBtn'); await page.waitForTimeout(400);
+    const over = await page.evaluate(() => ({ box: document.getElementById('fbSubmitResult').innerText,
+      sent: JSON.parse(localStorage.getItem('UEC_FEEDBACK_v1')).reports[0].sent }));
+    check(G, '送太多则：说出原因与等几分钟，申诉留在浏览器、标成未送出', /3 则申诉/.test(over.box) && /40 分钟/.test(over.box) && over.sent === false, JSON.stringify(over));
+    check(G, '浏览器不直接连 Formspree', outside.length === 0, outside[0]);
+    check(G, '没有 JS 错误', errors.length === 0, errors[0]);
+    await ctx.close();
+  });
+
   await section('单题分享', async () => {
     // 同学点「网址/#q=科目/章节id/m题号」：直接到那一题（题号是题库里的位置，前面有下架的题也对得上）；
     // 按分享：没有系统分享选单就复制链接；下架的题要说明，不是停在别题上装没事

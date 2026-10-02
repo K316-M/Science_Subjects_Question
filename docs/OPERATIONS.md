@@ -136,6 +136,7 @@ https://science-subjects-question.vercel.app/dev/#pending
 
 ```
 学生在网站上提交问题
+  ↓ 网站伺服器（api/feedback.js）先挡洗版：每台装置每小时 3 则、同一个网络 10 则、同样内容一天只寄一次
   ↓ Formspree 寄一封信到你信箱
 信里有一段「开发者代码」，形如 UECFB:xxxxx
   ↓ 打开 https://science-subjects-question.vercel.app/dev/ → 申诉处理
@@ -275,6 +276,7 @@ Claude 每次做了新功能，PR 说明最後会附一段「更新日志草稿�
 | `UPSTASH_REDIS_REST_URL` | 选填 | 跨装置同步要用，见下方 |
 | `UPSTASH_REDIS_REST_TOKEN` | 选填 | 同上 |
 | `GEMINI_API_KEY` | 选填 | 做答题的「交给 AI 批改」与选择题的「AI 讲给我听」要用（和 GitHub Actions 那把可以是同一把）。没设就显示「还没开启」，其他功能照常 |
+| `FEEDBACK_FORMSPREE_ID` | 选填 | 申诉转寄用的 Formspree 表单编号（`formspree.io/f/` 後面那串）。没设就用旧表单，但旧编号已经公开过，见第九节 |
 | `ALARM_CRON_SECRET` | 选填 | 统考闹钟「网站关着也会提醒」要用，随便一串够长的随机字；另外要设 cron-job.org，见下方「设定统考闹钟」。没设的话，闹钟只在开着网站时响 |
 
 > **AI 的额度**：每台装置每小时最多批改 20 次、讲解 30 次；同一个网络（全校共用的 Wi-Fi 对外是同一个 IP）另有合计上限 200／300 次，挡有人换装置码刷额度。AI 没答出来的那次不扣。有设 Upstash 才能跨服务器准确计数，没设只能各台服务器各算。
@@ -819,6 +821,21 @@ node run.js
 | 想换登录密码 | Vercel 改 `DEV_PASSWORD` → Redeploy（所有旧登录立刻失效） |
 | 怀疑 GitHub 令牌外泄 | GitHub → Settings → Developer settings → Tokens → **Revoke**，重新产一个填回 Vercel |
 | 想让所有装置登出 | 改 `DEV_SESSION_SECRET` → Redeploy |
+| 申诉信箱被灌信（同一种垃圾信一直来） | 照下面「申诉防洗版」换一个新的 Formspree 表单 |
+
+**申诉防洗版**：学生站的申诉不再直接打 Formspree，而是先送到本站的 `/api/feedback`：
+只收本站页面送来的，每台装置每小时 3 则、同一个网络（全校 Wi-Fi）合计 10 则，同一台装置一模一样的内容一天只寄一次，字数最多 2000。
+次数要设 Upstash 才能跨服务器准确计数（同 AI 讲解）。
+
+但**旧的 Formspree 表单编号已经写在以前公开的程式里**，有心人可以绕过网站直接打 Formspree。要彻底堵住：
+
+1. Formspree 登入 → 开一个新表单（寄到同一个信箱）→ 复制网址 `https://formspree.io/f/` 後面那串
+2. Vercel → Settings → Environment Variables 加 **`FEEDBACK_FORMSPREE_ID`**＝那串（勾 Production）→ Deployments → Redeploy
+3. 网站送一则测试申诉，确认新表单收到信
+4. 回 Formspree 把**旧表单删掉**（编号 `mdekopgq`）
+
+新编号只放在 Vercel，不会出现在网页或仓库里。
+
 
 **这个仓库目前是私有的**（你已经改过来了），所以：
 
@@ -892,7 +909,7 @@ papers/*.json           各科正式题库
 papers/pending_approval.json   待审区（AI 产物先进这里）
 data/resolved_issues.json      申诉处理结果（由工作台写入）
 data/devlog.json        更新日志（「发布更新日志」工作流写入）
-api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改与讲解、同步、统考闹钟）
+api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改与讲解、同步、统考闹钟、申诉转寄）
 dev/                    开发者工作台（独立的深色网站）
 
 ── 你放东西的地方（不部署）──
