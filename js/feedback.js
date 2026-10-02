@@ -3,13 +3,15 @@
    ---------------------------------------------------------------------------
    申诉的往返流程：
      1. 用户提交问题 → 存进他自己浏览器的 localStorage，拿到问题编号，
-        同时通过 Formspree 自动寄到管理员邮箱（邮件里附带一行「开发者处理码」）
+        同时送到本站的 /api/feedback：挡掉洗版後由伺服器转寄 Formspree，寄到管理员邮箱
+        （邮件里附带一行「开发者处理码」）
      2. 管理员登录开发者工作台（/dev/），贴上处理码、写处理说明、一键发布，
         结果会写进仓库的 data/resolved_issues.json
      3. 用户下次打开网站 → 比对本地的待处理问题 → 命中就弹出通知小精灵
    ========================================================================== */
 
-const FEEDBACK_ENDPOINT = 'https://formspree.io/f/mdekopgq';
+// 先到本站伺服器挡洗版再转寄 Formspree（表单编号与次数上限在 api/feedback.js）
+const FEEDBACK_ENDPOINT = '/api/feedback';
 const FEEDBACK_STORAGE_KEY = 'UEC_FEEDBACK_v1';
 const RESOLUTIONS_URL = '/data/resolved_issues.json';
 
@@ -75,32 +77,23 @@ function makeDevCode(report) {
   return 'UECFB:' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-function looksLikeEmail(str) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str || '');
-}
-
+// 回传 { ok, message }：message 是伺服器说没送出的原因（例如这一小时送太多则）
 async function sendReportToAdmin(report) {
-  if (!FEEDBACK_ENDPOINT) return false;
   const payload = {
-    _subject: `独中理科网站问题申诉 ${report.id}`,
-    问题编号: report.id,
-    出问题的位置: describeContext(report.location),
-    问题描述: report.text,
-    联络方式: report.contact || '（未填写）',
-    开发者处理码: makeDevCode(report),
+    id: report.id,
+    text: report.text,
+    contact: report.contact,
+    where: describeContext(report.location),
+    devCode: makeDevCode(report),
   };
-  // Formspree 会把 email 字段设为回复地址，格式不合法会整笔拒收，所以只在像邮箱时才带
-  if (looksLikeEmail(report.contact)) payload.email = report.contact;
-
+  // 次数按装置算（同 AI 讲解的装置码），全校共用一个 IP 也不会互相卡到
+  const headers = typeof aiHeaders === 'function' ? aiHeaders() : { 'Content-Type': 'application/json' };
   try {
-    const res = await fetch(FEEDBACK_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    return res.ok;
+    const res = await fetch(FEEDBACK_ENDPOINT, { method: 'POST', headers, body: JSON.stringify(payload) });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok && data.ok !== false, message: res.ok ? '' : String(data.message || '') };
   } catch (e) {
-    return false;
+    return { ok: false, message: '' };
   }
 }
 
@@ -170,13 +163,13 @@ async function submitFeedback() {
   saveFeedbackStore(store);
 
   if (btn) { btn.disabled = true; btn.textContent = '发送中…'; }
-  const sent = await sendReportToAdmin(report);
+  const { ok: sent, message } = await sendReportToAdmin(report);
   markReportSent(report.id, sent);
   if (btn) { btn.disabled = false; if (window.setBtnLabel) window.setBtnLabel(btn, 'send', '提交申诉'); else btn.textContent = '提交申诉'; }
 
   textEl.value = '';
   if (typeof playSound === 'function') playSound(sent ? 'correct' : 'pop');
-  showSubmitResult({ ...report, sent });
+  showSubmitResult({ ...report, sent }, message);
   renderMyReports();
 }
 
@@ -195,7 +188,7 @@ function buildReportPlainText(report) {
   ].filter(line => line !== '').join('\n');
 }
 
-function showSubmitResult(report) {
+function showSubmitResult(report, reason) {
   const box = document.getElementById('fbSubmitResult');
   if (!box) return;
   const plain = buildReportPlainText(report);
@@ -214,7 +207,7 @@ function showSubmitResult(report) {
           <span class="fb-status pending"><svg class="ic" aria-hidden="true"><use href="#i-alert"></use></svg>自动发送失败</span>
           <span class="fb-report-id">${escapeFb(report.id)}</span>
         </div>
-        <div class="fb-report-text">问题已记录在你的浏览器里，但暂时没能送出（可能是网络问题）。请用下面任一方式发给管理员：</div>
+        <div class="fb-report-text">问题已记录在你的浏览器里，但${escapeFb(reason || '暂时没能送出（可能是网络问题）。')}也可以用下面的方式发给管理员：</div>
         <div style="display:flex; gap: 8px; margin-top: 12px; flex-wrap:wrap;">
           <button class="btn-ghost-retro" onclick="copyReportText(${fbJsArg(report.id)})"><svg class="ic" aria-hidden="true"><use href="#i-copy"></use></svg>复制问题内容</button>
           <a class="btn-ghost-retro" style="text-decoration:none; display:inline-block;" href="${mailto}">✉️ 用邮件发送</a>
@@ -227,9 +220,9 @@ function showSubmitResult(report) {
 async function resendReport(id) {
   const report = loadFeedbackStore().reports.find(r => r.id === id);
   if (!report) return;
-  const sent = await sendReportToAdmin(report);
+  const { ok: sent, message } = await sendReportToAdmin(report);
   markReportSent(id, sent);
-  showSubmitResult({ ...report, sent });
+  showSubmitResult({ ...report, sent }, message);
   renderMyReports();
 }
 
@@ -612,14 +605,14 @@ async function submitSpriteNewIssue() {
 
   ta.value = '';
   closeSpriteNewIssue();
-  const sent = await sendReportToAdmin(report);
+  const { ok: sent, message } = await sendReportToAdmin(report);
   markReportSent(report.id, sent);
   if (typeof playSound === 'function') playSound(sent ? 'correct' : 'pop');
   // 送出成功开心一下（alert 会挡住画面，所以先换姿势再跳提示）
   if (sent) setSpritePose('happy', SPRITE_TIMING.happyOnSend);
   alert(sent
     ? `已把新问题送给管理员（编号 ${report.id}），谢谢！`
-    : `新问题已记录（编号 ${report.id}），但暂时没能送出。\n请到「网页问题申诉」页面点「重新发送」。`);
+    : `新问题已记录（编号 ${report.id}），但${message || '暂时没能送出。'}\n可以到「网页问题申诉」页面点「重新发送」。`);
   renderMyReports();
 }
 

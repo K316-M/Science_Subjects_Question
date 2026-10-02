@@ -1282,11 +1282,11 @@
       </div>
       <div class="fb-field">
         <label class="fb-label" for="fbText">问题描述</label>
-        <textarea class="fb-textarea" id="fbText" placeholder="例：点第 3 章的错题本，画面一片空白，什么都没有出现。"></textarea>
+        <textarea class="fb-textarea" id="fbText" maxlength="2000" placeholder="例：点第 3 章的错题本，画面一片空白，什么都没有出现。"></textarea>
       </div>
       <div class="fb-field">
         <label class="fb-label" for="fbContact">联络方式（选填）</label>
-        <input class="fb-input" id="fbContact" placeholder="邮箱或 WhatsApp，方便管理员追问细节">
+        <input class="fb-input" id="fbContact" maxlength="100" placeholder="邮箱或 WhatsApp，方便管理员追问细节">
       </div>
       <button class="btn-primary-retro" id="fbSubmitBtn" onclick="submitFeedback()"><svg class="ic" aria-hidden="true"><use href="#i-send"></use></svg><span class="btn-txt">提交申诉</span></button>
       <div id="fbSubmitResult" style="margin-top: 14px;"></div>
@@ -1385,7 +1385,7 @@
       <button class="note-close-btn" onclick="closeSpriteNewIssue()" aria-label="关闭">×</button>
     </div>
     <div style="padding: 16px;">
-      <textarea class="fb-textarea" id="spriteIssueText" placeholder="把还没解决、或者新发现的问题写在这里…"></textarea>
+      <textarea class="fb-textarea" id="spriteIssueText" maxlength="2000" placeholder="把还没解决、或者新发现的问题写在这里…"></textarea>
       <div style="display:flex; gap: 8px; justify-content:flex-end; margin-top: 12px;">
         <button class="btn-ghost-retro" onclick="closeSpriteNewIssue()">取消</button>
         <button class="btn-primary-retro" onclick="submitSpriteNewIssue()">提交</button>

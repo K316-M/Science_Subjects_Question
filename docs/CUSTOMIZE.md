@@ -160,7 +160,11 @@
 | 删掉的笔记要记住多久（防止另一台装置同步回来） | `js/sync.js` | `NOTE_TOMBSTONE_DAYS` | `365` | 🟢 |
 | 错几次标成「顽固」 | `js/review.js` | `STUBBORN_LAPSES` | `3` | 🟢 |
 | 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～6，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize`、`check_devlog` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
-| 申诉要寄到哪个信箱 | `js/feedback.js` | `FEEDBACK_ENDPOINT` | Formspree 表单 | 🟡 换成你自己的 Formspree 网址 |
+| 申诉要寄到哪个信箱 | Vercel 环境变数 `FEEDBACK_FORMSPREE_ID`（没设才用 `api/feedback.js` 的旧表单） | `LEGACY_FORM_ID` | 旧表单 `mdekopgq`（编号写在公开过的程式里，谁都能直接灌） | 🟡 到 Formspree 开一个新表单，把网址 `formspree.io/f/` 後面那串填进 `FEEDBACK_FORMSPREE_ID` → Redeploy → 再把旧表单删掉。步骤见 [OPERATIONS 九](OPERATIONS.md#九安全) |
+| 申诉：每台装置每小时最多送几则 | `api/feedback.js` | `PER_DEVICE_PER_HOUR` | `3` | 🟢 超过时学生会看到「几分钟後再按重新发送」，申诉留在他的浏览器 |
+| 申诉：同一个网络（全校 Wi-Fi）每小时合计几则 | `api/feedback.js` | `PER_NETWORK_PER_HOUR` | `10` | 🟡 挡有人换装置码洗版；Formspree 免费方案每月能收的信有限，调太高等於没挡 |
+| 申诉：问题描述最多几个字 | `api/feedback.js` | `MAX_TEXT` | `2000` | 🟡 `index.html` 两个申诉文字框（`fbText`、`spriteIssueText`）的 `maxlength` 要一起改 |
+| 申诉：同样内容多久内不重寄 | `api/feedback.js` | `DUPLICATE_SECONDS` | 一天 | 🟢 同一台装置送一模一样的内容（例如连按、按「重新发送」）只寄一封 |
 | 单题分享链接的网址格式 | `index.html` | `SHARE_LINK` | `网址/#q=科目/章节id/m题号`（做答题是 `s题号`），题号是题库里的位置 | 🔴 改了格式，以前分享出去的链接全都打不开；题号靠「题目只下架、不删」才不会指错题 |
 | 暂时关掉某一科（首页那颗球变灰、点不进去） | `js/orbit-subjects.js` | `SUBJECTS` 里那一科的 `enabled` | 四科都是 `true`（数学已开放） | 🟡 改 `false` 时 `note` 写「尚未开放」；要打开的科目，`papers/<科目>_question_bank.json` 要先有章节 |
 
@@ -195,6 +199,7 @@ Vercel 与 GitHub 的环境变数、金钥放哪里，见 [OPERATIONS 四](OPERA
 - **GitHub Actions `GEMINI_API_KEY2`**：AI 录题、AI 出题用这把；没设才退回 Actions 的 `GEMINI_API_KEY`。
   要换名字，改 `.github/workflows/generate_questions.yml` 与 `.github/workflows/ingest_paper.yml` 里的 `GEMINI_API_KEY2`（🟡 两个档一起改）。
 - **Vercel `GITHUB_TOKEN`**：/dev 的采纳、改题、上传配图要用（Contents: Read and write）。
+- **Vercel `FEEDBACK_FORMSPREE_ID`**：申诉转寄用的 Formspree 新表单编号；没设就继续用旧的（旧的编号已经公开过，挡不住直接灌信）。步骤见 [OPERATIONS 九](OPERATIONS.md#九安全)。
 - **Vercel `ALARM_CRON_SECRET` ＋ cron-job.org**：统考闹钟在网站关着时也会响要用；没设的话只在开着网站时响。
   步骤见 [OPERATIONS 四·设定统考闹钟](OPERATIONS.md#设定统考闹钟网站关着也会提醒)。
 
