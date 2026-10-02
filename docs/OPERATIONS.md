@@ -56,6 +56,9 @@ GitHub → Actions → 「AI 依考纲出题 (Generate Questions)」→ Run work
 - 题目直接进待审区（不开 PR），报告在 Actions 那次执行的摘要
 - **每周自动跑的那次，待审区还有上一批 AI 出的题没审完就先不出**，免得越堆越多、同几章重复出；手动跑不受影响
 - 放了考纲，出题依官方考点；没放就只依章节标题（质量差很多）
+- 化学另外附上那一章的「出题重点与易错点」（`syllabus/chemistry-focus.md`）和老师讲义（`syllabus/chemistry-notes/`），
+  报告会写「（附出题重点）（附老师讲义）」。老师 PPT 改了或加了新的，重跑 `python3 scripts/ppt_notes.py chemistry source/*.pptx` 再 commit，
+  详见 [syllabus/README.md](../syllabus/README.md#老师讲义与出题重点)
 - ⚠️ **AI 写的理科题可能科学性出错**。每题都会请 AI 不看答案重做一次，对不上的才标出来；复核用的是同一家的模型，两次都错的题它抓不到，一键采纳前请扫一眼
 
 ### 模型怎么挑
@@ -914,7 +917,8 @@ dev/                    开发者工作台（独立的深色网站）
 
 ── 你放东西的地方（不部署）──
 drafts/<科目>/          要录的题目档（照片、Word、PPT、PDF）
-syllabus/               官方考纲
+syllabus/               官方考纲；<科目>-focus.md 各章出题重点（人写）、<科目>-notes/ 老师讲义（程式产生）
+source/*.pptx           老师的教学 PPT（scripts/ppt_notes.py 整理成讲义）
 source/sprite/          小精灵原图（真正透明的 PNG）
 source/scene/           背景参考图与分层设定（<科目>.png / <科目>.json）
 source/audio/<场景>/    背景音乐原档
