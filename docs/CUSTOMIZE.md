@@ -28,6 +28,7 @@
 | 护眼模式背景水彩的亮度 | `scripts/scene/build_scene.py` | `NIGHT_K` | `0.32` | 改完要重跑脚本，见 [OPERATIONS 七](OPERATIONS.md#护眼模式的颜色) | 🟡 |
 | 网站图标（学士帽）的颜色：导航列中间的徽章、首页轨道中心 | `index.html`（白天）、`css/night.css`（护眼） | `--logo-ink`（线条）`--logo-paper`（帽身、车轮、灯泡）`--logo-phys`（帽板左半）`--logo-math`（帽板右半）`--logo-bio` `--logo-bio2`（DNA）`--logo-chem`（原子）`--logo-spark`（电子） | 白天 `#3e4b52` `#ffffff` `#93c2c1` `#efe6a3` `#3f9a66` `#8fd0a4` `#8a78c8` `#e9cf63`；护眼线条换米白 `#e6dfd1`、帽身 `#34302a`，其他压暗一档 | 单色、不用渐层。/dev 与手机桌面图示用的 `assets/icons/logo.svg` 是固定颜色，要一起换的话见「五、换网页图标」 | 🟢 |
 | 首页轨道中心的底色与框 | `css/orbit.css` | `.orbit-core {` | 纸色 `#fffdf8`＋细墨线框；指到哪一科，框与外圈染成那一科的颜色 | 护眼的在 `css/night.css` 搜 `.orbit-core` | 🟢 |
+| 首页轨道球底下的科目名称、题数的字色（白天） | `css/orbit.css` | `.node-label {` | `#334155` | 别再调浅：标签跟著轨道转，会转到飘动的青绿光团上，以前的 `#475569` 实测只剩 4.16:1（UI 检查有时会红）。水彩预览时用 `.has-scene .node-label`，护眼的在 `css/night.css` | 🟡 |
 | 轨道球里的四科图案（DNA、原子、电路＋小车、黄金螺线） | `js/orbit-subjects.js` | `MOTIFS` | 48×48 的 SVG，和网站图标同一套笔触 | 各部位的颜色在 `css/orbit.css`「球里的科目图案」那一段（`.m-` 开头） | 🟢 |
 | 轨道球图案的墨线颜色 | `css/orbit.css`（白天）、`css/night.css`（护眼） | `--motif-ink` | 白天 `#3e4b52`、护眼 `#e6dfd1` | 和网站图标的 `--logo-ink` 同色 | 🟢 |
 | 护眼模式的笔记画布颜色 | `css/night.css` | `--n-note-paper` | `#2c2924`（深色纸） | 调亮要重算下面五支笔的对比，别低於 4.5:1 | 🟡 |

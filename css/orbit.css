@@ -179,11 +179,12 @@
   transition: stroke-dashoffset .9s cubic-bezier(.22, 1, .36, 1);
 }
 
+/* 标签跟著轨道转，会转到飘动的青绿光团上：用 --text-muted（#475569）不算白光晕实测最低 4.16:1，调深一档 */
 .node-label {
   position: absolute; top: calc(100% + 8px); left: 50%;
   transform: translateX(-50%);
   white-space: nowrap; text-align: center;
-  font-size: 12px; font-weight: 700; color: var(--text-muted, #64748b);
+  font-size: 12px; font-weight: 700; color: #334155;
   z-index: 2;
   text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 1px 2px rgba(255, 255, 255, .95);
   transition: color .35s ease, top .35s ease;
