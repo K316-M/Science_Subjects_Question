@@ -3,8 +3,8 @@
 AI 依考纲出题脚本
 ------------------
 读取 papers/<subject>_question_bank.json 里的官方章节框架，挑出题目最少的章节，
-请 Gemini 依据该章节（以及 syllabus/<subject>.md 里的官方考点，若有）撰写**原创**
-选择题，写入 papers/pending_approval.json，并生成 GENERATION_REPORT.md 供人工审核。
+请 Gemini 依据该章节（以及 syllabus/<subject>.md 里的官方考点、syllabus/<subject>-focus.md 的
+出题重点、syllabus/<subject>-notes/ 里老师讲义的那一章，若有）撰写**原创**选择题，写入 papers/pending_approval.json，并生成 GENERATION_REPORT.md 供人工审核。
 
 与 ingest_drafts.py 的分工：
   - ingest_drafts.py  : 把你拍的真题照片转写成题目（来源是你自己的试卷）
@@ -47,6 +47,7 @@ ONLY_SUBJECT = os.environ.get("ONLY_SUBJECT", "").strip()
 SIMILARITY_LIMIT = 0.82   # 题干与既有题目相似度超过这个值就丢弃，避免换句话重复出题
 PAUSE_WHEN_WAITING = 1     # 每周自动跑时，待审区还有这么多道 AI 出的题没审完就先不出；0＝不管，照样出（手动跑不受影响）
 SYLLABUS_CHAR_LIMIT = 12000   # 考纲塞进提示词的上限；四科目前都在这个数字以内，会整份带上
+NOTES_CHAR_LIMIT = 24000      # 一章老师讲义塞进提示词的上限；化学最长的一章（电化学）约 1.9 万字
 # 出题不用这几级模型：pro、flash 额度都用完就停手，不往下退（2026-09 那批答案错、解析自言自语的题几乎都出自 flash-lite）。
 # () ＝ 照样退到最後一级。录题（转写）不受影响
 GENERATE_SKIP_TIERS = ("flash-lite",)
@@ -138,17 +139,39 @@ def pick_chapters(bank, pending):
     return [sec for _, sec in ranked[:CHAPTERS_PER_RUN]]
 
 
-def build_prompt(subject, section, syllabus, pending=()):
+def load_chapter_guide(subject, chapter_id):
+    """这一章的（出题重点, 老师讲义）：
+    出题重点在 syllabus/<科目>-focus.md 的「## 章节id」那一段（人写的，可以直接改）；
+    老师讲义是 scripts/ppt_notes.py 从 PPT 整理出来的 syllabus/<科目>-notes/<章节id>.md"""
+    focus = notes = ""
+    path = os.path.join(SYLLABUS_DIR, f"{subject}-focus.md")
+    if chapter_id and os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            m = re.search(rf"^## {re.escape(chapter_id)}(?!\d)[^\n]*\n(.*?)(?=^## |\Z)", f.read(), flags=re.M | re.S)
+        focus = m.group(1).strip() if m else ""
+    path = os.path.join(SYLLABUS_DIR, f"{subject}-notes", f"{chapter_id}.md")
+    if chapter_id and os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            notes = re.sub(r"<!--.*?-->", "", f.read(), flags=re.S).strip()
+    return focus, notes
+
+
+def build_prompt(subject, section, syllabus, pending=(), focus="", notes=""):
     label = SUBJECT_LABEL.get(subject, subject)
     avoid = (existing_stems(section) + list(pending))[:12]
     avoid_block = "\n".join(f"- {s[:60]}" for s in avoid) or "（本章目前没有题目）"
     syllabus_block = f"\n【官方考纲节录】\n{syllabus[:SYLLABUS_CHAR_LIMIT]}\n" if syllabus else ""
+    focus_block = f"\n【本章出题重点与易错点】（依老师讲义整理，出题优先考这些、错误选项多用这里的易错点）\n{focus}\n" if focus else ""
+    notes_block = ("\n【老师讲义节录】（学校老师的教学投影片文字，用来对齐课本的讲法、用词、反应条件与重点。"
+                   "可能有笔误、也可能讲得比考纲深：出题范围以考纲为准，答案以正确的科学知识为准；"
+                   "不要照抄里面的例题、思考题、问题解决）\n"
+                   f"{notes[:NOTES_CHAR_LIMIT]}\n") if notes else ""
 
     return f"""你是马来西亚华文独立中学（董总 UEC 高中统考）{label}科的资深命题老师。
 请为以下章节撰写 {PER_CHAPTER} 道**全新原创**的单选题。
 
 【章节】{section.get('title', '')}
-{syllabus_block}
+{syllabus_block}{focus_block}{notes_block}
 【本章已有题目的题干（不可重复、不可改写同一题）】
 {avoid_block}
 
@@ -232,9 +255,10 @@ def process_subject(subject, report_rows):
 
     for section in pick_chapters(bank, pending):
         title = section.get("title", "")
+        focus, notes = load_chapter_guide(subject, section.get("id"))
 
         try:
-            parsed = extract_json_array(call_gemini(build_prompt(subject, section, syllabus, pending.get(section.get("id"), []))))
+            parsed = extract_json_array(call_gemini(build_prompt(subject, section, syllabus, pending.get(section.get("id"), []), focus, notes)))
         except gemini_api.LowTierOnly as e:
             report_rows.append((subject, title, "⏸️ 停手", str(e)))
             break
@@ -289,6 +313,7 @@ def process_subject(subject, report_rows):
 
         if kept:
             report_rows.append((subject, title, "✅ 已生成", f"{kept} 题" + ("（依官方考纲）" if syllabus else "（仅依章节标题）")
+                                + ("（附出题重点）" if focus else "") + ("（附老师讲义）" if notes else "")
                                 + f" · 模型 {model}" + ("（备用）" if backup else "")))
 
     # 整科一次复核，比每章各打一次省呼叫次数

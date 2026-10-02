@@ -115,6 +115,11 @@
 | 新题和旧题多像就当成重复丢掉 | `scripts/generate_questions.py` | `SIMILARITY_LIMIT` | `0.82`（0～1） | 🟡 调低会丢掉更多题 |
 | 每周自动出题：待审区还有几道 AI 题没审完就先不出 | `scripts/generate_questions.py` | `PAUSE_WHEN_WAITING` | `1`（有 1 道就不出） | 🟢 `0`＝不管，照样出；手动跑不受影响 |
 | 离线用：网站装好後先下载哪些档案 | `sw.js` | `OFFLINE_EXTRAS` | 四科题库＋数学公式排版（约 550KB） | 🟡 学生第一次打开就会下载；背景图（每科约 250KB）、音乐（每科约 2MB）要加进来前先想想学生的流量 |
+| 一章老师讲义最多塞多少字进出题提示词 | `scripts/generate_questions.py` | `NOTES_CHAR_LIMIT` | `24000`（化学最长的电化学约 1.9 万字，整章都带上） | 🟢 超过的部分截掉；调太大会让每次呼叫变慢、更快用完额度 |
+| 老师 PPT 的章号要减几才对到题库的章 | `scripts/ppt_notes.py` | `CHAPTER_OFFSET` | 化学 `1`（课本第一章是绪论，题库没有） | 🔴 对错了，Gemini 出第五章时看到的是第六章的讲义；跑完看印出来的对照表 |
+| 哪几份 PPT 不做成讲义、或指定对到哪一章 | `scripts/ppt_notes.py` | `CHAPTER_OVERRIDE` | 不要：绪论、芳香烃精简版、五份习题答案讲解（第二～五章、第12章碳和硅练习题） | 🟢 档名（不含 .pptx）→ 章节 id，写 `None` 就跳过；改完重跑，跳过的那章旧讲义档要自己删 |
+| 讲义里从哪种标题开始算「只有答案」的段落（一直拿掉到下一个正常标题） | `scripts/ppt_notes.py` | `EXERCISE_TITLE` | 选择题、作答题、补充练习、总练习、旧课本练习、练习 | 🟡 「问题解决」「思考题」故意没列（题目在投影片上）；加太宽会把正文一起拿掉 |
+| 出题 AI 看的各章「出题重点与易错点」 | `syllabus/chemistry-focus.md` | `## chap` 开头的那几段 | 化学 34 章都有，依老师 PPT 与习题答案整理 | 🟡 直接改文字就好；🔴 `## chap5` 这种标题要跟题库章节 id 一样，打错那一章就没附重点。讲义（`syllabus/chemistry-notes/`）是程式产生的，别手改，要更正写在这份 |
 | 出题不用哪一级模型（跳过它改试旧版 pro／flash，只剩这一级就停手） | `scripts/generate_questions.py` | `GENERATE_SKIP_TIERS` | `("flash-lite",)` | 🟡 `()`＝照样退到最後一级，题目品质差很多；录题不受影响。想固定用某个模型设 `GEMINI_MODEL` |
 | 答案复核不用哪一级模型（只剩这一级就不复核，标「答案未经 AI 复核」） | `scripts/qa.py` | `CHECK_SKIP_TIERS` | `("flash-lite",)` | 🟡 `()`＝照样用 flash-lite 复核，「答案有疑」会多出一堆它自己算错的误报；出题、录题都用这个复核 |
 | 录题／出题推进待审区时被抢先（/dev 刚采纳）最多重试几次 | `scripts/push_pending.sh` | `TRIES` | `5` | 🟢 通常用不到；全部失败就重跑那个工作流（原档还在 drafts/） |
@@ -178,6 +183,7 @@
 | 改已上线的题、换配图、下架不要的题 | 网站 `/dev` →「题目修改」 | 不用碰 JSON，见 [OPERATIONS 一·4](OPERATIONS.md#4-修改已上线的题) |
 | 改章节名称或顺序 | `papers/<科目>_question_bank.json` 的 `sections[].title` | 🔴 不要改 `id`，学生的进度、笔记、划线都靠它对应 |
 | 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](../syllabus/README.md) |
+| 放老师的教学 PPT（让 AI 出题贴近课堂讲法） | `source/*.pptx`，再跑 `python3 scripts/ppt_notes.py chemistry source/*.pptx` | 🟡 产出 `syllabus/chemistry-notes/` 一章一档，跟着 commit。内容会送给 Gemini；图片不读。见 [syllabus/README.md](../syllabus/README.md#老师讲义与出题重点) |
 | 换背景图 | `assets/visual/<科目>/` | [assets/README.md](../assets/README.md) |
 | 换背景音乐 | `source/audio/<科目>/ambient.mp3`（上传就好） | 🟢 「背景音乐自动处理」工作流会剪静音、做无缝循环、调音量，推到 `assets/audio/`；档名一定要叫 `ambient` |
 | 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。现在这五张是从 `assets/icons/logo.svg` 输出的：16／32 透明底、铺满；180／192／512 纸色底 `#fffdf8`、图占 84%（iPhone 会把透明的地方填黑）。学士帽的车子、电路在 16px 只剩一顶彩色帽子的轮廓，是尺寸限制。🔴 浏览器会一直用快取的旧分页图标：换完 16／32 要把 `index.html`、`dev/index.html`、`dev/login.html` 里 `favicon-32x32.png?v=`、`favicon-16x16.png?v=` 的数字一起加一（现在是 2，`index.html` 搜 `FAVICON_VERSION` 有说明）。已经装到手机桌面的图示要删掉重装才会换。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是 SVG：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
