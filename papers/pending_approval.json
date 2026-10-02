@@ -1,4 +1,161 @@
 {
-  "items": [],
-  "generated_at": "2026-09-30T09:45:58.270935+00:00"
+  "items": [
+    {
+      "id": "chemistry_gen_fdbcd7e7",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第三章：化学方程式与化学计算",
+      "q": "将 0.84 g 铁粉加入到 100 mL、0.20 mol/L 的硝酸银（AgNO₃）溶液中，充分反应后过滤、洗涤并干燥。测得所得滤渣的质量为多少？（相对原子质量：Fe = 56，Ag = 108）",
+      "options": [
+        "A. 2.16 g",
+        "B. 2.44 g",
+        "C. 2.63 g",
+        "D. 3.24 g"
+      ],
+      "answer": 1,
+      "explanation": "本题考查置换反应中的限量试剂判断以及化学计算。首先计算反应物的物质的量：n(Fe) = 0.84 g / 56 g/mol = 0.015 mol；n(Ag⁺) = 0.100 L × 0.20 mol/L = 0.020 mol。铁与硝酸银发生置换反应，由于是在溶液中进行，铁被氧化为二价铁（Fe²⁺），反应方程式为：Fe + 2Ag⁺ → Fe²⁺ + 2Ag。根据方程式，0.015 mol Fe 完全反应需要 0.030 mol Ag⁺，而实际仅有 0.020 mol Ag⁺，因此 Ag⁺ 为限量试剂（限制性反应物）。反应消耗的 Fe 为 0.020 mol × 0.5 = 0.010 mol，剩余的 Fe 为 0.015 mol - 0.010 mol = 0.005 mol；反应生成的 Ag 为 0.020 mol。过滤所得的滤渣包含生成的银和未反应完的铁。滤渣的总质量 = m(Ag) + m(Fe剩余) = (0.020 mol × 108 g/mol) + (0.005 mol × 56 g/mol) = 2.16 g + 0.28 g = 2.44 g。常见易错点：① A项（2.16 g）漏掉了未反应的剩余铁粉；② C项（2.63 g）误以为铁与银离子反应生成 Fe³⁺；③ D项（3.24 g）误判铁为限量试剂，直接用铁的量计算生成的银。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-02T15:54:28.339867+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "0.020 mol AgNO3 与 0.010 mol Fe 反应生成 2.16 g Ag，剩余 0.005 mol Fe（0.28 g），滤渣总质量为 2.44 g。"
+      }
+    },
+    {
+      "id": "chemistry_gen_ccafe46d",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap3",
+      "chapter_title": "第三章：化学方程式与化学计算",
+      "q": "下列反应的离子方程式书写正确的是：",
+      "options": [
+        "A. 铅（Pb）浸入氯化锡（SnCl₂）溶液中：Pb + Sn²⁺ → Pb²⁺ + Sn",
+        "B. 铁粉与稀硫酸反应：2Fe + 6H⁺ → 2Fe³⁺ + 3H₂↑",
+        "C. 氢氧化钡溶液与稀硫酸混合：Ba²⁺ + OH⁻ + H⁺ + SO₄²⁻ → BaSO₄↓ + H₂O",
+        "D. 将氯气通入冷的氢氧化钠溶液中：Cl₂ + 2OH⁻ → Cl⁻ + ClO⁻ + H₂O"
+      ],
+      "answer": 3,
+      "explanation": "本题考查离子方程式的正误判断，涉及金属活动性顺序、反应产物的价态、电荷与原子配平。D项为漂白粉/漂白液的制备原理，氯气在碱性条件下发生歧化反应，电荷守恒与原子守恒均正确。其余选项分析如下：\n- A项错误：根据金属活动性顺序，锡（Sn）的活动性强于铅（Pb），因此铅不能置换出锡，该反应在常温下不能发生；\n- B项错误：铁与稀酸反应只能生成二价铁（Fe²⁺），正确的离子方程式为：Fe + 2H⁺ → Fe²⁺ + H₂↑；\n- C项错误：没有遵循电解质电离出的离子配比。Ba(OH)₂ 与 H₂SO₄ 反应时，Ba²⁺ 与 OH⁻ 的比例必须为 1:2，H⁺ 与 SO₄²⁻ 的比例必须为 2:1，正确的离子方程式为：Ba²⁺ + 2OH⁻ + 2H⁺ + SO₄²⁻ → BaSO₄↓ + 2H₂O。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-02T15:54:28.344614+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "氯气与冷氢氧化钠溶液反应发生歧化生成 Cl⁻、ClO⁻ 和 H₂O，离子方程式书写完全正确。"
+      }
+    },
+    {
+      "id": "chemistry_gen_07595df9",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap28",
+      "chapter_title": "第二十八章：炔烃",
+      "q": "某不饱和烃的结构简式为 CH₂=CH-CH(C₂H₅)-C≡CH，根据系统命名法（IUPAC），该化合物的正确名称是：",
+      "options": [
+        "A. 3-乙基-1-戊烯-4-炔",
+        "B. 3-乙基-4-戊烯-1-炔",
+        "C. 3-乙基-1-戊炔-4-烯",
+        "D. 2-乙烯基-3-丁炔"
+      ],
+      "answer": 0,
+      "explanation": "本题考查既含双键又含三键的烯炔类化合物的命名规则。首先，主链必须包含双键与三键，该分子主链为 5 个碳原子（戊烯炔）。编号时，应使双键和三键的位次和尽可能小；若从左往右编号，位次为 1-烯-4-炔（1+4=5）；若从右往左编号，位次为 1-炔-4-烯（1+4=5）。根据命名规则，当位次和相同时，应让双键的位次较小，故从左向右编号，双键在 1 位，三键在 4 位，乙基在 3 位。书写名称时，“烯”应在“炔”之前。故正确名称为 3-乙基-1-戊烯-4-炔。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-02T16:06:19.657050+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "含有双键与叁键的主链为 5 碳，官能团位号相同时双键优先编号为 1，3 位有乙基，故命名为 3-乙基-1-戊烯-4-炔。"
+      }
+    },
+    {
+      "id": "chemistry_gen_fbea80f8",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap28",
+      "chapter_title": "第二十八章：炔烃",
+      "q": "某炔烃 A 的分子式为 C₆H₁₀，已知 A 不能与银氨溶液反应生成沉淀。在酸性 KMnO₄ 溶液的作用下，A 发生氧化反应并仅得到一种有机酸 B。下列关于 A 的结构简式及 B 的名称，对应正确的是：",
+      "options": [
+        "A. CH₃(CH₂)₃C≡CH；己酸",
+        "B. CH₃C≡C(CH₂)₂CH₃；乙酸与丁酸",
+        "C. CH₃CH₂C≡CCH₂CH₃；丙酸",
+        "D. (CH₃)₂CHC≡CCH₃；3-甲基丁酸"
+      ],
+      "answer": 2,
+      "explanation": "本题考查炔烃的化学性质（末端炔烃的鉴定及氧化断裂）。由“A 不能与银氨溶液反应”可知，A 不是末端炔烃（三键不在 1 位），排除 A 选项。由“氧化后仅得到一种有机酸”可知，该炔烃结构必须对称。B 选项（2-己炔）是不对称炔烃，氧化后会得到乙酸（CH₃COOH）和丁酸（CH₃CH₂CH₂COOH）的混合物。C 选项（3-己炔）是对称炔烃，三键断裂后两端均生成丙酸（CH₃CH₂COOH），符合题意。D 选项（4-甲基-2-戊炔）是不对称炔烃，氧化后得到乙酸和 3-甲基丁酸。故选 C。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-02T16:06:19.669312+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "A 不与银氨反应且氧化仅得一种酸，说明 A 是对称的非端基炔烃 3-己炔，氧化产物 B 为丙酸。"
+      }
+    },
+    {
+      "id": "chemistry_gen_c1c70e43",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap30",
+      "chapter_title": "第三十章：卤代烃",
+      "q": "将 2-氯丙烷与氯乙烷的混合物与足量的金属钠在干燥乙醚中充分反应，所得的烷烃混合物中，不包括下列哪一种化合物？",
+      "options": [
+        "A. 丁烷",
+        "B. 2-甲基丙烷",
+        "C. 2-甲基丁烷",
+        "D. 2,3-二甲基丁烷"
+      ],
+      "answer": 1,
+      "explanation": "本题考查伍尔兹反应（Wurtz Reaction）。当两种不同的卤代烷（R-X 与 R'-X）混合与钠反应时，会生成三种烷烃：R-R、R'-R' 和 R-R'。在本题中：\n1. 氯乙烷（CH₃CH₂Cl）自偶联生成丁烷（CH₃CH₂CH₂CH₃）。\n2. 2-氯丙烷（CH₃CHClCH₃）自偶联生成 2,3-二甲基丁烷（CH₃CH(CH₃)CH(CH₃)CH₃）。\n3. 氯乙烷与 2-氯丙烷交叉偶联生成 2-甲基丁烷（CH₃CH₂CH(CH₃)CH₃）。\n2-甲基丙烷（异丁烷）含有 4 个碳原子，但无法由上述两个片段偶联而成（偶联反应中碳原子数的变化为 2+2=4, 3+3=6, 2+3=5），故选项 B 正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-02T16:06:31.095910+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 1,
+        "reason": "氯乙烷和 2-氯丙烷发生武兹反应偶联可得丁烷、2-甲基丁烷和 2,3-二甲基丁烷，无法得到 2-甲基丙烷。"
+      }
+    },
+    {
+      "id": "chemistry_gen_2fb9e019",
+      "subject": "chemistry",
+      "type": "mcq",
+      "chapter_id": "chap30",
+      "chapter_title": "第三十章：卤代烃",
+      "q": "下列关于卤代烃的叙述，哪些是正确的？\nI. 1,2-二溴乙烷的密度比水大，可由乙烯与溴的四氯化碳溶液发生加成反应制得。\nII. 2-溴丁烷与氢氧化钠的乙醇溶液共热，发生消去反应的主要产物是 2-丁烯。\nIII. 欲检验 1-氯丙烷中的氯元素，可直接加入硝酸银溶液并观察是否有白色沉淀产生。\nIV. 相同碳原子数的一卤代烷，支链越多，其沸点越高。",
+      "options": [
+        "A. 仅 I、II",
+        "B. 仅 II、III",
+        "C. 仅 I、III、IV",
+        "D. 仅 II、IV"
+      ],
+      "answer": 0,
+      "explanation": "考点解析：\nI 正确：多卤代烷（如 1,2-二溴乙烷）的密度通常大于水；乙烯与溴发生加成反应是制备邻二卤代烷的常用方法。\nII 正确：卤代烷在 NaOH 醇溶液中发生消去反应。根据扎伊采夫规则（Zaitsev's rule），脱氢时优先从含氢较少的 β-碳上脱去，故 2-丁烯是主要产物。\nIII 错误：卤代烃中的卤原子以共价键结合，不电离。检验前必须先与 NaOH 水溶液共热使之水解产生 Cl⁻，酸化后再加 AgNO₃。\nIV 错误：对于同分异构体，支链越多，分子的接触面积越小，分子间作用力（范德华力）越弱，沸点应越低。\n因此，只有 I 和 II 正确，选 A。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-02T16:06:31.114140+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "叙述 I 和 II 正确；III 需先水解酸化再加 AgNO3；IV 支链越多沸点越低。"
+      }
+    }
+  ],
+  "generated_at": "2026-10-02T16:17:15.451646+00:00"
 }
