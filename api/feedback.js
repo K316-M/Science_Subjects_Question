@@ -10,9 +10,8 @@ const { sendJson, readJsonBody, sameOrigin } = require('./_lib/devauth');
 const { useQuota } = require('./_lib/ai');
 const store = require('./_lib/store');
 
-// Formspree 表单编号放 Vercel 环境变数 FEEDBACK_FORMSPREE_ID。
-// 没设就先用旧的（已经写在公开的程式里过，谁都能直接打），申诉不会因为还没设而断掉
-const LEGACY_FORM_ID = 'mdekopgq';
+// Formspree 表单编号只放 Vercel 环境变数 FEEDBACK_FORMSPREE_ID，程式里不留备用：
+// 旧表单已经删了，留着只会在环境变数不见时把申诉送进不存在的表单、没人发现
 // 每台装置每小时最多送几则；同一个网络（全校 Wi-Fi）合计几则
 const PER_DEVICE_PER_HOUR = 3;
 const PER_NETWORK_PER_HOUR = 10;
@@ -85,6 +84,11 @@ async function forward(formId, r) {
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return sendJson(res, 405, { ok: false, error: 'method_not_allowed' });
   if (!sameOrigin(req)) return sendJson(res, 403, { ok: false, error: 'forbidden', message: '请从网站的申诉页送出。' });
+  const formId = (process.env.FEEDBACK_FORMSPREE_ID || '').trim();
+  if (!formId) {
+    console.error('申诉收不到：Vercel 没有设 FEEDBACK_FORMSPREE_ID（见 docs/OPERATIONS.md 第九节）');
+    return sendJson(res, 503, { ok: false, error: 'not_configured', message: '申诉信箱暂时没有设定好，可以晚点再按「重新发送」。' });
+  }
 
   const r = clean(await readJsonBody(req));
   if (r.error) return sendJson(res, 400, { ok: false, error: 'invalid', message: r.error });
@@ -103,7 +107,6 @@ module.exports = async (req, res) => {
       : `这一小时已经送出 ${PER_DEVICE_PER_HOUR} 则申诉了，${q.resetMin} 分钟後再按「重新发送」。` });
   }
 
-  const formId = (process.env.FEEDBACK_FORMSPREE_ID || '').trim() || LEGACY_FORM_ID;
   if (!(await forward(formId, r))) {
     await q.refund();
     return sendJson(res, 502, { ok: false, error: 'upstream', message: '暂时没能送出（可能是网络问题）。' });
