@@ -2451,7 +2451,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
   const EXAM_SUBJECT = { biology: '生物', chemistry: '化学', physics: '物理', 'math:I': '高级数学（Ⅰ）', 'math:II': '高级数学（Ⅱ）' };
   const PAPER_LABEL = { I: '高数Ⅰ', II: '高数Ⅱ' };
   // 高数Ⅰ只考《高中数学》：这几章是《高级数学》才有的，没标卷别的题只进高数Ⅱ（章节 id 永久不变）
-  const MATH_ADVANCED_CHAPTERS = ['chap30', 'chap31', 'chap33', 'chap34', 'chap35'];
+  const MATH_ADVANCED_CHAPTERS = ['chap30', 'chap31', 'chap32', 'chap33', 'chap34', 'chap35'];
   const mockPapers = () => (currentSubject === 'math' ? ['I', 'II'] : [null]);
   // 标了卷别的题只进那一份；没标的，高数Ⅱ都收，高数Ⅰ不收进阶章
   function inPaper(sec, m, paper) {

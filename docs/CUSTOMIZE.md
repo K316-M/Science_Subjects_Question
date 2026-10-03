@@ -144,7 +144,7 @@
 | 更新日志内容的分点符号 | `scripts/publish_devlog.py` | `SEPARATOR` | `\|\|` | 🟡 改了要一起改 `.github/workflows/publish_devlog.yml` 输入框的说明 |
 | 更新日志一点最多几个字 | `scripts/publish_devlog.py` | `MAX_ITEM_CHARS` | `200` | 🟢 再长多半是忘了分点 |
 | 模拟统考对到时间表的哪一科 | `index.html` | `EXAM_SUBJECT` | 数学用 `'math:I'`→`高级数学（Ⅰ）`、`'math:II'`→`高级数学（Ⅱ）` | 🔴 右边要和 `js/exam-timetable.js` 的 `subject` 一字不差（全形括号、罗马数字 Ⅰ Ⅱ），对不上按钮就不出现 |
-| 没标卷别的数学题，哪几章不进高数Ⅰ | `index.html` | `MATH_ADVANCED_CHAPTERS` | 第 30、31、33、34、35 章（《高级数学》才有） | 🔴 写章节 `id`（`chap30`），不是章名；课程标准改版才动 |
+| 没标卷别的数学题，哪几章不进高数Ⅰ | `index.html` | `MATH_ADVANCED_CHAPTERS` | 第 30～35 章（《高级数学》才有；第 32 章坐标轴的转换是圆锥曲线的铺垫，也算） | 🔴 写章节 `id`（`chap30`），不是章名；课程标准改版才动 |
 | 数学卷别的代号 | `api/_lib/questions.js`、`scripts/ingest_drafts.py`、`scripts/check_repo.py` | `PAPERS` | `'I'`、`'II'` | 🔴 三处一起改；题库里存的就是这两个字，改了，已经标好的题全部对不上 |
 | 照片档名怎么认高数Ⅰ／Ⅱ（第二页以後没有卷头时） | `scripts/ingest_drafts.py` | `PAPER_IN_FILENAME` | 「高数2」「高数Ⅱ」「SC07」→ Ⅱ；「高数1」「SC06」→ Ⅰ | 🟡 Ⅱ 要排在前面（「高数II」也含「高数I」） |
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |
