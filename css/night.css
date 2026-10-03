@@ -187,6 +187,9 @@
 /* 统考闹钟：钟面和日历一样压暗；面板、输入框、音效按钮换成暗纸 */
 [data-theme="night"] .alarm-clock .clk-body { fill: #e0d8c6; }
 [data-theme="night"] .alarm-clock .clk-bell { fill: #b34a37; }
+/* 日历、闹钟的眼睛和嘴巴画在米色纸面／钟面上，照白天用深色（外框的墨线才换米白） */
+[data-theme="night"] .exam-cal .cal-face, [data-theme="night"] .alarm-clock .clk-face { fill: #3f3e3c; }
+[data-theme="night"] .exam-cal .cal-smile, [data-theme="night"] .alarm-clock .clk-smile { stroke: #3f3e3c; }
 [data-theme="night"] .alarm-count { background: #9c4a3a; border-color: var(--n-page); color: var(--n-btn-text); }
 [data-theme="night"] .alarm-panel, [data-theme="night"] .alarm-ring { background: var(--n-raised); border-color: var(--n-border-strong); }
 [data-theme="night"] .alarm-title, [data-theme="night"] .alarm-field, [data-theme="night"] .alarm-sounds-label { color: var(--n-text-2); }
