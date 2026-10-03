@@ -1,12 +1,15 @@
 import os
 import json
+import re
 
 SUBJECTS = ["biology", "chemistry", "physics", "math"]
 SUBJECT_LABEL = {"biology": "生物", "chemistry": "化学", "physics": "物理", "math": "高级数学"}
 PENDING_PATH = "papers/pending_approval.json"
 REPORT_PATH = "docs/INSPECTION_REPORT.md"
 
-FIG_KEYWORDS = ["图", "曲线", "装置", "示意图", "如下"]
+# 题干真的指向一张图才算「缺图」；和 dev/dev.js 的 FIGURE_WORDS 同一套（/dev 巡检与这份每周报告要一致）。
+# 不要放「图」「如下」「曲线」这种太宽的字：「反应如下」「曲线 y=x²」「函数的图像」「箱型图」都会被误报
+FIGURE_WORDS = re.compile(r"如图|下图|图中|图示|示意图|曲线图|装置图|见图|右图|左图")
 
 
 def bank_path(subject):
@@ -35,7 +38,7 @@ def check_mcq(q, source, chapter, issues):
 
     # 检测是否缺图
     has_fig = bool(q.get("figure") or q.get("image"))
-    if any(kw in q_text for kw in FIG_KEYWORDS) and not has_fig:
+    if FIGURE_WORDS.search(q_text) and not has_fig:
         issues.append({
             "source": source, "chapter": chapter, "type": "📷 缺失配图", "snippet": q_short,
             "action": "题干涉及图表但未提供图片，请拍照上传并将文件名写入 `image` 字段",
