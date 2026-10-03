@@ -781,7 +781,111 @@
         "ai_answer": 1,
         "reason": "向量 $\\vec{d}$ 与 $\\vec{n}$ 夹角为 $60^\\circ$，故直线与平面的夹角为 $90^\\circ - 60^\\circ = 30^\\circ$，命题 I、III 正确。"
       }
+    },
+    {
+      "id": "math_gen_1acddd1d",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap32",
+      "chapter_title": "第三十二章：坐标轴的转换",
+      "q": "若将直角坐标系的原点平移至新原点 $O'(h, k)$ 后，方程式 $xy - 2x + 3y - 10 = 0$ 化为不含一次项的新方程式 $XY = c$（其中 $c$ 为常数），则 $h + k + c$ 的值为",
+      "options": [
+        "A. $-1$",
+        "B. $1$",
+        "C. $3$",
+        "D. $5$"
+      ],
+      "answer": 2,
+      "explanation": "【考点】坐标轴的平移及其代数应用。\n【解析】由平移公式，设新旧坐标的关系为 $x = X + h$，$y = Y + k$。\n代入原方程得：\n$(X + h)(Y + k) - 2(X + h) + 3(Y + k) - 10 = 0$\n展开并按 $X, Y$ 降幂整理：\n$XY + (k - 2)X + (h + 3)Y + (hk - 2h + 3k - 10) = 0$\n由于新方程式中不含一次项，故一次项系数必为零：\n$k - 2 = 0 \\implies k = 2$\n$h + 3 = 0 \\implies h = -3$\n新原点为 $(-3, 2)$。\n将 $h = -3$，$k = 2$ 代入常数项：\n$hk - 2h + 3k - 10 = (-3)(2) - 2(-3) + 3(2) - 10 = -6 + 6 + 6 - 10 = -4$\n因此方程化为 $XY - 4 = 0$，即 $XY = 4$，故 $c = 4$。\n由此可得 $h + k + c = (-3) + 2 + 4 = 3$。\n【常见错误】容易将平移公式记反为 $x = X - h$ 或 $X = x + h$，从而导致求出的 $h$ 与 $k$ 符号颠倒，计算出错误结果。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-03T13:13:26.213084+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "由平移公式可得 h = -3, k = 2，代入常数项得 c = 4，故 h + k + c = 3。"
+      }
+    },
+    {
+      "id": "math_gen_7a565e1a",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap32",
+      "chapter_title": "第三十二章：坐标轴的转换",
+      "q": "将直角坐标系的坐标轴绕原点逆时针旋转角度 $\\theta$（$0^\\circ \\lt \\theta \\lt 90^\\circ$）后，直线 $\\sqrt{3}x + y - 4 = 0$ 在新坐标系中的方程式化为 $X = c$（其中 $c$ 为常数），则旋转角 $\\theta$ 与常数 $c$ 的值分别为",
+      "options": [
+        "A. $\\theta = 30^\\circ,\\ c = 2$",
+        "B. $\\theta = 30^\\circ,\\ c = 4$",
+        "C. $\\theta = 60^\\circ,\\ c = 2$",
+        "D. $\\theta = 60^\\circ,\\ c = 4$"
+      ],
+      "answer": 0,
+      "explanation": "【考点】坐标轴的旋转公式及其应用。\n【解析】由坐标轴旋转公式，旧坐标与新坐标的关系为：\n$x = X\\cos\\theta - Y\\sin\\theta$\n$y = X\\sin\\theta + Y\\cos\\theta$\n将上述公式代入原直线方程 $\\sqrt{3}x + y - 4 = 0$：\n$\\sqrt{3}(X\\cos\\theta - Y\\sin\\theta) + (X\\sin\\theta + Y\\cos\\theta) - 4 = 0$\n整理得：\n$(\\sqrt{3}\\cos\\theta + \\sin\\theta)X + (\\cos\\theta - \\sqrt{3}\\sin\\theta)Y - 4 = 0$\n依题意，新方程式为 $X = c$，即不含 $Y$ 项，故 $Y$ 的系数为 0：\n$\\cos\\theta - \\sqrt{3}\\sin\\theta = 0 \\implies \\tan\\theta = \\frac{1}{\\sqrt{3}}$\n因 $0^\\circ \\lt \\theta \\lt 90^\\circ$，解得 $\\theta = 30^\\circ$。\n将 $\\theta = 30^\\circ$ 代入 $X$ 的系数：\n$\\sqrt{3}\\cos 30^\\circ + \\sin 30^\\circ = \\sqrt{3}\\left(\\frac{\\sqrt{3}}{2}\\right) + \\frac{1}{2} = \\frac{3}{2} + \\frac{1}{2} = 2$\n因此新方程式为 $2X - 4 = 0 \\implies X = 2$，即 $c = 2$。\n故 $\\theta = 30^\\circ,\\ c = 2$。\n【常见错误】若误将常数项 $-4$ 直接当作新方程的常数 $c$ 而忽略 $X$ 的系数 $2$ 进行归一化，容易误选 B；若求三角方程时误将 $\\tan\\theta$ 算成 $\\sqrt{3}$，则会误选 C 或 D。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-03T13:13:26.236582+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 0,
+        "reason": "消去 Y 项得 tanθ = 1/√3，故 θ = 30°，此时 X 的系数为 2，得 c = 2。"
+      }
+    },
+    {
+      "id": "math_gen_49980de6",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap32",
+      "chapter_title": "第三十二章：坐标轴的转换",
+      "q": "将直角坐标系的坐标轴绕原点逆时针旋转一个锐角 $\\theta$ 后，曲线方程式 $7x^2 - 6\\sqrt{3}xy + 13y^2 = 16$ 化为新坐标系下的标准椭圆方程式 $\\frac{X^2}{a^2} + \\frac{Y^2}{b^2} = 1$（其中 $a \\gt b \\gt 0$），则旋转角 $\\theta$ 与长半轴长 $a$ 的值分别为",
+      "options": [
+        "A. $\\theta = 60^\\circ,\\ a = 4$",
+        "B. $\\theta = 60^\\circ,\\ a = 2$",
+        "C. $\\theta = 30^\\circ,\\ a = 4$",
+        "D. $\\theta = 30^\\circ,\\ a = 2$"
+      ],
+      "answer": 3,
+      "explanation": "【考点】利用坐标轴旋转消去二次曲线的交叉项 $xy$ 及标准方程求值。\n【解析】二次曲线一般式为 $Ax^2 + Bxy + Cy^2 = F$，这里 $A = 7$，$B = -6\\sqrt{3}$，$C = 13$。\n要消去交叉项 $XY$，旋转角 $\\theta$ 需满足公式：\n$\\cot 2\\theta = \\frac{A - C}{B} = \\frac{7 - 13}{-6\\sqrt{3}} = \\frac{-6}{-6\\sqrt{3}} = \\frac{1}{\\sqrt{3}}$\n由于 $\\theta$ 为锐角，故 $0^\\circ \\lt 2\\theta \\lt 180^\\circ$，得 $2\\theta = 60^\\circ \\implies \\theta = 30^\\circ$。\n旋转公式为：\n$x = X\\cos 30^\\circ - Y\\sin 30^\\circ = \\frac{\\sqrt{3}X - Y}{2}$\n$y = X\\sin 30^\\circ + Y\\cos 30^\\circ = \\frac{X + \\sqrt{3}Y}{2}$\n代入原方程展开：\n$7\\left(\\frac{3X^2 - 2\\sqrt{3}XY + Y^2}{4}\\right) - 6\\sqrt{3}\\left(\\frac{\\sqrt{3}X^2 + 2XY - \\sqrt{3}Y^2}{4}\\right) + 13\\left(\\frac{X^2 + 2\\sqrt{3}XY + 3Y^2}{4}\\right) = 16$\n计算 $X^2$ 的系数：\n$\\frac{7\\times 3 - 6\\sqrt{3}\\times\\sqrt{3} + 13\\times 1}{4} = \\frac{21 - 18 + 13}{4} = \\frac{16}{4} = 4$\n计算 $Y^2$ 的系数：\n$\\frac{7\\times 1 + 6\\sqrt{3}\\times\\sqrt{3} + 13\\times 3}{4} = \\frac{7 + 18 + 39}{4} = \\frac{64}{4} = 16$\n交叉项 $XY$ 的系数抵消为 0。\n故新方程为 $4X^2 + 16Y^2 = 16$，两边同除以 16 得：\n$\\frac{X^2}{4} + \\frac{Y^2}{1} = 1$\n对比标准方程 $\\frac{X^2}{a^2} + \\frac{Y^2}{b^2} = 1$（$a \\gt b \\gt 0$），得 $a^2 = 4 \\implies a = 2$。\n故 $\\theta = 30^\\circ,\\ a = 2$。\n【常见错误】若误将 $\\cot 2\\theta = \\frac{1}{\\sqrt{3}}$ 记为 $\\tan 2\\theta = \\frac{1}{\\sqrt{3}}$，会误得出 $2\\theta = 30^\\circ$；或者算得 $a^2 = 4$ 却误把 $a^2$ 当作 $a = 4$。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-03T13:13:26.263232+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 3,
+        "reason": "由 tan 2θ = √3 得锐角 θ = 30°，代入得新方程为 4X² + 16Y² = 16，即 X²/4 + Y²/1 = 1，故 a = 2。"
+      }
+    },
+    {
+      "id": "math_gen_5c63df8e",
+      "subject": "math",
+      "type": "mcq",
+      "chapter_id": "chap32",
+      "chapter_title": "第三十二章：坐标轴的转换",
+      "q": "考虑下列关于平面直角坐标系转换的叙述：\nI. 若将坐标轴的原点平移至点 $(h, k)$，则原坐标系中的点 $P(a, b)$ 在新坐标系中的坐标为 $(a - h, b - k)$。\nII. 若将坐标轴绕原点逆时针旋转角度 $\\theta$，则原坐标系中的点 $(x, y)$ 在新坐标系中的坐标 $(X, Y)$ 满足 $X = x\\cos\\theta - y\\sin\\theta$。\nIII. 二次曲线方程式 $Ax^2 + Bxy + Cy^2 + F = 0$（$B \\neq 0$，$A \\neq C$）经坐标轴旋转消去交叉项 $XY$ 时，旋转角 $\\theta$ 满足 $\\tan 2\\theta = \\frac{B}{A - C}$。\nIV. 二次曲线方程式 $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$ 经坐标轴旋转任意角度后，其二次项系数之和保持不变，即 $A' + C' = A + C$。\n上述叙述中，正确的有哪些？",
+      "options": [
+        "A. 仅有 I、III",
+        "B. 仅有 I、IV",
+        "C. 仅有 I、III、IV",
+        "D. I、II、III、IV"
+      ],
+      "answer": 2,
+      "explanation": "【考点】坐标轴平移与旋转公式、旋转消元角公式及旋转不变量。\n【解析】\nI. 正确。设原坐标系中坐标为 $(x, y)$，平移至新原点 $(h, k)$ 后，新坐标满足 $X = x - h$，$Y = y - k$。因此点 $P(a, b)$ 的新坐标即为 $(a - h, b - k)$。\nII. 错误。将坐标轴绕原点逆时针旋转 $\\theta$ 时，原坐标用新坐标表示的公式为 $x = X\\cos\\theta - Y\\sin\\theta$，$y = X\\sin\\theta + Y\\cos\\theta$；而用原坐标表示新坐标的公式为 $X = x\\cos\\theta + y\\sin\\theta$，$Y = -x\\sin\\theta + y\\cos\\theta$。叙述中混淆了正逆变换。\nIII. 正确。消去交叉项 $XY$ 的条件为 $\\cot 2\\theta = \\frac{A - C}{B}$，当 $A \\neq C$ 时，两边取倒数即得 $\\tan 2\\theta = \\frac{B}{A - C}$。\nIV. 正确。设旋转角为 $\\theta$，新二次项系数分别为 $A' = A\\cos^2\\theta + B\\sin\\theta\\cos\\theta + C\\sin^2\\theta$，$C' = A\\sin^2\\theta - B\\sin\\theta\\cos\\theta + C\\cos^2\\theta$。两式相加得 $A' + C' = A(\\cos^2\\theta + \\sin^2\\theta) + C(\\sin^2\\theta + \\cos^2\\theta) = A + C$。此为二次曲线在正交坐标变换下的不变量。\n综上，正确的叙述为 I、III、IV。\n【常见错误】学生极易混淆旋转公式中正向变换（新表示旧）与逆向变换（旧表示新）的正负号，从而误认为 II 也正确。",
+      "origin": "ai_generated",
+      "answer_source": "generated",
+      "needs_expert_check": true,
+      "flags": [],
+      "generated_at": "2026-10-03T13:13:26.311841+00:00",
+      "syllabus_used": true,
+      "review": {
+        "ai_answer": 2,
+        "reason": "坐标轴逆时针旋转 θ 后新坐标应为 X = x cosθ + y sinθ，故 II 错误，I、III、IV 均正确。"
+      }
     }
   ],
-  "generated_at": "2026-10-03T11:35:13.085513+00:00"
+  "generated_at": "2026-10-03T13:13:31.940220+00:00"
 }
