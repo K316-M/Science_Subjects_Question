@@ -38,7 +38,7 @@
 | 数学的分数、积分、Σ 排成全尺寸（像试卷） | `js/math-render.js` | `preProcess` | 每条公式前加 `\\displaystyle` | 拿掉就变回 KaTeX 预设的行内小分数，手机上很难看清 | 🟢 |
 | 统考时间表弹出框的宽度 | `index.html` | `.exam-list {` 的 `width` | `min(520px, …)` | 窄於 460px 时名称自动换到下一行 | 🟢 |
 | 统考闹钟面板的宽度 | `index.html` | `.alarm-panel {` 的 `width` | `min(520px, …)`（和时间表一样宽） | | 🟢 |
-| 首页闹钟图示（日历右边）的样子 | `js/exam-alarm.js`（形状）、`index.html`（颜色） | `CLOCK_SVG`；颜色搜 `.alarm-clock .clk-body`（钟面）、`.alarm-clock .clk-bell`（铃）；护眼的在 `css/night.css` 搜 `.alarm-clock` | 卡通闹钟，和日历同一套笔触 | | 🟢 |
+| 首页闹钟图示（日历右边）的样子 | `js/exam-alarm.js`（形状）、`index.html`（颜色） | `CLOCK_SVG`；颜色搜 `.alarm-clock .clk-body`（钟面）、`.alarm-clock .clk-bell`（铃）；护眼的在 `css/night.css` 搜 `.alarm-clock` | 卡通闹钟，和日历同一套笔触 | 护眼模式下钟面、日历纸面是米色，眼睛和嘴巴照白天用深色 `#3f3e3c`（`css/night.css` 搜 `.clk-face`） | 🟢 |
 | 换题时题卡左右滑进来的距离 | `index.html` | `slideFromRight`、`slideFromLeft` | `12px` | 不要超过 `16px`（手机的页边） | 🔴 超过的话，滑进来那几格会超出萤幕，手机浏览器把整页撑宽、之後一直能左右晃 |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | /dev 列表（巡检、待审、题目修改）题与题之间的空隙 | `dev/dev.css` | `--list-gap` | `12px` | 每题一张卡；太小又会看起来连在一起 | 🟢 |
