@@ -53,4 +53,5 @@
 
 余割写 $\operatorname{cosec}$（不写 csc），另有 $\sec$、$\cot$；反三角函数写 $\sin^{-1}x$、$\tan^{-1}x$（不写 arcsin）；
 组合数写 ${}_nC_r$；对数写 $\log_a x$、自然对数 $\ln x$；行列式 $\det(A)$、伴随矩阵 $\operatorname{adj}(A)$、逆矩阵 $A^{-1}$；
-无穷等比级数和 $S_\infty$；三角形面积 $\Delta$；导数写 $\frac{dy}{dx}$、$f'(x)$；积分写 $\int_a^b f(x)\,dx$；极限写 $\lim_{x\to0}$。
+无穷等比级数和 $S_\infty$；三角形面积 $\Delta$；导数写 $\frac{dy}{dx}$、$f'(x)$；积分写 $\int_a^b f(x)\,dx$；极限写 $\lim_{x\to0}$；
+抛物线写 $y^2=4ax$、$x^2=4ay$（焦点到顶点的距离是 $a$），不写 $y^2=2px$、$y^2=4px$。
