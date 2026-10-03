@@ -97,6 +97,7 @@ MATH_RULES = r"""
 - 符号照统考公式表：余割 \operatorname{cosec}（不写 csc）、反三角函数 \sin^{-1}x（不写 arcsin）、组合数 {}_nC_r、
   对数 \log_a x、自然对数 \ln x、行列式 \det(A)、伴随矩阵 \operatorname{adj}(A)、无穷等比级数和 S_\infty、
   矩阵 \begin{pmatrix}…\end{pmatrix}、行列式 \begin{vmatrix}…\end{vmatrix}。
+- 抛物线照课本写 y^2 = 4ax、x^2 = 4ay（焦点到顶点的距离是 a），不写 y^2 = 2px、y^2 = 4px。
 """
 
 # 生物、化学、物理：公式少，简单的直接打符号，复杂的才用 $…$ 的 LaTeX（网站一样排得出来）
