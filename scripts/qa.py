@@ -94,8 +94,8 @@ MATH_RULES = r"""
 - 选项前缀写在 $ 外面，例如 "A. $x=-1$"。
 - 不等号写 \neq（不要写 \ne）；乘号 \times；点乘 \cdot。
 - 小于、大于写 \lt、\gt，小于等于、大于等于写 \leq、\geq；不要直接打 < >（网页会当成 HTML 标签吃掉）。
-- 符号照统考公式表：余割 \operatorname{cosec}（不写 csc）、反三角函数 \sin^{-1}x（不写 arcsin）、组合数 {}_nC_r、
-  对数 \log_a x、自然对数 \ln x、行列式 \det(A)、伴随矩阵 \operatorname{adj}(A)、无穷等比级数和 S_\infty、
+- 符号照统考公式表：余割 \operatorname{cosec}（不写 csc）、反三角函数 \sin^{-1}x（不写 arcsin）、组合数 {}^nC_r、排列数 {}^nP_r（n 写在左上角）、
+  对数 \log_a x、自然对数 \ln x、行列式 |A|（不写 \det）、伴随矩阵 \operatorname{adj}(A)、无穷等比级数和 S_\infty、
   矩阵 \begin{pmatrix}…\end{pmatrix}、行列式 \begin{vmatrix}…\end{vmatrix}。
 - 抛物线照课本写 y^2 = 4ax、x^2 = 4ay（焦点到顶点的距离是 a），不写 y^2 = 2px、y^2 = 4px。
 """
