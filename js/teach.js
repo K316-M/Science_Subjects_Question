@@ -185,11 +185,12 @@
     state.art = new Set(files);
     return state.art;
   }
-  function artImg(kind, id, cls) {
+  // fallback：图载入失败（没网络、档案被删）时换回内置图案，不会留一个空圆盘
+  function artImg(kind, id, cls, fallback) {
     const file = `${kind}-${id}.webp`;
     if (!state.art || !state.art.has(file)) return null;
     const img = h('img', { class: `tm-art-img ${cls || ''}`, src: `/assets/teach/${file}`, alt: '', loading: 'lazy', decoding: 'async' });
-    img.addEventListener('error', () => img.remove());
+    img.addEventListener('error', () => { if (fallback) img.replaceWith(fallback()); else img.remove(); });
     return img;
   }
 
@@ -269,7 +270,7 @@
     const cards = data.maps.map(m => {
       const st = mapStats(subject, m);
       const card = h('button', { type: 'button', class: 'tm-card', style: `--tm-accent:${m.accent}`, onclick: () => { sound('pop'); openMap(m.id); } },
-        h('span', { class: 'tm-card-art' }, artImg('cover', m.id, 'tm-cover') || motifSvg(m.cover || 'flask', 'tm-art')),
+        h('span', { class: 'tm-card-art' }, artImg('cover', m.id, 'tm-cover', () => motifSvg(m.cover || 'flask', 'tm-art')) || motifSvg(m.cover || 'flask', 'tm-art')),
         h('span', { class: 'tm-card-body' },
           h('span', { class: 'tm-card-title', text: m.title }),
           h('span', { class: 'tm-card-tag', text: m.tagline }),
@@ -543,7 +544,7 @@
 
     // 起点：地图封面＋通关进度环
     const rr = L.rects.root, pct = st.total ? st.done / st.total : 0, R = 46, C = 2 * Math.PI * R;
-    const rootArt = artImg('cover', map.id, 'tm-art') || motifSvg(map.cover || 'flask', 'tm-art');
+    const rootArt = artImg('cover', map.id, 'tm-art', () => motifSvg(map.cover || 'flask', 'tm-art')) || motifSvg(map.cover || 'flask', 'tm-art');
     const ring = svgOf(`<circle class="rg-bg" cx="50" cy="50" r="${R}"/><circle class="rg-fg" cx="50" cy="50" r="${R}" stroke-dasharray="${(C * pct).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/>`, 'tm-ring');
     ring.setAttribute('viewBox', '0 0 100 100');
     world.append(h('div', { class: 'tm-rootnode', 'data-rect': 'root', style: box(rr), role: 'group', 'aria-label': `${map.title}，已通关 ${st.done} / ${st.total} 关` },
@@ -615,10 +616,12 @@
     const aria = isBoss
       ? `${it.title}，魔王关，${bossDone ? '已通关' : '随时可以挑战，通过可免修本小节'}`
       : `${it.title}，${kinds.map(k => KIND_LABEL[k]).join('、')}，${locked ? '未解锁' : done ? `已通关，${stars} 颗星${skipped ? '（跳级）' : ''}` : '可以挑战'}`;
-    const art = locked ? svgOf(ICON.lock, 'tm-art') : (artImg(isBoss ? 'boss' : 'node', it.id, 'tm-art') || motifSvg(it.motif, 'tm-art'));
+    // 有你给的图：锁住的关也画出来，但变灰变淡、角上挂一把锁（看得见、够不着，比一把通用的锁更想去解开）
+    const pic = artImg(isBoss ? 'boss' : 'node', it.id, 'tm-art', () => motifSvg(it.motif, 'tm-art'));
+    const art = pic || (locked ? svgOf(ICON.lock, 'tm-art') : motifSvg(it.motif, 'tm-art'));
     const btn = h('button', { type: 'button', class: `tm-node tm-ncard${isBoss ? ' is-boss' : ''}`, 'data-state': stateName, 'data-id': it.id, 'data-rect': it.id,
       'aria-label': plain(aria), title: plain(it.title), 'aria-disabled': locked ? 'true' : null, style: `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px` },
-    h('span', { class: 'tm-disc' }, h('span', { class: 'tm-disc-art' }, art)),
+    h('span', { class: `tm-disc${pic ? ' has-pic' : ''}${pic && locked ? ' is-fog' : ''}` }, h('span', { class: 'tm-disc-art' }, art), pic && locked ? h('span', { class: 'tm-lockbadge' }, svgOf(ICON.lock, 'tm-art')) : null),
     h('span', { class: 'tm-text' },
       h('span', { class: 'tm-name', text: it.title }),
       h('span', { class: 'tm-gist', text: gistOf(it) }),

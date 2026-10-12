@@ -130,7 +130,19 @@
 @keyframes tm-pulse { 50% { transform: scale(1.06); } }
 .tm-disc-art .tm-art { display: block; width: 44px; height: 44px; }
 .tm-art-img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.tm-cover { width: 100%; height: 100%; object-fit: cover; }
+/* 你给的贴纸图：关卡的圆盘里放大一点；魔王的图比圆盘大一圈、从圆盘里「站」出来；锁住的变灰变淡、角上挂锁；起点用封面中间裁成圆 */
+.tm-disc.has-pic { overflow: visible; }
+.tm-disc.has-pic .tm-disc-art .tm-art-img { width: 58px; height: 58px; }
+.tm-disc.is-fog .tm-art-img { filter: grayscale(1); opacity: .45; }
+.tm-lockbadge { position: absolute; right: -4px; bottom: -4px; display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--tm-ink); border-radius: 50%; background: var(--tm-paper); }
+.tm-lockbadge .tm-art { width: 14px; height: 14px; }
+.is-boss .tm-disc.has-pic { margin-right: 4px; }
+.is-boss .tm-disc.has-pic .tm-disc-art { width: 72px; height: 72px; background: none; }
+.is-boss .tm-disc.has-pic .tm-disc-art .tm-art-img { width: 92px; height: 92px; max-width: none; margin: -10px; }
+.tm-root-art .tm-art-img { width: 100%; height: 100%; object-fit: cover; }
+/* 封面铺满那个 100px 高的框；手机上卡片比较宽，图按比例会比 100px 高，所以绝对定位＋裁掉多的，不然会盖到下面的标题 */
+.tm-card-art { position: relative; overflow: hidden; }
+.tm-card-art .tm-cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .tm-text { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
 .tm-name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 13px; font-weight: 800; line-height: 1.2; }
 .tm-gist { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 12px; line-height: 1.4; }
