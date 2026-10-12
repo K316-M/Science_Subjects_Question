@@ -38,19 +38,39 @@
     Object.entries(attrs || {}).forEach(([k, v]) => {
       if (v == null || v === false) return;
       if (k === 'class') el.className = v;
-      else if (k === 'text') el.textContent = v;
+      else if (k === 'text') el.append(rich(v));
       else if (k === 'style') el.style.cssText = v;
       else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
       else el.setAttribute(k, v === true ? '' : v);
     });
-    kids.flat().forEach(k => { if (k != null && k !== false) el.append(k.nodeType ? k : document.createTextNode(String(k))); });
+    kids.flat().forEach(k => { if (k != null && k !== false) el.append(k.nodeType ? k : rich(k)); });
     return el;
   }
   // DOM 的 append 会把 null 写成文字「null」；这个版本跳过 null／false，也接受数组
   function put(el, ...kids) {
-    kids.flat().forEach(k => { if (k != null && k !== false) el.append(k.nodeType ? k : document.createTextNode(String(k))); });
+    kids.flat().forEach(k => { if (k != null && k !== false) el.append(k.nodeType ? k : rich(k)); });
     return el;
   }
+  // 上下标：资料里写 _{c}（下标）、^{2+}（上标），这里用 <sub>／<sup> 元素画出来（createElement＋textContent，不经过 innerHTML）。
+  // Unicode 没有 b c d f g q w y z 和大写字母的下标，K_{c}、ΔH_{f} 只能这样写；已经是 Unicode 的（H₂O、mol⁻¹）照样能用
+  const MARK_TEST = /[_^]\{/, MARK_ALL = /([_^])\{([^{}]*)\}/g;
+  function rich(text) {
+    const s = String(text);
+    if (!MARK_TEST.test(s)) return document.createTextNode(s);
+    const frag = document.createDocumentFragment();
+    let at = 0, m;
+    MARK_ALL.lastIndex = 0;
+    while ((m = MARK_ALL.exec(s))) {
+      if (m.index > at) frag.append(s.slice(at, m.index));
+      const el = document.createElement(m[1] === '_' ? 'sub' : 'sup');
+      el.textContent = m[2];
+      frag.append(el);
+      at = m.index + m[0].length;
+    }
+    if (at < s.length) frag.append(s.slice(at));
+    return frag;
+  }
+  const plain = text => String(text).replace(/[_^]\{([^{}]*)\}/g, '$1');   // aria-label 用，不能放元素
   const clear = el => { while (el.firstChild) el.removeChild(el.firstChild); return el; };
   const sound = t => { if (typeof window.playSound === 'function') { try { window.playSound(t); } catch (e) { /* 没有音效也没关系 */ } } };
 
@@ -166,7 +186,8 @@
     const boss = bossOf(map, id);
     return boss ? bossCleared(subject, map, boss) : starsOf(subject, id) > 0;
   }
-  const isLocked = (subject, map, node) => !node.parents.every(p => clearedId(subject, map, p));
+  // 有星的关永远可以进（亲手通关、跳级都算）：越级打赢某个小节的魔王後，那个小节的每一关都开放，不管前面的小节过没过
+  const isLocked = (subject, map, node) => starsOf(subject, node.id) === 0 && !node.parents.every(p => clearedId(subject, map, p));
   function lockReason(subject, map, node) {
     const names = node.parents.filter(p => !clearedId(subject, map, p)).map(p => {
       const b = bossOf(map, p); const n = b || nodeIndex(map)[p];
@@ -311,7 +332,7 @@
       const aria = isBoss
         ? `${it.title}，魔王关，${bossDone ? '已通关' : '随时可以挑战，通过可免修本小节'}`
         : `${it.title}，${kinds.map(k => KIND_LABEL[k]).join('、')}，${locked ? '未解锁' : done ? `已通关，${stars} 颗星${skipped ? '（跳级）' : ''}` : '可以挑战'}`;
-      const btn = h('button', { type: 'button', class: `tm-node${isBoss ? ' is-boss' : ''}`, 'data-state': stateName, 'data-id': it.id, 'aria-label': aria,
+      const btn = h('button', { type: 'button', class: `tm-node${isBoss ? ' is-boss' : ''}`, 'data-state': stateName, 'data-id': it.id, 'aria-label': plain(aria),
         'aria-disabled': locked ? 'true' : null },
         h('span', { class: 'tm-disc' },
           h('span', { class: 'tm-disc-art' }, locked ? svgOf(ICON.lock, 'tm-art') : motifSvg(it.motif, 'tm-art'))),
@@ -362,15 +383,19 @@
   function openSheet(from, build) {
     closeSheet(false);
     const body = h('div', { class: 'tm-sheet-body' });
+    const top = h('div', { class: 'tm-top' });   // 顶栏左边：小标签／题号与进度条（每个画面自己放）；右边永远是 ×，两者不会叠在一起
     const closeBtn = h('button', { type: 'button', class: 'tm-x', 'aria-label': '关闭', text: '×', onclick: () => requestClose() });
-    const box = h('div', { class: 'tm-sheet', role: 'dialog', 'aria-modal': 'true', style: `--tm-accent:${(state.mapAccent || '#0f766e')}` }, closeBtn, body);
+    const bar = h('div', { class: 'tm-sheet-top' }, top, closeBtn);
+    const box = h('div', { class: 'tm-sheet', role: 'dialog', 'aria-modal': 'true', style: `--tm-accent:${(state.mapAccent || '#0f766e')}` }, bar, body);
     const mask = h('div', { class: 'tm-mask' }, box);
     mask.addEventListener('mousedown', e => { if (e.target === mask) requestClose(); });
-    const s = { mask, box, body, from, busy: false, onKey: null, confirmClose: false };
+    const s = { mask, box, body, top, bar, from, busy: false, onKey: null, confirmClose: false, leave: null, prevFocus: null };
     s.onKey = e => {
       if (e.key === 'Escape') { e.stopPropagation(); requestClose(); return; }
       if (e.key !== 'Tab') return;
-      const f = [...box.querySelectorAll('button, input, textarea, [tabindex]:not([tabindex="-1"])')].filter(el => !el.disabled && el.offsetParent !== null);
+      // 确认条开着时，焦点只在确认条的两个按钮之间转
+      const scope = s.leave || box;
+      const f = [...scope.querySelectorAll('button, input, textarea, [tabindex]:not([tabindex="-1"])')].filter(el => !el.disabled && el.offsetParent !== null);
       if (!f.length) return;
       const first = f[0], last = f[f.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
@@ -387,9 +412,32 @@
   }
   function requestClose() {
     if (!sheet) return;
-    // 答题到一半关掉：问一次，免得误触
-    if (sheet.confirmClose && !window.confirm('现在退出，这次闯关不会记录。确定退出吗？')) return;
+    if (sheet.leave) { stayInSheet(); return; }          // 确认条开着时再按一次 Esc／×／点外面 = 继续闯关
+    if (sheet.confirmClose) { askLeave(); return; }       // 答题到一半关掉：问一次，免得误触
     closeSheet();
+  }
+  // 用面板内的确认条，不用 window.confirm：原生对话框会把主线程卡到你点完为止（浏览器会报「INP Issue」），手机上也很突兀
+  function askLeave() {
+    const s = sheet;
+    s.prevFocus = document.activeElement;
+    const stay = h('button', { type: 'button', class: 'btn-nav tm-primary', text: '继续闯关', onclick: () => stayInSheet() });
+    const leave = h('button', { type: 'button', class: 'btn-nav tm-ghost tm-leave-go', text: '退出', onclick: () => closeSheet() });
+    s.leave = h('div', { class: 'tm-leave', role: 'alertdialog', 'aria-label': '确认退出' },
+      h('p', { text: '现在退出，这次闯关不会记录。确定退出吗？' }),
+      h('div', { class: 'tm-actions' }, stay, leave));
+    s.bar.after(s.leave);
+    s.body.classList.add('is-asking');
+    s.body.setAttribute('aria-hidden', 'true');
+    stay.focus();
+  }
+  function stayInSheet() {
+    const s = sheet;
+    if (!s || !s.leave) return;
+    s.leave.remove();
+    s.leave = null;
+    s.body.classList.remove('is-asking');
+    s.body.removeAttribute('aria-hidden');
+    if (s.prevFocus && s.box.contains(s.prevFocus)) s.prevFocus.focus();
   }
   const refreshMap = () => { if (state.mapId) { const y = window.scrollY; openMap(state.mapId); window.scrollTo(0, y); } };
 
@@ -419,12 +467,12 @@
 
   function openLesson(map, node, from) {
     state.mapAccent = map.accent;
-    openSheet(from, (body) => {
+    openSheet(from, (body, s) => {
       const L = node.lesson || {};
+      put(s.top, h('div', { class: 'tm-eyebrow' },
+        h('span', { class: 'tm-chip tm-chip-tier', text: TIER_LABEL[node.tier] || '' }),
+        kindsOf(node.challenges).map(k => h('span', { class: 'tm-chip', text: KIND_LABEL[k] }))));
       put(body, 
-        h('div', { class: 'tm-eyebrow' },
-          h('span', { class: 'tm-chip tm-chip-tier', text: TIER_LABEL[node.tier] || '' }),
-          kindsOf(node.challenges).map(k => h('span', { class: 'tm-chip', text: KIND_LABEL[k] }))),
         h('h3', { class: 'tm-sheet-title', 'data-autofocus': '', tabindex: '-1', text: node.title }),
         h('p', { class: 'tm-lead', text: L.summary || '' }),
         h('ul', { class: 'tm-points' }, (L.points || []).map(p => h('li', { text: p }))),
@@ -446,9 +494,9 @@
     const sec = sectionOfBoss(map, boss.id);
     const pool = sec ? sec.nodes.flatMap(id => nodeIndex(map)[id].challenges) : [];
     const done = bossCleared(state.subject, map, boss);
-    openSheet(from, (body) => {
+    openSheet(from, (body, s) => {
+      put(s.top, h('div', { class: 'tm-eyebrow' }, h('span', { class: 'tm-chip tm-chip-boss', text: '魔王关' })));
       put(body, 
-        h('div', { class: 'tm-eyebrow' }, h('span', { class: 'tm-chip tm-chip-boss', text: '魔王关' })),
         h('h3', { class: 'tm-sheet-title', 'data-autofocus': '', tabindex: '-1', text: boss.title }),
         h('p', { class: 'tm-lead', text: boss.blurb || '' }),
         h('ul', { class: 'tm-points' },
@@ -492,8 +540,9 @@
 
   function showQuestion(body, s, run) {
     clear(body);
+    put(clear(s.top), progressBar(run));
     const q = run.items[run.index];
-    put(body, progressBar(run),
+    put(body,
       h('div', { class: 'tm-eyebrow' }, h('span', { class: 'tm-chip', text: KIND_LABEL[q.type] || '' })),
       h('p', { class: 'tm-q', 'data-autofocus': '', tabindex: '-1', text: q.q }));
     const feedback = h('div', { class: 'tm-feedback', role: 'status', 'aria-live': 'polite' });
@@ -523,7 +572,7 @@
       });
       put(body, list, feedback);
     } else if (q.type === 'calc') {
-      const input = h('input', { class: 'tm-input', type: 'text', inputmode: 'decimal', autocomplete: 'off', 'aria-label': `答案${q.unit ? `（单位：${q.unit}）` : ''}`, placeholder: '填数字，例如 4.48 或 1.2×10^-3' });
+      const input = h('input', { class: 'tm-input', type: 'text', inputmode: 'decimal', autocomplete: 'off', 'aria-label': `答案${q.unit ? `（单位：${plain(q.unit)}）` : ''}`, placeholder: '填数字，例如 4.48 或 1.2×10^-3' });
       const warn = h('p', { class: 'tm-warn', role: 'alert' });
       const submit = h('button', { type: 'button', class: 'btn-nav tm-primary', text: '提交答案' });
       const giveUp = h('button', { type: 'button', class: 'btn-nav tm-ghost', text: '不会，看解法' });
@@ -572,7 +621,7 @@
   /* ---------- 结果 ---------- */
   function showResult(body, s, run) {
     s.confirmClose = false;
-    clear(body);
+    clear(body); clear(s.top);
     const total = run.items.length;
     const stars = starsFor(run.correct, total, run.ratio);
     const passed = stars > 0;

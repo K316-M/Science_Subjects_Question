@@ -274,6 +274,27 @@ def _teach_question(q, at, seen):
             problems.append(f'{at}：论述题要有参考答案 model')
 
 
+_TEACH_MARK_OK = re.compile(r'[_^]\{[^{}]+\}')
+_TEACH_MARK_BAD = re.compile(r'[_^]|<su[bp]>|\*\*')
+
+
+def _teach_markup(o, at):
+    """教学资料的文字只认 _{c}（下标）、^{2+}（上标）和 Unicode（₂ ²）。js/teach.js 的 rich() 只处理前两种，
+    其余的 _ ^ <sub> ** 会原样露在网页上（例如 K_c、A^(y+)），所以这里先挡下来。"""
+    if isinstance(o, dict):
+        for k, v in o.items():
+            _teach_markup(v, f'{at}/{k}')
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            _teach_markup(v, f'{at}/{i}')
+    elif isinstance(o, str):
+        left = _TEACH_MARK_OK.sub('', o)
+        m = _TEACH_MARK_BAD.search(left)
+        if m:
+            problems.append(f'{at}：文字里有没处理好的上下标／标记「{left[max(0, m.start() - 8):m.end() + 8]}」'
+                            '——下标写 _{c}、上标写 ^{2+}，或直接用 Unicode（₂ ²）')
+
+
 def check_teach():
     motifs = _teach_motifs()
     for path in sorted(glob.glob(os.path.join(ROOT, 'data', 'teach', '*.json'))):
@@ -281,6 +302,7 @@ def check_teach():
         if data is None:
             continue
         name = rel(path)
+        _teach_markup(data, name)
         cats = {c.get('id'): c for c in data.get('reaction_categories') or []}
         if not cats:
             problems.append(f'{name}：缺 reaction_categories')
