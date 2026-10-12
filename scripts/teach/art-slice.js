@@ -5,24 +5,63 @@
  *   1. 按「实心像素（alpha ≥ 100）」找连通块；每件取中心点落在 spec 里 region 框内的块，淡边往外多带 3 像素，更淡的杂边切掉
  *   2. 被围住的半透明洞（例如苯环中间的发光）补成奶白底，不然深色背景上会变黑洞
  *   3. square：缩成 size×size；banner：往里缩 inset 去掉圆角，再裁成 ratio
- * 原图必须是真正透明的 PNG／WebP（灰白棋盘格不行）。
+ * 两种特殊情况（写在 spec 里）：
+ *   "key": "checker"  原图是 JPG／没有透明通道、棋盘格是画进像素里的（贴纸外面一圈奶白边）：先把棋盘格抠掉再切。
+ *                     抠法：从四边往里涂满「中性灰（两种灰块）」，被奶白贴纸边围住的灰块洞也算（要整块都是那两种灰才算），
+ *                     贴纸边外缘混了灰的那一圈像素按亮度还原成半透明。真透明的 PNG／WebP 永远比这个干净，能重发就重发。
+ *   kind "photo"      整张图不抠、只缩小（封面这种铺满的图）：size = 宽度，高度按比例。
  */
 const fs = require('fs'), path = require('path');
 let chromium; try { ({ chromium } = require('playwright-core')); } catch (e) { ({ chromium } = require('playwright')); }
 const ROOT = path.join(__dirname, '..', '..');
 const [src, specPath] = process.argv.slice(2);
 if (!src || !specPath) { console.log('用法：node scripts/teach/art-slice.js <拼图> <spec.json>'); process.exit(1); }
-const spec = JSON.parse(fs.readFileSync(specPath, 'utf8')).items;
+const specFile = JSON.parse(fs.readFileSync(specPath, 'utf8'));
+const spec = specFile.items, KEY = specFile.key || '';
 const OUT = path.join(ROOT, 'assets', 'teach');
 (async () => {
   const b = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
   const p = await b.newPage();
   const data = fs.readFileSync(src).toString('base64');
-  const out = await p.evaluate(async ({ d, spec }) => {
-    const img = new Image(); img.src = 'data:image/webp;base64,' + d; await img.decode();
+  const out = await p.evaluate(async ({ d, spec, KEY, mime }) => {
+    const img = new Image(); img.src = `data:${mime};base64,` + d; await img.decode();
     const W = img.naturalWidth, H = img.naturalHeight;
     const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.drawImage(img, 0, 0);
-    const id = x.getImageData(0, 0, W, H).data;
+    const idata = x.getImageData(0, 0, W, H); const id = idata.data;
+    const photoOut = [];
+    for (const sp of spec.filter(s => s.kind === 'photo')) {   // 整张只缩小
+      const f = document.createElement('canvas'); f.width = sp.size; f.height = Math.round(sp.size * H / W);
+      const fx = f.getContext('2d'); fx.imageSmoothingQuality = 'high'; fx.drawImage(img, 0, 0, f.width, f.height);
+      const blob = await new Promise(r => f.toBlob(r, 'image/webp', sp.quality || 0.86));
+      const buf = new Uint8Array(await blob.arrayBuffer()); let bin = ''; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
+      photoOut.push({ name: sp.name, bytes: buf.length, b64: btoa(bin), w: f.width, h: f.height });
+    }
+    if (KEY === 'checker') {
+      const N0 = W * H, near = (v, c) => Math.abs(v - c) <= 8;
+      const gray = i => { const r = id[i * 4], g = id[i * 4 + 1], b = id[i * 4 + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b), L = (r + g + b) / 3; return mx - mn <= 10 && L >= 60 && L <= 112; };
+      const bg = new Uint8Array(N0), st = [];
+      const seed = i => { if (!bg[i] && gray(i)) { bg[i] = 1; st.push(i); } };
+      for (let xx = 0; xx < W; xx++) { seed(xx); seed((H - 1) * W + xx); } for (let yy = 0; yy < H; yy++) { seed(yy * W); seed(yy * W + W - 1); }
+      while (st.length) { const q = st.pop(), qx = q % W, qy = (q / W) | 0; if (qx > 0) seed(q - 1); if (qx < W - 1) seed(q + 1); if (qy > 0) seed(q - W); if (qy < H - 1) seed(q + W); }
+      // 被围住的灰块洞：整块几乎都是那两种棋盘灰才算背景（角色自己的灰石头有色偏，不会被误删）
+      const seen = new Uint8Array(N0);
+      for (let s = 0; s < N0; s++) {
+        if (bg[s] || seen[s] || !gray(s)) continue;
+        const comp = [s]; seen[s] = 1; let k = 0, ok = 0;
+        while (k < comp.length) { const q = comp[k++], qx = q % W, qy = (q / W) | 0; const v = id[q * 4]; if (near(v, 75) || near(v, 98)) ok++;
+          for (const t of [qx > 0 ? q - 1 : -1, qx < W - 1 ? q + 1 : -1, qy > 0 ? q - W : -1, qy < H - 1 ? q + W : -1]) if (t >= 0 && !seen[t] && !bg[t] && gray(t)) { seen[t] = 1; comp.push(t); } }
+        if (comp.length >= 150 && ok / comp.length >= 0.92) comp.forEach(q => { bg[q] = 1; });
+      }
+      // 贴纸外缘 2 像素：奶白混了灰 → 按亮度还原成半透明、颜色定成奶白
+      const edge = new Uint8Array(N0);
+      for (let yy = 2; yy < H - 2; yy++) for (let xx = 2; xx < W - 2; xx++) { const i = yy * W + xx; if (bg[i]) continue;
+        let near_bg = false; for (let dy = -2; dy <= 2 && !near_bg; dy++) for (let dx = -2; dx <= 2; dx++) if (bg[i + dy * W + dx]) { near_bg = true; break; } if (near_bg) edge[i] = 1; }
+      for (let i = 0; i < N0; i++) { const k = i * 4;
+        if (bg[i]) { id[k + 3] = 0; continue; }
+        id[k + 3] = 255;
+        if (edge[i]) { const L = (id[k] + id[k + 1] + id[k + 2]) / 3; if (L > 110) { const a = Math.max(0, Math.min(1, (L - 86) / (236 - 86))); if (a < 0.98) { id[k] = 251; id[k + 1] = 243; id[k + 2] = 223; id[k + 3] = Math.round(a * 255); } } else if (L < 90 && Math.max(id[k], id[k + 1], id[k + 2]) - Math.min(id[k], id[k + 1], id[k + 2]) > 4) { id[k + 3] = 0; } }
+      }
+    }
     // 连通块（alpha > 8）
     const lab = new Int32Array(W * H), comps = []; let n = 0;
     for (let s = 0; s < W * H; s++) {
@@ -34,8 +73,8 @@ const OUT = path.join(ROOT, 'assets', 'teach');
     }
     for (let it = 0; it < 3; it++) { const nl = lab.slice(); for (let yy = 1; yy < H - 1; yy++) for (let xx = 1; xx < W - 1; xx++) { const i = yy * W + xx; if (lab[i] || id[i * 4 + 3] < 28) continue; const nb = lab[i - 1] || lab[i + 1] || lab[i - W] || lab[i + W]; if (nb) nl[i] = nb; } lab.set(nl); }
     const big = comps.filter(k => k.cnt > 400);
-    const result = [];
-    for (const sp of spec) {
+    const result = [...photoOut];
+    for (const sp of spec.filter(s => s.kind !== 'photo')) {
       const [rx0, ry0, rx1, ry1] = sp.region;
       const mine = big.filter(k => k.cx >= rx0 && k.cx <= rx1 && k.cy >= ry0 && k.cy <= ry1);
       if (!mine.length) { result.push({ name: sp.name, error: '没有找到' }); continue; }
@@ -78,7 +117,7 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       result.push({ name: sp.name, filled: sp.filled || 0, box: [bx0, by0, bx1, by1], comps: mine.length, bytes: buf.length, b64: btoa(bin), w: sw, h: sh });
     }
     return { W, H, comps: big.map(k => [k.x0, k.y0, k.x1, k.y1, k.cnt]), result };
-  }, { d: data, spec });
+  }, { d: data, spec, KEY, mime: /\.jpe?g$/i.test(src) ? 'image/jpeg' : /\.png$/i.test(src) ? 'image/png' : 'image/webp' });
   console.log('拼图', out.W, '×', out.H);
   fs.mkdirSync(OUT, { recursive: true });
   const made = [];
