@@ -14,7 +14,7 @@
         "D. $\\begin{pmatrix} -1 & 1 \\\\ 5 & -2 \\end{pmatrix}$"
       ],
       "answer": 1,
-      "explanation": "【考点】矩阵因式分解、单位矩阵性质与逆矩阵的求解。\n【解析】由题意，$AB - A = I \\implies A(B - I) = I$。\n因为两方阵之积为单位矩阵，所以 $B - I$ 是 $A$ 的逆矩阵 $A^{-1}$，即 $B = A^{-1} + I$。\n对于二阶方阵 $A = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$，其行列式 $\\det(A) = ad - bc = 3(2) - 1(5) = 1$。\n由二阶逆矩阵公式：$A^{-1} = \\frac{1}{\\det(A)}\\begin{pmatrix} 2 & -1 \\\\ -5 & 3 \\end{pmatrix} = \\begin{pmatrix} 2 & -1 \\\\ -5 & 3 \\end{pmatrix}$。\n因此，$B = A^{-1} + I = \\begin{pmatrix} 2 & -1 \\\\ -5 & 3 \\end{pmatrix} + \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} = \\begin{pmatrix} 3 & -1 \\\\ -5 & 4 \\end{pmatrix}$，故选 B。\n【迷思点】常见错误包括：误将 $B - I = A^{-1}$ 移项错为 $B = A^{-1} - I$（导致选 A）；或计算出 $AB = \\begin{pmatrix} 4 & 1 \\\\ 5 & 3 \\end{pmatrix}$ 后误以为该矩阵即为 $B$（导致选 C）。",
+      "explanation": "【考点】矩阵因式分解、单位矩阵性质与逆矩阵的求解。\n【解析】由题意，$AB - A = I \\implies A(B - I) = I$。\n因为两方阵之积为单位矩阵，所以 $B - I$ 是 $A$ 的逆矩阵 $A^{-1}$，即 $B = A^{-1} + I$。\n对于二阶方阵 $A = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$，其行列式 $|A| = ad - bc = 3(2) - 1(5) = 1$。\n由二阶逆矩阵公式：$A^{-1} = \\frac{1}{|A|}\\begin{pmatrix} 2 & -1 \\\\ -5 & 3 \\end{pmatrix} = \\begin{pmatrix} 2 & -1 \\\\ -5 & 3 \\end{pmatrix}$。\n因此，$B = A^{-1} + I = \\begin{pmatrix} 2 & -1 \\\\ -5 & 3 \\end{pmatrix} + \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} = \\begin{pmatrix} 3 & -1 \\\\ -5 & 4 \\end{pmatrix}$，故选 B。\n【迷思点】常见错误包括：误将 $B - I = A^{-1}$ 移项错为 $B = A^{-1} - I$（导致选 A）；或计算出 $AB = \\begin{pmatrix} 4 & 1 \\\\ 5 & 3 \\end{pmatrix}$ 后误以为该矩阵即为 $B$（导致选 C）。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
@@ -40,7 +40,7 @@
         "D. $-\\frac{1}{8}$"
       ],
       "answer": 0,
-      "explanation": "【考点】三阶逆矩阵公式 $A^{-1} = \\frac{1}{\\det(A)}\\operatorname{adj}(A)$ 与代数余子式的计算。\n【解析】首先计算矩阵 $A$ 的行列式：\n$\\det(A) = 1 \\cdot \\begin{vmatrix} 1 & 1 \\\\ 3 & -1 \\end{vmatrix} - 0 + 2 \\cdot \\begin{vmatrix} 2 & 1 \\\\ 0 & 3 \\end{vmatrix} = 1(-1 - 3) + 2(6 - 0) = -4 + 12 = 8$。\n伴随矩阵 $\\operatorname{adj}(A)$ 是代数余子式矩阵的转置，即 $(\\operatorname{adj}(A))_{ij} = C_{ji}$。\n因此，$A^{-1}$ 的第 2 行第 3 列元素等于 $\\frac{1}{\\det(A)} C_{32}$。\n代数余子式 $C_{32} = (-1)^{3+2} M_{32} = -\\begin{vmatrix} 1 & 2 \\\\ 2 & 1 \\end{vmatrix} = -(1 - 4) = 3$。\n故该元素为 $\\frac{C_{32}}{\\det(A)} = \\frac{3}{8}$，选项 A 正确。\n【迷思点】极易混淆伴随矩阵的下标转置关系，误将第 2 行第 3 列元素算成 $\\frac{C_{23}}{\\det(A)}$。划去第 2 行第 3 列得 $M_{23} = \\begin{vmatrix} 1 & 0 \\\\ 0 & 3 \\end{vmatrix} = 3$，代数余子式 $C_{23} = -3$，从而误选 B。",
+      "explanation": "【考点】三阶逆矩阵公式 $A^{-1} = \\frac{1}{|A|}\\operatorname{adj}(A)$ 与代数余子式的计算。\n【解析】首先计算矩阵 $A$ 的行列式：\n$|A| = 1 \\cdot \\begin{vmatrix} 1 & 1 \\\\ 3 & -1 \\end{vmatrix} - 0 + 2 \\cdot \\begin{vmatrix} 2 & 1 \\\\ 0 & 3 \\end{vmatrix} = 1(-1 - 3) + 2(6 - 0) = -4 + 12 = 8$。\n伴随矩阵 $\\operatorname{adj}(A)$ 是代数余子式矩阵的转置，即 $(\\operatorname{adj}(A))_{ij} = C_{ji}$。\n因此，$A^{-1}$ 的第 2 行第 3 列元素等于 $\\frac{1}{|A|} C_{32}$。\n代数余子式 $C_{32} = (-1)^{3+2} M_{32} = -\\begin{vmatrix} 1 & 2 \\\\ 2 & 1 \\end{vmatrix} = -(1 - 4) = 3$。\n故该元素为 $\\frac{C_{32}}{|A|} = \\frac{3}{8}$，选项 A 正确。\n【迷思点】极易混淆伴随矩阵的下标转置关系，误将第 2 行第 3 列元素算成 $\\frac{C_{23}}{|A|}$。划去第 2 行第 3 列得 $M_{23} = \\begin{vmatrix} 1 & 0 \\\\ 0 & 3 \\end{vmatrix} = 3$，代数余子式 $C_{23} = -3$，从而误选 B。",
       "origin": "ai_generated",
       "answer_source": "generated",
       "needs_expert_check": true,
@@ -49,7 +49,7 @@
       "syllabus_used": true,
       "review": {
         "ai_answer": 0,
-        "reason": "$A^{-1}$ 第 2 行第 3 列的元素为 $\\frac{C_{3,2}}{\\det(A)} = \\frac{-(-3)}{8} = \\frac{3}{8}$。"
+        "reason": "$A^{-1}$ 第 2 行第 3 列的元素为 $\\frac{C_{3,2}}{|A|} = \\frac{-(-3)}{8} = \\frac{3}{8}$。"
       }
     },
     {
