@@ -275,6 +275,11 @@
 [data-theme="night"] .flip-toggle-title { color: var(--n-text-2); }
 [data-theme="night"] .flip-status-pill { background: var(--n-sunken); }
 [data-theme="night"] .flip-answer-content { background: var(--n-surface); color: var(--n-text); }
+/* 题目来源的小标签与首页底部的制作名单：夜里改用亮一点的字、淡淡的底 */
+[data-theme="night"] .q-tag-exam { background: rgba(134, 207, 168, .14); color: var(--n-green); }
+[data-theme="night"] .q-tag-extra { background: var(--n-amber-bg); color: var(--n-amber); }
+[data-theme="night"] .q-tag-school { background: rgba(169, 152, 224, .15); color: #c9bdf0; }
+[data-theme="night"] .site-credits { color: var(--n-text-2); border-top-color: var(--n-border-strong); }
 [data-theme="night"] .form-q-num { background: rgba(255, 255, 255, .08); color: var(--n-text-2); }
 [data-theme="night"] .subj-attempt { background: var(--n-sunken); border-color: var(--n-border-strong); }
 [data-theme="night"] .subj-attempt-label { color: var(--n-text-2); }

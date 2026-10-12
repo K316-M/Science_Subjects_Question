@@ -397,6 +397,20 @@
     .page-hint { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
     /* 水彩背景上这两行会落在深色的水彩上（实测 4.0–4.3:1）：压在水彩上的字一律用最深那档 */
     .has-scene .bank-coverage, .has-scene .page-hint { color: var(--text-main); }
+    /* 题目来源的小标签（统考／额外／校内课件）：没标的题不画这一行，版面和以前一样 */
+    .q-tag-row { margin: 0 0 10px; }
+    .q-tag { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: .02em; }
+    .q-tag-exam { background: rgba(77, 129, 137, .14); color: var(--retro-teal-dark); }
+    .q-tag-extra { background: rgba(180, 120, 30, .15); color: #7a4a0b; }
+    .q-tag-school { background: rgba(96, 80, 160, .13); color: #4c3d8f; }
+    .form-card-body .q-tag-row { display: inline-block; margin: 0 0 10px 6px; }
+    /* 首页最底下的制作名单：名单在 data/credits.json，到 /dev「制作名单」改；还没读到之前整块藏着 */
+    .site-credits { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; margin: 36px 4px 8px; padding-top: 14px;
+      border-top: 1px dashed rgba(71, 85, 105, .35); font-size: 13px; line-height: 1.75; color: var(--text-muted); }
+    .site-credits[hidden] { display: none; }
+    .site-credits .credit-role { margin-right: 6px; font-weight: 600; opacity: .85; }
+    .site-credits .credit-name { font-weight: 800; }
+    .has-scene .site-credits { color: var(--text-main); }
     .bank-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 0 4px 8px; }
     .bank-row .bank-coverage { margin: 0; }
     /* 模拟统考：计时的东西用「时间」青色（见 DESIGN 功能色） */
@@ -1189,6 +1203,7 @@
       <div class="orbit-core" aria-hidden="true"><svg class="brand-logo"><use href="#i-logo"></use></svg></div>
       <!-- 小球与确认面板由 js/orbit-subjects.js 生成 -->
     </div>
+    <footer class="site-credits" id="siteCredits" aria-label="制作名单" hidden></footer>
   </div>
 
   <!-- 视图 2: 题目练习区 -->
@@ -1797,6 +1812,14 @@
   // 进度、错题、笔记都按「第几题」记，真的删掉的话後面每一题的纪录都会对到别题
   const isLive = q => Boolean(q) && !q.hidden;
   const liveCount = list => (list || []).filter(isLive).length;
+  // 题目来源的小标签。文字只来自这张表与整数年份，不会把题库里的任意字串塞进网页
+  const TAG_LABEL = { exam: '统考', extra: '额外', school: '校内课件' };
+  const tagBadge = q => {
+    const label = q && Object.prototype.hasOwnProperty.call(TAG_LABEL, q.tag) ? TAG_LABEL[q.tag] : '';
+    if (!label) return '';
+    const year = q.tag === 'exam' && Number.isInteger(q.year) ? ` ${q.year}` : '';
+    return `<div class="q-tag-row"><span class="q-tag q-tag-${q.tag}">${label}${year}</span></div>`;
+  };
   // 章节卡、章节选单上的题数：「选择 5 · 做答 1」，没有的那一种不写
   function countLabel(sec) {
     const mcq = liveCount(sec.mcqs), subj = liveCount(sec.subjectives);
@@ -2779,6 +2802,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
 
       area.innerHTML = `
         <div class="flashcard">
+          ${tagBadge(item)}
           <div class="mcq-question">${safeHtml(item.q)}</div>
           ${figureHtml}
           <div class="mcq-options" id="optContainer"></div>
@@ -2917,7 +2941,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
           <div class="form-question-card" data-idx="${qIndex}">
             <div class="form-card-top-bar"></div>
             <div class="form-card-body">
-              <div class="form-q-num">做答题 ${subjPos}<span>／${subjTotal}</span></div>
+              <div class="form-q-num">做答题 ${subjPos}<span>／${subjTotal}</span></div>${tagBadge(q)}
               <div class="form-question-text">${safeHtml(q.question)}</div>
               ${subjImage ? `
               <div class="figure-container" onclick="openImageModal('${subjImage}')">
@@ -3608,6 +3632,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
 <script src="/js/sync.js"></script>
 <script src="/js/sync-ui.js"></script>
 <script src="/js/devlog.js"></script>
+<script src="/js/credits.js"></script>
 <script src="/js/math-render.js"></script>
 </body>
 </html>

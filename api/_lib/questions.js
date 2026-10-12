@@ -4,6 +4,12 @@
 const SUBJECTS = ['biology', 'chemistry', 'physics', 'math'];
 // 高级数学的题目各属统考哪一份卷：高数Ⅰ（SC06）或高数Ⅱ（SC07）。模拟统考照这个分题池
 const PAPERS = ['I', 'II'];
+// 题目来源的标签：统考（可再填年份）、额外、校内课件。一题最多一个；没标就是没有这两个栏位。
+// 学生站在题目旁边显示成小标签，/dev 的编辑面板里改。年份只有「统考」才有。
+const TAGS = ['exam', 'extra', 'school'];
+const YEAR_MIN = 2000;
+const YEAR_MAX = 2099;
+const validYear = y => Number.isInteger(y) && y >= YEAR_MIN && y <= YEAR_MAX;
 const PENDING_PATH = 'papers/pending_approval.json';
 const bankPath = subject => `papers/${subject}_question_bank.json`;
 
@@ -13,6 +19,13 @@ const normalize = t =>
   String(t || '').replace(/\s+/g, '').trim();
 
 const stemOf = item => (item && (item.q || item.question)) || '';
+
+// 标签与年份：认得的才带进正式资料（年份只跟着「统考」）
+function copyTag(entry, item) {
+  if (!TAGS.includes(item.tag)) return;
+  entry.tag = item.tag;
+  if (item.tag === 'exam' && validYear(item.year)) entry.year = item.year;
+}
 
 // 只挑认得的栏位写进题库。
 // 待审区里的其余栏位（flags、来源、时间戳等）不带进正式资料。
@@ -37,6 +50,7 @@ function toBankEntry(item) {
       answer,
     };
     if (PAPERS.includes(item.paper)) entry.paper = item.paper;
+    copyTag(entry, item);
 
     // 做答题也常要看图（例如标出泌尿系统各部位），配图要跟着进题库
     if (item.image) {
@@ -91,6 +105,7 @@ function toBankEntry(item) {
     explanation: String(item.explanation || '').trim(),
   };
   if (PAPERS.includes(item.paper)) entry.paper = item.paper;
+  copyTag(entry, item);
 
   if (item.image) {
     entry.image = String(item.image);
@@ -119,6 +134,21 @@ function applyPatch(item, patch) {
     if (!paper) delete out.paper;
     else if (PAPERS.includes(paper)) out.paper = paper;
     else throw new InputError('卷别只能是高数Ⅰ或高数Ⅱ。');
+  }
+
+  // 标签：清空＝没标；不是「统考」就没有年份。年份要在「统考」之下才收
+  if ('tag' in p) {
+    const tag = text(p.tag);
+    if (!tag) { delete out.tag; delete out.year; }
+    else if (TAGS.includes(tag)) { out.tag = tag; if (tag !== 'exam') delete out.year; }
+    else throw new InputError('标签只能是统考、额外或校内课件。');
+  }
+  if ('year' in p) {
+    const year = text(p.year);
+    if (!year) delete out.year;
+    else if (out.tag !== 'exam') throw new InputError('年份只有「统考」才填。');
+    else if (!validYear(Number(year))) throw new InputError(`年份要在 ${YEAR_MIN}～${YEAR_MAX} 之间。`);
+    else out.year = Number(year);
   }
 
   if (item.type === 'subjective') {
@@ -158,5 +188,5 @@ function decodeImage(subject, name, dataUrl) {
 }
 
 module.exports = {
-  SUBJECTS, PAPERS, PENDING_PATH, bankPath, InputError, normalize, stemOf, toBankEntry, applyPatch, decodeImage,
+  SUBJECTS, PAPERS, TAGS, YEAR_MIN, YEAR_MAX, PENDING_PATH, bankPath, InputError, normalize, stemOf, toBankEntry, applyPatch, decodeImage,
 };
