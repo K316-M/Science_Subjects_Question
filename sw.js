@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uec-science-cache-v21';
+const CACHE_NAME = 'uec-science-cache-v22';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -21,6 +21,7 @@ const APP_SHELL = [
   '/js/sync.js',
   '/js/sync-ui.js',
   '/js/devlog.js',
+  '/js/credits.js',
   '/js/theme.js',
   '/js/math-render.js',
 ];

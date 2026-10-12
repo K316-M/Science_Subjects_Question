@@ -6,11 +6,12 @@
 
   1. JSON 读得开：题库、待审区、申诉结果、manifest、vercel.json、各科 scene.json
   2. 题库：章节 id 不重复；上线的选择题有题干、恰好 4 个选项、答案在 0～3；
-     做答题有题干与参考答案；配图档案真的存在；数学的卷别只能是 I／II（下架的题不检查）
+     做答题有题干与参考答案；配图档案真的存在；数学的卷别只能是 I／II、标签只能是 exam／extra／school 且年份只跟着 exam（下架的题不检查）
   3. 待审区：每题有 id、科目、题型，id 不重复
   4. 语法：scripts/ 底下的 Python、网站与 API 的 JS（含 index.html 里内嵌的 <script>）
   5. docs/CUSTOMIZE.md：每一列「搜这个名字」都要在那一列写的档案里搜得到（CLAUDE.md 第 5 条）
-  6. 更新日志 data/devlog.json：版本号、日期、内容的格式，新的在前（规则在 scripts/publish_devlog.py）
+  6. api/ 的接口数不能超过 Vercel 免费方案的 12 个
+  7. 更新日志 data/devlog.json：版本号、日期、内容的格式，新的在前（规则在 scripts/publish_devlog.py）
 
   python3 scripts/check_repo.py      # 有问题就列出来并 exit 1
 """
@@ -25,6 +26,9 @@ import tempfile
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 PAPERS = ('I', 'II')          # 同 api/_lib/questions.js 的 PAPERS
+TAGS = ('exam', 'extra', 'school')   # 同 api/_lib/questions.js 的 TAGS、YEAR_MIN、YEAR_MAX
+YEAR_RANGE = (2000, 2099)
+API_FUNCTION_LIMIT = 12       # Vercel Hobby 方案的无伺服器函数上限
 problems = []
 _loaded = {}
 
@@ -102,6 +106,14 @@ def check_common(q, at):
         problems.append(f'{at}：配图 {image} 不存在')
     if 'paper' in q and q['paper'] not in PAPERS:
         problems.append(f"{at}：卷别 {q['paper']!r} 只能是 'I' 或 'II'")
+    if 'tag' in q and q['tag'] not in TAGS:
+        problems.append(f"{at}：标签 {q['tag']!r} 只能是 {'、'.join(TAGS)}")
+    if 'year' in q:
+        year = q['year']
+        if q.get('tag') != 'exam':
+            problems.append(f'{at}：有年份却不是「统考」标签')
+        elif not isinstance(year, int) or isinstance(year, bool) or not YEAR_RANGE[0] <= year <= YEAR_RANGE[1]:
+            problems.append(f'{at}：年份 {year!r} 要是 {YEAR_RANGE[0]}～{YEAR_RANGE[1]} 的整数')
 
 
 def check_pending(subjects):
@@ -190,6 +202,15 @@ def check_customize():
                 problems.append(f"docs/CUSTOMIZE.md「{row.get(cols[0], '')[:30]}」：`{name}` 在 {'、'.join(paths)} 里搜不到")
 
 
+def check_function_limit():
+    """Vercel 免费（Hobby）方案一次部署最多 12 个无伺服器函数，也就是 api/ 底下（不含 _lib/）的 .js 档。
+    第 13 个会让整个部署失败，学生站也跟着上不了线；新功能请并进现有的接口（例如 api/dev-edit.js 的 target）。"""
+    count = len(glob.glob(os.path.join(ROOT, 'api', '*.js')))
+    if count > API_FUNCTION_LIMIT:
+        problems.append(f'api/ 有 {count} 支接口，超过 Vercel 免费方案的上限 {API_FUNCTION_LIMIT}：'
+                        '部署会失败。请并进现有的接口，不要另开新档')
+
+
 def check_devlog():
     from publish_devlog import problems_in
     data = load_json(os.path.join(ROOT, 'data', 'devlog.json'))
@@ -206,6 +227,7 @@ def main():
     check_python()
     check_js()
     check_customize()
+    check_function_limit()
     check_devlog()
 
     lines = ['## ✅ 合并前检查：全部通过'] if not problems else \

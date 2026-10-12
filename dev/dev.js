@@ -6,6 +6,15 @@ const SUBJECTS = ['biology', 'chemistry', 'physics', 'math'];
 const SUBJECT_LABEL = { biology: '生物', chemistry: '化学', physics: '物理', math: '数学' };
 // 数学的卷别（题目的 paper 栏位）：模拟统考照它分高数Ⅰ、Ⅱ 抽题；没标的照章节分（见 index.html 的 MATH_ADVANCED_CHAPTERS）
 const PAPER_LABEL = { I: '高数Ⅰ', II: '高数Ⅱ' };
+// 题目来源标签（题目的 tag、year 栏位，规则在 api/_lib/questions.js）：学生站在题目旁边显示成小标签。
+// 年份只有「统考」才有；下拉的年份从今年排到 YEAR_MIN
+const TAG_LABEL = { exam: '统考', extra: '额外', school: '校内课件' };
+const YEAR_MIN = 2000;
+const tagText = item => {
+  const label = TAG_LABEL[item && item.tag];
+  if (!label) return '';
+  return item.tag === 'exam' && item.year ? `${label} ${item.year}` : label;
+};
 const VIEW_LABEL = {
   viewSubjects: '主页（学科选择）',
   viewStudy: '做题页',
@@ -26,6 +35,7 @@ const state = {
   banks: {},
   pending: [],
   resolutions: [],
+  credits: [],
   resolutionsSource: 'static',
   issues: [],
   imageIssues: [],
@@ -47,6 +57,7 @@ const ROUTES = {
   inspector: { label: '题库巡检', icon: 'shield', title: '题库巡检', desc: '自动检查各科题库里的格式问题：选项数量、答案序号、缺少配图与解析、重复题目、图片死链。', render: renderInspector },
   pending: { label: 'AI 录题待审', icon: 'sparkles', title: 'AI 录题待审', desc: '被自动检查标出问题的题逐题展开，可以直接改文字、换配图再采纳；没问题的收成一张清单，扫过一遍一键采纳。', render: renderPending },
   editor: { label: '题目修改', icon: 'edit', title: '题目修改', desc: '搜寻或按章节浏览已上线的题目：直接改题干、选项、答案、解析、换配图，或下架不要的题。存档後约一分钟自动部署，学生就看得到。', render: renderEditor },
+  credits: { label: '制作名单', icon: 'user', title: '制作名单', desc: '学生站首页最底下的制作名单（身份＋名字，例如「制作　某某」「工具助手　Claude Code」）。增减、改字後存档，约一分钟自动上线。', render: renderCredits },
   local: { label: '本机调试', icon: 'terminal', title: '本机调试', desc: '查看、导出或清除这台设备上学生站留下的本地数据，并能生成测试通知来预览小精灵。', render: renderLocal },
 };
 
@@ -146,6 +157,9 @@ async function loadData() {
     ]);
   state.banks = Object.fromEntries(SUBJECTS.map(s => [s, (banks[s] && banks[s].sections) || []]));
   state.pending = (pending && Array.isArray(pending.items)) ? pending.items : [];
+  // 制作名单跟题库一起读（同一支接口，见 api/_lib/credits.js 的说明）；不能发布时读网站上那份
+  if (fresh) state.credits = fresh.credits || [];
+  else state.credits = ((await fetchJson('/data/credits.json')) || {}).credits || [];
   await loadResolutions();
   state.issues = inspectBanks();
   updateNavCounts();
@@ -987,8 +1001,24 @@ function questionEditor(item, isSubj, subject) {
         el('option', { text: t, selected: (item.paper || '') === v, attrs: { value: v } })));
     box.appendChild(field('卷别', paper));
   }
+  // 来源标签：统考（可选年份）／额外／校内课件，所有科目都有；年份只在选了「统考」时出现
+  const tag = el('select', { class: 'select select-inline', attrs: { 'aria-label': '来源标签' } },
+    [['', '没标'], ...Object.entries(TAG_LABEL)].map(([v, text]) =>
+      el('option', { text, selected: (item.tag || '') === v, attrs: { value: v } })));
+  const thisYear = new Date().getFullYear();
+  const years = Array.from({ length: thisYear - YEAR_MIN + 1 }, (_, i) => thisYear - i);
+  if (item.year && !years.includes(item.year)) years.unshift(item.year);
+  const year = el('select', { class: 'select select-inline', attrs: { 'aria-label': '统考年份' } },
+    [['', '年份不填'], ...years.map(y => [String(y), `${y} 年`])].map(([v, text]) =>
+      el('option', { text, selected: String(item.year || '') === v, attrs: { value: v } })));
+  const syncYear = () => { year.hidden = tag.value !== 'exam'; };
+  tag.addEventListener('change', syncYear);
+  syncYear();
+  box.appendChild(field('来源标签', el('div', { class: 'row' }, tag, year)));
   const withPaper = p => {
     if (paper && paper.value !== (item.paper || '')) p.paper = paper.value;
+    if (tag.value !== (item.tag || '')) p.tag = tag.value;
+    if (tag.value === 'exam' && year.value !== String(item.year || '')) p.year = year.value;
     return p;
   };
   // 数学：文字框里是 LaTeX 原文，底下照学生站排好公式给你对照；边打边更新
@@ -1272,6 +1302,7 @@ function renderEditor(body) {
           el('span', { class: 'pill', text: `${SUBJECT_LABEL[h.subject]} · ${h.chapterTitle}` }),
           el('span', { class: 'pill', text: `${h.type === 'mcq' ? '选择题' : '做答题'} 第 ${h.qIndex + 1} 题` }),
           PAPER_LABEL[h.item.paper] ? el('span', { class: 'pill', text: PAPER_LABEL[h.item.paper] }) : null,
+          tagText(h.item) ? el('span', { class: 'pill', text: tagText(h.item) }) : null,
           hidden ? el('span', { class: 'pill pill-retired' }, icon('eyeOff'), el('span', { text: moved ? '已移走' : '已下架' })) : null,
           actions),
         el('div', { class: 'issue-text', text: String(text || '（空）').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').slice(0, 160) }),
@@ -1324,6 +1355,7 @@ function originPills(item) {
     item.type !== 'subjective' && item.answer_source === 'marked' ? el('span', { class: 'pill', text: '答案：原档标的' }) : null,
     item.type !== 'subjective' && item.answer_source === 'ai' ? el('span', { class: 'pill', text: '答案：AI 作答' }) : null,
     item.subject === 'math' ? el('span', { class: 'pill', text: PAPER_LABEL[item.paper] || '卷别没标' }) : null,
+    tagText(item) ? el('span', { class: 'pill', text: tagText(item) }) : null,
   ];
 }
 
@@ -1525,6 +1557,60 @@ function readStorage(key, raw) {
 
 function formatSize(bytes) {
   return bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`;
+}
+
+/* ==========================================================================
+   制作名单（学生站首页最底下，资料在 data/credits.json）
+   ========================================================================== */
+const CREDITS_MAX_ROWS = 10;   // 同 api/_lib/credits.js 的 MAX_ROWS、MAX_ROLE、MAX_NAME
+const CREDITS_MAX_ROLE = 12;
+const CREDITS_MAX_NAME = 40;
+
+function renderCredits(body) {
+  if (!canPublish()) body.appendChild(el('div', { class: 'card field-hint', text: NO_PUBLISH_HINT }));
+  const slot = el('div', { class: 'stack' });
+  body.appendChild(slot);
+
+  let rows = state.credits;
+  rows = rows.map(c => ({ role: c.role || '', name: c.name || '' }));
+
+  const list = el('div', { class: 'stack', style: 'gap:8px' });
+  const preview = el('div', { class: 'card field-hint' });
+  const add = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', text: '＋ 新增一行' });
+  const save = el('button', { class: 'btn btn-primary btn-sm', type: 'button', disabled: !canPublish() }, icon('check'), el('span', { text: '存档并上线' }));
+
+  const draw = () => {
+    clear(list);
+    rows.forEach((row, i) => {
+      const role = el('input', { class: 'input', value: row.role, placeholder: '身份，例如「制作」', attrs: { 'aria-label': `第 ${i + 1} 行身份`, maxlength: String(CREDITS_MAX_ROLE) } });
+      const name = el('input', { class: 'input', value: row.name, placeholder: '名字或工具，例如「Claude Code」', attrs: { 'aria-label': `第 ${i + 1} 行名字`, maxlength: String(CREDITS_MAX_NAME) } });
+      role.addEventListener('input', () => { row.role = role.value; showPreview(); });
+      name.addEventListener('input', () => { row.name = name.value; showPreview(); });
+      const del = el('button', { class: 'btn btn-ghost btn-sm', type: 'button', attrs: { 'aria-label': `删除第 ${i + 1} 行` } }, icon('trash'));
+      del.addEventListener('click', () => { rows.splice(i, 1); draw(); });
+      list.appendChild(el('div', { class: 'credit-row' }, role, name, del));
+    });
+    add.disabled = rows.length >= CREDITS_MAX_ROWS;
+    showPreview();
+  };
+  const showPreview = () => {
+    const shown = rows.filter(r => r.role.trim() && r.name.trim());
+    preview.textContent = shown.length
+      ? `学生站首页底部会显示：${shown.map(r => `${r.role.trim()} ${r.name.trim()}`).join('　·　')}`
+      : '名单是空的：学生站首页底部不会显示任何东西。';
+  };
+  add.addEventListener('click', () => { rows.push({ role: '', name: '' }); draw(); });
+  save.addEventListener('click', async () => {
+    const data = await busy(save, () => api('/api/dev-edit', { method: 'POST', body: { target: 'credits', credits: rows } }));
+    if (!data) return;
+    state.credits = data.credits;
+    rows = data.credits.map(c => ({ ...c }));
+    draw();
+    toast('已存档，约一分钟後学生站就看得到', 'good');
+  });
+
+  clear(slot).append(el('div', { class: 'card stack' }, list, el('div', { class: 'row' }, add, save)), preview);
+  draw();
 }
 
 function renderLocal(body) {

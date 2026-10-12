@@ -40,6 +40,8 @@
 | 统考闹钟面板的宽度 | `index.html` | `.alarm-panel {` 的 `width` | `min(520px, …)`（和时间表一样宽） | | 🟢 |
 | 首页闹钟图示（日历右边）的样子 | `js/exam-alarm.js`（形状）、`index.html`（颜色） | `CLOCK_SVG`；颜色搜 `.alarm-clock .clk-body`（钟面）、`.alarm-clock .clk-bell`（铃）；护眼的在 `css/night.css` 搜 `.alarm-clock` | 卡通闹钟，和日历同一套笔触 | 护眼模式下钟面、日历纸面是米色，眼睛和嘴巴照白天用深色 `#3f3e3c`（`css/night.css` 搜 `.clk-face`） | 🟢 |
 | 换题时题卡左右滑进来的距离 | `index.html` | `slideFromRight`、`slideFromLeft` | `12px` | 不要超过 `16px`（手机的页边） | 🔴 超过的话，滑进来那几格会超出萤幕，手机浏览器把整页撑宽、之後一直能左右晃 |
+| 题目旁小标签（统考／额外／校内课件）的颜色 | `index.html`（白天）、`css/night.css`（护眼） | `.q-tag-exam`（另有 `.q-tag-extra`、`.q-tag-school`） | 青、琥珀、紫 | 字与底色要 ≥ 4.5:1；改完跑 UI 检查 | 🟡 |
+| 首页底部制作名单的样子（字级、间距、分隔线） | `index.html` | `.site-credits {` | 13px 小字、上方一条虚线 | 名单内容不在这里改，见第五节 | 🟢 |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | /dev 列表（巡检、待审、题目修改）题与题之间的空隙 | `dev/dev.css` | `--list-gap` | `12px` | 每题一张卡；太小又会看起来连在一起 | 🟢 |
 | 字级、行高、间距 | 各 CSS | — | | **只能用阶梯上的值**，见 [OPERATIONS 七·阶梯](OPERATIONS.md#字级行高间距的阶梯) | 🔴 |
@@ -145,6 +147,9 @@
 | 更新日志一点最多几个字 | `scripts/publish_devlog.py` | `MAX_ITEM_CHARS` | `200` | 🟢 再长多半是忘了分点 |
 | 模拟统考对到时间表的哪一科 | `index.html` | `EXAM_SUBJECT` | 数学用 `'math:I'`→`高级数学（Ⅰ）`、`'math:II'`→`高级数学（Ⅱ）` | 🔴 右边要和 `js/exam-timetable.js` 的 `subject` 一字不差（全形括号、罗马数字 Ⅰ Ⅱ），对不上按钮就不出现 |
 | 没标卷别的数学题，哪几章不进高数Ⅰ | `index.html` | `MATH_ADVANCED_CHAPTERS` | 第 30～35 章（《高级数学》才有；第 32 章坐标轴的转换是圆锥曲线的铺垫，也算） | 🔴 写章节 `id`（`chap30`），不是章名；课程标准改版才动 |
+| 题目来源标签有哪几种（统考／额外／校内课件） | `api/_lib/questions.js`、`scripts/check_repo.py`、`dev/dev.js`、`index.html` | `TAGS`（前两个档）、`TAG_LABEL`（後两个档） | `exam`／`extra`／`school` → 统考／额外／校内课件 | 🔴 四处一起改；题库里已存的 `tag` 值也要跟着换，不然学生站不显示、`check_repo` 会报错 |
+| 统考标签的年份下拉从哪一年开始（上限 2099） | `api/_lib/questions.js`、`dev/dev.js`、`scripts/check_repo.py` | `YEAR_MIN`（前两个档）、`YEAR_RANGE`（`check_repo`） | `2000` | 🔴 三处一起改；下拉一直排到今年 |
+| 制作名单最多几行、身份最多几个字、名字最多几个字 | `api/_lib/credits.js`、`js/credits.js`、`dev/dev.js` | `MAX_ROWS`、`MAX_ROLE`、`MAX_NAME` | `10` 行、`12` 字、`40` 字 | 🔴 三个档要一起改（`dev.js` 里叫 `CREDITS_MAX_ROWS` 等） |
 | 数学卷别的代号 | `api/_lib/questions.js`、`scripts/ingest_drafts.py`、`scripts/check_repo.py` | `PAPERS` | `'I'`、`'II'` | 🔴 三处一起改；题库里存的就是这两个字，改了，已经标好的题全部对不上 |
 | 照片档名怎么认高数Ⅰ／Ⅱ（第二页以後没有卷头时） | `scripts/ingest_drafts.py` | `PAPER_IN_FILENAME` | 「高数2」「高数Ⅱ」「SC07」→ Ⅱ；「高数1」「SC06」→ Ⅰ | 🟡 Ⅱ 要排在前面（「高数II」也含「高数I」） |
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |
@@ -193,6 +198,8 @@
 | 数学公式排版程式（KaTeX）换新版 | `vendor/katex/` | 🟡 照 `vendor/katex/README.md` 换掉同名档案；只留 `.woff2` 字型。字型档有增减的话，`sw.js` 的 `KATEX_FONTS` 也要跟着改（离线下载用） |
 | 题目档下载 PDF 的程式（html2canvas、jsPDF）换新版 | `vendor/pdf/` | 🟢 照 `vendor/pdf/README.md` 换掉同名档案、改里面写的版本号；档名不变的话 `js/archive.js` 的 `PDF_LIBS` 不用动 |
 | 小精灵的姿势图 | `source/sprite/<姿势>.png` → 跑 `python3 scripts/sprite/build.py` | 🔴 **一定要真正透明的 PNG**。AI 生图的「透明背景」常是画进去的棋盘格，脚本会停下来告诉你；色调、大小、位置脚本会自动对齐 |
+| 给题目标上「统考（可选年份）／额外／校内课件」 | 网站 `/dev` →「题目修改」或「AI 录题待审」，展开一题的「来源标签」 | 一题只能一个；学生站在题目旁边显示小标签，没标的题不显示。见 [OPERATIONS 一·4](OPERATIONS.md#4-修改已上线的题) |
+| 改首页底部的制作名单（身份＋名字） | 网站 `/dev` →「制作名单」 | 存在 `data/credits.json`，不必手改；约一分钟自动上线 |
 | 申诉处理结果 | 网站 `/dev` →「申诉处理」 | 不必手改 `data/resolved_issues.json` |
 | 发一篇更新日志（有新功能时） | GitHub → Actions →「发布更新日志」 | 🟢 填版本号＋内容（每一点之间用 `\|\|` 隔开），见 [OPERATIONS 三之三](OPERATIONS.md#三之三更新日志加了新功能就发一篇)；改已经发出去的，直接改 `data/devlog.json` |
 

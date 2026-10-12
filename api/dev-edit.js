@@ -6,7 +6,8 @@
 //     action = 'clearExplain'：清掉这一题（选择题）全班共用的 AI 讲解，下一个问的人会拿到新的。
 //     action = 'move'：把下架的题移到同一科的另一章（toChapterId）。接在那一章最後面、仍是下架；
 //     原位留一个标了 moved_to 的隐藏空位 —— 两边原有的题号都不变，学生的纪录才不会错位。
-// 两种都跟采纳一样用 toBankEntry 验证，改完是坏的就不让存。
+//   target = 'credits'：首页底部的制作名单（data/credits.json），{ credits: [{ role, name }, …] } 整份换掉。
+// 题目的两种都跟采纳一样用 toBankEntry 验证，改完是坏的就不让存。
 // GET：直接从 GitHub 读最新的各科题库与待审区。网站上的 /papers 要等 Vercel 部署完（约一分钟）
 // 才会更新，工作台若读那份，刚存的修改会「消失」一下，接著再改就会撞到「题库被改过」。
 const { publishingConfig, verifySession, sendJson, readJsonBody, sameOrigin } = require('./_lib/devauth');
@@ -15,6 +16,7 @@ const {
   SUBJECTS, PENDING_PATH, bankPath, InputError, normalize, stemOf, toBankEntry, applyPatch, decodeImage,
 } = require('./_lib/questions');
 const { clearExplain } = require('./_lib/ai');
+const { CREDITS_PATH, cleanCredits } = require('./_lib/credits');
 
 module.exports = async (req, res) => {
   if (!verifySession(req)) {
@@ -36,11 +38,12 @@ module.exports = async (req, res) => {
   if (req.method === 'GET') {
     try {
       const snap = await snapshot(pub);
-      const [pending, ...banks] = await Promise.all(
-        [PENDING_PATH, ...SUBJECTS.map(bankPath)].map(p => readJson(pub, snap, p)));
+      const [pending, credits, ...banks] = await Promise.all(
+        [PENDING_PATH, CREDITS_PATH, ...SUBJECTS.map(bankPath)].map(p => readJson(pub, snap, p)));
       return sendJson(res, 200, {
         ok: true,
         pending: pending || { items: [] },
+        credits: credits && Array.isArray(credits.credits) ? credits.credits : [],
         banks: Object.fromEntries(SUBJECTS.map((s, i) => [s, banks[i] || { sections: [] }])),
       });
     } catch (err) {
@@ -63,6 +66,13 @@ module.exports = async (req, res) => {
       }
       toBankEntry(edited);
       return edited;
+    }
+
+    if (body.target === 'credits') {
+      const credits = cleanCredits(body.credits);
+      writes.push({ path: CREDITS_PATH, json: { credits } });
+      await commitFiles(pub, snap, writes, '📝 修改首页制作名单');
+      return sendJson(res, 200, { ok: true, credits });
     }
 
     if (body.target === 'pending') {

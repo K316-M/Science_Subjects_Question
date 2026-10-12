@@ -340,6 +340,9 @@ code, .mono { font-family: var(--mono); }
 
 .stack { display: flex; flex-direction: column; gap: 16px; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+/* 制作名单：身份（窄）、名字（宽）、删除按钮排成一行；手机上身份与名字各占一行 */
+.credit-row { display: grid; grid-template-columns: minmax(96px, 160px) 1fr auto; gap: 10px; align-items: center; }
+@media (max-width: 560px) { .credit-row { grid-template-columns: 1fr auto; } .credit-row > :first-child { grid-column: 1 / -1; } }
 
 /* 统计卡片 */
 .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
