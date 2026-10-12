@@ -21,8 +21,14 @@
   const STORE_KEY = 'UEC_TEACH_v1';
   /* ====================================== */
 
-  // 地图排版：横向 4 栏（col 0～3），纵向每一行 ROW_H px，每个小节之间多留 SEC_GAP px 放小节标题
-  const COLS = 4, ROW_H = 172, SEC_GAP = 60, TOP = 10, NODE = 68, MAP_BOTTOM = 96;
+  // 地图画布（卡片大小、间距在下面 DIM；缩放与镜头在这里）
+  const ZOOM_MIN = 0.3, ZOOM_MAX = 1.8, ZOOM_STEP = 1.25;   // 缩放范围与每按一下放大／缩小几倍
+  const ZOOM_FAR = 0.5, ZOOM_NEAR = 0.85;                    // 缩得比 FAR 小：只留图标和标题；比 NEAR 大：显示一句话重点和星星
+  const FLY_MS = 480;            // 镜头飞到某一关要多久（毫秒）；系统开了「减少动态」就直接跳过去
+  const DRAG_PX = 6;             // 手指／鼠标移动超过几像素才算「拖动」，没超过算点击
+  const HORIZONTAL_MIN = 720;    // 画面宽度 ≥ 这个值用左→右排；窄的（手机竖拿）用上→下
+  const FIT_PAD = 28;            // 「适配」时四周留多宽
+  const REGION_GAP = 110;        // 小节与小节之间（沿前进方向）隔多远
 
   const KIND_LABEL = { calc: '计算', term: '名词', essay: '理论' };
   const KIND_ORDER = ['calc', 'term', 'essay'];
@@ -146,6 +152,13 @@
     balance: '<path class="ink" d="M32 10v44M20 54h24"/><path class="ink" d="M10 22h44"/><path class="ink fa" d="M4 34q6 8 12 0z"/><path class="ink" d="M10 22l-6 12M10 22l6 12"/><path class="ink fb" d="M48 34q6 8 12 0z"/><path class="ink" d="M54 22l-6 12M54 22l6 12"/><circle class="ink fc" cx="32" cy="10" r="3"/>',
     flag: '<path class="ink" d="M14 60V6"/><g class="wave"><path class="ink fa" d="M14 8q12-6 20 0t20 0v22q-10 6-20 0t-20 0z"/></g><path class="ink fb" d="M32 14l2.4 5 5.4.7-4 3.7 1 5.3-4.8-2.6-4.8 2.6 1-5.3-4-3.7 5.4-.7z"/><circle class="ink fc" cx="14" cy="6" r="3"/>',
     benzene: '<path class="ink fc" d="M32 6l22 13v26L32 58 10 45V19z"/><path class="ink" d="M32 14l15 9v18l-15 9-15-9V23z"/><path class="ink fa" d="M32 22l8 5v10l-8 5-8-5V27z"/><path class="ink" d="M32 6V0M54 19l6-3M10 19l-6-3"/>',
+    refinery: '<path class="ink fc" d="M24 6h16v50H24z"/><path class="ink fa" d="M24 18h16v9H24z"/><path class="ink fb" d="M24 34h16v9H24z"/><path class="ink" d="M40 22h12v-8M24 12h-10v14M40 38h10"/><path class="ink fa" d="M52 42q7 9 0 14t-7-6z"/><circle class="bub b1 ink fc" cx="32" cy="5" r="2.4"/>',
+    torch: '<path class="ink fc" d="M4 34h24v11H4z"/><path class="ink fb" d="M28 36h10v7H28z"/><path class="ink fa" d="M9 45v12h9V45"/><path class="flick ink fd" d="M38 39.5c8-5 15-3 22 0-7 4-14 5-22 0z"/><path class="flick2 ink fc" d="M40 39.5c6-2 10-1 14 0-4 2-9 3-14 0z"/>',
+    lamp: '<path class="ink fc" d="M12 38q0-9 20-9t20 9v11q0 8-20 8t-20-8z"/><path class="ink fa" d="M14 43q18 6 36 0v6q0 7-18 7t-18-7z"/><path class="ink fb" d="M26 29h12l2-7H24z"/><path class="ink" d="M32 22v-4"/><path class="flick ink fb" d="M32 18c-6-4-5-10 0-15 5 5 6 11 0 15z"/><path class="flick2 ink fd" d="M32 16c-3-2-3-5 0-8 3 3 3 6 0 8z"/><path class="ink" d="M20 36q2-3 6-3"/>',
+    magnifier: '<circle class="ink fc" cx="26" cy="26" r="17"/><circle class="ink fd" cx="26" cy="26" r="11"/><path class="ink" d="M18 22q3-6 9-6"/><path class="ink fb" d="M39 39l7-7 12 12q3 3 0 6t-6 0z"/><circle class="bub b1 ink fa" cx="29" cy="30" r="2.6"/>',
+    polymer: '<path class="ink" d="M10 12H5v40h5M54 12h5v40h-5"/><path class="ink" d="M12 40q10-22 20-8t20-14"/><circle class="ink fa" cx="12" cy="40" r="6"/><circle class="ink fc" cx="22" cy="28" r="6"/><circle class="ink fa" cx="32" cy="32" r="6"/><circle class="ink fc" cx="42" cy="23" r="6"/><circle class="ink fa" cx="52" cy="18" r="6"/>',
+    syringe: '<rect class="ink fc" x="12" y="24" width="34" height="18" rx="3"/><path class="ink" d="M12 33H3M3 26v14M46 33h13"/><rect class="ink fb" x="14" y="26" width="7" height="14" rx="1.5"/><circle class="bub b1 ink fa" cx="29" cy="33" r="2.6"/><circle class="bub b2 ink fa" cx="37" cy="30" r="2.6"/><circle class="bub b3 ink fa" cx="35" cy="38" r="2.6"/><circle class="ink fc" cx="32" cy="10" r="8"/><path class="ink" d="M32 10l4-4M32 18v6"/>',
+    cylinder: '<path class="ink fc" d="M19 14q0-8 13-8t13 8v38q0 6-13 6t-13-6z"/><circle class="bub b1 ink fa" cx="27" cy="22" r="4.4"/><circle class="bub b2 ink fb" cx="37" cy="32" r="4.4"/><circle class="bub b3 ink fd" cx="27" cy="43" r="4.4"/><path class="ink fb" d="M27 6V2h10v4"/><path class="ink" d="M45 18h8"/><circle class="ink fc" cx="55" cy="18" r="4"/>',
   };
   const ICON = {
     lock: '<rect class="ink fb" x="14" y="28" width="36" height="28" rx="5"/><path class="ink" d="M21 28V20a11 11 0 0 1 22 0v8"/><circle class="ink fc" cx="32" cy="41" r="3.5"/>',
@@ -158,6 +171,27 @@
     return wrap.firstChild;
   };
   const motifSvg = (name, cls) => svgOf(has(MOTIFS, name) ? MOTIFS[name] : MOTIFS.flask, cls);
+
+  // 你给的插画：放进 assets/teach/（<种类>-<id>.webp，种类 = cover／node／boss），名字登记在 assets/teach/manifest.json，
+  // 登记了的才会去载入；没登记的关卡继续用上面的内置 SVG。清单与提示词见 docs/ART_BRIEF.md
+  async function loadArt() {
+    if (state.art) return state.art;
+    let files = [];
+    try {
+      const res = await fetch('/assets/teach/manifest.json', { cache: 'no-cache' });
+      const j = res.ok ? await res.json() : null;
+      if (j && Array.isArray(j.files)) files = j.files.filter(f => typeof f === 'string');
+    } catch (e) { /* 没有清单或没网络：全部用内置图案 */ }
+    state.art = new Set(files);
+    return state.art;
+  }
+  function artImg(kind, id, cls) {
+    const file = `${kind}-${id}.webp`;
+    if (!state.art || !state.art.has(file)) return null;
+    const img = h('img', { class: `tm-art-img ${cls || ''}`, src: `/assets/teach/${file}`, alt: '', loading: 'lazy', decoding: 'async' });
+    img.addEventListener('error', () => img.remove());
+    return img;
+  }
 
   /* ---------- 资料 ---------- */
   const cache = {};
@@ -203,7 +237,7 @@
   }
 
   /* ---------- 画面状态 ---------- */
-  let state = { subject: null, data: null, mapId: null };
+  let state = { subject: null, data: null, mapId: null, cams: {}, view: null, celebrate: null, art: null, msg: null };
   let sheet = null;   // 目前开着的面板
 
   function setCrumbs(items) {
@@ -227,6 +261,7 @@
   function renderHome() {
     const { subject, data } = state;
     state.mapId = null;
+    state.view = null;
     setCrumbs([{ label: '主页', onClick: goHome }, { label: `${SUBJECT_NAME[subject] || subject} · 教学` }]);
     const box = clear(root());
     box.className = 'tm-root';
@@ -234,7 +269,7 @@
     const cards = data.maps.map(m => {
       const st = mapStats(subject, m);
       const card = h('button', { type: 'button', class: 'tm-card', style: `--tm-accent:${m.accent}`, onclick: () => { sound('pop'); openMap(m.id); } },
-        h('span', { class: 'tm-card-art' }, motifSvg(m.cover || 'flask', 'tm-art')),
+        h('span', { class: 'tm-card-art' }, artImg('cover', m.id, 'tm-cover') || motifSvg(m.cover || 'flask', 'tm-art')),
         h('span', { class: 'tm-card-body' },
           h('span', { class: 'tm-card-title', text: m.title }),
           h('span', { class: 'tm-card-tag', text: m.tagline }),
@@ -252,21 +287,407 @@
       h('div', { class: 'tm-cards' }, cards));
   }
 
-  /* ---------- 地图页（思维导图） ---------- */
-  function layout(map) {
-    const secIndexOfNode = {};
-    map.sections.forEach((s, i) => { s.nodes.forEach(id => { secIndexOfNode[id] = i; }); secIndexOfNode[s.boss] = i; });
-    const items = [...map.nodes, ...(map.bosses || [])];
-    const pos = {};
-    items.forEach(it => {
-      const si = secIndexOfNode[it.id] || 0;
-      pos[it.id] = { x: (it.col + 0.5) / COLS * 100, y: TOP + SEC_GAP * (si + 1) + it.row * ROW_H, si };
+  /* ---------- 地图页（可拖拽、可缩放的思维导图画布） ---------- */
+  // 宽屏左→右：起点在最左，每个小节是一块底板，关卡依 row 往右排、依 col 分上中下三条泳道；
+  // 窄屏（手机竖拿）整张图转成上→下。小节可以折叠成一座「小岛」：进来只展开你现在在学的那一区，其余收起，整张图一眼看得完。
+  // 各数字的意义见 docs/CUSTOMIZE.md「教学地图的画布」。
+  const DIM = {
+    h: { cw: 188, ch: 108, rank: 64, lane: 28, root: 200, island: [236, 120] },   // 宽屏：卡片宽高、前後关间距、并排关间距、起点、小岛
+    v: { cw: 132, ch: 128, rank: 60, lane: 14, root: 160, island: [252, 104] },   // 手机竖拿
+  };
+  const HEAD_H = 44, PAD = 24;
+
+  // 现在该玩哪一关：依小节顺序、依 row，第一个没星又没锁的
+  function nextNode(subject, map) {
+    const idx = nodeIndex(map);
+    for (const sec of map.sections) {
+      const n = sec.nodes.map(id => idx[id]).sort((a, b) => a.row - b.row || a.col - b.col)
+        .find(x => starsOf(subject, x.id) === 0 && !isLocked(subject, map, x));
+      if (n) return n;
+    }
+    return null;
+  }
+  // 卡片上的一句话重点：资料里有 gist 就用 gist，没有就用知识卡的「记住」那句
+  const gistOf = it => it.gist || (it.lesson && it.lesson.tip ? it.lesson.tip.replace(/[。.]$/, '') : '')
+    || `${BOSS_POOL + 1} 题答对 ${needed(BOSS_POOL + 1, BOSS_RATIO)} 题，整个小节免修`;
+  const sectionNo = i => `第 ${'一二三四五六七八'[i] || i + 1} 区`;
+  const sectionDone = (subject, map, sec) => sec.nodes.filter(id => starsOf(subject, id) > 0).length;
+
+  function layout(map, expanded, horiz) {
+    const D = horiz ? DIM.h : DIM.v;
+    const along = (w, h) => (horiz ? w : h);                  // 「往前走」那个方向的长度
+    const rankStep = along(D.cw, D.ch) + D.rank;
+    const laneStep = (horiz ? D.ch : D.cw) + D.lane;
+    const off = horiz ? HEAD_H + 32 : PAD;                     // 泳道从哪里开始（宽屏上方放小节标题，再留一段给「你在这里」小精灵）
+    const head = horiz ? 0 : HEAD_H + 24;                      // 窄屏：小节标题占一行在开头
+    const place = (a, c, w, h) => (horiz ? { x: a, y: c - h / 2, w, h } : { x: c - w / 2, y: a, w, h });
+    const mid = off + laneStep * 1.5;                          // 中线：起点和小岛放这里
+    const rects = {};
+    const regions = [];
+    rects.root = place(0, mid, D.root, D.root);
+    let cursor = D.root + REGION_GAP;
+    const idx = nodeIndex(map);
+    map.sections.forEach((sec, si) => {
+      const boss = bossOf(map, sec.boss);
+      const items = [...sec.nodes.map(id => idx[id]), boss];
+      const minRow = Math.min(...items.map(i => i.row));
+      if (expanded.has(sec.id)) {
+        const maxRank = Math.max(...items.map(i => i.row - minRow));
+        items.forEach(it => {
+          const isBoss = it.id === sec.boss;
+          const w = D.cw + (isBoss ? 24 : 0), h = D.ch + (isBoss ? 12 : 0);
+          rects[it.id] = place(cursor + PAD + head + (it.row - minRow) * rankStep, off + it.col * laneStep, w, h);
+        });
+        const len = PAD * 2 + head + maxRank * rankStep + along(D.cw + 24, D.ch + 12);
+        const span = laneStep * 3;
+        const plate = horiz ? { x: cursor, y: 0, w: len, h: off + span + 14 } : { x: 0, y: cursor, w: span + PAD * 2, h: len };
+        regions.push({ sec, si, open: true, plate, head: { x: plate.x + 12, y: plate.y + 8 } });
+        cursor += len + REGION_GAP;
+      } else {
+        const [iw, ih] = D.island;
+        const r = place(cursor, mid, iw, ih);
+        rects[`region:${sec.id}`] = r;
+        regions.push({ sec, si, open: false, island: r });
+        cursor += along(r.w, r.h) + REGION_GAP;
+      }
     });
-    const height = Math.max(...Object.values(pos).map(p => p.y)) + NODE + MAP_BOTTOM;
-    return { pos, height, items };
+    const all = [...Object.values(rects), ...regions.filter(r => r.plate).map(r => r.plate)];
+    return { rects, regions, W: Math.max(...all.map(r => r.x + r.w)) + PAD, H: Math.max(...all.map(r => r.y + r.h)) + PAD };
   }
 
-  function openMap(mapId) {
+  function edgePath(a, b, horiz) {
+    if (horiz) {
+      const x1 = a.x + a.w, y1 = a.y + a.h / 2, x2 = b.x, y2 = b.y + b.h / 2, dx = Math.max(36, (x2 - x1) / 2);
+      return `M${x1} ${y1} C${x1 + dx} ${y1} ${x2 - dx} ${y2} ${x2} ${y2}`;
+    }
+    const x1 = a.x + a.w / 2, y1 = a.y + a.h, x2 = b.x + b.w / 2, y2 = b.y, dy = Math.max(30, (y2 - y1) / 2);
+    return `M${x1} ${y1} C${x1} ${y1 + dy} ${x2} ${y2 - dy} ${x2} ${y2}`;
+  }
+
+  /* ---- 镜头：拖拽、缩放、飞行 ---- */
+  const clampK = k => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, k));
+  const reduced = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function applyCam() {
+    const v = state.view; if (!v) return;
+    const c = v.cam;
+    v.world.style.transform = `translate(${c.x}px, ${c.y}px) scale(${c.k})`;
+    v.stage.dataset.zoom = c.k < ZOOM_FAR ? 'far' : c.k < ZOOM_NEAR ? 'mid' : 'near';
+    v.stage.style.backgroundPosition = `${c.x}px ${c.y}px`;                       // 点阵底纹跟着镜头走
+    v.stage.style.backgroundSize = `${16 * c.k}px ${16 * c.k}px, auto`;
+    state.cams[state.mapId] = { x: c.x, y: c.y, k: c.k, expanded: [...v.expanded] };
+  }
+  function clampCam() {   // 图至少要留一角在画面里，不会被拖丢
+    const v = state.view, c = v.cam, m = 80;
+    c.x = Math.min(v.stage.clientWidth - m, Math.max(m - v.W * c.k, c.x));
+    c.y = Math.min(v.stage.clientHeight - m, Math.max(m - v.H * c.k, c.y));
+  }
+  function stopFly() { const v = state.view; if (v && v.fly) { cancelAnimationFrame(v.fly); v.fly = 0; } }
+  function zoomAt(px, py, k2) {
+    const v = state.view, c = v.cam; k2 = clampK(k2);
+    const r = k2 / c.k; c.x = px - (px - c.x) * r; c.y = py - (py - c.y) * r; c.k = k2;
+    clampCam(); applyCam();
+  }
+  const zoomBy = f => { stopFly(); const s = state.view.stage; zoomAt(s.clientWidth / 2, s.clientHeight / 2, state.view.cam.k * f); };
+  // 把世界坐标 (wx, wy) 放到画面中央，缩放到 k；ms = 0 就是瞬移
+  function flyTo(wx, wy, k, ms = FLY_MS) {
+    const v = state.view; if (!v) return;
+    stopFly();
+    k = clampK(k);
+    const c = v.cam, to = { x: v.stage.clientWidth / 2 - wx * k, y: v.stage.clientHeight / 2 - wy * k, k };
+    if (!ms || reduced()) { Object.assign(c, to); clampCam(); applyCam(); return; }
+    const from = { ...c }, t0 = performance.now();
+    const step = now => {
+      const t = Math.min(1, (now - t0) / ms), e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      c.x = from.x + (to.x - from.x) * e; c.y = from.y + (to.y - from.y) * e; c.k = from.k + (to.k - from.k) * e;
+      clampCam(); applyCam();
+      v.fly = t < 1 ? requestAnimationFrame(step) : 0;
+    };
+    v.fly = requestAnimationFrame(step);
+  }
+  function flyToRect(r, maxK, ms) {   // 缩放到刚好装下这个矩形（不超过 maxK、不小于 0.5）
+    const v = state.view, pad = FIT_PAD * 2;
+    if (!v.stage.clientWidth) return;
+    const k = Math.max(0.5, Math.min(maxK, (v.stage.clientWidth - pad) / r.w, (v.stage.clientHeight - pad) / r.h));
+    flyTo(r.x + r.w / 2, r.y + r.h / 2, k, ms);
+  }
+  function fitAll(ms) {
+    const v = state.view, pad = FIT_PAD * 2;
+    if (!v.stage.clientWidth) return;
+    const k = Math.min(1, (v.stage.clientWidth - pad) / v.W, (v.stage.clientHeight - pad) / v.H);
+    flyTo(v.W / 2, v.H / 2, Math.max(ZOOM_MIN, k), ms);
+  }
+  function revealRect(r) {   // 键盘 Tab 到画面外的关卡时，镜头平移过去（不改缩放）
+    const v = state.view, c = v.cam, m = 28;
+    const x = r.x * c.k + c.x, y = r.y * c.k + c.y, w = r.w * c.k, h = r.h * c.k;
+    let dx = 0, dy = 0;
+    if (x < m) dx = m - x; else if (x + w > v.stage.clientWidth - m) dx = v.stage.clientWidth - m - (x + w);
+    if (y < m) dy = m - y; else if (y + h > v.stage.clientHeight - m) dy = v.stage.clientHeight - m - (y + h);
+    if (dx || dy) flyTo((v.stage.clientWidth / 2 - c.x - dx) / c.k, (v.stage.clientHeight / 2 - c.y - dy) / c.k, c.k, 220);
+  }
+
+  function wireStage(stage) {
+    const ptrs = new Map();
+    let drag = null, pinch = null, moved = false, suppress = false;
+    const v = () => state.view;
+    const pinchStart = () => {
+      const [a, b] = [...ptrs.values()];
+      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, k: v().cam.k };
+    };
+    stage.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      stopFly();
+      ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (ptrs.size === 1) { drag = { sx: e.clientX, sy: e.clientY, cx: v().cam.x, cy: v().cam.y }; moved = false; }
+      else if (ptrs.size === 2) { pinchStart(); moved = true; }
+    });
+    stage.addEventListener('pointermove', e => {
+      if (!ptrs.has(e.pointerId)) return;
+      ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const c = v().cam;
+      if (ptrs.size === 2 && pinch) {
+        const [a, b] = [...ptrs.values()], r = stage.getBoundingClientRect();
+        zoomAt((a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top, pinch.k * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d);
+        return;
+      }
+      if (!drag || ptrs.size !== 1) return;
+      const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+      if (!moved) {
+        if (Math.hypot(dx, dy) < DRAG_PX) return;
+        moved = true; stage.classList.add('is-dragging');
+        try { stage.setPointerCapture(e.pointerId); } catch (err) { /* 抓不到也能拖 */ }
+      }
+      c.x = drag.cx + dx; c.y = drag.cy + dy; clampCam(); applyCam();
+    });
+    const end = e => {
+      if (!ptrs.has(e.pointerId)) return;
+      ptrs.delete(e.pointerId);
+      if (ptrs.size < 2) pinch = null;
+      if (ptrs.size === 0) { suppress = moved; drag = null; stage.classList.remove('is-dragging'); setTimeout(() => { suppress = false; }, 0); }
+      else if (ptrs.size === 1) { const p = [...ptrs.values()][0]; drag = { sx: p.x, sy: p.y, cx: v().cam.x, cy: v().cam.y }; moved = true; }
+    };
+    stage.addEventListener('pointerup', end);
+    stage.addEventListener('pointercancel', end);
+    stage.addEventListener('click', e => { if (suppress) { e.stopPropagation(); e.preventDefault(); } }, true);   // 拖完松手不算点了关卡
+    stage.addEventListener('wheel', e => {   // 只在 Ctrl／⌘（含触控板捏合）时缩放；单纯滚轮不拦截，页面照常滚动
+      if (!(e.ctrlKey || e.metaKey)) return;
+      e.preventDefault(); stopFly();
+      const r = stage.getBoundingClientRect();
+      zoomAt(e.clientX - r.left, e.clientY - r.top, v().cam.k * Math.exp(-e.deltaY * 0.0022));
+    }, { passive: false });
+    stage.addEventListener('dblclick', e => {
+      if (e.target.closest('button, .tm-hud')) return;
+      const r = stage.getBoundingClientRect(); stopFly();
+      zoomAt(e.clientX - r.left, e.clientY - r.top, v().cam.k * ZOOM_STEP);
+    });
+    stage.addEventListener('keydown', e => {
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      const c = v().cam, s = (e.shiftKey ? 3 : 1) * 90;
+      const pan = (dx, dy) => { e.preventDefault(); stopFly(); c.x += dx; c.y += dy; clampCam(); applyCam(); };
+      if (e.key === 'ArrowLeft') pan(s, 0); else if (e.key === 'ArrowRight') pan(-s, 0);
+      else if (e.key === 'ArrowUp') pan(0, s); else if (e.key === 'ArrowDown') pan(0, -s);
+      else if (e.key === '+' || e.key === '=') { e.preventDefault(); zoomBy(ZOOM_STEP); }
+      else if (e.key === '-' || e.key === '_') { e.preventDefault(); zoomBy(1 / ZOOM_STEP); }
+      else if (e.key === '0') { e.preventDefault(); fitAll(); }
+    });
+    stage.addEventListener('focusin', e => {
+      const el = e.target.closest && e.target.closest('[data-rect]');
+      const r = el && v().rects[el.dataset.rect];
+      if (r) revealRect(r);
+    });
+  }
+
+  /* ---- 画出整张图 ---- */
+  function buildWorld() {
+    const v = state.view, { subject } = state, map = v.map;
+    const horiz = !v.stage.clientWidth || v.stage.clientWidth >= HORIZONTAL_MIN;
+    const L = layout(map, v.expanded, horiz);
+    Object.assign(v, { horiz, rects: L.rects, W: L.W, H: L.H, plates: {} });
+    const world = clear(v.world);
+    world.dataset.axis = horiz ? 'h' : 'v';
+    world.style.width = `${L.W}px`; world.style.height = `${L.H}px`;
+    const box = r => `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px`;
+    const idx = nodeIndex(map);
+    const st = mapStats(subject, map);
+
+    // 小节底板（展开的）
+    L.regions.forEach(rg => {
+      if (!rg.open) return;
+      v.plates[rg.sec.id] = rg.plate;
+      world.append(h('div', { class: 'tm-plate', 'aria-hidden': 'true', style: box(rg.plate) }));
+    });
+
+    // 连线：画在节点後面；还没通的虚线，通了的实线。小节折叠时，里面的线接到小岛上
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'tm-edges');
+    svg.setAttribute('width', L.W); svg.setAttribute('height', L.H);
+    svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('focusable', 'false');
+    const anchor = id => { const sec = sectionOfNode(map, id) || sectionOfBoss(map, id); return sec && !v.expanded.has(sec.id) ? `region:${sec.id}` : id; };
+    const edges = new Map();
+    [...map.nodes, ...(map.bosses || [])].forEach(it => {
+      const to = anchor(it.id);
+      (it.parents.length ? it.parents : ['root']).forEach(pid => {
+        const from = pid === 'root' ? 'root' : anchor(pid);
+        if (from === to || !L.rects[from] || !L.rects[to]) return;
+        const key = `${from}>${to}`, open = pid === 'root' || clearedId(subject, map, pid);
+        edges.set(key, { from, to, open: open || (edges.get(key) || {}).open });
+      });
+    });
+    edges.forEach(e => {
+      const path = document.createElementNS(NS, 'path');
+      path.setAttribute('d', edgePath(L.rects[e.from], L.rects[e.to], horiz));
+      path.setAttribute('class', `tm-edge${e.open ? ' is-open' : ''}`);
+      svg.appendChild(path);
+    });
+    world.append(svg);
+
+    // 起点：地图封面＋通关进度环
+    const rr = L.rects.root, pct = st.total ? st.done / st.total : 0, R = 46, C = 2 * Math.PI * R;
+    const rootArt = artImg('cover', map.id, 'tm-art') || motifSvg(map.cover || 'flask', 'tm-art');
+    const ring = svgOf(`<circle class="rg-bg" cx="50" cy="50" r="${R}"/><circle class="rg-fg" cx="50" cy="50" r="${R}" stroke-dasharray="${(C * pct).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 50 50)"/>`, 'tm-ring');
+    ring.setAttribute('viewBox', '0 0 100 100');
+    world.append(h('div', { class: 'tm-rootnode', 'data-rect': 'root', style: box(rr), role: 'group', 'aria-label': `${map.title}，已通关 ${st.done} / ${st.total} 关` },
+      h('span', { class: 'tm-root-ring' }, ring, h('span', { class: 'tm-root-art' }, rootArt)),
+      h('span', { class: 'tm-root-name', text: map.title }),
+      h('span', { class: 'tm-root-prog', text: `${st.done} / ${st.total} 关 · ${st.stars} 颗星` })));
+
+    // 小节标题（展开的）与小岛（折叠的）
+    L.regions.forEach(rg => {
+      const { sec, si } = rg, done = sectionDone(subject, map, sec), total = sec.nodes.length;
+      const boss = bossOf(map, sec.boss), cleared = bossCleared(subject, map, boss);
+      if (rg.open) {
+        world.append(h('button', { type: 'button', class: `tm-region-head${cleared ? ' is-done' : ''}`, 'data-sec': sec.id, 'aria-expanded': 'true', 'aria-label': `${sectionNo(si)} ${plain(sec.title)}，已通关 ${done} / ${total} 关，点一下收起`,
+          style: `left:${rg.head.x}px;top:${rg.head.y}px`, onclick: () => { sound('pop'); toggleRegion(sec.id); } },
+        h('span', { class: 'tm-section-no', text: sectionNo(si) }), h('span', { class: 'tm-section-name', text: sec.title }),
+        h('span', { class: 'tm-region-prog', text: `${done}/${total}` }), h('span', { class: 'tm-fold', 'aria-hidden': 'true', text: '收起' })));
+        return;
+      }
+      const locked = sec.nodes.every(id => isLocked(subject, map, idx[id]));
+      world.append(h('div', { class: `tm-island${locked ? ' is-locked' : ''}${cleared ? ' is-done' : ''}`, 'data-rect': `region:${sec.id}`, style: box(rg.island) },
+        h('button', { type: 'button', class: 'tm-island-main', 'data-sec': sec.id, 'aria-expanded': 'false', 'aria-label': `${sectionNo(si)} ${plain(sec.title)}，已通关 ${done} / ${total} 关${locked ? '，还没解锁' : ''}，点一下展开`,
+          onclick: () => { sound('pop'); toggleRegion(sec.id); } },
+        h('span', { class: 'tm-section-no', text: sectionNo(si) }),
+        h('span', { class: 'tm-island-name', text: sec.title }),
+        h('span', { class: 'tm-island-prog' }, h('span', { class: 'tm-bar', 'aria-hidden': 'true' }, h('i', { style: `width:${Math.round(done / total * 100)}%` })), h('span', { text: `${done}/${total}` })),
+        h('span', { class: 'tm-fold', 'aria-hidden': 'true', text: locked ? '展开看看' : '展开' })),
+        h('button', { type: 'button', class: `tm-node tm-island-boss${cleared ? ' is-done' : ''}`, 'data-id': boss.id, 'data-state': cleared ? 'done' : 'open', 'aria-label': `挑战${plain(boss.title)}，答对门槛后整个小节免修`,
+          onclick: e => { sound('pop'); state.msg.textContent = ''; openBoss(map, boss, e.currentTarget); } },
+        svgOf(MOTIFS.flag, 'tm-art'), h('span', { text: cleared ? '已免修' : '魔王' }))));
+    });
+
+    // 展开的小节里的关卡
+    L.regions.forEach(rg => {
+      if (!rg.open) return;
+      [...rg.sec.nodes.map(id => idx[id]), bossOf(map, rg.sec.boss)].forEach(it => world.append(nodeCard(map, it, L.rects[it.id])));
+    });
+
+    // 「你在这里」：小精灵停在下一个可玩的关
+    const nxt = nextNode(subject, map);
+    if (nxt) {
+      const key = v.expanded.has((sectionOfNode(map, nxt.id) || {}).id) ? nxt.id : `region:${(sectionOfNode(map, nxt.id) || {}).id}`;
+      const r = L.rects[key];
+      if (r) {
+        const img = h('img', { src: '/assets/sprite/idle.webp', alt: '', width: '48', height: '48', decoding: 'async' });
+        img.addEventListener('error', () => img.remove());
+        world.append(h('div', { class: 'tm-pin', 'aria-hidden': 'true', style: `left:${horiz ? r.x + 10 : r.x + r.w - 62}px;top:${r.y - 58}px` }, img, h('span', { class: 'tm-pin-tag', text: '你在这里' })));
+      }
+    }
+    v.nxt = nxt;
+    if (v.next) {
+      v.next.hidden = !nxt;
+      if (nxt) v.next.textContent = `下一步：${plain(nxt.title)}`;
+    }
+    if (v.allBtn) v.allBtn.textContent = L.regions.every(rg => rg.open) ? '全部收起' : '全部展开';
+    if (v.chips) refreshChips();
+  }
+
+  function nodeCard(map, it, r) {
+    const { subject } = state, v = state.view;
+    const isBoss = !!bossOf(map, it.id);
+    const locked = !isBoss && isLocked(subject, map, it);
+    const stars = starsOf(subject, it.id);
+    const rec = progressOf(subject)[it.id];
+    const bossDone = isBoss && bossCleared(subject, map, it);
+    const done = isBoss ? bossDone : stars > 0;
+    const skipped = !isBoss && rec && rec.k === 's';
+    const stateName = locked ? 'locked' : done ? 'done' : 'open';
+    const kinds = isBoss ? [] : kindsOf(it.challenges);
+    const aria = isBoss
+      ? `${it.title}，魔王关，${bossDone ? '已通关' : '随时可以挑战，通过可免修本小节'}`
+      : `${it.title}，${kinds.map(k => KIND_LABEL[k]).join('、')}，${locked ? '未解锁' : done ? `已通关，${stars} 颗星${skipped ? '（跳级）' : ''}` : '可以挑战'}`;
+    const art = locked ? svgOf(ICON.lock, 'tm-art') : (artImg(isBoss ? 'boss' : 'node', it.id, 'tm-art') || motifSvg(it.motif, 'tm-art'));
+    const btn = h('button', { type: 'button', class: `tm-node tm-ncard${isBoss ? ' is-boss' : ''}`, 'data-state': stateName, 'data-id': it.id, 'data-rect': it.id,
+      'aria-label': plain(aria), title: plain(it.title), 'aria-disabled': locked ? 'true' : null, style: `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px` },
+    h('span', { class: 'tm-disc' }, h('span', { class: 'tm-disc-art' }, art)),
+    h('span', { class: 'tm-text' },
+      h('span', { class: 'tm-name', text: it.title }),
+      h('span', { class: 'tm-gist', text: gistOf(it) }),
+      h('span', { class: 'tm-meta' },
+        h('span', { class: `tm-chip ${isBoss ? 'tm-chip-boss' : 'tm-chip-tier'}`, text: isBoss ? '魔王关' : TIER_LABEL[it.tier] || '' }),
+        isBoss
+          ? h('span', { class: 'tm-sub', text: bossDone ? starsText(stars) || '已免修' : '免修本小节' })
+          : h('span', { class: 'tm-stars', 'aria-hidden': 'true' }, [1, 2, 3].map(i => svgOf(i <= stars ? ICON.star : ICON.starOff, 'tm-star'))))),
+    skipped ? h('span', { class: 'tm-skip', text: '跳级' }) : null);
+    btn.addEventListener('click', () => {
+      if (locked) { sound('wrong'); state.msg.textContent = lockReason(subject, map, it); return; }
+      state.msg.textContent = '';
+      sound('pop');
+      if (isBoss) openBoss(map, it, btn); else openLesson(map, it, btn);
+    });
+    return btn;
+  }
+
+  function toggleRegion(secId, force) {
+    const v = state.view, open = v.expanded.has(secId), want = force === undefined ? !open : force;
+    if (want === open) { focusRegion(secId, 360); return; }
+    if (want) v.expanded.add(secId); else v.expanded.delete(secId);
+    buildWorld();
+    focusRegion(secId, 360);
+    const el = v.world.querySelector(want ? `.tm-region-head[data-sec="${secId}"]` : `.tm-island-main[data-sec="${secId}"]`);
+    if (el) el.focus({ preventScroll: true });   // 键盘用户按完 Enter，焦点留在刚才那个位置
+  }
+  function focusRegion(secId, ms) {
+    const v = state.view, r = v.plates[secId] || v.rects[`region:${secId}`];
+    if (r) flyToRect(r, 1, ms);
+  }
+  function refreshChips() {
+    const v = state.view, { subject } = state, map = v.map;
+    [...v.chips.children].forEach((b, i) => {
+      const sec = map.sections[i], boss = bossOf(map, sec.boss);
+      b.classList.toggle('is-open', v.expanded.has(sec.id));
+      b.classList.toggle('is-done', bossCleared(subject, map, boss));
+    });
+  }
+
+  // 通关回到地图：镜头飞到刚解锁的关，那几关弹一下
+  function runCelebrate() {
+    const c = state.celebrate; state.celebrate = null;
+    const v = state.view;
+    if (!c || !v || !c.ids.length || !document.contains(v.stage)) return false;
+    const sec = sectionOfNode(v.map, c.ids[0]);
+    if (sec && !v.expanded.has(sec.id)) { v.expanded.add(sec.id); buildWorld(); }
+    const r = v.rects[c.ids[0]];
+    if (r) flyTo(r.x + r.w / 2, r.y + r.h / 2, Math.max(v.cam.k, 0.9));
+    c.ids.forEach(id => {
+      const n = v.world.querySelector(`.tm-node[data-id="${id}"]`);
+      if (n) { n.classList.add('is-new'); setTimeout(() => n.classList.remove('is-new'), 4200); }
+    });
+    const first = v.world.querySelector(`.tm-node[data-id="${c.ids[0]}"]`);
+    if (first) first.focus({ preventScroll: true });
+    return true;
+  }
+
+  function goNext() {
+    const v = state.view, nxt = v.nxt; if (!nxt) return;
+    const sec = sectionOfNode(v.map, nxt.id);
+    if (sec && !v.expanded.has(sec.id)) { v.expanded.add(sec.id); buildWorld(); }
+    const r = v.rects[nxt.id];
+    flyTo(r.x + r.w / 2, r.y + r.h / 2, Math.max(v.cam.k, 0.9));
+    const btn = v.world.querySelector(`.tm-node[data-id="${nxt.id}"]`);
+    setTimeout(() => { if (state.view === v && btn && document.contains(btn)) btn.click(); }, reduced() ? 0 : FLY_MS + 60);
+  }
+
+  function openMap(mapId, opts = {}) {
     const { subject, data } = state;
     const map = data.maps.find(m => m.id === mapId);
     if (!map) return renderHome();
@@ -278,95 +699,58 @@
     box.className = 'tm-root';
     box.style.setProperty('--tm-accent', map.accent);
     const st = mapStats(subject, map);
-    const msg = h('p', { class: 'tm-msg', role: 'status', 'aria-live': 'polite' });
-    const canvas = h('div', { class: 'tm-map' });
-    const { pos, height, items } = layout(map);
-    canvas.style.height = `${height}px`;
+    state.msg = h('p', { class: 'tm-msg', role: 'status', 'aria-live': 'polite' });
+    const saved = opts.keep ? state.cams[mapId] : null;
+    const first = nextNode(subject, map);
+    const firstSec = first ? sectionOfNode(map, first.id) : null;
+    const expanded = new Set(saved ? saved.expanded : firstSec ? [firstSec.id] : []);
 
-    // 小节标题
-    map.sections.forEach((sec, i) => {
-      const ids = [...sec.nodes, sec.boss];
-      const top = Math.min(...ids.map(id => pos[id].y));
-      canvas.append(h('div', { class: 'tm-section', style: `top:${top - 50}px` },
-        h('span', { class: 'tm-section-no', text: `第 ${'一二三四五六'[i] || i + 1} 区` }),
-        h('span', { class: 'tm-section-name', text: sec.title })));
-    });
+    const stage = h('div', { class: 'tm-stage', tabindex: '0', role: 'application', 'aria-label': '教学地图。用鼠标或手指拖动，Ctrl 加滚轮或双指捏合缩放；键盘用方向键移动、加减号缩放、0 看全图；Tab 逐个走关卡。' });
+    const world = h('div', { class: 'tm-world' });
+    stage.append(world);
+    const tool = (text, label, fn, extra = '') => h('button', { type: 'button', class: `tm-tool ${extra}`, 'aria-label': label, title: label, text, onclick: () => { sound('pop'); fn(); } });
+    const next = h('button', { type: 'button', class: 'btn-nav tm-next', onclick: () => { sound('pop'); goNext(); } });
+    const allBtn = h('button', { type: 'button', class: 'tm-tool tm-tool-wide', onclick: () => {
+      const v = state.view, all = !map.sections.every(s => v.expanded.has(s.id));
+      map.sections.forEach(s => (all ? v.expanded.add(s.id) : v.expanded.delete(s.id)));
+      sound('pop'); buildWorld(); fitAll(360);
+    } });
+    const hud = h('div', { class: 'tm-hud' },
+      h('div', { class: 'tm-hud-l' }, next),
+      h('div', { class: 'tm-hud-r' }, allBtn, tool('适配', '整张图缩放到刚好看完', () => fitAll(360)), tool('−', '缩小', () => zoomBy(1 / ZOOM_STEP), 'tm-zoombtn'), tool('+', '放大', () => zoomBy(ZOOM_STEP), 'tm-zoombtn')));
+    hud.addEventListener('pointerdown', e => e.stopPropagation());
+    hud.addEventListener('dblclick', e => e.stopPropagation());
+    stage.append(hud);
 
-    // 连线：画在节点後面；locked 的虚线，通关的实线
-    const NS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('class', 'tm-edges');
-    svg.setAttribute('viewBox', `0 0 100 ${height}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.setAttribute('focusable', 'false');
-    items.forEach(it => {
-      it.parents.forEach(pid => {
-        if (!pos[pid]) return;
-        const a = pos[pid], b = pos[it.id];
-        const y1 = a.y + NODE + 2, y2 = b.y - 2, ym = (y1 + y2) / 2;
-        const path = document.createElementNS(NS, 'path');
-        path.setAttribute('d', `M${a.x} ${y1} C${a.x} ${ym} ${b.x} ${ym} ${b.x} ${y2}`);
-        path.setAttribute('vector-effect', 'non-scaling-stroke');
-        const open = clearedId(subject, map, pid);
-        path.setAttribute('class', `tm-edge${open ? ' is-open' : ''}`);
-        svg.appendChild(path);
-      });
-    });
-    canvas.append(svg);
-
-    // 节点
-    items.forEach(it => {
-      const isBoss = !!bossOf(map, it.id);
-      const p = pos[it.id];
-      const locked = !isBoss && isLocked(subject, map, it);
-      const stars = starsOf(subject, it.id);
-      const rec = progressOf(subject)[it.id];
-      const bossDone = isBoss && bossCleared(subject, map, it);
-      const done = isBoss ? bossDone : stars > 0;
-      const skipped = !isBoss && rec && rec.k === 's';
-      const stateName = locked ? 'locked' : done ? 'done' : 'open';
-      const side = it.col < 1.75 ? 'r' : 'l';
-      const kinds = isBoss ? [] : kindsOf(it.challenges);
-      const label = isBoss ? '魔王关' : TIER_LABEL[it.tier] || '';
-      const aria = isBoss
-        ? `${it.title}，魔王关，${bossDone ? '已通关' : '随时可以挑战，通过可免修本小节'}`
-        : `${it.title}，${kinds.map(k => KIND_LABEL[k]).join('、')}，${locked ? '未解锁' : done ? `已通关，${stars} 颗星${skipped ? '（跳级）' : ''}` : '可以挑战'}`;
-      const btn = h('button', { type: 'button', class: `tm-node${isBoss ? ' is-boss' : ''}`, 'data-state': stateName, 'data-id': it.id, 'aria-label': plain(aria),
-        'aria-disabled': locked ? 'true' : null },
-        h('span', { class: 'tm-disc' },
-          h('span', { class: 'tm-disc-art' }, locked ? svgOf(ICON.lock, 'tm-art') : motifSvg(it.motif, 'tm-art'))),
-        h('span', { class: 'tm-name', text: it.title }),
-        h('span', { class: 'tm-chips' },
-          h('span', { class: 'tm-chip tm-chip-tier', text: label }),
-          kinds.map(k => h('span', { class: 'tm-chip', text: KIND_LABEL[k] }))),
-        isBoss
-          ? h('span', { class: 'tm-sub', text: bossDone ? starsText(stars) || '已免修' : '免修本小节' })
-          : h('span', { class: 'tm-stars', 'aria-hidden': 'true' }, [1, 2, 3].map(i => svgOf(i <= stars ? ICON.star : ICON.starOff, 'tm-star'))),
-        skipped ? h('span', { class: 'tm-skip', text: '跳级' }) : null);
-      const wrap = h('div', { class: `tm-pos side-${side}${locked ? ' is-locked' : ''}`, style: `left:${p.x}%;top:${p.y}px` },
-        h('span', { class: 'tm-deco', 'aria-hidden': 'true' }, motifSvg(isBoss ? 'flag' : it.motif, 'tm-deco-art')), btn);
-      btn.addEventListener('click', () => {
-        if (locked) { sound('wrong'); msg.textContent = lockReason(subject, map, it); return; }
-        msg.textContent = '';
-        sound('pop');
-        if (isBoss) openBoss(map, it, btn); else openLesson(map, it, btn);
-      });
-      canvas.append(wrap);
-    });
+    const chips = h('div', { class: 'tm-regions', role: 'group', 'aria-label': '小节' }, map.sections.map((sec, i) => h('button', { type: 'button', class: 'tm-chip-region', 'data-sec': sec.id,
+      onclick: () => { sound('pop'); toggleRegion(sec.id, true); } },
+    h('b', { text: sectionNo(i) }), ` ${sec.title} `, h('span', { text: `${sectionDone(subject, map, sec)}/${sec.nodes.length}` }))));
 
     const book = h('button', { type: 'button', class: 'btn-nav tm-book', onclick: e => { sound('pop'); openReactionBook(map, e.currentTarget); } }, '反应册（按类别汇总）');
-    put(box, 
+    put(box,
       h('div', { class: 'tm-head' },
         h('button', { type: 'button', class: 'btn-nav tm-back', onclick: () => { sound('pop'); renderHome(); } }, '← 选地图'),
         h('div', { class: 'tm-head-main' },
           h('h2', { class: 'page-heading tm-title', text: map.title }),
           h('p', { class: 'tm-prog', text: `已通关 ${st.done} / ${st.total} 关 · 累计 ${st.stars} 颗星` })),
         book),
-      draftBanner(), msg,
+      draftBanner(), state.msg, chips,
       h('div', { class: 'tm-legend', 'aria-hidden': 'true' },
-        h('span', { text: '锁住：先通过前面的关' }), h('span', { text: '亮着：可以挑战' }), h('span', { text: '旗帜：魔王关，直接挑战可跳级' })),
-      canvas);
+        h('span', { text: '锁住：先通过前面的关' }), h('span', { text: '亮着：可以挑战' }), h('span', { text: '旗帜：魔王关，直接挑战可跳级' }), h('span', { text: '拖动画面、Ctrl＋滚轮缩放；点小节标题收起／展开' })),
+      stage);
+
+    state.view = { stage, world, map, expanded, cam: saved ? { x: saved.x, y: saved.y, k: saved.k } : { x: 0, y: 0, k: 1 }, rects: {}, plates: {}, W: 1, H: 1, fly: 0, nxt: null, next, allBtn, chips };
+    wireStage(stage);
+    buildWorld();
+    if (saved) { clampCam(); applyCam(); }
+    else if (firstSec) {
+      // 第一次进来：现在在学的那一区放进画面；如果就是第一区，连起点一起放进来
+      const r = state.view.plates[firstSec.id], root = state.view.rects.root;
+      const box = firstSec === map.sections[0]
+        ? { x: Math.min(r.x, root.x), y: Math.min(r.y, root.y), w: Math.max(r.x + r.w, root.x + root.w) - Math.min(r.x, root.x), h: Math.max(r.y + r.h, root.y + root.h) - Math.min(r.y, root.y) }
+        : r;
+      flyToRect(box, 1, 0);
+    } else fitAll(0);
   }
   const starsText = n => (n > 0 ? '★'.repeat(n) : '');
 
@@ -376,9 +760,14 @@
     document.removeEventListener('keydown', sheet.onKey, true);
     sheet.mask.remove();
     document.body.classList.remove('tm-lock');
-    const from = sheet.from;
+    const from = sheet.from, fromId = from && from.dataset ? from.dataset.id : null;
     sheet = null;
-    if (restore && from && document.contains(from)) from.focus();
+    const celebrated = runCelebrate();   // 刚解锁了新关：镜头飞过去（同时负责把焦点放到新关上）
+    if (restore && !celebrated) {
+      // 通关後地图重画过，原来那个按钮已经不在了：按 id 找回新的
+      const back = from && document.contains(from) ? from : (fromId && state.view ? state.view.world.querySelector(`.tm-node[data-id="${fromId}"]`) : null);
+      if (back) back.focus({ preventScroll: true });
+    }
   }
   function openSheet(from, build) {
     closeSheet(false);
@@ -439,7 +828,7 @@
     s.body.removeAttribute('aria-hidden');
     if (s.prevFocus && s.box.contains(s.prevFocus)) s.prevFocus.focus();
   }
-  const refreshMap = () => { if (state.mapId) { const y = window.scrollY; openMap(state.mapId); window.scrollTo(0, y); } };
+  const refreshMap = () => { if (state.mapId) openMap(state.mapId, { keep: true }); };
 
   /* ---------- 知识卡 ---------- */
   function renderReactions(list) {
@@ -635,7 +1024,10 @@
         if (sec) sec.nodes.forEach(id => award(subject, id, 2, 's'));   // 跳级：每关算 2 星，不盖掉更高的星数
       }
     }
-    const unlocked = map.nodes.filter(n => lockedBefore.includes(n.id) && !isLocked(subject, map, n)).map(n => n.title);
+    const unlockedNodes = map.nodes.filter(n => lockedBefore.includes(n.id) && !isLocked(subject, map, n));
+    const unlocked = unlockedNodes.map(n => n.title);
+    const fresh = unlockedNodes.filter(n => starsOf(subject, n.id) === 0);   // 跳级过去的不算「新」解锁
+    state.celebrate = passed && unlockedNodes.length ? { ids: (fresh.length ? fresh : unlockedNodes).map(n => n.id) } : null;
     sound(passed ? 'correct' : 'wrong');
     put(body, 
       h('h3', { class: 'tm-sheet-title', 'data-autofocus': '', tabindex: '-1', text: passed ? (run.kind === 'boss' ? '魔王倒下了！' : '过关！') : '差一点' }),
@@ -645,13 +1037,14 @@
       passed && unlocked.length ? h('p', { class: 'tm-tip' }, h('b', { text: '解锁了：' }), unlocked.join('、')) : null,
       !passed ? h('p', { class: 'tm-tip', text: run.kind === 'boss' ? '没过不会扣任何进度。回去看看知识卡，再来挑战。' : '回去看一遍知识卡，再来一次。' }) : null,
       h('div', { class: 'tm-actions' },
-        h('button', { type: 'button', class: 'btn-nav tm-primary', onclick: () => { closeSheet(false); refreshMap(); } }, '回到地图'),
+        h('button', { type: 'button', class: 'btn-nav tm-primary', onclick: () => closeSheet(false) }, '回到地图'),
         h('button', { type: 'button', class: 'btn-nav tm-ghost', onclick: () => {
           sound('pop');
           const items = run.kind === 'boss'
             ? (() => { const sec = map.sections.find(x => x.id === run.sectionId); const pool = sec.nodes.flatMap(id => nodeIndex(map)[id].challenges); return [...shuffle(pool).slice(0, BOSS_POOL).map(prepare), prepare(bossOf(map, run.id).extra)]; })()
             : nodeIndex(map)[run.id].challenges.map(prepare);
           const next = { ...run, items, index: 0, correct: 0 };
+          state.celebrate = null;
           s.confirmClose = true; showQuestion(body, s, next);
         } }, '再来一次')));
     // 面板後面的地图先更新（星星、解锁），关掉面板就看得到
@@ -674,18 +1067,30 @@
   async function open(subject) {
     const box = root();
     if (!box) return;
-    state = { subject, data: null, mapId: null };
+    state = { subject, data: null, mapId: null, cams: {}, view: null, celebrate: null, art: null, msg: null };
     clear(box);
     box.className = 'tm-root';
     put(box, h('p', { class: 'page-hint', role: 'status', text: '载入教学地图…' }));
     try {
       state.data = await loadData(subject);
+      await loadArt();
       renderHome();
     } catch (e) {
       put(clear(box), h('p', { class: 'page-hint', text: '教学地图载入失败（可能没有网络）。' }),
         h('button', { type: 'button', class: 'btn-nav', onclick: () => open(subject), text: '再试一次' }));
     }
   }
+
+  // 窗口大小变了：宽窄跨过 HORIZONTAL_MIN 就换排法（左→右／上→下），否则只把画面拉回范围内
+  let resizeTimer = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const v = state.view;
+      if (!v || !document.contains(v.stage) || !v.stage.clientWidth) return;
+      if ((v.stage.clientWidth >= HORIZONTAL_MIN) !== v.horiz) { buildWorld(); fitAll(0); } else { clampCam(); applyCam(); }
+    }, 150);
+  });
 
   window.TeachMode = { open, _test: { parseNumber, isCorrect, starsFor, needed, PASS_RATIO, BOSS_RATIO } };
 })();

@@ -44,8 +44,10 @@
 | 题目旁小标签（统考／额外／校内课件）的颜色 | `index.html`（白天）、`css/night.css`（护眼） | `.q-tag-exam`（另有 `.q-tag-extra`、`.q-tag-school`） | 青、琥珀、紫 | 字与底色要 ≥ 4.5:1；改完跑 UI 检查 | 🟡 |
 | 首页底部制作名单的样子（字级、间距、分隔线） | `index.html` | `.site-credits {` | 13px 小字、上方一条虚线 | 名单内容不在这里改，见第五节 | 🟢 |
 | 教学地图的颜色与排版（纸色、墨线、节点圆、魔王关的黄黑斜纹） | `css/teach.css` | `.tm-root`（最上面的 `--tm-` 开头变数）；护眼版在 `css/night.css` 的 `.tm-root` | 米黄纸＋深墨线；各地图的主色在 `data/teach/chemistry.json` 每张地图的 `accent` | 🟡 字级、间距只能用[阶梯](OPERATIONS.md#字级行高间距的阶梯)上的值；改了纸色要重看护眼模式的对比 |
-| 教学地图每一行多高、小节之间留多宽、节点圆多大 | `js/teach.js` | `ROW_H`、`SEC_GAP`、`NODE` | `172`、`60`、`68` | 🟡 `NODE` 要和 `css/teach.css` 的 `.tm-disc` 宽高一起改，不然连线接不到圆 |
-| 教学地图节点旁的小图案（烧瓶、气球、工厂、电解、苯环…）与旗帜、星星、锁 | `js/teach.js` | `MOTIFS`、`ICON` | 22 个内嵌 SVG，64×64，墨线＋地图主色 | 🟢 资料里的 `motif`／`cover` 只能写 `MOTIFS` 里有的名字，写错合并前检查会挡下来；会动的部分在 `css/teach.css` 的 `@keyframes` |
+| 教学地图的画布：卡片多大、前後关隔多远、并排关隔多远、起点与小岛多大、小节之间隔多远 | `js/teach.js` | `DIM`（`cw`、`ch`、`rank`、`lane`、`root`、`island`）、`REGION_GAP` | 宽屏 188×108、64、28、200、236×120；手机竖拿 132×128、60、14、160、252×104；小节间距 `110` | 🟡 卡片宽高要和 `css/teach.css` 的 `.tm-disc`（圆盘 64px）、`.tm-ncard` 的内距一起看，缩太小标题会被切掉；字级、间距只能用阶梯上的值 |
+| 教学地图的缩放与镜头：最小／最大倍数、每按一下放大几倍、缩到多小只留图标、放大到多大才显示一句话重点、飞行多久、拖多远才算拖、宽于多少用左→右 | `js/teach.js` | `ZOOM_MIN`、`ZOOM_MAX`、`ZOOM_STEP`、`ZOOM_FAR`、`ZOOM_NEAR`、`FLY_MS`、`DRAG_PX`、`HORIZONTAL_MIN`、`FIT_PAD` | `0.3`、`1.8`、`1.25`、`0.5`、`0.85`、`480`（毫秒）、`6`（像素）、`720`（像素）、`28` | 🟢 `ZOOM_FAR` 要小于 `ZOOM_NEAR`；`HORIZONTAL_MIN` 改了，手机／平板的排法分界线就跟着变；系统开了「减少动态」时镜头不飞、直接跳过去 |
+| 教学地图卡片上的一句话重点 | `data/teach/chemistry.json`（每关可选的 `gist`）、`js/teach.js`（`gistOf`） | `gist`、`gistOf` | 没写 `gist` 就用知识卡的「记住」那一句（`lesson.tip`）；目前只有 4 关（气体定律、电解计算、增碳反应、化学键）因为 tip 太长另写了短的 | 🟢 最多 26 字，合并前检查会挡；手机竖拿时卡片不显示这一行 |
+| 教学地图节点旁的小图案（烧瓶、气球、工厂、电解、苯环…）与旗帜、星星、锁 | `js/teach.js` | `MOTIFS`、`ICON` | 29 个内嵌 SVG，64×64，墨线＋地图主色（有你给的图时，图优先，见 [ART_BRIEF.md](ART_BRIEF.md)） | 🟢 资料里的 `motif`／`cover` 只能写 `MOTIFS` 里有的名字，写错合并前检查会挡下来；会动的部分在 `css/teach.css` 的 `@keyframes` |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | /dev 列表（巡检、待审、题目修改）题与题之间的空隙 | `dev/dev.css` | `--list-gap` | `12px` | 每题一张卡；太小又会看起来连在一起 | 🟢 |
 | 字级、行高、间距 | 各 CSS | — | | **只能用阶梯上的值**，见 [OPERATIONS 七·阶梯](OPERATIONS.md#字级行高间距的阶梯) | 🔴 |

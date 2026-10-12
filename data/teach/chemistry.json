@@ -321,12 +321,13 @@
      "id": "i-pv",
      "title": "气体定律",
      "tier": 3,
+     "gist": "T 不变用波义耳，p 不变用查理",
      "parents": [
       "i-boss-a"
      ],
      "col": 2.5,
      "row": 3,
-     "motif": "tubes",
+     "motif": "syringe",
      "sources": [
       "第十六章 气体（17.3 波义耳定律、查理定律、格雷姆扩散定律）"
      ],
@@ -395,7 +396,7 @@
      ],
      "col": 2.5,
      "row": 4,
-     "motif": "bubbles",
+     "motif": "cylinder",
      "sources": [
       "第十六章 气体（17.6 道尔顿分压定律、分体积定律、排水集气法）"
      ],
@@ -671,6 +672,7 @@
      "id": "i-elec",
      "title": "电解计算（法拉第）",
      "tier": 4,
+     "gist": "别漏：分钟→秒、mol 电子→系数",
      "parents": [
       "i-ind"
      ],
@@ -953,7 +955,7 @@
      ],
      "col": 0.5,
      "row": 1,
-     "motif": "factory",
+     "motif": "refinery",
      "sources": [
       "第二十六章 烷烃（石油分馏、裂化、同分异构体、命名、取代反应）"
      ],
@@ -1342,7 +1344,7 @@
      ],
      "col": 0.5,
      "row": 4,
-     "motif": "bubbles",
+     "motif": "torch",
      "sources": [
       "第二十八章 炔烃（结构、加成、氧化、金属炔化物、电石法）"
      ],
@@ -1701,7 +1703,7 @@
      ],
      "col": 0.5,
      "row": 7,
-     "motif": "beaker",
+     "motif": "lamp",
      "sources": [
       "第三十一章 醇和酚（醇的氧化、脱水、取代、酯化；苯酚的性质与制法）"
      ],
@@ -2068,6 +2070,7 @@
      "id": "o-carb",
      "title": "增碳反应（多 1 个 C）",
      "tier": 3,
+     "gist": "增碳＝加一个新碳（—CN 或 CO₂）",
      "parents": [
       "o-boss-ox"
      ],
@@ -2302,7 +2305,7 @@
      ],
      "col": 0.5,
      "row": 11,
-     "motif": "testtube",
+     "motif": "magnifier",
      "sources": [
       "第三十二章 醛和酮（托伦、斐林、卤仿反应）",
       "第三十章 卤代烃（卤素的检验）",
@@ -2404,7 +2407,7 @@
      ],
      "col": 2.5,
      "row": 11,
-     "motif": "crystal",
+     "motif": "polymer",
      "sources": [
       "第三十四章 高分子化合物（加聚、缩聚、橡胶）"
      ],
@@ -2782,6 +2785,7 @@
      "id": "p-bond",
      "title": "化学键与电负性",
      "tier": 1,
+     "gist": "金属＋非金属＝离子键；非金属＋非金属＝共价键",
      "parents": [],
      "col": 1.5,
      "row": 0,

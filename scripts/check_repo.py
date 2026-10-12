@@ -295,8 +295,29 @@ def _teach_markup(o, at):
                             '——下标写 _{c}、上标写 ^{2+}，或直接用 Unicode（₂ ²）')
 
 
+def _teach_art(data_ids):
+    """assets/teach/manifest.json 登记的插画：文件要真的存在，名字要对得上某张地图／关卡／魔王（<cover|node|boss>-<id>.webp）"""
+    path = os.path.join(ROOT, 'assets', 'teach', 'manifest.json')
+    if not os.path.isfile(path):
+        return
+    data = load_json(path)
+    files = (data or {}).get('files')
+    if not isinstance(files, list):
+        problems.append('assets/teach/manifest.json：files 要是清单（数组）')
+        return
+    for f in files:
+        m = re.fullmatch(r'(cover|node|boss)-(.+)\.webp', f) if isinstance(f, str) else None
+        if not m:
+            problems.append(f'assets/teach/manifest.json：{f!r} 不是 <cover|node|boss>-<id>.webp')
+        elif m.group(2) not in data_ids.get(m.group(1), set()):
+            problems.append(f'assets/teach/manifest.json：{f} 找不到对应的{ {"cover": "地图", "node": "关卡", "boss": "魔王"}[m.group(1)] } id')
+        elif not os.path.isfile(os.path.join(ROOT, 'assets', 'teach', f)):
+            problems.append(f'assets/teach/manifest.json：登记了 {f}，但 assets/teach/ 里没有这个档案')
+
+
 def check_teach():
     motifs = _teach_motifs()
+    art_ids = {'cover': set(), 'node': set(), 'boss': set()}
     for path in sorted(glob.glob(os.path.join(ROOT, 'data', 'teach', '*.json'))):
         data = load_json(path)
         if data is None:
@@ -311,6 +332,9 @@ def check_teach():
             at = f'{name}/{m.get("id")}'
             nodes = {n.get('id'): n for n in m.get('nodes') or []}
             bosses = {b.get('id'): b for b in m.get('bosses') or []}
+            art_ids['cover'].add(m.get('id'))
+            art_ids['node'].update(nodes)
+            art_ids['boss'].update(bosses)
             if len(nodes) != len(m.get('nodes') or []):
                 problems.append(f'{at}：关卡 id 有重复')
             for ident in list(nodes) + list(bosses):
@@ -359,6 +383,8 @@ def check_teach():
                         problems.append(f'{nat}：{cat["name"]}的反应式要标 level（{"／".join(cat["levels"])}）：{r.get("name")}')
                     if not (r.get('name') and r.get('equation')):
                         problems.append(f'{nat}：反应式缺 name／equation')
+                if 'gist' in n and not (isinstance(n['gist'], str) and 0 < len(n['gist']) <= 26):
+                    problems.append(f'{nat}：gist（地图卡片上的一句话重点）要是 1～26 字的字串；不写就用知识卡的 tip')
                 if len(n.get('challenges') or []) < 3:
                     problems.append(f'{nat}：每关至少 3 题')
                 for q in n.get('challenges') or []:
@@ -383,6 +409,7 @@ def check_teach():
             for nid in nodes:
                 if in_section[nid] != 1:
                     problems.append(f'{at}/{nid}：要恰好属于一个小节（现在 {in_section[nid]} 个）')
+    _teach_art(art_ids)
 
 
 def main():

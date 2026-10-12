@@ -1030,7 +1030,6 @@ async function run() {
     TEACH.maps.forEach(m => { m.nodes.forEach(n => n.challenges.forEach(c => { Q[c.q] = c; })); m.bosses.forEach(b => { Q[b.extra.q] = b.extra; }); });
     for (const [night, theme] of [[false, 'day'], [true, 'night']]) {
       const { ctx, page, errors } = await open({ width: 390, height: 844, mobile: true });
-      page.on('dialog', d => d.accept());   // 作答到一半关掉面板会问「确定退出吗」
       if (night) await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'night'));
       await page.evaluate(() => document.querySelectorAll('.orbit-node')[1].click()); await page.waitForTimeout(450);
       const panel = await page.evaluate(() => ({ teach: !document.querySelector('.panel-teach').hidden }));
@@ -1040,19 +1039,27 @@ async function run() {
       check(G, `${theme}：三张地图卡`, await page.$$eval('.tm-card', e => e.length) === 3);
       await contrast(page, `${theme} 教学：选地图`, '#teachRoot', R);
       await page.evaluate(() => document.querySelectorAll('.tm-card')[0].click()); await page.waitForTimeout(500);
+      const first = await page.evaluate(() => ({ islands: document.querySelectorAll('.tm-island').length, pin: !!document.querySelector('.tm-pin'), root: !!document.querySelector('.tm-rootnode'), next: document.querySelector('.tm-next') && document.querySelector('.tm-next').textContent }));
+      check(G, `${theme}：进来只展开现在的小节，其余折成小岛（2 个），有起点、「你在这里」、「下一步」`, first.islands === 2 && first.pin && first.root && /下一步/.test(first.next || ''), JSON.stringify(first));
+      await contrast(page, `${theme} 教学：地图`, '.tm-stage', R);
+      await page.evaluate(() => { const b = document.querySelector('.tm-tool-wide'); if (b && /全部展开/.test(b.textContent)) b.click(); }); await page.waitForTimeout(450);
       const lay = await page.evaluate(() => ({ nodes: document.querySelectorAll('.tm-node').length, over: document.documentElement.scrollWidth > innerWidth }));
-      check(G, `${theme}：地图有节点、没有横向溢出`, lay.nodes >= 9 && !lay.over, JSON.stringify(lay));
-      await contrast(page, `${theme} 教学：地图`, '.tm-map', R);
-      await page.click('.tm-node[data-id="i-mole"]'); await page.waitForSelector('.tm-sheet');
+      check(G, `${theme}：全部展开後有 11 个节点、没有横向溢出`, lay.nodes === 11 && !lay.over, JSON.stringify(lay));
+      await page.evaluate(() => document.querySelector('.tm-node[data-id="i-mole"]').click()); await page.waitForSelector('.tm-sheet');
       await contrast(page, `${theme} 教学：知识卡`, '.tm-sheet', R);
       await page.click('.tm-sheet .tm-primary'); await page.waitForTimeout(150);
       const qtext = (await page.$eval('.tm-q', e => e.textContent)).trim();
       check(G, `${theme}：进入第一题、没有「null」字样`, !!Q[qtext] && !/\bnull\b/.test(await page.$eval('.tm-sheet', e => e.textContent)));
       await contrast(page, `${theme} 教学：作答`, '.tm-sheet', R);
+      const ov = await page.evaluate(() => { const a = document.querySelector('.tm-x').getBoundingClientRect(), b = document.querySelector('.tm-qno').getBoundingClientRect(); return !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top); });
+      check(G, `${theme}：× 和「第 N / M 题」不重叠`, !ov);
       await page.fill('.tm-input', '9999'); await page.click('.tm-primary'); await page.waitForTimeout(150);
       await contrast(page, `${theme} 教学：答错解析`, '.tm-sheet', R);
       await page.keyboard.press('Escape'); await page.waitForTimeout(300);
-      check(G, `${theme}：作答到一半按 Esc 会先问再关`, !(await page.$('.tm-sheet')));
+      check(G, `${theme}：作答到一半按 Esc 先出现面板内的确认条（不是原生对话框），面板还开着`, !!(await page.$('.tm-leave')) && !!(await page.$('.tm-sheet')));
+      await contrast(page, `${theme} 教学：退出确认条`, '.tm-sheet', R);
+      await page.click('.tm-leave-go'); await page.waitForTimeout(300);
+      check(G, `${theme}：点「退出」关掉面板`, !(await page.$('.tm-sheet')));
       await page.evaluate(() => { const b = document.querySelector('.tm-node[data-id="i-boss-a"]'); if (b) b.click(); });
       await page.waitForSelector('.tm-sheet');
       await contrast(page, `${theme} 教学：魔王关`, '.tm-sheet', R);
