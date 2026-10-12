@@ -209,10 +209,10 @@
     setCrumbs([{ label: '主页', onClick: goHome }, { label: `${SUBJECT_NAME[subject] || subject} · 教学` }]);
     const box = clear(root());
     box.className = 'tm-root';
-    box.style.removeProperty('--tm-a');
+    box.style.removeProperty('--tm-accent');
     const cards = data.maps.map(m => {
       const st = mapStats(subject, m);
-      const card = h('button', { type: 'button', class: 'tm-card', style: `--tm-a:${m.accent}`, onclick: () => { sound('pop'); openMap(m.id); } },
+      const card = h('button', { type: 'button', class: 'tm-card', style: `--tm-accent:${m.accent}`, onclick: () => { sound('pop'); openMap(m.id); } },
         h('span', { class: 'tm-card-art' }, motifSvg(m.cover || 'flask', 'tm-art')),
         h('span', { class: 'tm-card-body' },
           h('span', { class: 'tm-card-title', text: m.title }),
@@ -255,7 +255,7 @@
       { label: map.title }]);
     const box = clear(root());
     box.className = 'tm-root';
-    box.style.setProperty('--tm-a', map.accent);
+    box.style.setProperty('--tm-accent', map.accent);
     const st = mapStats(subject, map);
     const msg = h('p', { class: 'tm-msg', role: 'status', 'aria-live': 'polite' });
     const canvas = h('div', { class: 'tm-map' });
@@ -363,7 +363,7 @@
     closeSheet(false);
     const body = h('div', { class: 'tm-sheet-body' });
     const closeBtn = h('button', { type: 'button', class: 'tm-x', 'aria-label': '关闭', text: '×', onclick: () => requestClose() });
-    const box = h('div', { class: 'tm-sheet', role: 'dialog', 'aria-modal': 'true', style: `--tm-a:${(state.mapAccent || '#0f766e')}` }, closeBtn, body);
+    const box = h('div', { class: 'tm-sheet', role: 'dialog', 'aria-modal': 'true', style: `--tm-accent:${(state.mapAccent || '#0f766e')}` }, closeBtn, body);
     const mask = h('div', { class: 'tm-mask' }, box);
     mask.addEventListener('mousedown', e => { if (e.target === mask) requestClose(); });
     const s = { mask, box, body, from, busy: false, onKey: null, confirmClose: false };

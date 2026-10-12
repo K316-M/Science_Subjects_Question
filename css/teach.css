@@ -8,13 +8,16 @@
   --tm-paper-2: #f2e6c4;
   --tm-b: #e9b44c;
   --tm-c: #9fd3e6;
-  --tm-a: #0f766e;
+  --tm-accent: #0f766e;     /* 这张地图的颜色（JS 依地图写在卡片、地图、面板上） */
   --tm-on-a: #ffffff;       /* 压在 --tm-a 上的字 */
   --tm-on-b: #2a2823;       /* 压在 --tm-b 上的字 */
   --tm-ok: #d6f0dc;
   --tm-bad: #f8d7d3;
   --tm-dot: rgba(42, 40, 35, .12);
 }
+
+/* --tm-a = 地图颜色；要写在每个会改 --tm-accent 的元素上，才会各自重新算（护眼模式会把它调亮） */
+.tm-root, .tm-card, .tm-sheet { --tm-a: var(--tm-accent); }
 
 /* ---------- 地图选择 ---------- */
 .tm-root { padding-bottom: 40px; }
@@ -71,7 +74,7 @@
 .tm-section-no { padding: 2px 8px; border-radius: 6px; background: var(--tm-ink); color: var(--tm-paper); font-size: 12px; font-weight: 800; line-height: 1.4; }
 .tm-section-name { font-family: var(--font-display, serif); font-size: 14px; font-weight: 800; line-height: 1.4; color: var(--tm-ink); }
 
-.tm-pos { position: absolute; z-index: 2; width: 116px; margin-left: -58px; }
+.tm-pos { position: absolute; z-index: 2; width: 116px; transform: translateX(-50%); }
 .tm-node { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; padding: 0; border: 0; background: none; color: var(--tm-ink); font: inherit; cursor: pointer; position: relative; }
 .tm-node:focus-visible { outline: 3px solid var(--tm-ink); outline-offset: 4px; border-radius: 16px; }
 .tm-disc { position: relative; display: grid; place-items: center; width: 68px; height: 68px; border: 3px solid var(--tm-ink); border-radius: 50%;
@@ -214,8 +217,8 @@ body.tm-lock { overflow: hidden; }
   --tm-bad: #4a2623;
   --tm-dot: rgba(232, 225, 212, .09);
 }
-[data-theme="night"] .tm-root { --tm-a: #5fc4ae; }
-[data-theme="night"] .tm-mask { --tm-a: #5fc4ae; }
+/* 护眼：把地图颜色调亮，深色字压在上面才看得清 */
+[data-theme="night"] .tm-root, [data-theme="night"] .tm-card, [data-theme="night"] .tm-sheet { --tm-a: color-mix(in oklab, var(--tm-accent) 55%, #fff); }
 [data-theme="night"] .tm-input, [data-theme="night"] .tm-textarea { background: #1c1a17; color: #e8e1d4; }
 [data-theme="night"] .tm-warn { color: #f2aaa6; }
 [data-theme="night"] .tm-mask { background: rgba(0, 0, 0, .65); }

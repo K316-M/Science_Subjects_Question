@@ -84,8 +84,10 @@ async function contrast(page, label, scope, R) {
       for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
         const c = getComputedStyle(p);
         if (c.overflowX !== 'visible' || c.overflowY !== 'visible') {
+          // 裁切线在 padding box（边框里面一圈）：用 border box 会把粗边框那 2～3px 也当成文字背景
           const b = p.getBoundingClientRect();
-          L = Math.max(L, b.left); T = Math.max(T, b.top); Rt = Math.min(Rt, b.right); B = Math.min(B, b.bottom);
+          L = Math.max(L, b.left + p.clientLeft); T = Math.max(T, b.top + p.clientTop);
+          Rt = Math.min(Rt, b.left + p.clientLeft + p.clientWidth); B = Math.min(B, b.top + p.clientTop + p.clientHeight);
         }
       }
       if (Rt - L < 4 || B - T < 4) continue;
