@@ -100,7 +100,7 @@
 | 点「有新题」提示框後，题卡从远处滑到定位的时间 | `index.html` | `NEW_TIP_PAN_MS` | `450` 毫秒 | 🟢 太长会像卡住；开了「减少动态」的装置不滑 |
 | 背景音乐音量 | `index.html` | `MUSIC_VOLUME` | `0.35`（0～1，iPhone／iPad 也照这个） | 🟢 |
 | 换科时音乐交叉淡入淡出 | `index.html` | `MUSIC_FADE_MS` | `900` 毫秒 | 🟢 `js/scene-assets.js` 的 `FADE_MS` 只管其他独立页面自己的音乐（目前没有这种页面），主网页不看它 |
-| 背景音乐的响度、剪静音的门槛、循环接头的淡接秒数 | `scripts/audio/build.py` | `LUFS`、`SILENCE_DB`、`XFADE` | `-20`、`-50`、`3.0` 秒 | 🟡 改完到 Actions 手动跑「背景音乐自动处理」、科目留空，全部重做；只重做一首会和其他首不一样大声 |
+| 背景音乐的响度（先 K 加权统一，再按人耳等响曲线补）、剪静音的门槛、循环接头的淡接秒数 | `scripts/audio/build.py` | `LUFS`、`EQ_PHON`、`EQ_LUFS`、`LIMIT`、`SILENCE_DB`、`XFADE` | `-20`、`40`（phon）、`-26.9`、`0.89`、`-50`、`3.0` 秒 | 🔴 改完到 Actions 手动跑「背景音乐自动处理」、科目留空，全部重做；只重做一首会和其他首不一样大声。`EQ_PHON` 或 `LUFS` 一改，`EQ_LUFS` 要重新量（脚本里 `ear_loudness` 量五首取中位数）。听起来整体偏小／偏大，先调 `index.html` 的 `MUSIC_VOLUME`，不要动这里 |
 | 音乐播完接回开头时，头尾交叉叠多久 | `index.html` | `MUSIC_LOOP_XFADE_MS` | `3000` 毫秒 | 🟢 太长会听到结尾和开头叠在一起；曲子短于它的 3 倍就不叠，直接重播 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |
 | 待在做题页、或从背景切回来时，多久检查一次题库有没有更新 | `index.html` | `BANK_RECHECK_MS` | 1 分钟 | 🟢 题库没变时伺服器只回「没变」（0 bytes），几乎不花流量；有变就跳「题库更新了」。旁边的 `setInterval(checkBankUpdate, …)` 是多久看一次到了没，要比它短 |

@@ -463,12 +463,14 @@ GitHub → Actions → 「BioQuestion Auto Pipeline & Health Check」→ Run wor
 
 ### 音乐响度统一
 
-五首背景音乐（首页、生物、化学、物理、数学）都统一到 −20 LUFS。**以后换新歌，把原档上传到 `source/audio/<科目>/ambient.mp3` 就好**
+五首背景音乐（首页、生物、化学、物理、数学）先统一到 −20 LUFS，再按人耳的等响曲线补一次（ISO 226:2003，40 phon）：背景音乐开得小，人耳对低频的灵敏度掉得很多，只看 LUFS 会让低音多的曲子「数字一样、听起来小」（生物那首 72% 的能量在 200 Hz 以下，补前比别首低约 5～6 dB）。补完五首的等响差在 1 dB 内（人耳分辨响度差约 1 dB）。**以后换新歌，把原档上传到 `source/audio/<科目>/ambient.mp3` 就好**
 （手机 GitHub App 也行），「背景音乐自动处理」工作流（`.github/workflows/build_audio.yml`）会跑 `scripts/audio/build.py`：
 剪掉头尾静音、做成无缝循环、调到同样响度，输出到 `assets/audio/<科目>/` 并推回 main。结果在 Actions 那次执行的摘要。
 
 - 档名一定要叫 `ambient`（首页是 `default/background`）：叫别的照样处理，但网站只认这两个名字，摘要会提醒、不会推上去
-- 改了 `build.py` 的响度（`LUFS`）之後，到 **Actions →「背景音乐自动处理」→ Run workflow**、科目留空，全部重做一次，不然新旧曲子会不一样大声
+- 改了 `build.py` 的响度（`LUFS`、`EQ_PHON`、`EQ_LUFS`）之後，到 **Actions →「背景音乐自动处理」→ Run workflow**、科目留空，全部重做一次，不然新旧曲子会不一样大声
+- 听起来整体偏小／偏大：先调 `index.html` 的 `MUSIC_VOLUME`（全部一起变）；只有某一首不对，才说这首的曲子并重做，不要在页面里给单科补倍率（下次换歌又歪）
+- 一个限制：模型是「40 phon 的等响曲线」，适合小音量听；开很大声或戴耳机时，低音多的曲子会比别首略大声。要折中就把 `EQ_PHON` 改成 50 再重做
 - 想在自己电脑跑也行：装 Python 3 与 ffmpeg，`python3 scripts/audio/build.py math`（不写科目＝全部）
 
 ### 背景的浓淡
