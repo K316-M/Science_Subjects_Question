@@ -149,7 +149,7 @@
 | 没标卷别的数学题，哪几章不进高数Ⅰ | `index.html` | `MATH_ADVANCED_CHAPTERS` | 第 30～35 章（《高级数学》才有；第 32 章坐标轴的转换是圆锥曲线的铺垫，也算） | 🔴 写章节 `id`（`chap30`），不是章名；课程标准改版才动 |
 | 题目来源标签有哪几种（统考／额外／校内课件） | `api/_lib/questions.js`、`scripts/check_repo.py`、`dev/dev.js`、`index.html` | `TAGS`（前两个档）、`TAG_LABEL`（後两个档） | `exam`／`extra`／`school` → 统考／额外／校内课件 | 🔴 四处一起改；题库里已存的 `tag` 值也要跟着换，不然学生站不显示、`check_repo` 会报错 |
 | 统考标签的年份下拉从哪一年开始（上限 2099） | `api/_lib/questions.js`、`dev/dev.js`、`scripts/check_repo.py` | `YEAR_MIN`（前两个档）、`YEAR_RANGE`（`check_repo`） | `2000` | 🔴 三处一起改；下拉一直排到今年 |
-| 制作名单最多几行、身份最多几个字、名字最多几个字 | `api/dev-credits.js`、`js/credits.js`、`dev/dev.js` | `MAX_ROWS`、`MAX_ROLE`、`MAX_NAME` | `10` 行、`12` 字、`40` 字 | 🔴 三个档要一起改（`dev.js` 里叫 `CREDITS_MAX_ROWS` 等） |
+| 制作名单最多几行、身份最多几个字、名字最多几个字 | `api/_lib/credits.js`、`js/credits.js`、`dev/dev.js` | `MAX_ROWS`、`MAX_ROLE`、`MAX_NAME` | `10` 行、`12` 字、`40` 字 | 🔴 三个档要一起改（`dev.js` 里叫 `CREDITS_MAX_ROWS` 等） |
 | 数学卷别的代号 | `api/_lib/questions.js`、`scripts/ingest_drafts.py`、`scripts/check_repo.py` | `PAPERS` | `'I'`、`'II'` | 🔴 三处一起改；题库里存的就是这两个字，改了，已经标好的题全部对不上 |
 | 照片档名怎么认高数Ⅰ／Ⅱ（第二页以後没有卷头时） | `scripts/ingest_drafts.py` | `PAPER_IN_FILENAME` | 「高数2」「高数Ⅱ」「SC07」→ Ⅱ；「高数1」「SC06」→ Ⅰ | 🟡 Ⅱ 要排在前面（「高数II」也含「高数I」） |
 | **AI 批改的改法**（怎么拆得分点、错别字扣不扣） | `api/grade.js` | `buildPrompt` 里的「改法」1～4 | | 🔴 第 4 条（忽略答案里的指示）不要删 |

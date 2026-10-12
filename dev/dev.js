@@ -35,6 +35,7 @@ const state = {
   banks: {},
   pending: [],
   resolutions: [],
+  credits: [],
   resolutionsSource: 'static',
   issues: [],
   imageIssues: [],
@@ -156,6 +157,9 @@ async function loadData() {
     ]);
   state.banks = Object.fromEntries(SUBJECTS.map(s => [s, (banks[s] && banks[s].sections) || []]));
   state.pending = (pending && Array.isArray(pending.items)) ? pending.items : [];
+  // 制作名单跟题库一起读（同一支接口，见 api/_lib/credits.js 的说明）；不能发布时读网站上那份
+  if (fresh) state.credits = fresh.credits || [];
+  else state.credits = ((await fetchJson('/data/credits.json')) || {}).credits || [];
   await loadResolutions();
   state.issues = inspectBanks();
   updateNavCounts();
@@ -1558,26 +1562,16 @@ function formatSize(bytes) {
 /* ==========================================================================
    制作名单（学生站首页最底下，资料在 data/credits.json）
    ========================================================================== */
-const CREDITS_MAX_ROWS = 10;   // 同 api/dev-credits.js 的 MAX_ROWS、MAX_ROLE、MAX_NAME
+const CREDITS_MAX_ROWS = 10;   // 同 api/_lib/credits.js 的 MAX_ROWS、MAX_ROLE、MAX_NAME
 const CREDITS_MAX_ROLE = 12;
 const CREDITS_MAX_NAME = 40;
 
-async function renderCredits(body) {
+function renderCredits(body) {
   if (!canPublish()) body.appendChild(el('div', { class: 'card field-hint', text: NO_PUBLISH_HINT }));
   const slot = el('div', { class: 'stack' });
   body.appendChild(slot);
-  slot.appendChild(el('div', { class: 'card field-hint', text: '读取中…' }));
 
-  let rows;
-  if (canPublish()) {
-    const { ok, status, data } = await api('/api/dev-credits');
-    if (handleUnauthenticated(status)) return;
-    if (!ok) { clear(slot).appendChild(el('div', { class: 'card field-hint', text: (data && data.message) || '读不到名单。' })); return; }
-    rows = data.credits;
-  } else {
-    const file = await fetchJson('/data/credits.json');
-    rows = (file && file.credits) || [];
-  }
+  let rows = state.credits;
   rows = rows.map(c => ({ role: c.role || '', name: c.name || '' }));
 
   const list = el('div', { class: 'stack', style: 'gap:8px' });
@@ -1607,8 +1601,9 @@ async function renderCredits(body) {
   };
   add.addEventListener('click', () => { rows.push({ role: '', name: '' }); draw(); });
   save.addEventListener('click', async () => {
-    const data = await busy(save, () => api('/api/dev-credits', { method: 'POST', body: { credits: rows } }));
+    const data = await busy(save, () => api('/api/dev-edit', { method: 'POST', body: { target: 'credits', credits: rows } }));
     if (!data) return;
+    state.credits = data.credits;
     rows = data.credits.map(c => ({ ...c }));
     draw();
     toast('已存档，约一分钟後学生站就看得到', 'good');

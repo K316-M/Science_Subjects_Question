@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const MAX_ROWS = 10;   // 同 api/dev-credits.js 的 MAX_ROWS
+  const MAX_ROWS = 10;   // 同 api/_lib/credits.js 的 MAX_ROWS
   const box = document.getElementById('siteCredits');
   if (!box) return;
 
