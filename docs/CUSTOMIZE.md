@@ -25,6 +25,7 @@
 | 各科的强调色（首页轨道） | `js/orbit-subjects.js` | `SUBJECTS` 里的 `accent` | 生物绿、化学紫、物理蓝、数学琥珀 | | 🟢 |
 | 各科背景光团的颜色 | `index.html` | `SUBJECT_THEME` 的 `blobA` `blobB` | | | 🟢 |
 | 背景插画的浓淡 | `index.html` | `.custom-photo-layer` | | 见 [OPERATIONS 七·背景的浓淡](OPERATIONS.md#背景的浓淡) | 🟢 |
+| 切换科目时背景淡入淡出多久（旧画留着、新画淡入盖上去） | `index.html` | `BG_FADE_MS`；CSS 搜 `.custom-photo-layer`、`.subject-bg-wash` 的 `transition: opacity` | `700`（毫秒）＝ CSS 的 `0.7s` | 🔴 JS 这个数字要和那两处 CSS 的秒数一起改，不然旧画会在新画还没盖满时就被撤掉（闪一下） |
 | 护眼模式背景水彩的亮度 | `scripts/scene/build_scene.py` | `NIGHT_K` | `0.32` | 改完要重跑脚本，见 [OPERATIONS 七](OPERATIONS.md#护眼模式的颜色) | 🟡 |
 | 网站图标（学士帽）的颜色：导航列中间的徽章、首页轨道中心 | `index.html`（白天）、`css/night.css`（护眼） | `--logo-ink`（线条）`--logo-paper`（帽身、车轮、灯泡）`--logo-phys`（帽板左半）`--logo-math`（帽板右半）`--logo-bio` `--logo-bio2`（DNA）`--logo-chem`（原子）`--logo-spark`（电子） | 白天 `#3e4b52` `#ffffff` `#93c2c1` `#efe6a3` `#3f9a66` `#8fd0a4` `#8a78c8` `#e9cf63`；护眼线条换米白 `#e6dfd1`、帽身 `#34302a`，其他压暗一档 | 单色、不用渐层。/dev 与手机桌面图示用的 `assets/icons/logo.svg` 是固定颜色，要一起换的话见「五、换网页图标」 | 🟢 |
 | 首页轨道中心的底色与框 | `css/orbit.css` | `.orbit-core {` | 纸色 `#fffdf8`＋细墨线框；指到哪一科，框与外圈染成那一科的颜色 | 护眼的在 `css/night.css` 搜 `.orbit-core` | 🟢 |

@@ -1536,29 +1536,58 @@
   let bgSessionId = 0;
   // 背景层现在画著哪一科：首页预览过的，按「进入」时直接沿用，不要清掉重画（会闪一下）
   let bgShown = null;
+  const BG_FADE_MS = 700;   // 与 .custom-photo-layer／.subject-bg-wash 的 transition: opacity 0.7s 一致
+  let bgLeaveTimer = null;
+
+  // 直接从一科换到另一科：旧的那张画原地留着当「退场层」，换一层新的盖上去，新画好了淡入、盖满再撤掉旧的。
+  // 以前是先清掉旧画再画新的：旧画瞬间消失、光团冒出来，等新图载入才淡入，看起来是闪着切。
+  function stackPhotoLayer() {
+    const old = document.getElementById('customPhotoLayer');
+    old.removeAttribute('id');
+    old.classList.add('is-leaving');
+    const next = document.createElement('div');
+    next.className = 'custom-photo-layer';
+    next.id = 'customPhotoLayer';
+    old.after(next);          // 后面的画在上面
+    void next.offsetWidth;    // 先让它以 opacity 0 落地，之后加 .active 才会真的淡入
+    return next;
+  }
+  // 退场层撤掉：淡入完成後直接移除；新科目没有自己的画时，先让它淡出再移除
+  function dropLeavingLayers(fade) {
+    clearTimeout(bgLeaveTimer);
+    const gone = () => document.querySelectorAll('.custom-photo-layer.is-leaving').forEach(n => n.remove());
+    if (fade) document.querySelectorAll('.custom-photo-layer.is-leaving').forEach(n => n.classList.remove('active'));
+    bgLeaveTimer = setTimeout(gone, BG_FADE_MS + 100);
+  }
 
   async function applySubjectBackground(subject) {
     const sessionId = ++bgSessionId;
     const wash = document.getElementById('subjectBgWash');
     const theme = SUBJECT_THEME[subject];
-    const photoLayer = document.getElementById('customPhotoLayer');
     if (!wash || !theme) return;
-    SceneAssets.setParallax(photoLayer, false);
+    SceneAssets.setParallax(document.getElementById('customPhotoLayer'), false);
     if (bgShown && bgShown.subject === subject) {
       wash.classList.add('active');
       document.body.classList.toggle('has-scene', bgShown.scene);
       updateSceneGlow();
       return;
     }
+    const hadPhoto = Boolean(bgShown);
     bgShown = null;
-    SceneAssets.glow(photoLayer, false);
+    SceneAssets.glow(document.getElementById('customPhotoLayer'), false);
 
     document.getElementById('washBlobA').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
     document.getElementById('washBlobB').style.background = `radial-gradient(circle at 32% 30%, ${theme.blobA}, ${theme.blobB})`;
     wash.classList.add('active');
-    wash.classList.remove('has-photo');
-    photoLayer.classList.remove('active');
-    SceneAssets.paint(photoLayer, null);
+    let photoLayer;
+    if (hadPhoto) {
+      photoLayer = stackPhotoLayer();      // 旧画留着（has-photo 也先不拿掉，光团不会冒出来）
+    } else {
+      photoLayer = document.getElementById('customPhotoLayer');
+      wash.classList.remove('has-photo');
+      photoLayer.classList.remove('active');
+      SceneAssets.paint(photoLayer, null);
+    }
 
     const customUrl = await SceneAssets.findBackground(subject);
     if (sessionId !== bgSessionId) return; // 期间已切换到其他科目，放弃这次结果
@@ -1568,6 +1597,10 @@
       photoLayer.classList.add('active');
       wash.classList.add('has-photo');
       bgShown = { subject, scene: /scene\.json$/.test(customUrl) };
+      dropLeavingLayers(false);
+    } else {
+      wash.classList.remove('has-photo');
+      dropLeavingLayers(true);
     }
     // 会动的分层背景：颗粒层的 multiply 混合会跟著每帧重算整个画面，而水彩本身已有纸纹，关掉
     document.body.classList.toggle('has-scene', Boolean(bgShown && bgShown.scene));
@@ -1579,6 +1612,7 @@
     if (wash) wash.classList.remove('active');
     document.body.classList.remove('has-scene');
     SceneAssets.setParallax(null, false);
+    dropLeavingLayers(false);   // 整片 wash 本来就在淡出；等淡完把退场层撤掉
   }
 
   // 首页：在轨道上选到有水彩场景的科目，先把那一科的背景淡入，桌面上跟著鼠标错开。
