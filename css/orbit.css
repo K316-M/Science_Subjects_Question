@@ -242,6 +242,17 @@
 .panel-enter:active { transform: translateY(0); }
 .panel-enter[disabled] { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
 .panel-enter.is-quiet { background: transparent; color: #334155; box-shadow: inset 0 0 0 1px rgba(51,65,85,.35); }
+.panel-teach {
+  margin-top: 8px; width: 100%;
+  padding: 8px 14px; border: 0; border-radius: 11px; cursor: pointer;
+  font-size: 14px; font-weight: 700; color: var(--accent-color);
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--accent-color);
+  transition: transform .15s ease, background .2s ease;
+}
+.panel-teach[hidden] { display: none; }
+.panel-teach:hover { transform: translateY(-1px); background: color-mix(in oklab, var(--accent-color) 10%, transparent); }
+.panel-teach:active { transform: translateY(0); }
 .panel-hint { margin-top: 8px; font-size: 11px; color: var(--text-muted, #64748b); }
 
 /* 手机的空心比较小：面板收紧，章节预览只留一行，
@@ -250,7 +261,7 @@
   .orbit-panel { padding: 12px 12px 12px; }
   .panel-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .panel-bar { margin: 8px 0 4px; }
-  .panel-enter { margin-top: 8px; padding: 8px 12px; }
+  .panel-enter, .panel-teach { margin-top: 8px; padding: 8px 12px; }
   .panel-hint { display: none; }
   /* 选中那颗球的标签会被面板压住一半；面板上已经写了科目名，让它淡出 */
   .orbit-stage.has-selection .orbit-node.is-selected .node-label { opacity: 0; transition: opacity .25s ease; }

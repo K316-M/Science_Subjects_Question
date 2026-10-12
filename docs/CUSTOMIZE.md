@@ -42,6 +42,9 @@
 | 换题时题卡左右滑进来的距离 | `index.html` | `slideFromRight`、`slideFromLeft` | `12px` | 不要超过 `16px`（手机的页边） | 🔴 超过的话，滑进来那几格会超出萤幕，手机浏览器把整页撑宽、之後一直能左右晃 |
 | 题目旁小标签（统考／额外／校内课件）的颜色 | `index.html`（白天）、`css/night.css`（护眼） | `.q-tag-exam`（另有 `.q-tag-extra`、`.q-tag-school`） | 青、琥珀、紫 | 字与底色要 ≥ 4.5:1；改完跑 UI 检查 | 🟡 |
 | 首页底部制作名单的样子（字级、间距、分隔线） | `index.html` | `.site-credits {` | 13px 小字、上方一条虚线 | 名单内容不在这里改，见第五节 | 🟢 |
+| 教学地图的颜色与排版（纸色、墨线、节点圆、魔王关的黄黑斜纹） | `css/teach.css` | `.tm-root`（最上面的 `--tm-` 开头变数）；护眼版在 `css/night.css` 的 `.tm-root` | 米黄纸＋深墨线；各地图的主色在 `data/teach/chemistry.json` 每张地图的 `accent` | 🟡 字级、间距只能用[阶梯](OPERATIONS.md#字级行高间距的阶梯)上的值；改了纸色要重看护眼模式的对比 |
+| 教学地图每一行多高、小节之间留多宽、节点圆多大 | `js/teach.js` | `ROW_H`、`SEC_GAP`、`NODE` | `172`、`60`、`68` | 🟡 `NODE` 要和 `css/teach.css` 的 `.tm-disc` 宽高一起改，不然连线接不到圆 |
+| 教学地图节点旁的小图案（烧瓶、气球、工厂、电解、苯环…）与旗帜、星星、锁 | `js/teach.js` | `MOTIFS`、`ICON` | 22 个内嵌 SVG，64×64，墨线＋地图主色 | 🟢 资料里的 `motif`／`cover` 只能写 `MOTIFS` 里有的名字，写错合并前检查会挡下来；会动的部分在 `css/teach.css` 的 `@keyframes` |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | /dev 列表（巡检、待审、题目修改）题与题之间的空隙 | `dev/dev.css` | `--list-gap` | `12px` | 每题一张卡；太小又会看起来连在一起 | 🟢 |
 | 字级、行高、间距 | 各 CSS | — | | **只能用阶梯上的值**，见 [OPERATIONS 七·阶梯](OPERATIONS.md#字级行高间距的阶梯) | 🔴 |
@@ -58,6 +61,9 @@
 | 网站的一句话说明（Google 搜寻结果、分享网址的预览、装到手机桌面） | `index.html`、`manifest.json` | `index.html` 的 `name="description"`、`og:description`；`manifest.json` 的 `description` | 🟡 三处一起改才一致；加科目时记得补上科目名 |
 | 「选择学习学科」与下面的提示 | `index.html` | `page-heading`、`page-hint` | 🟢 |
 | 各科名称、英文名、轨道上的小字说明 | `js/orbit-subjects.js` | `SUBJECTS` 的 `name` `en` `note` | 🟢 |
+| 化学球面板上两个按钮的字（「刷题：化学题库」「教学：闯关地图」） | `js/orbit-subjects.js`、`index.html` | `刷题：`、`教学：闯关地图`；面板的样式搜 `.panel-teach`（在 `css/orbit.css`） | 其他科目的面板还是单一个「进入」 | 🟢 |
+| 教学页的题型名称（计算／名词／理论）与关卡层级（入门／进阶／挑战／终局） | `js/teach.js` | `KIND_LABEL`、`TIER_LABEL` | 完整的字，不用单字或图标 | 🟢 |
+| 教学页顶端的「草稿版」提醒条 | `js/teach.js` | `SHOW_DRAFT_BADGE` | `true` | 🟢 内容审完改成 `false`，提醒条就不再出现 |
 | 做题页上的科目名称（「生物科」） | `index.html` | `SUBJECT_LABELS` | 🟢 |
 | 数学两份卷的名称（按钮「模拟高数Ⅰ · 60 分钟」、/dev 的卷别） | `index.html`、`dev/dev.js` | `PAPER_LABEL` | 🟡 两个档各一份，写一样才对得上 |
 | **每个画面的导览（聚光灯）文字** | `js/onboarding.js` | `TOURS` —— 每一步有 title（标题）和 body（内文），内文可以用 `<strong>` | 🟢 |
@@ -117,7 +123,7 @@
 | 每次自动出题照顾几章、每章几题 | `.github/workflows/generate_questions.yml` | `chapters_per_run`、`questions_per_chapter` 的 `default` | 3 章 × 4 题 | 🟢 手动跑时也可以当场填 |
 | 新题和旧题多像就当成重复丢掉 | `scripts/generate_questions.py` | `SIMILARITY_LIMIT` | `0.82`（0～1） | 🟡 调低会丢掉更多题 |
 | 每周自动出题：待审区还有几道 AI 题没审完就先不出 | `scripts/generate_questions.py` | `PAUSE_WHEN_WAITING` | `1`（有 1 道就不出） | 🟢 `0`＝不管，照样出；手动跑不受影响 |
-| 离线用：网站装好後先下载哪些档案 | `sw.js` | `OFFLINE_EXTRAS` | 四科题库＋数学公式排版（约 550KB） | 🟡 学生第一次打开就会下载；背景图（每科约 250KB）、音乐（每科约 2MB）要加进来前先想想学生的流量 |
+| 离线用：网站装好後先下载哪些档案 | `sw.js` | `OFFLINE_EXTRAS` | 四科题库＋教学地图资料＋数学公式排版（约 550KB） | 🟡 学生第一次打开就会下载；背景图（每科约 250KB）、音乐（每科约 2MB）要加进来前先想想学生的流量 |
 | 一章老师讲义最多塞多少字进出题提示词 | `scripts/generate_questions.py` | `NOTES_CHAR_LIMIT` | `24000`（化学最长的电化学约 1.9 万字，整章都带上） | 🟢 超过的部分截掉；调太大会让每次呼叫变慢、更快用完额度 |
 | 老师 PPT 的章号要减几才对到题库的章 | `scripts/ppt_notes.py` | `CHAPTER_OFFSET` | 化学 `1`（课本第一章是绪论，题库没有） | 🔴 对错了，Gemini 出第五章时看到的是第六章的讲义；跑完看印出来的对照表 |
 | 哪几份 PPT 不做成讲义、或指定对到哪一章 | `scripts/ppt_notes.py` | `CHAPTER_OVERRIDE` | 不要：绪论、芳香烃精简版、五份习题答案讲解（第二～五章、第12章碳和硅练习题） | 🟢 档名（不含 .pptx）→ 章节 id，写 `None` 就跳过；改完重跑，跳过的那章旧讲义档要自己删 |
@@ -140,6 +146,13 @@
 | 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS`；个别科目在 `MOCK_QUESTIONS_BY_SUBJECT` | 理科 `40`；数学 `15`（高数Ⅰ、Ⅱ 评量规格） | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
 | 时间表的科目名称（统考闹钟、模拟统考都靠它对应） | `js/exam-timetable.js` | `subject` | 「物理」「高级数学（Ⅰ）」… | 🔴 学生设的闹钟存的是科目名称：改了名，那一科已设的闹钟会失效、要重设；`index.html` 的 `EXAM_SUBJECT` 也要跟着改 |
 | 一台装置最多几个闹钟 | `js/exam-alarm.js`、`api/_lib/alarms.js` | `MAX_ALARMS` | 网站 `10`、伺服器 `20` | 🔴 网站的不能大于伺服器的：超过的话伺服器把那台装置的整批闹钟拒收，只剩开着网站时会响 |
+| 教学：一般关卡答对几成算过关（3 题要对 2 题；全对 3 星） | `js/teach.js` | `PASS_RATIO` | `0.6` | 🟢 论述题自评「勾到几成要点算对」也用这个数 |
+| 教学：魔王关的门槛（5 题要对 4 题）与从小节题池抽几题（外加 1 道专属终局题） | `js/teach.js` | `BOSS_RATIO`、`BOSS_POOL` | `0.8`、`4` | 🟡 `BOSS_POOL` 改了，`scripts/check_repo.py` 检查的「小节题池至少 4 题」也要对得上 |
+| 教学：计算题允许的相对误差（资料里每题可以写自己的 `tol`） | `js/teach.js` | `DEFAULT_TOL` | `0.02`（2%） | 🟢 老师的 22.4 L/mol、R = 8.314、F = 96500 都已经照课本，不要放太宽 |
+| 教学关卡与题目的内容（关卡、知识卡、反应式、题目、魔王关的专属题） | `data/teach/chemistry.json` | `maps`、`nodes`、`challenges`、`bosses` | 3 张地图、21 关、73 题（全部是草稿，待审） | 🟡 格式与怎么加关见 [OPERATIONS 三之四](OPERATIONS.md#三之四教学模式化学闯关地图)；合并前检查会验证 |
+| 教学：反应式的类别（制取反应分简单／复杂、转化反应、性质反应、鉴别与检验） | `data/teach/chemistry.json` | `reaction_categories` | 4 类 | 🔴 关卡里每条反应式的 `category`／`level` 要和这里一致，写错合并前检查会挡下来 |
+| 教学：进度存在学生浏览器哪个键 | `js/teach.js`、`dev/dev.js` | `STORE_KEY`（teach.js）、`UEC_TEACH_v1`（dev.js） | `UEC_TEACH_v1` | 🔴 改了，所有学生的教学进度归零；两个档要一起改 |
+| 哪一科有「教学」按钮 | `js/orbit-subjects.js`、`js/teach.js` | `teach: true`（`SUBJECTS` 的那一行）、`SUBJECT_NAME`（teach.js） | 只有化学 | 🟡 再开一科要有 `data/teach/<科目>.json`，还要加进 `sw.js` 的 `OFFLINE_EXTRAS` |
 | 闹钟资料在伺服器存多久（那台装置一直没再打开网站） | `api/_lib/alarms.js` | `DEVICE_TTL_SECONDS` | 60 天 | 🟢 统考一年一次，考完就没用了 |
 | 同一个网络每分钟最多登记几次闹钟 | `api/alarm.js` | `MAX_PER_WINDOW` | `30` | 🟢 |
 | 推播只送到哪几家推播服务 | `api/_lib/webpush.js` | `PUSH_HOSTS`、`PUSH_HOST_SUFFIXES` | Google（Chrome、Android）、Mozilla（Firefox）、Apple（iPhone、Mac）、Microsoft（电脑版 Edge） | 🔴 只加推播服务的网址：这份清单挡的是有人拿假订阅叫伺服器去打任意网址。学生回报某个浏览器收不到、记录里是被挡时才加 |
@@ -171,7 +184,7 @@
 | 错题要在几个不同的日子答对才移出错题本 | `js/review.js` | `WEAK_EXIT_DAYS` | `2` | 🟢 |
 | 删掉的笔记要记住多久（防止另一台装置同步回来） | `js/sync.js` | `NOTE_TOMBSTONE_DAYS` | `365` | 🟢 |
 | 错几次标成「顽固」 | `js/review.js` | `STUBBORN_LAPSES` | `3` | 🟢 |
-| 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～6，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize`、`check_devlog` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
+| 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～8，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize`、`check_devlog`、`check_teach` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
 | 申诉要寄到哪个信箱 | Vercel 环境变数（`api/feedback.js` 读它） | `FEEDBACK_FORMSPREE_ID` | 新表单（编号只放在 Vercel，程式里没有备用） | 🔴 一定要设：没设的话申诉全部送不出去（学生看到「申诉信箱暂时没有设定好」）。换信箱：Formspree 开新表单 → 把 `formspree.io/f/` 後面那串填进来 → Redeploy → 送一则测试 → 删旧表单。步骤见 [OPERATIONS 九](OPERATIONS.md#九安全) |
 | 申诉：每台装置每小时最多送几则 | `api/feedback.js` | `PER_DEVICE_PER_HOUR` | `3` | 🟢 超过时学生会看到「几分钟後再按重新发送」，申诉留在他的浏览器 |
 | 申诉：同一个网络（全校 Wi-Fi）每小时合计几则 | `api/feedback.js` | `PER_NETWORK_PER_HOUR` | `10` | 🟡 挡有人换装置码洗版；Formspree 免费方案每月能收的信有限，调太高等於没挡 |

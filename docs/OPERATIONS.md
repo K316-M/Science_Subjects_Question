@@ -264,6 +264,41 @@ Claude 每次做了新功能，PR 说明最後会附一段「更新日志草稿�
 
 ---
 
+## 三之四、教学模式（化学闯关地图）
+
+首页点化学球，面板有两个按钮：**刷题**（原来的题库）和**教学**。教学把老师的 PPT 笔记整理成三张从易到难的游戏地图：无机（计算为主）、有机（按「增碳」「生成 NH₃」这类功能分支）、物化（键、分子间作用力、晶体、热、速率、平衡）。画面由 `js/teach.js` ＋ `css/teach.css` 画，**内容全部在 `data/teach/chemistry.json`**，加关、改题不用动程式。
+
+**学生怎么玩**：选一张地图 → 点亮着的关卡 → 先看知识卡（要点、口诀、这一关的反应式）→「开始闯关」答 3～4 题 → 答对 ⌈60%⌉ 过关（全对 3 星，过关 2 星）→ 下一关解锁。题型有三种，名称写完整的字：**名词**（四选一）、**计算**（填数字，答完给分步解法）、**理论**（论述题：先自己写，再看参考答案，对着要点清单勾「我写到了」，勾到 60% 算对；这是自评，没有 AI 批改，也不用新接口）。
+每个小节尽头有一个**魔王关**，不必先过前面的关卡，随时可以挑战（给想跳级的人）：5 题 = 从本小节所有关卡的题里随机抽 4 题 ＋ 1 道专属终局题，要对 4 题；通过后本小节所有关卡标成「跳级」（算 2 星，不会盖掉原来更高的星数），下一个小节解锁；没过不扣任何进度。地图页顶端的**反应册**把整张地图的反应式按类别汇总（制取反应分「简单」＝一步完成、「复杂」＝要连续好几步）。
+
+**进度**存在学生浏览器的 `UEC_TEACH_v1`（`{ chemistry: { 关卡id: { s: 星数, k: 'p'亲手通关／'s'跳级 } } }`），**只存本机，这一版不进同步码**；换装置会从头开始。要同步得在 `js/sync.js` 的 `KEYS` 加一条合并规则（每关取较大星数）。
+
+**资料格式**（一张地图）：
+
+```
+maps[]：id、title、tagline、blurb、accent（主色）、cover（封面图案名）
+  sections[]：id、title、nodes[关卡 id…]、boss（魔王关 id）
+  nodes[]：id、title、tier（1入门 2进阶 3挑战 4终局）、parents[]、col（0～3，可以是小数）、row、motif（图案名）、sources[]
+    lesson：summary、points[]、tip、reactions[]  → { name, equation, conditions, category, level, note }
+    challenges[]：id、type = term | calc | essay、q，另外
+      term：options（恰好 4 个）、answer（0～3）、explain
+      calc：answer（数字）、unit（没有单位就写 ""）、tol（容许相对误差，可省）、steps（分步解法）
+      essay：points[]（至少 3 条自评要点）、model（参考答案）
+  bosses[]：id、title、motif、col、row、parents[]、blurb、extra（1 道专属终局题，格式同 challenges）
+```
+
+- **加一关**：在 `nodes` 加一项（`parents` 写前面的关卡，`col`／`row` 决定摆在哪），再把它的 id 放进某个小节的 `nodes`；每关至少 3 题；每个关卡必须恰好属于一个小节。
+- **反应式的命名**：制取反应优先用 PPT 里出现的名称（哈伯法、接触法、氯碱工业、伍尔兹反应、格氏试剂…）；PPT 没有名称的用描述性名字，不自己编人名。**哈伯法算「简单」（一步），但条件一定要写**（催化剂、高温、高压）。
+- **计算题的答案要实算**：用 Python 算过再写进 `answer`（老师的惯例：标准状况 22.4 L/mol、`R = 8.314 Pa·m³·mol⁻¹·K⁻¹`、`F = 96500 C/mol`）；化学式用上下标字（H₂O、SO₄²⁻）。
+- **`draft: true`** 只是给你的记号（引擎不看它）；教学页顶端的「草稿版」提醒条由 `SHOW_DRAFT_BADGE` 控制，内容审完把它改成 `false`。
+- **待确认**：制取 Na₂CO₃ 那条的名称「氨碱法（索尔维法）」——PPT 只写了「氨碱法」，人名叫法待使用者定（在 `i-ind` 那一关的反应式里，`note` 栏有写）。
+- 合并前检查（`scripts/check_repo.py` 的 `check_teach`）会挡：id 重复、`parents` 不存在或绕成圈、题型／选项／答案格式不对、反应式类别不在 `reaction_categories` 里、关卡不属于任何小节、小节没有魔王关或专属题、题池不足 4 题、`motif`／`cover` 不在 `js/teach.js` 的 `MOTIFS` 里。
+- 内容来自 `syllabus/chemistry-notes/` 的老师 PPT 笔记；**老师 PPT 里的图不要直接放进来**（档案里有带个人名字的本机路径）。
+
+**离线**：`data/teach/chemistry.json` 在 `sw.js` 的 `OFFLINE_EXTRAS`，装好之后会一起下载。
+
+---
+
 ## 四、设定：环境变数（两个地方，别放错）
 
 这是最容易搞错的一件事。**两套系统，互相看不到对方的变数。**
@@ -767,6 +802,7 @@ python3 -m http.server 8080
   - 上线的题：题干、4 个选项、答案 A～D、做答题的参考答案、配图档案在不在、数学卷别只能是 I／II
   - Python、JS 语法（含 `index.html` 里内嵌的程式）
   - `docs/CUSTOMIZE.md` 每个「搜这个名字」在那一列的档案里搜不搜得到
+  - 教学地图 `data/teach/*.json`：id、`parents`、题型与答案格式、反应式类别、小节与魔王关（见「三之四、教学模式」）
   - `api/` 底下的接口（不含 `_lib/`）不能超过 **12 个**：Vercel 免费方案一次部署最多 12 个无伺服器函数，第 13 个会让整个部署失败（预览和正式站都上不了线）。要加新接口，请并进现有的（例如 `api/dev-edit.js` 用 `target` 分流），共用的程式放 `api/_lib/`
   - 每条工作流用到的 action 版本（`actions/checkout@v5` 这类）在 GitHub 上真的存在：录题、出题这些只在触发时才跑，版本号写错平常看不出来
 - **介面**（约 5 分钟）：下面那个一键 UI 检查，加上标题宋体子集有没有缺字；失败时截图在那次执行的 **Artifacts**
@@ -883,6 +919,7 @@ node run.js
 | `UEC_BIO_HL_STORE_OFFICIAL_19` | 简答题的划重点 |
 | `UEC_ALARMS_v1` | 统考闹钟：设了哪些闹钟、选的音效、有没有交给伺服器（不跟同步码走） |
 | `UEC_DEVLOG_SEEN_v1` | 更新日志看到哪一版（决定「日志」按钮亮不亮红点） |
+| `UEC_TEACH_v1` | 教学地图的进度：每一关的星数（只存本机，不跟同步码走） |
 
 ```js
 localStorage.removeItem('UEC_PROGRESS_v1');   // 只清做题记录
@@ -907,6 +944,8 @@ js/exam-alarm.js        统考闹钟：首页闹钟按钮、设定面板、音�
 js/alarm-common.js      统考闹钟的「还有多久」与通知文字（网站和伺服器共用）
 js/devlog.js            更新日志：工具列「日志」按钮与面板
 js/credits.js           首页底部制作名单（读 data/credits.json）
+js/teach.js             教学模式（化学闯关地图）：地图、知识卡、闯关、魔王关、反应册
+css/teach.css           教学模式的样式（含护眼版的覆盖在 css/night.css）
 js/notes.js             笔记画布
 js/archive.js           题目档与 PDF 下载
 js/feedback.js          申诉与通知小精灵
@@ -919,6 +958,7 @@ papers/*.json           各科正式题库
 papers/pending_approval.json   待审区（AI 产物先进这里）
 data/resolved_issues.json      申诉处理结果（由工作台写入）
 data/credits.json       首页底部的制作名单（工作台「制作名单」写入）
+data/teach/chemistry.json  教学地图的内容（3 张地图、关卡、知识卡、反应式、题目、魔王关）
 data/devlog.json        更新日志（「发布更新日志」工作流写入）
 api/                    Vercel 无伺服器接口（登录、审题、改题、AI 批改与讲解、同步、统考闹钟、申诉转寄）
 dev/                    开发者工作台（独立的深色网站）

@@ -105,7 +105,7 @@ async function run() {
     const FS = [11, 12, 13, 14, 16, 19, 23, 28, 32, 40, 56];
     const LH = ['1', '1.2', '1.4', '1.6', '1.75'];
     const SP = [1, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 36, 40, 48, 56];
-    const files = ['index.html', 'css/features.css', 'css/orbit.css', 'css/night.css',
+    const files = ['index.html', 'css/features.css', 'css/orbit.css', 'css/teach.css', 'css/night.css',
       ...fs.readdirSync(path.join(ROOT, 'js')).filter(f => f.endsWith('.js')).map(f => 'js/' + f)];
     const bad = { 字级: [], 行高: [], 间距: [] };
     for (const rel of files) {
@@ -1021,6 +1021,51 @@ async function run() {
     check('模拟统考', '看过解析再重做没答的题，也不写进复习排程', await page.evaluate(() => localStorage.getItem('UEC_REVIEW_v1')) === rec1);
     check('模拟统考', '没有 JS 错误', errors.length === 0, errors[0]);
     await ctx.close();
+  });
+
+  await section('教学模式', async () => {
+    const G = '教学模式';
+    const TEACH = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'teach', 'chemistry.json'), 'utf8'));
+    const Q = {};
+    TEACH.maps.forEach(m => { m.nodes.forEach(n => n.challenges.forEach(c => { Q[c.q] = c; })); m.bosses.forEach(b => { Q[b.extra.q] = b.extra; }); });
+    for (const [night, theme] of [[false, 'day'], [true, 'night']]) {
+      const { ctx, page, errors } = await open({ width: 390, height: 844, mobile: true });
+      page.on('dialog', d => d.accept());   // 作答到一半关掉面板会问「确定退出吗」
+      if (night) await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'night'));
+      await page.evaluate(() => document.querySelectorAll('.orbit-node')[1].click()); await page.waitForTimeout(450);
+      const panel = await page.evaluate(() => ({ teach: !document.querySelector('.panel-teach').hidden }));
+      check(G, `${theme}：化学面板有「教学」按钮`, panel.teach);
+      await contrast(page, `${theme} 化学面板（刷题／教学）`, '.orbit-panel', R);
+      await page.evaluate(() => document.querySelector('.panel-teach').click()); await page.waitForTimeout(700);
+      check(G, `${theme}：三张地图卡`, await page.$$eval('.tm-card', e => e.length) === 3);
+      await contrast(page, `${theme} 教学：选地图`, '#teachRoot', R);
+      await page.evaluate(() => document.querySelectorAll('.tm-card')[0].click()); await page.waitForTimeout(500);
+      const lay = await page.evaluate(() => ({ nodes: document.querySelectorAll('.tm-node').length, over: document.documentElement.scrollWidth > innerWidth }));
+      check(G, `${theme}：地图有节点、没有横向溢出`, lay.nodes >= 9 && !lay.over, JSON.stringify(lay));
+      await contrast(page, `${theme} 教学：地图`, '.tm-map', R);
+      await page.click('.tm-node[data-id="i-mole"]'); await page.waitForSelector('.tm-sheet');
+      await contrast(page, `${theme} 教学：知识卡`, '.tm-sheet', R);
+      await page.click('.tm-sheet .tm-primary'); await page.waitForTimeout(150);
+      const qtext = (await page.$eval('.tm-q', e => e.textContent)).trim();
+      check(G, `${theme}：进入第一题、没有「null」字样`, !!Q[qtext] && !/\bnull\b/.test(await page.$eval('.tm-sheet', e => e.textContent)));
+      await contrast(page, `${theme} 教学：作答`, '.tm-sheet', R);
+      await page.fill('.tm-input', '9999'); await page.click('.tm-primary'); await page.waitForTimeout(150);
+      await contrast(page, `${theme} 教学：答错解析`, '.tm-sheet', R);
+      await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+      check(G, `${theme}：作答到一半按 Esc 会先问再关`, !(await page.$('.tm-sheet')));
+      await page.evaluate(() => { const b = document.querySelector('.tm-node[data-id="i-boss-a"]'); if (b) b.click(); });
+      await page.waitForSelector('.tm-sheet');
+      await contrast(page, `${theme} 教学：魔王关`, '.tm-sheet', R);
+      await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+      const rb = await page.evaluateHandle(() => [...document.querySelectorAll('button')].find(b => /反应册/.test(b.textContent)));
+      await rb.asElement().click(); await page.waitForSelector('.tm-sheet');
+      await contrast(page, `${theme} 教学：反应册`, '.tm-sheet', R);
+      if (!night) await shot(page, 'teach-rxbook-mobile');
+      await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+      if (!night) await shot(page, 'teach-map-mobile');
+      check(G, `${theme}：没有 JS 错误`, errors.length === 0, errors[0]);
+      await ctx.close();
+    }
   });
 
   // 对比度汇总：同一个元素同一种颜色只算一次，取最差的那个样本

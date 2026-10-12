@@ -12,9 +12,12 @@
   5. docs/CUSTOMIZE.md：每一列「搜这个名字」都要在那一列写的档案里搜得到（CLAUDE.md 第 5 条）
   6. api/ 的接口数不能超过 Vercel 免费方案的 12 个
   7. 更新日志 data/devlog.json：版本号、日期、内容的格式，新的在前（规则在 scripts/publish_devlog.py）
+  8. 教学地图 data/teach/*.json：关卡与题目 id 不重复、parents 存在且无环、题型与答案格式、
+     反应式类别在固定清单内、每个小节有魔王关和专属题、图案名字 js/teach.js 里有
 
   python3 scripts/check_repo.py      # 有问题就列出来并 exit 1
 """
+import collections
 import glob
 import json
 import os
@@ -50,7 +53,7 @@ def load_json(path):
 
 
 def check_json_files():
-    patterns = ['papers/*.json', 'data/*.json', 'manifest.json', 'vercel.json',
+    patterns = ['papers/*.json', 'data/*.json', 'data/teach/*.json', 'manifest.json', 'vercel.json',
                 'assets/visual/*/scene.json', 'source/scene/*.json']
     for pattern in patterns:
         for path in sorted(glob.glob(os.path.join(ROOT, pattern))):
@@ -218,6 +221,148 @@ def check_devlog():
         problems.extend(f'data/devlog.json：{p}' for p in problems_in(data))
 
 
+TEACH_TYPES = ('term', 'calc', 'essay')
+
+
+def _teach_motifs():
+    """js/teach.js 的 MOTIFS 里有哪些图案名字（资料里的 motif／cover 只能用这些）"""
+    try:
+        with open(os.path.join(ROOT, 'js', 'teach.js'), encoding='utf-8') as f:
+            src = f.read()
+    except OSError:
+        return set()
+    block = src.split('const MOTIFS = {', 1)[-1].split('\n  };', 1)[0]
+    return set(re.findall(r'^    ([a-z]+): ', block, re.M))
+
+
+def _teach_question(q, at, seen):
+    qid = q.get('id')
+    if not qid or qid in seen:
+        problems.append(f'{at}：题目 id 缺少或重复（{qid}）')
+    seen.add(qid)
+    at = f'{at}/{qid}'
+    t = q.get('type')
+    if t not in TEACH_TYPES:
+        problems.append(f'{at}：type 只能是 {"／".join(TEACH_TYPES)}（现在是 {t}）')
+        return
+    if not (q.get('q') or '').strip():
+        problems.append(f'{at}：没有题干')
+    if t == 'term':
+        opts = q.get('options')
+        if not (isinstance(opts, list) and len(opts) == 4 and all(isinstance(o, str) and o.strip() for o in opts)):
+            problems.append(f'{at}：名词题要恰好 4 个选项')
+        if q.get('answer') not in (0, 1, 2, 3) or isinstance(q.get('answer'), bool):
+            problems.append(f'{at}：名词题 answer 要是 0～3')
+        elif isinstance(opts, list) and len(set(opts)) != len(opts):
+            problems.append(f'{at}：选项有重复')
+    elif t == 'calc':
+        a = q.get('answer')
+        if isinstance(a, bool) or not isinstance(a, (int, float)):
+            problems.append(f'{at}：计算题 answer 要是数字')
+        if not isinstance(q.get('unit'), str):
+            problems.append(f'{at}：计算题要有 unit 栏（没有单位就写空字串）')
+        if not (q.get('steps') or '').strip():
+            problems.append(f'{at}：计算题要有分步解法 steps')
+        tol = q.get('tol', 0.02)
+        if isinstance(tol, bool) or not isinstance(tol, (int, float)) or not 0 < tol <= 0.2:
+            problems.append(f'{at}：tol 要在 0～0.2 之间')
+    else:
+        pts = q.get('points')
+        if not (isinstance(pts, list) and len(pts) >= 3 and all(isinstance(x, str) and x.strip() for x in pts)):
+            problems.append(f'{at}：论述题自评要点至少 3 条')
+        if not (q.get('model') or '').strip():
+            problems.append(f'{at}：论述题要有参考答案 model')
+
+
+def check_teach():
+    motifs = _teach_motifs()
+    for path in sorted(glob.glob(os.path.join(ROOT, 'data', 'teach', '*.json'))):
+        data = load_json(path)
+        if data is None:
+            continue
+        name = rel(path)
+        cats = {c.get('id'): c for c in data.get('reaction_categories') or []}
+        if not cats:
+            problems.append(f'{name}：缺 reaction_categories')
+        seen_q, seen_node = set(), set()
+        for m in data.get('maps') or []:
+            at = f'{name}/{m.get("id")}'
+            nodes = {n.get('id'): n for n in m.get('nodes') or []}
+            bosses = {b.get('id'): b for b in m.get('bosses') or []}
+            if len(nodes) != len(m.get('nodes') or []):
+                problems.append(f'{at}：关卡 id 有重复')
+            for ident in list(nodes) + list(bosses):
+                if not ident or ident in seen_node:
+                    problems.append(f'{at}：关卡／魔王 id 缺少或跨地图重复（{ident}）')
+                seen_node.add(ident)
+            if motifs and m.get('cover') not in motifs:
+                problems.append(f'{at}：cover 图案 {m.get("cover")} 不在 js/teach.js 的 MOTIFS 里')
+            for n in list(nodes.values()) + list(bosses.values()):
+                nat = f'{at}/{n.get("id")}'
+                for k in ('col', 'row'):
+                    if isinstance(n.get(k), bool) or not isinstance(n.get(k), (int, float)):
+                        problems.append(f'{nat}：{k} 要是数字')
+                if isinstance(n.get('col'), (int, float)) and not 0 <= n['col'] <= 3:
+                    problems.append(f'{nat}：col 要在 0～3')
+                if motifs and n.get('motif') not in motifs:
+                    problems.append(f'{nat}：motif {n.get("motif")} 不在 js/teach.js 的 MOTIFS 里')
+                for par in n.get('parents') or []:
+                    if par not in nodes and par not in bosses:
+                        problems.append(f'{nat}：parents 里的 {par} 不存在')
+            # 无环：沿 parents 一路往上走，不能走回自己
+            allnodes = {**nodes, **bosses}
+            for start in allnodes:
+                stack, visited = list(allnodes[start].get('parents') or []), set()
+                while stack:
+                    cur = stack.pop()
+                    if cur == start:
+                        problems.append(f'{at}/{start}：parents 绕成了圈')
+                        break
+                    if cur in visited or cur not in allnodes:
+                        continue
+                    visited.add(cur)
+                    stack.extend(allnodes[cur].get('parents') or [])
+            for n in nodes.values():
+                nat = f'{at}/{n.get("id")}'
+                if n.get('tier') not in (1, 2, 3, 4):
+                    problems.append(f'{nat}：tier 要是 1～4')
+                lesson = n.get('lesson') or {}
+                if not (lesson.get('summary') and lesson.get('points')):
+                    problems.append(f'{nat}：知识卡缺 summary／points')
+                for r in lesson.get('reactions') or []:
+                    cat = cats.get(r.get('category'))
+                    if not cat:
+                        problems.append(f'{nat}：反应式类别 {r.get("category")} 不在 reaction_categories 里')
+                    elif cat.get('levels') and r.get('level') not in cat['levels']:
+                        problems.append(f'{nat}：{cat["name"]}的反应式要标 level（{"／".join(cat["levels"])}）：{r.get("name")}')
+                    if not (r.get('name') and r.get('equation')):
+                        problems.append(f'{nat}：反应式缺 name／equation')
+                if len(n.get('challenges') or []) < 3:
+                    problems.append(f'{nat}：每关至少 3 题')
+                for q in n.get('challenges') or []:
+                    _teach_question(q, nat, seen_q)
+            in_section = collections.Counter()
+            for sec in m.get('sections') or []:
+                sat = f'{at}/{sec.get("id")}'
+                pool = 0
+                for nid in sec.get('nodes') or []:
+                    if nid not in nodes:
+                        problems.append(f'{sat}：小节里的关卡 {nid} 不存在')
+                    else:
+                        in_section[nid] += 1
+                        pool += len(nodes[nid].get('challenges') or [])
+                boss = bosses.get(sec.get('boss'))
+                if not boss:
+                    problems.append(f'{sat}：小节缺魔王关（boss）')
+                else:
+                    _teach_question(boss.get('extra') or {}, f'{sat}/{boss["id"]}', seen_q)
+                if pool < 4:
+                    problems.append(f'{sat}：小节题池只有 {pool} 题，魔王关要抽 4 题')
+            for nid in nodes:
+                if in_section[nid] != 1:
+                    problems.append(f'{at}/{nid}：要恰好属于一个小节（现在 {in_section[nid]} 个）')
+
+
 def main():
     check_json_files()
     banks = sorted(glob.glob(os.path.join(ROOT, 'papers', '*_question_bank.json')))
@@ -229,6 +374,7 @@ def main():
     check_customize()
     check_function_limit()
     check_devlog()
+    check_teach()
 
     lines = ['## ✅ 合并前检查：全部通过'] if not problems else \
         [f'## ❌ 合并前检查：{len(problems)} 个问题', ''] + [f'- {p}' for p in problems]

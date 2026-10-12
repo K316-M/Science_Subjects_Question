@@ -1,0 +1,2046 @@
+{
+ "version": 1,
+ "note": "草稿：题目由 Claude 照老师 PPT 笔记手写，科学正确性与范围待使用者审核（每题 draft: true，审完拿掉）。",
+ "reaction_categories": [
+  {
+   "id": "prep",
+   "name": "制取反应",
+   "levels": [
+    "简单",
+    "复杂"
+   ]
+  },
+  {
+   "id": "convert",
+   "name": "转化反应"
+  },
+  {
+   "id": "property",
+   "name": "性质反应"
+  },
+  {
+   "id": "test",
+   "name": "鉴别与检验"
+  }
+ ],
+ "maps": [
+  {
+   "id": "inorganic",
+   "title": "无机化学",
+   "tagline": "计算题闯关",
+   "blurb": "从摩尔、气体、溶液走到工业制法与电解，一路练计算题与催化剂、条件这类名词题。",
+   "accent": "#0f766e",
+   "cover": "flask",
+   "sections": [
+    {
+     "id": "i-sec-a",
+     "title": "方程式与计算",
+     "nodes": [
+      "i-mole",
+      "i-mass",
+      "i-gas"
+     ],
+     "boss": "i-boss-a"
+    },
+    {
+     "id": "i-sec-b",
+     "title": "气体与溶液",
+     "nodes": [
+      "i-sol",
+      "i-pv"
+     ],
+     "boss": "i-boss-b"
+    },
+    {
+     "id": "i-sec-c",
+     "title": "工业与电化学",
+     "nodes": [
+      "i-ind",
+      "i-elec"
+     ],
+     "boss": "i-boss-c"
+    }
+   ],
+   "nodes": [
+    {
+     "id": "i-mole",
+     "title": "摩尔与方程式",
+     "tier": 1,
+     "parents": [],
+     "col": 1.5,
+     "row": 0,
+     "motif": "balance",
+     "sources": [
+      "第三章 化学方程式与化学计算（老师的 PPT 只有习题答案，题目与步骤照答案的做法重写）"
+     ],
+     "lesson": {
+      "summary": "化学方程式的系数比 = 物质的量（mol）之比，所有计算都从这里出发。",
+      "points": [
+       "配平後，系数比 = 物质的量之比（mol 比），不是质量比。",
+       "三步走：写出并配平方程式 → 把已知量换成 mol（n = m ÷ M）→ 按系数比求未知量，再换回题目要的单位。",
+       "同一种物质的单位要一样：g 对 g、mol 对 mol、L 对 L，不要混着比。",
+       "例：2Mg + O₂ → 2MgO，2 mol Mg 恰好与 1 mol O₂ 反应，所以 1 mol Mg 需要 0.5 mol O₂。"
+      ],
+      "tip": "先配平，再列比例；系数是 mol 比。",
+      "reactions": [
+       {
+        "name": "镁在氧气中燃烧",
+        "equation": "2Mg + O₂ → 2MgO",
+        "conditions": "点燃",
+        "category": "property"
+       },
+       {
+        "name": "铝在氧气中燃烧",
+        "equation": "4Al + 3O₂ → 2Al₂O₃",
+        "conditions": "点燃",
+        "category": "property"
+       },
+       {
+        "name": "氢气燃烧",
+        "equation": "2H₂ + O₂ → 2H₂O",
+        "conditions": "点燃",
+        "category": "property"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "i-mole-1",
+       "type": "calc",
+       "q": "1 mol 铝与足量氧气完全反应（4Al + 3O₂ → 2Al₂O₃），需要氧气多少 mol？",
+       "answer": 0.75,
+       "unit": "mol",
+       "tol": 0.02,
+       "steps": "系数比 Al : O₂ = 4 : 3。\nn(O₂) = 1 mol × 3/4 = 0.75 mol。",
+       "draft": true
+      },
+      {
+       "id": "i-mole-2",
+       "type": "term",
+       "q": "对于反应 N₂ + 3H₂ ⇌ 2NH₃，下列叙述正确的是？",
+       "options": [
+        "1 g N₂ 恰好与 3 g H₂ 完全反应",
+        "参加反应的 N₂ 与 H₂ 的物质的量之比为 1 : 3",
+        "反应後分子总数一定变多",
+        "28 g N₂ 恰好与 2 g H₂ 完全反应"
+       ],
+       "answer": 1,
+       "explain": "系数比就是 mol 比：N₂ : H₂ = 1 : 3。A 把系数当成质量；C 反应後分子数由 4 变 2，是减少；D 中 28 g N₂ 是 1 mol，需要 3 mol H₂ = 6 g，不是 2 g。",
+       "draft": true
+      },
+      {
+       "id": "i-mole-3",
+       "type": "calc",
+       "q": "加热 12.8 g 铜与足量氧气反应（2Cu + O₂ → 2CuO），得到氧化铜多少 g？（Cu = 64，O = 16）",
+       "answer": 16.0,
+       "unit": "g",
+       "tol": 0.02,
+       "steps": "n(Cu) = 12.8 ÷ 64 = 0.2 mol；系数比 Cu : CuO = 1 : 1，n(CuO) = 0.2 mol。\nm(CuO) = 0.2 × 80 = 16.0 g。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "i-mass",
+     "title": "质量计算与限量试剂",
+     "tier": 2,
+     "parents": [
+      "i-mole"
+     ],
+     "col": 0.5,
+     "row": 1,
+     "motif": "flask",
+     "sources": [
+      "第三章 化学方程式与化学计算（习题答案：含结晶水化合物、质量计算）"
+     ],
+     "lesson": {
+      "summary": "题目给了两种反应物的量时，先找「谁先用完」；含结晶水的物质别漏了水的式量。",
+      "points": [
+       "限量试剂：反应中最先被用完的反应物，它决定产物最多能生成多少。",
+       "做法：把每种反应物都换成 mol，除以各自的系数，比值较小的就是限量试剂。",
+       "含结晶水的化合物要把水算进式量：CuSO₄·5H₂O = 64 + 32 + 64 + 5×18 = 250。",
+       "产率 = 实际产量 ÷ 理论产量 × 100%，理论产量按限量试剂算。"
+      ],
+      "tip": "「谁先用完」决定产量，不是谁的质量大。",
+      "reactions": [
+       {
+        "name": "五水硫酸铜受热失水",
+        "equation": "CuSO₄·5H₂O → CuSO₄ + 5H₂O",
+        "conditions": "加热",
+        "category": "property"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "i-mass-1",
+       "type": "calc",
+       "q": "加热 25 g 五水硫酸铜（CuSO₄·5H₂O）使结晶水完全失去，得到无水硫酸铜多少 g？（Cu = 64，S = 32，O = 16，H = 1）",
+       "answer": 16.0,
+       "unit": "g",
+       "tol": 0.02,
+       "steps": "M(CuSO₄·5H₂O) = 64 + 32 + 64 + 90 = 250 g/mol；M(CuSO₄) = 160 g/mol。\nm = 25 × 160 ÷ 250 = 16.0 g。",
+       "draft": true
+      },
+      {
+       "id": "i-mass-2",
+       "type": "calc",
+       "q": "将 4.0 g 氢气与 16.0 g 氧气混合点燃（2H₂ + O₂ → 2H₂O），最多生成水多少 g？（H = 1，O = 16）",
+       "answer": 18.0,
+       "unit": "g",
+       "tol": 0.02,
+       "steps": "n(H₂) = 4.0 ÷ 2 = 2 mol；n(O₂) = 16.0 ÷ 32 = 0.5 mol。\n除以系数：H₂ 为 2 ÷ 2 = 1，O₂ 为 0.5 ÷ 1 = 0.5，O₂ 较小，是限量试剂。\nn(H₂O) = 2 × 0.5 = 1 mol，m = 1 × 18 = 18 g。",
+       "draft": true
+      },
+      {
+       "id": "i-mass-3",
+       "type": "term",
+       "q": "关於「限量试剂」，下列说法正确的是？",
+       "options": [
+        "物质的量最少的那种反应物",
+        "反应中最先被用完、决定产物最大量的反应物",
+        "质量最小的那种反应物",
+        "过量的那种反应物"
+       ],
+       "answer": 1,
+       "explain": "限量试剂是最先耗尽的反应物。物质的量或质量最少的不一定是它，必须除以各自的系数再比较。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "i-gas",
+     "title": "气体摩尔体积",
+     "tier": 2,
+     "parents": [
+      "i-mole"
+     ],
+     "col": 2.5,
+     "row": 1,
+     "motif": "balloon",
+     "sources": [
+      "第十六章 气体（17.4 气体摩尔体积的计算）"
+     ],
+     "lesson": {
+      "summary": "标准状况（STP）下，1 mol 任何气体的体积都约是 22.4 L。",
+      "points": [
+       "气体摩尔体积 V_m = 22.4 L/mol，只适用於「标准状况」下的「气体」。",
+       "n = V ÷ V_m；n = m ÷ M；n = N ÷ N_A（N_A = 6.02×10²³ mol⁻¹）。",
+       "标准状况下的密度：ρ = M ÷ V_m，所以摩尔质量 M = ρ × 22.4。",
+       "水在标准状况下不是气体，不能用 22.4 L/mol。"
+      ],
+      "tip": "看到 22.4，先问：标准状况吗？是气体吗？",
+      "reactions": [
+       {
+        "name": "锌与盐酸制氢气",
+        "equation": "Zn + 2HCl → ZnCl₂ + H₂↑",
+        "conditions": "常温",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "铝与盐酸制氢气",
+        "equation": "2Al + 6HCl → 2AlCl₃ + 3H₂↑",
+        "conditions": "常温",
+        "category": "prep",
+        "level": "简单"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "i-gas-1",
+       "type": "calc",
+       "q": "标准状况下，8.8 g 二氧化碳（C = 12，O = 16）的体积是多少 L？",
+       "answer": 4.48,
+       "unit": "L",
+       "tol": 0.02,
+       "steps": "M(CO₂) = 44 g/mol；n = 8.8 ÷ 44 = 0.2 mol。\nV = 22.4 × 0.2 = 4.48 L。",
+       "draft": true
+      },
+      {
+       "id": "i-gas-2",
+       "type": "calc",
+       "q": "19.5 g 锌与足量盐酸反应（Zn + 2HCl → ZnCl₂ + H₂），标准状况下可收集氢气多少 L？（Zn = 65）",
+       "answer": 6.72,
+       "unit": "L",
+       "tol": 0.02,
+       "steps": "n(Zn) = 19.5 ÷ 65 = 0.3 mol；Zn : H₂ = 1 : 1，n(H₂) = 0.3 mol。\nV = 22.4 × 0.3 = 6.72 L。",
+       "draft": true
+      },
+      {
+       "id": "i-gas-3",
+       "type": "term",
+       "q": "下列叙述正确的是？",
+       "options": [
+        "1 mol 任何气体的体积都是 22.4 L",
+        "标准状况下，1 mol 气态物质的体积约是 22.4 L",
+        "标准状况下，1 mol 水的体积约是 22.4 L",
+        "同温同压下，相同质量的任何气体体积相同"
+       ],
+       "answer": 1,
+       "explain": "A 少了「标准状况」；C 水在标准状况下不是气体；D 同温同压下是「相同物质的量」的气体体积才相同。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "i-pv",
+     "title": "理想气体 PV = nRT",
+     "tier": 3,
+     "parents": [
+      "i-boss-a"
+     ],
+     "col": 2.5,
+     "row": 3,
+     "motif": "tubes",
+     "sources": [
+      "第十六章 气体（理想气体方程式、查理定律、道尔顿分压定律、排水集气法）"
+     ],
+     "lesson": {
+      "summary": "不在标准状况时，用 PV = nRT；单位要先换成 R 要求的单位。",
+      "points": [
+       "PV = nRT，老师用的 R = 8.314 Pa·m³·mol⁻¹·K⁻¹，所以 P 用 Pa、V 用 m³、T 用 K。",
+       "换算：1 L = 10⁻³ m³；T（K）= t（°C）+ 273；1 atm ≈ 1.01×10⁵ Pa。",
+       "压强不变时 V₁/T₁ = V₂/T₂（T 一定要用 K）。",
+       "道尔顿分压定律：混合气体总压 p_T = p₁ + p₂ + …；排水集气法收集的气体含水蒸气：p(气体) = p_T − p(H₂O)。"
+      ],
+      "tip": "T 不用 K、V 不用 m³，是最常见的丢分点。",
+      "reactions": [
+       {
+        "name": "氯酸钾制氧气",
+        "equation": "2KClO₃ → 2KCl + 3O₂↑",
+        "conditions": "二氧化锰（催化剂）、加热",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "双氧水制氧气",
+        "equation": "2H₂O₂ → 2H₂O + O₂↑",
+        "conditions": "二氧化锰（催化剂），不必加热",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "碳酸钙制二氧化碳",
+        "equation": "CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂↑",
+        "conditions": "常温",
+        "category": "prep",
+        "level": "简单"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "i-pv-1",
+       "type": "calc",
+       "q": "0.025 mol 某气体在 298 K、1.01×10⁵ Pa 时的体积是多少 L？（R = 8.314 Pa·m³·mol⁻¹·K⁻¹）",
+       "answer": 0.6133,
+       "unit": "L",
+       "tol": 0.02,
+       "steps": "V = nRT ÷ P = 0.025 × 8.314 × 298 ÷ 1.01×10⁵ = 6.133e-04 m³。\n1 m³ = 1000 L，所以 V = 0.613 L。",
+       "draft": true
+      },
+      {
+       "id": "i-pv-2",
+       "type": "calc",
+       "q": "273 K、1.01×10⁵ Pa 时某气体体积为 22.4 L。压强不变，升温到 373 K，体积变成多少 L？",
+       "answer": 30.61,
+       "unit": "L",
+       "tol": 0.02,
+       "steps": "V₁/T₁ = V₂/T₂；V₂ = 22.4 × 373 ÷ 273 = 30.6 L。",
+       "draft": true
+      },
+      {
+       "id": "i-pv-3",
+       "type": "calc",
+       "q": "用排水集气法收集氧气，总压为 101 kPa，此温度下水蒸气的分压为 3.2 kPa，氧气的分压是多少 kPa？",
+       "answer": 97.8,
+       "unit": "kPa",
+       "tol": 0.005,
+       "steps": "p_T = p(O₂) + p(H₂O)；p(O₂) = 101 − 3.2 = 97.8 kPa。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "i-sol",
+     "title": "溶液浓度与稀释",
+     "tier": 2,
+     "parents": [
+      "i-boss-a"
+     ],
+     "col": 0.5,
+     "row": 3,
+     "motif": "beaker",
+     "sources": [
+      "第十七章 溶液及其性质（质量百分比浓度、摩尔浓度、稀释）"
+     ],
+     "lesson": {
+      "summary": "三种浓度各有各的公式；稀释时「溶质」的量不变。",
+      "points": [
+       "质量百分比浓度 ω = m(溶质) ÷ m(溶液) × 100%。",
+       "摩尔浓度 c = n ÷ V，单位 mol/L；n = c × V；m = c × V × M。",
+       "质量摩尔浓度 c_m = n(溶质) ÷ m(溶剂，kg)，单位 mol/kg。",
+       "稀释前後溶质不变：m(溶质) 不变，或 c₁V₁ = c₂V₂。"
+      ],
+      "tip": "稀释只加溶剂，溶质一点没变。",
+      "reactions": [
+       {
+        "name": "硫酸与氢氧化钠中和",
+        "equation": "H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O",
+        "conditions": "常温",
+        "category": "property"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "i-sol-1",
+       "type": "calc",
+       "q": "将 50 g 98% 的硫酸稀释成 20% 的溶液，需要加入多少 g 水？",
+       "answer": 195.0,
+       "unit": "g",
+       "tol": 0.02,
+       "steps": "m(H₂SO₄) = 50 × 98% = 49 g，稀释後溶质不变。\n稀释後溶液质量 = 49 ÷ 20% = 245 g。\n加水 = 245 − 50 = 195 g。",
+       "draft": true
+      },
+      {
+       "id": "i-sol-2",
+       "type": "calc",
+       "q": "配制 500 mL、0.15 mol/L 的氯化钠溶液，需要氯化钠多少 g？（Na = 23，Cl = 35.5）",
+       "answer": 4.388,
+       "unit": "g",
+       "tol": 0.02,
+       "steps": "n = c × V = 0.15 × 0.5 = 0.075 mol；m = n × M = 0.075 × 58.5 = 4.39 g。",
+       "draft": true
+      },
+      {
+       "id": "i-sol-3",
+       "type": "term",
+       "q": "把浓溶液稀释成稀溶液时，下列哪个量不变？",
+       "options": [
+        "溶液的体积",
+        "溶质的物质的量",
+        "溶液的浓度",
+        "溶液的密度"
+       ],
+       "answer": 1,
+       "explain": "稀释只加溶剂，溶质的物质的量（和质量）不变，所以 c₁V₁ = c₂V₂。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "i-ind",
+     "title": "工业制取与催化剂",
+     "tier": 3,
+     "parents": [
+      "i-boss-b"
+     ],
+     "col": 1.5,
+     "row": 5,
+     "motif": "factory",
+     "sources": [
+      "第十二章 氮和磷（哈伯法、氨的催化氧化法）",
+      "第十三章 氧和硫（接触法）",
+      "第十四章 卤素、第二十三章 电化学（氯碱工业）",
+      "第八章 钠和钾（氨碱法：PPT 只写了法名）"
+     ],
+     "lesson": {
+      "summary": "工业制法按「几步」分：一步就能写完的算简单，要连续好几步的算复杂；条件（催化剂、温度、压强）一定要会写。",
+      "points": [
+       "哈伯法合成氨：N₂ + 3H₂ ⇌ 2NH₃，条件是催化剂、高温、高压（算一步，但条件必须写）。",
+       "接触法制硫酸：① 燃烧硫或硫化物得 SO₂ → ② 2SO₂ + O₂ ⇌ 2SO₃（V₂O₅ 催化剂，400～500 °C）→ ③ 用浓硫酸吸收 SO₃ 成发烟硫酸，再稀释。",
+       "氯碱工业：电解饱和 NaCl 水溶液，阳极得 Cl₂，阴极得 H₂ 和 NaOH；阳离子交换膜避免 H₂ 与 Cl₂ 混合爆炸、避免 Cl₂ 与 NaOH 反应。",
+       "用浓硫酸（而不是水）吸收 SO₃：水吸收会形成酸雾，不利於继续吸收。"
+      ],
+      "tip": "条件和催化剂是名词题最常考的得分点。",
+      "reactions": [
+       {
+        "name": "哈伯法",
+        "equation": "N₂ + 3H₂ ⇌ 2NH₃",
+        "conditions": "催化剂、高温、高压（常用铁催化剂）",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "氯碱工业",
+        "equation": "2NaCl + 2H₂O → Cl₂↑ + H₂↑ + 2NaOH",
+        "conditions": "通电（电解饱和 NaCl 水溶液）",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "实验室制氨",
+        "equation": "2NH₄Cl + Ca(OH)₂ → CaCl₂ + 2NH₃↑ + 2H₂O",
+        "conditions": "加热",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "接触法（第 1 步）",
+        "equation": "4FeS₂ + 11O₂ → 2Fe₂O₃ + 8SO₂",
+        "conditions": "高温煅烧（直接烧硫则 S + O₂ → SO₂）",
+        "category": "prep",
+        "level": "复杂"
+       },
+       {
+        "name": "接触法（第 2 步）",
+        "equation": "2SO₂ + O₂ ⇌ 2SO₃",
+        "conditions": "V₂O₅ 催化剂、400～500 °C",
+        "category": "prep",
+        "level": "复杂"
+       },
+       {
+        "name": "接触法（第 3 步）",
+        "equation": "SO₃ + H₂SO₄ → H₂SO₄·SO₃；H₂SO₄·SO₃ + H₂O → 2H₂SO₄",
+        "conditions": "浓硫酸吸收，再稀释",
+        "category": "prep",
+        "level": "复杂"
+       },
+       {
+        "name": "氨的催化氧化法制硝酸",
+        "equation": "4NH₃ + 5O₂ → 4NO + 6H₂O；2NO + O₂ → 2NO₂；3NO₂ + H₂O → 2HNO₃ + NO",
+        "conditions": "催化剂、高温",
+        "category": "prep",
+        "level": "复杂"
+       },
+       {
+        "name": "氨碱法制纯碱（名称待确认）",
+        "equation": "NaCl + NH₃ + CO₂ + H₂O → NaHCO₃↓ + NH₄Cl；2NaHCO₃ → Na₂CO₃ + H₂O + CO₂↑",
+        "conditions": "加热",
+        "category": "prep",
+        "level": "复杂",
+        "note": "PPT 只写了「氨碱法 p280」，方程式是课本的标准写法，请对照课本；人名叫法（索尔维法）也待你确认。"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "i-ind-1",
+       "type": "term",
+       "q": "哈伯法合成氨的反应条件是？",
+       "options": [
+        "常温、常压，不用催化剂",
+        "催化剂、高温、高压",
+        "光照、常压",
+        "通电电解"
+       ],
+       "answer": 1,
+       "explain": "哈伯法：N₂ + 3H₂ ⇌ 2NH₃，条件是催化剂、高温、高压。",
+       "draft": true
+      },
+      {
+       "id": "i-ind-2",
+       "type": "term",
+       "q": "接触法制硫酸中，使 SO₂ 氧化成 SO₃ 的催化剂是？",
+       "options": [
+        "Fe",
+        "MnO₂",
+        "V₂O₅",
+        "Al₂O₃"
+       ],
+       "answer": 2,
+       "explain": "2SO₂ + O₂ ⇌ 2SO₃，催化剂是五氧化二钒 V₂O₅，温度 400～500 °C。杂质会使 V₂O₅「中毒」，所以 SO₂ 要先净化。",
+       "draft": true
+      },
+      {
+       "id": "i-ind-3",
+       "type": "term",
+       "q": "接触法中为什么用浓硫酸（而不是水）吸收 SO₃？",
+       "options": [
+        "浓硫酸便宜",
+        "水吸收会形成酸雾，不利於 SO₃ 继续被吸收",
+        "水不能与 SO₃ 反应",
+        "浓硫酸能把 SO₃ 还原"
+       ],
+       "answer": 1,
+       "explain": "用水吸收 SO₃ 放热、容易形成酸雾；浓硫酸液面水蒸气少，不会形成酸雾，先得发烟硫酸，再稀释到需要的浓度。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "i-elec",
+     "title": "电解计算（法拉第）",
+     "tier": 4,
+     "parents": [
+      "i-ind"
+     ],
+     "col": 1.5,
+     "row": 6,
+     "motif": "electrolysis",
+     "sources": [
+      "第二十三章 电化学（电解的计算：法拉第常数、析出量与电量）"
+     ],
+     "lesson": {
+      "summary": "电解的计算 = 电量换成 mol 电子，再按电极反应的系数比算产物。",
+      "points": [
+       "Q = I × t（Q：库仑 C，I：安培 A，t：秒 s）；法拉第常数 F = 96500 C/mol（1 mol 电子的电量）。",
+       "n(e⁻) = Q ÷ F。析出量：Ag⁺ + e⁻ → Ag，1 F 析出 1 mol（108 g）Ag；Cu²⁺ + 2e⁻ → Cu，2 F 析出 1 mol Cu。",
+       "放出氧气：4OH⁻ → 2H₂O + O₂ + 4e⁻，4 F 放出 22.4 L（标准状况）O₂。",
+       "分钟要先换成秒；先算电量，再算析出量。"
+      ],
+      "tip": "「分钟→秒」「mol 电子→系数」是两个最容易漏的步骤。",
+      "reactions": [
+       {
+        "name": "电解硫酸铜溶液",
+        "equation": "2CuSO₄ + 2H₂O → 2Cu + O₂↑ + 2H₂SO₄",
+        "conditions": "通电",
+        "category": "property"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "i-elec-1",
+       "type": "calc",
+       "q": "用 0.5 A 的电流给铁汤匙镀银，通电 30 分钟，镀上银多少 g？（Ag = 108，F = 96500 C/mol）",
+       "answer": 1.007,
+       "unit": "g",
+       "tol": 0.02,
+       "steps": "t = 30 × 60 = 1800 s；Q = It = 0.5 × 1800 = 900 C。\nAg⁺ + e⁻ → Ag：96500 C 析出 108 g。\nm = 900 ÷ 96500 × 108 = 1.01 g。",
+       "draft": true
+      },
+      {
+       "id": "i-elec-2",
+       "type": "calc",
+       "q": "用 2.0 A 的电流电解硫酸铜溶液，要在阴极析出 1.27 g 铜，需通电多少 s？（Cu = 63.5，F = 96500 C/mol）",
+       "answer": 1930.0,
+       "unit": "s",
+       "tol": 0.02,
+       "steps": "n(Cu) = 1.27 ÷ 63.5 = 0.02 mol；Cu²⁺ + 2e⁻ → Cu，n(e⁻) = 0.04 mol。\nQ = 0.04 × 96500 = 3860 C；t = Q ÷ I = 3860 ÷ 2.0 = 1930 s。",
+       "draft": true
+      },
+      {
+       "id": "i-elec-3",
+       "type": "calc",
+       "q": "电解水时通过的电量为 3860 C，阳极（4OH⁻ → 2H₂O + O₂ + 4e⁻）在标准状况下产生氧气多少 L？",
+       "answer": 0.224,
+       "unit": "L",
+       "tol": 0.02,
+       "steps": "4 F 放出 22.4 L O₂；n(e⁻) = 3860 ÷ 96500 = 0.04 mol。\nV = 0.04 ÷ 4 × 22.4 = 0.224 L。",
+       "draft": true
+      },
+      {
+       "id": "i-elec-4",
+       "type": "term",
+       "q": "电解饱和食盐水（氯碱工业），阴极和阳极的主要产物分别是？",
+       "options": [
+        "阴极 Cl₂，阳极 H₂ 和 NaOH",
+        "阴极 H₂ 和 NaOH，阳极 Cl₂",
+        "阴极 O₂，阳极 Na",
+        "阴极 Na，阳极 Cl₂"
+       ],
+       "answer": 1,
+       "explain": "阴极（得电子）：2H⁺ + 2e⁻ → H₂，溶液中剩下 OH⁻ 与 Na⁺ 成 NaOH；阳极（失电子）：2Cl⁻ → Cl₂ + 2e⁻。",
+       "draft": true
+      }
+     ]
+    }
+   ],
+   "bosses": [
+    {
+     "id": "i-boss-a",
+     "title": "魔王：计算基础",
+     "motif": "flag",
+     "col": 1.5,
+     "row": 2,
+     "parents": [
+      "i-mass",
+      "i-gas"
+     ],
+     "blurb": "不想一关一关来？答对 5 题中的 4 题，本小节视为通关。",
+     "extra": {
+      "id": "i-boss-a-x",
+      "type": "calc",
+      "q": "10 g 碳酸钙与足量稀盐酸反应（CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂↑），标准状况下得到二氧化碳多少 L？（Ca = 40，C = 12，O = 16）",
+      "answer": 2.24,
+      "unit": "L",
+      "tol": 0.02,
+      "steps": "M(CaCO₃) = 100 g/mol；n = 10 ÷ 100 = 0.1 mol。\nCaCO₃ : CO₂ = 1 : 1，n(CO₂) = 0.1 mol。\nV = 22.4 × 0.1 = 2.24 L。",
+      "draft": true
+     }
+    },
+    {
+     "id": "i-boss-b",
+     "title": "魔王：气体与溶液",
+     "motif": "flag",
+     "col": 1.5,
+     "row": 4,
+     "parents": [
+      "i-sol",
+      "i-pv"
+     ],
+     "blurb": "不想一关一关来？答对 5 题中的 4 题，本小节视为通关。",
+     "extra": {
+      "id": "i-boss-b-x",
+      "type": "calc",
+      "q": "取 25.0 mL 硫酸，用 0.100 mol/L 氢氧化钠滴定（H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O），恰好中和用去 40.0 mL。硫酸的浓度是多少 mol/L？",
+      "answer": 0.08,
+      "unit": "mol/L",
+      "tol": 0.02,
+      "steps": "n(NaOH) = 0.100 × 0.0400 = 0.00400 mol。\nH₂SO₄ : NaOH = 1 : 2，n(H₂SO₄) = 0.00200 mol。\nc = 0.00200 ÷ 0.0250 = 0.0800 mol/L。",
+      "draft": true
+     }
+    },
+    {
+     "id": "i-boss-c",
+     "title": "总魔王：工业与电化学",
+     "motif": "flag",
+     "col": 1.5,
+     "row": 7,
+     "parents": [
+      "i-elec"
+     ],
+     "blurb": "不想一关一关来？答对 5 题中的 4 题，本小节视为通关。",
+     "extra": {
+      "id": "i-boss-c-x",
+      "type": "calc",
+      "q": "氯碱工业中，电解槽通过 19300 C 的电量，理论上同时生成氢氧化钠多少 g？（2NaCl + 2H₂O → H₂ + Cl₂ + 2NaOH，生成 2 mol NaOH 转移 2 mol 电子；Na = 23，O = 16，H = 1，F = 96500 C/mol）",
+      "answer": 8.0,
+      "unit": "g",
+      "tol": 0.02,
+      "steps": "n(e⁻) = 19300 ÷ 96500 = 0.2 mol。\n每转移 1 mol 电子生成 1 mol NaOH，n(NaOH) = 0.2 mol。\nm = 0.2 × 40 = 8.0 g。",
+      "draft": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "organic",
+   "title": "有机化学",
+   "tagline": "反应工具箱",
+   "blurb": "按「功能」闯关：简单制取、增碳、生成 NH₃、鉴别，最後把它们串成合成路线。",
+   "accent": "#7c3aed",
+   "cover": "benzene",
+   "sections": [
+    {
+     "id": "o-sec-a",
+     "title": "基础与简单制取",
+     "nodes": [
+      "o-func",
+      "o-comb",
+      "o-simple"
+     ],
+     "boss": "o-boss-a"
+    },
+    {
+     "id": "o-sec-b",
+     "title": "转化、鉴别与合成",
+     "nodes": [
+      "o-carb",
+      "o-nh3",
+      "o-test",
+      "o-route"
+     ],
+     "boss": "o-boss-b"
+    }
+   ],
+   "nodes": [
+    {
+     "id": "o-func",
+     "title": "官能团与通式",
+     "tier": 1,
+     "parents": [],
+     "col": 1.5,
+     "row": 0,
+     "motif": "chain",
+     "sources": [
+      "第二十五章 有机化学（通式）",
+      "第三十二、三十三章（醛酮、羧酸的官能团）"
+     ],
+     "lesson": {
+      "summary": "有机物的性质由官能团决定；通式能帮你一眼判断可能是哪一类。",
+      "points": [
+       "通式：烷烃 CₙH₂ₙ₊₂；烯烃／环烷烃 CₙH₂ₙ；炔烃／二烯烃／环烯烃 CₙH₂ₙ₋₂。",
+       "一元饱和脂肪族醇／醚 CₙH₂ₙ₊₂O；饱和脂肪族醛／酮 CₙH₂ₙO；饱和一元脂肪族羧酸／酯 CₙH₂ₙO₂。",
+       "官能团：卤原子（—X）、羟基（—OH）、醛基（—CHO）、羰基／酮基（>C=O）、羧基（—COOH）、酯基（—COOR）、氰基（—CN）。",
+       "同一个通式可能是不同类的同分异构体：醛和酮、羧酸和酯、醇和醚。"
+      ],
+      "tip": "看到通式先想：可能有哪几类？",
+      "reactions": []
+     },
+     "challenges": [
+      {
+       "id": "o-func-1",
+       "type": "term",
+       "q": "饱和脂肪族醛或酮的通式是？",
+       "options": [
+        "CₙH₂ₙ₊₂O",
+        "CₙH₂ₙO",
+        "CₙH₂ₙO₂",
+        "CₙH₂ₙ₋₂O"
+       ],
+       "answer": 1,
+       "explain": "醛、酮含一个 C=O，比烷烃少 2 个 H，多 1 个 O：CₙH₂ₙO（醇和醚是 CₙH₂ₙ₊₂O，羧酸和酯是 CₙH₂ₙO₂）。",
+       "draft": true
+      },
+      {
+       "id": "o-func-2",
+       "type": "term",
+       "q": "分子式 C₂H₄O₂（符合 CₙH₂ₙO₂）的同分异构体，可以分属下列哪两类？",
+       "options": [
+        "醇和醚",
+        "羧酸和酯",
+        "醛和酮",
+        "烷烃和烯烃"
+       ],
+       "answer": 1,
+       "explain": "C₂H₄O₂ 可以是乙酸 CH₃COOH（羧酸），也可以是甲酸甲酯 HCOOCH₃（酯）。醇和醚是 CₙH₂ₙ₊₂O，醛和酮是 CₙH₂ₙO。",
+       "draft": true
+      },
+      {
+       "id": "o-func-3",
+       "type": "term",
+       "q": "CH₃CHO 的官能团叫做什么？",
+       "options": [
+        "羧基",
+        "羰基（酮基）",
+        "醛基",
+        "酯基"
+       ],
+       "answer": 2,
+       "explain": "—CHO 是醛基；—COOH 是羧基；>C=O（两边都连烃基）是羰基（酮基）；—COOR 是酯基。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "o-comb",
+     "title": "燃烧法与分子式",
+     "tier": 2,
+     "parents": [
+      "o-func"
+     ],
+     "col": 0.5,
+     "row": 1,
+     "motif": "flame",
+     "sources": [
+      "第十七章 溶液及其性质（由质量百分比求化学式）",
+      "第三十二章 醛和酮（碳的质量百分比）"
+     ],
+     "lesson": {
+      "summary": "由质量百分比、燃烧产物的量，一步步推出分子式。",
+      "points": [
+       "由质量百分比：原子数 = 式量 × 该元素的质量百分比 ÷ 该元素的相对原子质量。",
+       "由燃烧产物：n(C) = n(CO₂)，n(H) = 2 × n(H₂O)；再除以样品的 mol，得到每个分子的 C、H 原子数。",
+       "标准状况下 n(CO₂) = V ÷ 22.4。",
+       "不同的有机物可以有相同的碳质量百分比（例：甲醛、乙酸、葡萄糖、甲酸甲酯碳含量都是 40%），混合时碳含量固定。"
+      ],
+      "tip": "先算 mol，再得原子数。",
+      "reactions": [
+       {
+        "name": "烷烃完全燃烧",
+        "equation": "CₙH₂ₙ₊₂ + (3n+1)/2 O₂ → nCO₂ + (n+1)H₂O",
+        "conditions": "点燃",
+        "category": "property"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "o-comb-1",
+       "type": "calc",
+       "q": "葡萄糖（C₆H₁₂O₆）中，碳的质量百分比是多少（%）？（C = 12，H = 1，O = 16）",
+       "answer": 40.0,
+       "unit": "%",
+       "tol": 0.01,
+       "steps": "M(C₆H₁₂O₆) = 72 + 12 + 96 = 180 g/mol。\nω(C) = 72 ÷ 180 × 100% = 40.0%。",
+       "draft": true
+      },
+      {
+       "id": "o-comb-2",
+       "type": "calc",
+       "q": "0.1 mol 某烃完全燃烧，生成 4.48 L 二氧化碳（标准状况）和 5.4 g 水。这种烃每个分子里有几个氢原子？（H = 1，O = 16）",
+       "answer": 6.0,
+       "unit": "个",
+       "tol": 0.01,
+       "steps": "n(H₂O) = 5.4 ÷ 18 = 0.3 mol；n(H) = 2 × 0.3 = 0.6 mol。\n每个分子的 H 原子数 = 0.6 ÷ 0.1 = 6（同时 n(C) = 4.48 ÷ 22.4 = 0.2 mol，C 原子数 2，分子式 C₂H₆）。",
+       "draft": true
+      },
+      {
+       "id": "o-comb-3",
+       "type": "calc",
+       "q": "某烃的式量为 56，碳的质量百分比为 85.7%，分子里有几个碳原子？（C = 12，H = 1）",
+       "answer": 4.0,
+       "unit": "个",
+       "tol": 0.02,
+       "steps": "n(C) = 56 × 85.7% ÷ 12 ≈ 4；n(H) = (56 − 48) ÷ 1 = 8，分子式 C₄H₈。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "o-simple",
+     "title": "简单制取（一步）",
+     "tier": 2,
+     "parents": [
+      "o-func"
+     ],
+     "col": 2.5,
+     "row": 1,
+     "motif": "tubes",
+     "sources": [
+      "第二十七章 烯烃（醇脱水法、卤代烷脱卤化氢法）",
+      "第二十八章 炔烃（电石制乙炔）",
+      "第三十章 卤代烃（水解）",
+      "第三十三章 羧酸及其衍生物（酯化）"
+     ],
+     "lesson": {
+      "summary": "一步就能写完的制取反应：记住「原料 + 条件」。",
+      "points": [
+       "乙烯：乙醇与浓硫酸共热迅速升到 170 °C，分子内脱水（消去反应）；温度较低则主要分子间脱水，生成乙醚（取代反应）。",
+       "乙炔：电石（CaC₂）与水反应，常温，用排水集气法收集。",
+       "卤代烷：与 NaOH 水溶液共热是水解（得醇，取代反应）；与 NaOH 的醇溶液共热是消去（得烯；消去时从含 H 较少的 β-碳上脱 H，PPT 称「欺负 H 少的规则」）。",
+       "乙酸乙酯：乙酸和乙醇在浓硫酸催化下加热酯化，是可逆反应；浓硫酸还吸水，使平衡向酯的方向移动。"
+      ],
+      "tip": "水溶液是取代，醇溶液是消去。",
+      "reactions": [
+       {
+        "name": "乙醇分子内脱水制乙烯",
+        "equation": "CH₃CH₂OH → CH₂=CH₂ + H₂O",
+        "conditions": "浓 H₂SO₄、迅速升温到 170 °C",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "电石制乙炔",
+        "equation": "CaC₂ + 2H₂O → HC≡CH↑ + Ca(OH)₂",
+        "conditions": "常温，排水集气",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "卤代烷水解制醇",
+        "equation": "CH₃CH₂Br + NaOH → CH₃CH₂OH + NaBr",
+        "conditions": "NaOH 水溶液、加热",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "卤代烷消去制烯",
+        "equation": "CH₃CH₂Br + NaOH → CH₂=CH₂ + NaBr + H₂O",
+        "conditions": "NaOH 醇溶液、加热",
+        "category": "prep",
+        "level": "简单"
+       },
+       {
+        "name": "酯化反应制乙酸乙酯",
+        "equation": "CH₃COOH + CH₃CH₂OH ⇌ CH₃COOCH₂CH₃ + H₂O",
+        "conditions": "浓 H₂SO₄（催化剂、吸水剂）、加热",
+        "category": "prep",
+        "level": "简单"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "o-simple-1",
+       "type": "term",
+       "q": "实验室用乙醇和浓硫酸制乙烯，混合液应迅速升温到多少 °C？",
+       "options": [
+        "100 °C",
+        "140 °C",
+        "170 °C",
+        "300 °C"
+       ],
+       "answer": 2,
+       "explain": "170 °C 主要发生分子内脱水（消去）生成乙烯。温度较低时主要分子间脱水生成乙醚，所以要迅速升到 170 °C。",
+       "draft": true
+      },
+      {
+       "id": "o-simple-2",
+       "type": "term",
+       "q": "实验室制乙炔，最方便的原料是？",
+       "options": [
+        "乙醇和浓硫酸",
+        "电石（CaC₂）和水",
+        "甲烷高温分解",
+        "乙烯加氢"
+       ],
+       "answer": 1,
+       "explain": "CaC₂ + 2H₂O → HC≡CH↑ + Ca(OH)₂，常温下就反应，用排水集气法收集。",
+       "draft": true
+      },
+      {
+       "id": "o-simple-3",
+       "type": "term",
+       "q": "溴乙烷分别与 NaOH 的水溶液共热、NaOH 的醇溶液共热，主要产物依次是？",
+       "options": [
+        "乙烯；乙醇",
+        "乙醇；乙烯",
+        "乙醇；乙醇",
+        "乙烯；乙烯"
+       ],
+       "answer": 1,
+       "explain": "水溶液：取代（水解），得乙醇；醇溶液：消去，得乙烯。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "o-carb",
+     "title": "增碳反应（多 1 个 C）",
+     "tier": 3,
+     "parents": [
+      "o-boss-a"
+     ],
+     "col": 0.5,
+     "row": 3,
+     "motif": "ladder",
+     "sources": [
+      "第三十章 卤代烃（氰化钠、伍尔兹、格氏试剂）",
+      "第三十二章 醛和酮（HCN 加成、格氏试剂、羟醛缩合）",
+      "第三十三章 羧酸及其衍生物（方法（二）腈水解、（三）格氏试剂 + CO₂ 能增加一个 C）"
+     ],
+     "lesson": {
+      "summary": "想让碳链多 1 个 C，最常用的是「卤代烷 + NaCN」和「格氏试剂 + CO₂」。",
+      "points": [
+       "腈法：R—X + NaCN → R—CN + NaX，再水解 R—CN + 2H₂O → R—COOH + NH₃，碳链多了 1 个 C（腈的碳）。",
+       "格氏试剂法：R—X 与镁（干燥乙醚）得 R—MgX；R—MgX + CO₂ 再水解得 R—COOH，也多 1 个 C。",
+       "醛、酮 + HCN（碱催化）得 α-羟基腈，水解得 α-羟基酸（同样多 1 个 C，还生成 NH₃）。",
+       "伍尔兹反应：2R—X + 2Na → R—R + 2NaX，碳链加倍；格氏试剂 + 醛、酮得醇（甲醛→一级醇，其他醛→二级醇，酮→三级醇）。",
+       "减碳也有：卤仿反应（含 CH₃CO— 的醛酮）、酸性 KMnO₄ 氧化使 C=C 断开。"
+      ],
+      "tip": "增碳 = 加上一个新来的碳（—CN 的 C 或 CO₂ 的 C）。",
+      "reactions": [
+       {
+        "name": "腈法 ①",
+        "equation": "R—X + NaCN → R—CN + NaX",
+        "conditions": "乙醇溶液、加热",
+        "category": "convert"
+       },
+       {
+        "name": "腈法 ②（水解，放出 NH₃）",
+        "equation": "R—CN + 2H₂O → R—COOH + NH₃",
+        "conditions": "H⁺、加热",
+        "category": "convert"
+       },
+       {
+        "name": "格氏试剂的制备",
+        "equation": "R—X + Mg → R—MgX",
+        "conditions": "干燥乙醚",
+        "category": "convert"
+       },
+       {
+        "name": "格氏试剂 + CO₂",
+        "equation": "R—MgX + CO₂ → R—COOMgX；R—COOMgX + H₂O → R—COOH + MgOHX",
+        "conditions": "干燥乙醚；H⁺",
+        "category": "convert"
+       },
+       {
+        "name": "醛酮与 HCN 加成",
+        "equation": "R—CHO + HCN → R—CH(OH)—CN",
+        "conditions": "碱（如 NaOH）催化",
+        "category": "convert"
+       },
+       {
+        "name": "伍尔兹反应",
+        "equation": "2R—X + 2Na → R—R + 2NaX",
+        "conditions": "干燥乙醚",
+        "category": "convert"
+       },
+       {
+        "name": "羟醛缩合",
+        "equation": "2CH₃CHO → CH₃CH(OH)CH₂CHO",
+        "conditions": "稀 NaOH",
+        "category": "convert"
+       },
+       {
+        "name": "卤仿反应（减碳）",
+        "equation": "CH₃COCH₃ + 3I₂ + 4NaOH → CHI₃↓ + CH₃COONa + 3NaI + 3H₂O",
+        "conditions": "碘的碱溶液",
+        "category": "convert"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "o-carb-1",
+       "type": "term",
+       "q": "下列哪个方法可以使碳链增加一个碳原子？",
+       "options": [
+        "卤代烷水解成醇",
+        "卤代烷与 NaCN 反应再水解",
+        "醇氧化成醛",
+        "羧酸与醇酯化"
+       ],
+       "answer": 1,
+       "explain": "卤代烷 + NaCN 得腈（R—CN），水解成 R—COOH，多了 1 个 C。其余三个反应都不改变碳原子数。",
+       "draft": true
+      },
+      {
+       "id": "o-carb-2",
+       "type": "term",
+       "q": "由乙醇制丙酸（增加一个碳），最合适的路线是？",
+       "options": [
+        "乙醇 → 乙醛 → 丙酸",
+        "乙醇 → 一氯乙烷 → 格氏试剂 → 加 CO₂ → 水解",
+        "乙醇 → 乙烯 → 丙酸",
+        "乙醇 → 乙酸 → 丙酸"
+       ],
+       "answer": 1,
+       "explain": "乙醇 → CH₃CH₂Cl → CH₃CH₂MgCl → 与 CO₂ 加成 → 水解 → CH₃CH₂COOH，多了 1 个 C（CO₂ 的碳）。其他选项都没有加进新的碳。",
+       "draft": true
+      },
+      {
+       "id": "o-carb-3",
+       "type": "essay",
+       "q": "以一溴甲烷（CH₃Br）为原料，写出制备乙酸的两种增碳方法，说明各增加了几个碳原子。",
+       "points": [
+        "方法一：CH₃Br + NaCN → CH₃CN + NaBr",
+        "再水解：CH₃CN + 2H₂O → CH₃COOH + NH₃（H⁺、加热）",
+        "方法二：CH₃Br + Mg → CH₃MgBr（干燥乙醚）；CH₃MgBr + CO₂ → CH₃COOMgBr；水解得 CH₃COOH + MgOHBr",
+        "两种方法都使碳链增加 1 个碳原子（—CN 的碳 / CO₂ 的碳）"
+       ],
+       "model": "方法一（腈法）：CH₃Br + NaCN → CH₃CN，再水解 CH₃CN + 2H₂O → CH₃COOH + NH₃；方法二（格氏试剂法）：CH₃Br → CH₃MgBr，加 CO₂ 后水解得 CH₃COOH。两种方法都增加了 1 个碳。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "o-nh3",
+     "title": "生成 NH₃ 与含氮产物",
+     "tier": 3,
+     "parents": [
+      "o-boss-a"
+     ],
+     "col": 2.5,
+     "row": 3,
+     "motif": "nitrogen",
+     "sources": [
+      "第三十章 卤代烃（与氨作用、腈加氢）",
+      "第三十三章 羧酸及其衍生物（腈水解、酰胺的生成）",
+      "第三十二章 醛和酮（格氏试剂与腈制酮）"
+     ],
+     "lesson": {
+      "summary": "看到「—CN」「胺」「铵盐」就想到氮：哪些反应会放出 NH₃？哪些得到胺？",
+      "points": [
+       "腈水解：R—CN + 2H₂O → R—COOH + NH₃（H⁺、加热）；α-羟基腈水解得 α-羟基酸，也放出 NH₃。",
+       "腈加氢：R—CN + 2H₂ → R—CH₂NH₂（Ni 催化），得到胺，不放出 NH₃。",
+       "卤代烷 + NH₃：R—X + NH₃ → R—NH₂ + HX，得到胺。",
+       "羧酸与氨作用得铵盐，铵盐受热或加脱水剂分子内脱水，得酰胺 R—CONH₂。",
+       "格氏试剂 + 腈，水解後得酮，同时放出 NH₃。"
+      ],
+      "tip": "水解放 NH₃，加氢得胺。",
+      "reactions": [
+       {
+        "name": "腈水解",
+        "equation": "R—CN + 2H₂O → R—COOH + NH₃",
+        "conditions": "H⁺、加热",
+        "category": "convert"
+       },
+       {
+        "name": "α-羟基腈水解",
+        "equation": "R—CH(OH)—CN + 2H₂O → R—CH(OH)—COOH + NH₃",
+        "conditions": "H⁺",
+        "category": "convert"
+       },
+       {
+        "name": "腈加氢成胺",
+        "equation": "R—CN + 2H₂ → R—CH₂NH₂",
+        "conditions": "Ni",
+        "category": "convert"
+       },
+       {
+        "name": "卤代烷与氨作用",
+        "equation": "R—X + NH₃ → R—NH₂ + HX",
+        "conditions": "乙醇溶液",
+        "category": "convert"
+       },
+       {
+        "name": "铵盐脱水成酰胺",
+        "equation": "R—COONH₄ → R—CONH₂ + H₂O",
+        "conditions": "加热或脱水剂",
+        "category": "convert"
+       },
+       {
+        "name": "格氏试剂与腈制酮",
+        "equation": "R—CN + R′MgX → R—C(=NMgX)—R′；加 H₂O/H⁺ → R—CO—R′ + NH₃ + MgOHX",
+        "conditions": "干燥乙醚；H⁺",
+        "category": "convert"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "o-nh3-1",
+       "type": "term",
+       "q": "腈（R—CN）在酸催化下与水共热，生成的产物是？",
+       "options": [
+        "R—COOH 和 NH₃",
+        "R—CH₂NH₂",
+        "R—CHO 和 NH₃",
+        "R—COONa 和 H₂"
+       ],
+       "answer": 0,
+       "explain": "R—CN + 2H₂O → R—COOH + NH₃（H⁺、加热）。R—CH₂NH₂ 是腈催化加氢的产物。",
+       "draft": true
+      },
+      {
+       "id": "o-nh3-2",
+       "type": "term",
+       "q": "2-碘丙烷要变成 2-甲基丙酸（增加 1 个 C），正确的步骤是？",
+       "options": [
+        "先与 NaCN 反应，再水解",
+        "先水解成醇，再氧化",
+        "先用 NaOH 醇溶液消去，再加水",
+        "先与 NH₃ 反应，再氧化"
+       ],
+       "answer": 0,
+       "explain": "CH₃CHICH₃ + NaCN → CH₃CH(CN)CH₃（2-甲基丙腈），再水解得 (CH₃)₂CHCOOH + NH₃。",
+       "draft": true
+      },
+      {
+       "id": "o-nh3-3",
+       "type": "essay",
+       "q": "卤代烷 + NaCN、卤代烷 + NH₃、腈水解、腈加氢：这四个反应各得到什么类别的产物？哪些放出 NH₃？",
+       "points": [
+        "R—X + NaCN → 腈（碳链增加 1 个 C）",
+        "R—X + NH₃ → 胺（引入氮，不增碳）",
+        "腈水解 → 羧酸，同时放出 NH₃",
+        "腈催化加氢（Ni）→ 胺 R—CH₂NH₂，不放出 NH₃"
+       ],
+       "model": "卤代烷 + NaCN 得腈（增 1 个 C）；卤代烷 + NH₃ 得胺；腈水解得羧酸并放出 NH₃；腈加氢得胺（不放 NH₃）。只有腈水解（含 α-羟基腈水解）会放出 NH₃。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "o-test",
+     "title": "鉴别与检验",
+     "tier": 3,
+     "parents": [
+      "o-carb",
+      "o-nh3"
+     ],
+     "col": 1.5,
+     "row": 4,
+     "motif": "testtube",
+     "sources": [
+      "第三十二章 醛和酮（托伦、斐林、卤仿反应）",
+      "第三十章 卤代烃（卤素的检验）",
+      "第二十九章 炔烃（炔银、炔铜）"
+     ],
+     "lesson": {
+      "summary": "鉴别题 = 选对试剂 + 写对现象；每个试剂只认特定的结构。",
+      "points": [
+       "醛能被托伦试剂（银镜）、斐林试剂（砖红色 Cu₂O）氧化，酮不能；这两种试剂可以区分醛和酮。",
+       "碘仿（卤仿）反应：含 CH₃CO— 的醛酮（乙醛、丙酮、2-戊酮…）和含 CH₃CH(OH)— 的醇，与碘的碱溶液反应生成黄色 CHI₃ 沉淀。",
+       "检验卤代烷中的卤素：先加 NaOH 水溶液共热，再用稀硝酸酸化，最後加 AgNO₃：白色 AgCl（氯）、淡黄色 AgBr（溴）、黄色 AgI（碘）。",
+       "末端炔烃（含 —C≡CH）能与 Ag(NH₃)₂⁺、Cu(NH₃)₂⁺ 生成炔银、炔铜沉淀。"
+      ],
+      "tip": "先问：要分的两种物质，结构上差在哪里？",
+      "reactions": [
+       {
+        "name": "托伦试剂（银镜反应）",
+        "equation": "RCHO + 2Ag(NH₃)₂OH → RCOONH₄ + 2Ag↓ + H₂O + 3NH₃",
+        "conditions": "水浴加热",
+        "category": "test"
+       },
+       {
+        "name": "斐林试剂",
+        "equation": "RCHO + 2Cu²⁺ + 5OH⁻ → RCOO⁻ + Cu₂O↓ + 3H₂O",
+        "conditions": "加热，砖红色沉淀",
+        "category": "test"
+       },
+       {
+        "name": "碘仿反应",
+        "equation": "CH₃COCH₃ + 3I₂ + 4NaOH → CHI₃↓ + CH₃COONa + 3NaI + 3H₂O",
+        "conditions": "碘的碱溶液，黄色沉淀",
+        "category": "test"
+       },
+       {
+        "name": "卤素的检验",
+        "equation": "R—X + NaOH → R—OH + NaX；X⁻ + Ag⁺ → AgX↓",
+        "conditions": "先水解，稀 HNO₃ 酸化，再加 AgNO₃",
+        "category": "test"
+       },
+       {
+        "name": "末端炔的检验",
+        "equation": "CH₃CH₂C≡CH + Ag(NH₃)₂Cl → CH₃CH₂C≡CAg↓ + NH₄Cl + NH₃",
+        "conditions": "常温",
+        "category": "test"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "o-test-1",
+       "type": "term",
+       "q": "要区别乙醛和丙醛，应选用下列哪种试剂？",
+       "options": [
+        "托伦试剂",
+        "斐林试剂",
+        "碘的氢氧化钠溶液",
+        "酸性高锰酸钾溶液"
+       ],
+       "answer": 2,
+       "explain": "乙醛含 CH₃CO— 结构，与碘的碱溶液生成黄色碘仿沉淀；丙醛没有。托伦、斐林、酸性高锰酸钾对两者现象相同（都被氧化）。",
+       "draft": true
+      },
+      {
+       "id": "o-test-2",
+       "type": "term",
+       "q": "下列哪一种试剂可以区别丙醛和丙酮？",
+       "options": [
+        "托伦试剂",
+        "石蕊试液",
+        "Br₂ 的 CCl₄ 溶液",
+        "浓硫酸"
+       ],
+       "answer": 0,
+       "explain": "醛能被托伦试剂氧化，出现银镜；酮不能，所以可以区别。石蕊试液对两者都不变色，Br₂ 的 CCl₄ 溶液对两者都不褪色，浓硫酸也没有明显的区别现象。",
+       "draft": true
+      },
+      {
+       "id": "o-test-3",
+       "type": "essay",
+       "q": "如何检验溴乙烷中含有溴元素？请按顺序写出操作和现象。",
+       "points": [
+        "先加入 NaOH 水溶液并加热，使 C—Br 水解，溴变成 Br⁻",
+        "用稀硝酸酸化，中和多余的 NaOH（避免 OH⁻ 与 Ag⁺ 生成沉淀干扰）",
+        "再加入 AgNO₃ 溶液",
+        "出现淡黄色沉淀（AgBr），说明含溴（白色 AgCl 表示氯，黄色 AgI 表示碘）"
+       ],
+       "model": "① 加 NaOH 水溶液共热，使溴原子变成 Br⁻；② 加稀 HNO₃ 酸化；③ 加 AgNO₃ 溶液；④ 出现淡黄色沉淀 AgBr，说明含溴。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "o-route",
+     "title": "合成路线（复杂制取）",
+     "tier": 4,
+     "parents": [
+      "o-test"
+     ],
+     "col": 1.5,
+     "row": 5,
+     "motif": "route",
+     "sources": [
+      "第三十三章 羧酸及其衍生物（甲烷→乙酸、甲烷→2-甲基丁酸）",
+      "第二十九章 炔烃（电石→乙炔→乙醛）"
+     ],
+     "lesson": {
+      "summary": "合成路线 = 把一步步的反应串起来：先想「要增碳还是减碳？」「官能团怎么变？」",
+      "points": [
+       "从目标产物倒推：要什么官能团、多几个 C？每一步选哪一个反应？",
+       "甲烷 → 乙酸：CH₄ → CH₃Cl → CH₃CN → CH₃COOH（也可用格氏试剂 + CO₂）。",
+       "电石 → 乙炔 → 乙醛：CaC₂ + 2H₂O → C₂H₂；乙炔在催化剂作用下加水得乙醛。",
+       "甲烷 → 2-甲基丁酸：先用伍尔兹反应把碳链接成丁烷，再氯代、与 NaCN 反应、水解。"
+      ],
+      "tip": "倒推比顺推容易。",
+      "reactions": [
+       {
+        "name": "甲烷制乙酸",
+        "equation": "CH₄ → CH₃Cl → CH₃CN → CH₃COOH",
+        "conditions": "Cl₂／光；NaCN；H⁺／H₂O",
+        "category": "prep",
+        "level": "复杂"
+       },
+       {
+        "name": "乙醇制丙酸",
+        "equation": "CH₃CH₂OH → CH₃CH₂Cl → CH₃CH₂MgCl → CH₃CH₂COOH",
+        "conditions": "氯化（如 PCl₅）；Mg／干燥乙醚；CO₂ 後水解",
+        "category": "prep",
+        "level": "复杂"
+       },
+       {
+        "name": "电石制乙醛",
+        "equation": "CaC₂ → HC≡CH → CH₃CHO",
+        "conditions": "H₂O；催化剂下加水",
+        "category": "prep",
+        "level": "复杂"
+       },
+       {
+        "name": "甲烷制 2-甲基丁酸",
+        "equation": "CH₄ → CH₃Cl → C₂H₆ → C₂H₅Cl → C₄H₁₀ → 2-氯丁烷 → 2-甲基丁腈 → 2-甲基丁酸",
+        "conditions": "伍尔兹（Na）两次；Cl₂／光；NaCN；H⁺／H₂O",
+        "category": "prep",
+        "level": "复杂"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "o-route-1",
+       "type": "term",
+       "q": "由甲烷制取乙酸，下列路线正确的是？",
+       "options": [
+        "CH₄ → CH₃Cl → CH₃OH → CH₃COOH",
+        "CH₄ → CH₃Cl → CH₃CN → CH₃COOH",
+        "CH₄ → CH₃Cl → C₂H₆ → CH₃COOH",
+        "CH₄ → CH₂=CH₂ → CH₃COOH"
+       ],
+       "answer": 1,
+       "explain": "CH₃Cl + NaCN → CH₃CN（多 1 个 C），水解得 CH₃COOH。CH₃OH 只有 1 个 C，再氧化得到的是甲酸；其他路线没有可行的增碳步骤。",
+       "draft": true
+      },
+      {
+       "id": "o-route-2",
+       "type": "term",
+       "q": "由电石制取乙醛，正确的路线是？",
+       "options": [
+        "电石 + 水 → 乙炔；乙炔在催化剂作用下与水加成得乙醛",
+        "电石 + 氧气 → 乙醛",
+        "电石高温分解得乙烯，再氧化",
+        "电石 + 盐酸 → 乙醛"
+       ],
+       "answer": 0,
+       "explain": "CaC₂ + 2H₂O → HC≡CH + Ca(OH)₂；乙炔在催化剂作用下加水，先得烯醇，重排成乙醛。",
+       "draft": true
+      },
+      {
+       "id": "o-route-3",
+       "type": "essay",
+       "q": "以甲烷为有机原料（无机试剂任选），设计合成 2-甲基丁酸的路线，并指出增碳的步骤。",
+       "points": [
+        "CH₃Cl 经伍尔兹反应得乙烷：2CH₃Cl + 2Na → C₂H₆ + 2NaCl",
+        "乙烷氯代得氯乙烷，再经伍尔兹反应得丁烷：2C₂H₅Cl + 2Na → C₄H₁₀ + 2NaCl",
+        "丁烷光照氯代得 2-氯丁烷，与 NaCN 反应得 2-甲基丁腈（又增加 1 个 C）",
+        "2-甲基丁腈水解（H⁺、H₂O）得 2-甲基丁酸，同时放出 NH₃"
+       ],
+       "model": "CH₄ → CH₃Cl → C₂H₆ → C₂H₅Cl → C₄H₁₀（伍尔兹，碳链加倍）→ 2-氯丁烷 → 2-甲基丁腈（+NaCN，增 1 个 C）→ 2-甲基丁酸（水解，放出 NH₃）。",
+       "draft": true
+      },
+      {
+       "id": "o-route-4",
+       "type": "term",
+       "q": "由 R—Br 经两步（先 NaCN，再酸性水解）变成 R—COOH，第二步还会放出哪种气体？",
+       "options": [
+        "H₂",
+        "CO₂",
+        "NH₃",
+        "HBr"
+       ],
+       "answer": 2,
+       "explain": "R—CN + 2H₂O → R—COOH + NH₃，所以第二步放出 NH₃（酸性条件下实际以 NH₄⁺ 存在）。",
+       "draft": true
+      }
+     ]
+    }
+   ],
+   "bosses": [
+    {
+     "id": "o-boss-a",
+     "title": "魔王：基础与制取",
+     "motif": "flag",
+     "col": 1.5,
+     "row": 2,
+     "parents": [
+      "o-comb",
+      "o-simple"
+     ],
+     "blurb": "不想一关一关来？答对 5 题中的 4 题，本小节视为通关。",
+     "extra": {
+      "id": "o-boss-a-x",
+      "type": "essay",
+      "q": "实验室制乙烯时，为什么混合液要「迅速」升温到 170 °C？温度不够会得到什么副产物？",
+      "points": [
+       "乙醇在浓硫酸作用下，170 °C 时主要发生分子内脱水（消去反应），生成乙烯",
+       "温度较低时，主要发生分子间脱水（取代反应），生成乙醚",
+       "所以要迅速达到 170 °C，减少乙醚等副产物",
+       "浓硫酸有脱水性和强氧化性，温度过高会使乙醇碳化，使产物不纯"
+      ],
+      "model": "170 °C 时乙醇主要发生分子内脱水（消去）生成乙烯；温度较低时主要是分子间脱水（取代），副产物是乙醚。所以混合液要迅速升到 170 °C。",
+      "draft": true
+     }
+    },
+    {
+     "id": "o-boss-b",
+     "title": "总魔王：转化·鉴别·合成",
+     "motif": "flag",
+     "col": 1.5,
+     "row": 6,
+     "parents": [
+      "o-route"
+     ],
+     "blurb": "不想一关一关来？答对 5 题中的 4 题，本小节视为通关。",
+     "extra": {
+      "id": "o-boss-b-x",
+      "type": "calc",
+      "q": "用 0.50 mol 一溴甲烷（CH₃Br）经 NaCN 与水解两步合成乙酸，每一步的产率都是 80%。最後得到乙酸多少 g？（C = 12，H = 1，O = 16）",
+      "answer": 19.2,
+      "unit": "g",
+      "tol": 0.01,
+      "steps": "CH₃Br → CH₃CN → CH₃COOH，每步 1 : 1。\nn(乙酸) = 0.50 × 80% × 80% = 0.32 mol。\nm = 0.32 × 60 = 19.2 g。",
+      "draft": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "physical",
+   "title": "物理化学",
+   "tagline": "结构、能量与平衡",
+   "blurb": "从化学键、氢键与晶体，到反应热、速率与平衡：名词题、计算题和「说明原因」的论述题都在这里。",
+   "accent": "#b45309",
+   "cover": "energy",
+   "sections": [
+    {
+     "id": "p-sec-a",
+     "title": "结构与性质",
+     "nodes": [
+      "p-bond",
+      "p-polar",
+      "p-imf",
+      "p-crystal"
+     ],
+     "boss": "p-boss-a"
+    },
+    {
+     "id": "p-sec-b",
+     "title": "能量、速率与平衡",
+     "nodes": [
+      "p-heat",
+      "p-rate",
+      "p-eq"
+     ],
+     "boss": "p-boss-b"
+    }
+   ],
+   "nodes": [
+    {
+     "id": "p-bond",
+     "title": "化学键与电负性",
+     "tier": 1,
+     "parents": [],
+     "col": 1.5,
+     "row": 0,
+     "motif": "molecule",
+     "sources": [
+      "第六章 化学键与分子间作用力（7.1 化学键）"
+     ],
+     "lesson": {
+      "summary": "化学键 = 原子之间很强的相互作用；用电负性差可以判断是哪一种键。",
+      "points": [
+       "三种化学键：离子键、共价键、金属键。共价键又分极性键、非极性键，配位键是特殊的共价键（共用电子对出自同一原子）。",
+       "两个成键原子的电负性差：= 0 非极性键；0～1.7 极性键；≥ 1.7 离子键（一般是金属 + 非金属，或铵根 + 酸根）。",
+       "例外要记：AlCl₃、BeCl₂ 是共价化合物。",
+       "键能越大、键长越短，化学键越牢固；成键电子越多（单键＜双键＜三键），键越短、键能越大。"
+      ],
+      "tip": "离子键看「金属＋非金属」，共价键看「非金属＋非金属」，再记两个例外。",
+      "reactions": []
+     },
+     "challenges": [
+      {
+       "id": "p-bond-1",
+       "type": "term",
+       "q": "氢氧化钠固体中含有哪些化学键？",
+       "options": [
+        "只有离子键",
+        "只有共价键",
+        "离子键和共价键",
+        "离子键和金属键"
+       ],
+       "answer": 2,
+       "explain": "NaOH = Na⁺ 与 OH⁻ 之间是离子键；OH⁻ 里 O—H 之间是共价键，所以含离子键和共价键，是离子化合物。",
+       "draft": true
+      },
+      {
+       "id": "p-bond-2",
+       "type": "term",
+       "q": "下列哪一种是共价化合物？",
+       "options": [
+        "KCl",
+        "MgO",
+        "BeCl₂",
+        "NaF"
+       ],
+       "answer": 2,
+       "explain": "KCl、MgO、NaF 都是活泼金属与活泼非金属，形成离子键。BeCl₂（和 AlCl₃）是常考的例外，是共价化合物。",
+       "draft": true
+      },
+      {
+       "id": "p-bond-3",
+       "type": "term",
+       "q": "两个原子之间的电负性差为 2.1，它们之间最可能形成的键是？",
+       "options": [
+        "非极性键",
+        "极性共价键",
+        "离子键",
+        "金属键"
+       ],
+       "answer": 2,
+       "explain": "电负性差 ≥ 1.7 形成离子键；0～1.7 为极性键；等於 0 才是非极性键。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "p-polar",
+     "title": "分子极性与价层电子对",
+     "tier": 2,
+     "parents": [
+      "p-bond"
+     ],
+     "col": 0.5,
+     "row": 1,
+     "motif": "tetra",
+     "sources": [
+      "第六章 化学键与分子间作用力（极性分子与非极性分子、价层电子对互斥理论）"
+     ],
+     "lesson": {
+      "summary": "键有极性，分子不一定有极性：要看空间构型对不对称。",
+      "points": [
+       "价层电子对互斥理论：价层电子对（成键电子对＋孤对电子）尽量互相远离。2 对 → 直线；3 对 → 平面三角形；4 对 → 四面体。",
+       "双原子单质（H₂、O₂）是非极性分子；以非极性键结合的多原子分子一定是非极性分子。",
+       "以极性键结合的多原子分子：构型对称、极性抵消 → 非极性分子（CO₂、BF₃、CCl₄）；构型不对称 → 极性分子（H₂S、NH₃、CH₃Cl）。",
+       "判断顺序：先画出构型，再看各个键的极性能不能互相抵消。"
+      ],
+      "tip": "先看构型，再看抵不抵消。",
+      "reactions": []
+     },
+     "challenges": [
+      {
+       "id": "p-polar-1",
+       "type": "term",
+       "q": "下列分子中，含有极性键但属於非极性分子的是？",
+       "options": [
+        "H₂S",
+        "NH₃",
+        "CCl₄",
+        "CH₃Cl"
+       ],
+       "answer": 2,
+       "explain": "CCl₄ 是正四面体，四个 C—Cl 极性键互相抵消，是非极性分子；H₂S（V 形）、NH₃（三角锥形）、CH₃Cl（四面体但四个键不同）都不对称，是极性分子。",
+       "draft": true
+      },
+      {
+       "id": "p-polar-2",
+       "type": "term",
+       "q": "BF₃ 中心原子 B 有 3 对价层电子对（无孤对电子），分子的空间构型是？",
+       "options": [
+        "直线形",
+        "平面三角形",
+        "正四面体",
+        "三角锥形"
+       ],
+       "answer": 1,
+       "explain": "3 对价层电子对彼此尽量远离，形成平面三角形；三个 B—F 键互成 120°，极性抵消，BF₃ 是非极性分子。",
+       "draft": true
+      },
+      {
+       "id": "p-polar-3",
+       "type": "essay",
+       "q": "二氧化碳（CO₂）含有极性键，却是非极性分子；氨（NH₃）是极性分子。请说明原因。",
+       "points": [
+        "CO₂ 是直线形分子，两个 C=O 极性键方向相反",
+        "两个极性键的极性互相抵消，所以整个分子的电荷分布对称，是非极性分子",
+        "NH₃ 的 N 有一对孤对电子，是三角锥形，结构不对称",
+        "三个 N—H 键的极性无法抵消，所以 NH₃ 是极性分子"
+       ],
+       "model": "判断分子极性要同时看「键的极性」和「分子的空间构型」：CO₂ 直线对称，两个 C=O 极性互相抵消，所以是非极性分子；NH₃ 中 N 有一对孤对电子，构型是不对称的三角锥形，N—H 键的极性不能抵消，所以是极性分子。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "p-imf",
+     "title": "分子间作用力与沸点",
+     "tier": 2,
+     "parents": [
+      "p-bond"
+     ],
+     "col": 2.5,
+     "row": 1,
+     "motif": "bubbles",
+     "sources": [
+      "第六章 化学键与分子间作用力（7.2 分子间作用力：范德华力、氢键）"
+     ],
+     "lesson": {
+      "summary": "沸点高低看分子间作用力：先看有没有氢键，再比范德华力。",
+      "points": [
+       "范德华力：存在於所有分子之间，影响因素有极性、式量（电子数）、分子形状；范德华力越强，熔点、沸点越高。",
+       "氢键：H 连在 F、O、N 上（电负性大、半径小，H 几乎「裸露」），另一个分子的 F、O、N 有孤对电子。键能大概是 共价键 : 氢键 : 范德华力 = 100 : 10 : 1。",
+       "氢键会提高熔点、沸点，也影响溶解性：H₂O 的沸点远高於 H₂S；NH₃ 容易液化、极易溶於水。",
+       "HF、HCl、HBr、HI 的沸点：HF 最高（有氢键），其余随式量增大 HI > HBr > HCl。"
+      ],
+      "tip": "有氢键先排前面，没有氢键再比式量。",
+      "reactions": []
+     },
+     "challenges": [
+      {
+       "id": "p-imf-1",
+       "type": "term",
+       "q": "下列卤化氢沸点由高到低排列正确的是？",
+       "options": [
+        "HF > HCl > HBr > HI",
+        "HI > HBr > HCl > HF",
+        "HF > HI > HBr > HCl",
+        "HCl > HBr > HI > HF"
+       ],
+       "answer": 2,
+       "explain": "HF 分子间有氢键，沸点最高；HCl、HBr、HI 只有范德华力，式量越大范德华力越强，沸点 HI > HBr > HCl。所以 HF > HI > HBr > HCl。",
+       "draft": true
+      },
+      {
+       "id": "p-imf-2",
+       "type": "essay",
+       "q": "水（H₂O）的式量比硫化氢（H₂S）小，沸点（100 °C）却比 H₂S（−61 °C）高得多。请解释。",
+       "points": [
+        "H₂O 分子中 O 的电负性大、半径小，H 几乎「裸露」，O 又有孤对电子，所以水分子之间能形成氢键",
+        "氢键比范德华力强得多，使液态水汽化需要消耗更多的能量",
+        "H₂S 分子间只有范德华力，没有氢键",
+        "所以虽然 H₂S 的式量较大，范德华力也比较强，但沸点仍比有氢键的水低得多"
+       ],
+       "model": "水分子间除了范德华力，还有氢键（O 的电负性大、半径小，H 几乎裸露，O 有孤对电子）。氢键比范德华力强得多，要使水汽化需消耗更多能量，所以沸点高达 100 °C；H₂S 分子间只有范德华力，所以沸点只有 −61 °C。",
+       "draft": true
+      },
+      {
+       "id": "p-imf-3",
+       "type": "essay",
+       "q": "氨气为什么比一般的气体容易液化，又为什么极易溶於水？",
+       "points": [
+        "NH₃ 分子中 N 的电负性大、半径小，N—H 的 H 几乎裸露，N 有孤对电子，所以氨分子之间能形成氢键",
+        "氨分子间有氢键，沸点较高（−33 °C），所以比较容易液化",
+        "NH₃ 分子与 H₂O 分子之间也能形成氢键",
+        "NH₃ 与水之间的氢键增强了溶解（氨还能与水部分反应），所以极易溶於水"
+       ],
+       "model": "氨分子间有氢键，沸点（−33 °C）比同族 PH₃（−88 °C）高得多，所以容易液化；氨分子与水分子之间也能形成氢键，所以极易溶於水。氢键同时影响熔沸点和溶解性。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "p-crystal",
+     "title": "晶体类型与熔点",
+     "tier": 3,
+     "parents": [
+      "p-polar",
+      "p-imf"
+     ],
+     "col": 1.5,
+     "row": 2,
+     "motif": "crystal",
+     "sources": [
+      "第六章 化学键与分子间作用力（7.3 晶体及其特性）"
+     ],
+     "lesson": {
+      "summary": "先判断是哪一类晶体，再用「微粒间作用力」比熔点：原子晶体、离子晶体高，分子晶体低。",
+      "points": [
+       "离子晶体：离子 + 离子键，熔沸点高，固态不导电，熔融或溶於水能导电。",
+       "原子晶体：原子 + 共价键（空间网状），熔沸点高、硬度大，例如金刚石、SiC、SiO₂、晶体硅；没有独立的小分子。",
+       "分子晶体：分子 + 分子间作用力，熔沸点低、硬度小，固态熔融态都不导电（例如干冰、冰、碘、AlCl₃）。",
+       "金属晶体：金属键越强熔点越高；原子半径越小、单位体积自由电子越多，金属键越强（Al > Mg > Ca）。"
+      ],
+      "tip": "微粒间的作用力越强，熔点越高。",
+      "reactions": []
+     },
+     "challenges": [
+      {
+       "id": "p-crystal-1",
+       "type": "term",
+       "q": "SiO₂（石英）、AlCl₃、Na₂O、Fe 依序属於哪一种晶体？",
+       "options": [
+        "原子晶体、分子晶体、离子晶体、金属晶体",
+        "分子晶体、离子晶体、原子晶体、金属晶体",
+        "原子晶体、离子晶体、离子晶体、金属晶体",
+        "离子晶体、分子晶体、原子晶体、金属晶体"
+       ],
+       "answer": 0,
+       "explain": "SiO₂ 是空间网状共价结构，属原子晶体；AlCl₃ 是共价化合物，属分子晶体；Na₂O 是离子晶体；Fe 是金属晶体。",
+       "draft": true
+      },
+      {
+       "id": "p-crystal-2",
+       "type": "term",
+       "q": "下列金属的熔点由高到低排列，正确的是？",
+       "options": [
+        "Ca > Mg > Al",
+        "Al > Mg > Ca",
+        "Mg > Al > Ca",
+        "Al > Ca > Mg"
+       ],
+       "answer": 1,
+       "explain": "在周期表中往左、往下，原子半径增大、单位体积自由电子减少，金属键减弱，熔点降低：Al（3 个价电子，半径小）> Mg > Ca。",
+       "draft": true
+      },
+      {
+       "id": "p-crystal-3",
+       "type": "essay",
+       "q": "比较金刚石、氯化钠和干冰（固体 CO₂）的熔点高低，并解释原因。",
+       "points": [
+        "熔点：金刚石 > 氯化钠 > 干冰",
+        "金刚石是原子晶体，原子之间以强共价键形成空间网状结构，熔化要破坏共价键，需要极大的能量",
+        "氯化钠是离子晶体，靠离子键结合，离子键强，熔点较高",
+        "干冰是分子晶体，分子之间只有微弱的范德华力，熔点最低（常压下直接升华）"
+       ],
+       "model": "金刚石 > 氯化钠 > 干冰。金刚石是原子晶体，熔化需破坏很强的共价键；氯化钠是离子晶体，要破坏离子键；干冰是分子晶体，只需克服微弱的分子间作用力，所以熔点最低。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "p-heat",
+     "title": "反应热 ΔH",
+     "tier": 2,
+     "parents": [
+      "p-boss-a"
+     ],
+     "col": 0.5,
+     "row": 4,
+     "motif": "energy",
+     "sources": [
+      "第十八章 化学反应和能量（反应热、键能、生成热、燃烧热）"
+     ],
+     "lesson": {
+      "summary": "反应热 = 断键吸收的能量 − 成键放出的能量；放热反应 ΔH 为负。",
+      "points": [
+       "ΔH = 生成物总焓 − 反应物总焓，单位 kJ/mol；放热 ΔH < 0，吸热 ΔH > 0。",
+       "键能法：ΔH = 断开旧键吸收的总键能 − 形成新键放出的总键能。",
+       "生成热 ΔH_f：由单质生成 1 mol 化合物的反应热；燃烧热 ΔH_c：1 mol 物质完全燃烧的反应热（一定是负值）。",
+       "热量和物质的量成正比：先算 1 g（或 1 mol）放出多少，再乘以需要的量。"
+      ],
+      "tip": "算「1 mol」的数值再乘，别漏正负号。",
+      "reactions": [
+       {
+        "name": "氢气与氯气化合",
+        "equation": "H₂ + Cl₂ → 2HCl（ΔH = −184.6 kJ）",
+        "conditions": "光照",
+        "category": "property"
+       },
+       {
+        "name": "碳燃烧",
+        "equation": "C(s) + O₂ → CO₂（ΔH = −393.5 kJ/mol）",
+        "conditions": "点燃",
+        "category": "property"
+       }
+      ]
+     },
+     "challenges": [
+      {
+       "id": "p-heat-1",
+       "type": "calc",
+       "q": "键能：H—H 436.4 kJ/mol，Cl—Cl 242.7 kJ/mol，H—Cl 431.8 kJ/mol。求 H₂ + Cl₂ → 2HCl 的 ΔH（kJ，放热为负）。",
+       "answer": -184.5,
+       "unit": "kJ",
+       "tol": 0.01,
+       "steps": "吸收：436.4 + 242.7 = 679.1 kJ；放出：2 × 431.8 = 863.6 kJ。\nΔH = 679.1 − 863.6 = -184.5 kJ（放热）。",
+       "draft": true
+      },
+      {
+       "id": "p-heat-2",
+       "type": "calc",
+       "q": "1 g 铝在氧气中完全燃烧放出 31.0 kJ 的热量。求氧化铝 Al₂O₃ 的生成热 ΔH_f（kJ/mol，Al = 27，O = 16）。",
+       "answer": -1674.0,
+       "unit": "kJ/mol",
+       "tol": 0.01,
+       "steps": "生成热是由单质生成 1 mol Al₂O₃：2Al + 3/2 O₂ → Al₂O₃，用掉 2 mol Al = 54 g。\nΔH_f = −(54 × 31.0) = -1674 kJ/mol。",
+       "draft": true
+      },
+      {
+       "id": "p-heat-3",
+       "type": "term",
+       "q": "某反应的 ΔH = +131.4 kJ/mol，这表示？",
+       "options": [
+        "放热反应，反应物能量低於生成物",
+        "吸热反应，生成物总焓高於反应物",
+        "放热反应",
+        "反应不能进行"
+       ],
+       "answer": 1,
+       "explain": "ΔH = 生成物总焓 − 反应物总焓 > 0，生成物的总焓较高，反应需要从环境吸热，是吸热反应（例：C + H₂O → CO + H₂）。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "p-rate",
+     "title": "反应速率与催化剂",
+     "tier": 3,
+     "parents": [
+      "p-boss-a"
+     ],
+     "col": 2.5,
+     "row": 4,
+     "motif": "stopwatch",
+     "sources": [
+      "第十九章 化学反应速率（速率的表示、影响因素、催化剂）"
+     ],
+     "lesson": {
+      "summary": "速率 = 浓度的变化 ÷ 时间；影响因素有本性、接触面积、浓度、温度、催化剂。",
+      "points": [
+       "平均反应速率 R = Δc ÷ Δt，单位例如 mol·L⁻¹·min⁻¹（M/min）；速率之比 = 反应式系数之比。",
+       "比较速率快慢要先换成同一种物质、同一个单位。",
+       "增大浓度、升高温度、加催化剂、增大接触面积（固体磨碎）都能加快反应；原因是单位体积内活化分子数增加，有效碰撞增多。",
+       "催化剂降低活化能、加快正反应与逆反应，缩短到达平衡的时间，但不影响化学平衡的移动。"
+      ],
+      "tip": "先换成同一物质，再比大小。",
+      "reactions": []
+     },
+     "challenges": [
+      {
+       "id": "p-rate-1",
+       "type": "calc",
+       "q": "在 2 L 密闭容器里充入 0.1 mol N₂ 和 0.3 mol H₂ 反应生成 NH₃，10 分钟後容器里剩下 0.22 mol H₂。求 H₂ 的平均反应速率（mol·L⁻¹·min⁻¹）。",
+       "answer": 0.004,
+       "unit": "mol/(L·min)",
+       "tol": 0.02,
+       "steps": "Δn(H₂) = 0.30 − 0.22 = 0.08 mol；Δc = 0.08 ÷ 2 = 0.04 mol/L。\nR = 0.04 ÷ 10 = 0.004 mol·L⁻¹·min⁻¹。",
+       "draft": true
+      },
+      {
+       "id": "p-rate-2",
+       "type": "term",
+       "q": "反应 3A + 4B → 2C 中，C 的反应速率为 y mol·L⁻¹·min⁻¹，则 B 的反应速率是？",
+       "options": [
+        "1.5y",
+        "2y",
+        "0.5y",
+        "4y"
+       ],
+       "answer": 1,
+       "explain": "速率之比等於系数比：R(B) : R(C) = 4 : 2，所以 R(B) = 2y；同理 R(A) = 1.5y。",
+       "draft": true
+      },
+      {
+       "id": "p-rate-3",
+       "type": "term",
+       "q": "关於催化剂，下列叙述正确的是？",
+       "options": [
+        "催化剂能使化学平衡向正反应方向移动",
+        "催化剂同时加快正反应与逆反应，缩短到达平衡的时间",
+        "催化剂在反应前後质量会减少",
+        "催化剂能使本来不能发生的反应发生"
+       ],
+       "answer": 1,
+       "explain": "催化剂降低活化能，同时加快正逆反应，缩短到达平衡的时间，不能使平衡移动，本身在反应前後质量不变，也不能使本来不能进行的反应发生。",
+       "draft": true
+      }
+     ]
+    },
+    {
+     "id": "p-eq",
+     "title": "平衡常数与勒沙特列原理",
+     "tier": 4,
+     "parents": [
+      "p-heat",
+      "p-rate"
+     ],
+     "col": 1.5,
+     "row": 5,
+     "motif": "equilibrium",
+     "sources": [
+      "第二十章 化学平衡的移动（平衡常数、勒沙特列原理及应用）"
+     ],
+     "lesson": {
+      "summary": "K_c 只随温度变化；改变条件时平衡向「削弱这种改变」的方向移动。",
+      "points": [
+       "K_c = 生成物浓度幂的乘积 ÷ 反应物浓度幂的乘积（纯固体、纯液体不写）；同一反应、同一温度，K_c 是定值，与起始浓度无关。",
+       "K_c 越大，反应进行得越完全。",
+       "勒沙特列原理：改变浓度、压强、温度，平衡向减弱这种改变的方向移动。",
+       "合成氨 N₂ + 3H₂ ⇌ 2NH₃（ΔH = −92.4 kJ）：增压、把 NH₃ 分离出去有利於生成；降温有利於放热方向，但温度太低速率太小，所以选 500 °C；催化剂只加快到达平衡。"
+      ],
+      "tip": "代入的必须是「平衡时」的浓度。",
+      "reactions": []
+     },
+     "challenges": [
+      {
+       "id": "p-eq-1",
+       "type": "calc",
+       "q": "某温度下反应 A + 2B ⇌ C 达到平衡，平衡时 [A] = 0.10 mol/L，[B] = 0.50 mol/L，[C] = 0.20 mol/L。求平衡常数 K_c（单位省略）。",
+       "answer": 8.0,
+       "unit": "",
+       "tol": 0.02,
+       "steps": "K_c = [C] ÷ ([A][B]²) = 0.20 ÷ (0.10 × 0.50²) = 0.20 ÷ 0.025 = 8.0。",
+       "draft": true
+      },
+      {
+       "id": "p-eq-2",
+       "type": "term",
+       "q": "在 H₂(g) + I₂(g) ⇌ 2HI(g)（ΔH > 0）的平衡体系中，下列改变使平衡向正反应方向移动的是？",
+       "options": [
+        "缩小容器体积",
+        "升高温度",
+        "加入催化剂",
+        "通入氩气（体积不变）"
+       ],
+       "answer": 1,
+       "explain": "正反应吸热，升温平衡向吸热的正反应方向移动。缩小体积：反应前後气体总体积不变，平衡不移动；催化剂不影响平衡；体积不变时通入氩气，各物质浓度不变，平衡不移动。",
+       "draft": true
+      },
+      {
+       "id": "p-eq-3",
+       "type": "essay",
+       "q": "工业合成氨 N₂ + 3H₂ ⇌ 2NH₃（ΔH = −92.4 kJ）选用 500 °C 左右、高压、催化剂，并把 NH₃ 及时分离出去。请用勒沙特列原理和反应速率的知识说明理由。",
+       "points": [
+        "正反应使气体总体积变小，增大压强使平衡向生成 NH₃ 的方向移动",
+        "正反应放热，从平衡看应该低温；但温度太低反应速率太小，所以折中选择 500 °C 左右",
+        "把 NH₃ 从混合气体中分离出去，降低生成物浓度，平衡向正反应方向移动，提高转化率",
+        "催化剂加快反应速率、缩短到达平衡的时间，但不使平衡移动"
+       ],
+       "model": "合成氨：增大压强、及时分离出 NH₃ 都使平衡向正反应方向移动；正反应放热，低温对平衡有利，但温度太低速率太小，所以折中选 500 °C；催化剂只加快到达平衡，不影响平衡的位置。",
+       "draft": true
+      },
+      {
+       "id": "p-eq-4",
+       "type": "term",
+       "q": "K_c 的大小只随下列哪一个条件改变？",
+       "options": [
+        "反应物起始浓度",
+        "压强",
+        "温度",
+        "催化剂"
+       ],
+       "answer": 2,
+       "explain": "对同一个可逆反应，K_c 只随温度改变，与起始浓度、压强、催化剂都无关。K_c 越大，反应进行得越完全。",
+       "draft": true
+      }
+     ]
+    }
+   ],
+   "bosses": [
+    {
+     "id": "p-boss-a",
+     "title": "魔王：结构与性质",
+     "motif": "flag",
+     "col": 1.5,
+     "row": 3,
+     "parents": [
+      "p-crystal"
+     ],
+     "blurb": "不想一关一关来？答对 5 题中的 4 题，本小节视为通关。",
+     "extra": {
+      "id": "p-boss-a-x",
+      "type": "term",
+      "q": "下列各组物质，沸点高低排列正确的一组是？",
+      "options": [
+       "HCl > HF",
+       "NH₃ > PH₃",
+       "H₂S > H₂O",
+       "CH₄ > SiH₄"
+      ],
+      "answer": 1,
+      "explain": "NH₃ 分子间有氢键，沸点（−33 °C）高於 PH₃（−88 °C）。HF 有氢键，所以 HF > HCl；H₂O 有氢键，所以 H₂O > H₂S；同类分子 SiH₄ 式量较大，沸点高於 CH₄。",
+      "draft": true
+     }
+    },
+    {
+     "id": "p-boss-b",
+     "title": "总魔王：能量·速率·平衡",
+     "motif": "flag",
+     "col": 1.5,
+     "row": 6,
+     "parents": [
+      "p-eq"
+     ],
+     "blurb": "不想一关一关来？答对 5 题中的 4 题，本小节视为通关。",
+     "extra": {
+      "id": "p-boss-b-x",
+      "type": "calc",
+      "q": "燃烧热 ΔH_c(CH₄) = −890.3 kJ/mol。完全燃烧 8.0 g 甲烷，可放出多少 kJ 的热量？（C = 12，H = 1）",
+      "answer": 445.1,
+      "unit": "kJ",
+      "tol": 0.01,
+      "steps": "n(CH₄) = 8.0 ÷ 16 = 0.5 mol。\nQ = 0.5 × 890.3 = 445.1 kJ（放出）。",
+      "draft": true
+     }
+    }
+   ]
+  }
+ ]
+}

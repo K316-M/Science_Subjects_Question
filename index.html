@@ -1102,6 +1102,7 @@
   <!-- 新功能样式放在最后，确保能覆盖上面的基础样式 -->
   <link rel="stylesheet" href="/css/features.css">
   <link rel="stylesheet" href="/css/orbit.css">
+  <link rel="stylesheet" href="/css/teach.css">
   <link rel="stylesheet" href="/css/night.css">
 </head>
 <body data-scene="off">
@@ -1249,6 +1250,11 @@
       并用鼠标或手指直接在上面手写、画图；之后随时可以回来用橡皮擦修改。
     </p>
     <div id="notesListArea"></div>
+  </div>
+
+  <!-- 视图: 教学（闯关地图；画面由 js/teach.js 画，资料在 data/teach/） -->
+  <div id="viewTeach" class="view">
+    <div id="teachRoot" class="tm-root"></div>
   </div>
 
   <!-- 视图 5: 题目档（可下载） -->
@@ -3597,6 +3603,18 @@ function openSubject(subject, initialChapterIdx, subMode) {
     renderNotesView();
   }
 
+  // 化学球面板上的「教学」：进入闯关地图（js/teach.js）
+  function openTeach(subject) {
+    if (!Object.prototype.hasOwnProperty.call(SUBJECT_LABELS, subject)) return;
+    playSound('pop');
+    showView('viewTeach');
+    setActiveNav('navHomeBtn');
+    applySubjectBackground(subject);
+    if (musicEnabled) startAmbientMusic(subject);
+    setBreadcrumb(SUBJECT_LABELS[subject] + ' · 教学');
+    if (window.TeachMode) window.TeachMode.open(subject);
+  }
+
   function openArchiveView() {
     playSound('pop');
     showView('viewArchive');
@@ -3633,6 +3651,7 @@ function openSubject(subject, initialChapterIdx, subMode) {
 <script src="/js/sync-ui.js"></script>
 <script src="/js/devlog.js"></script>
 <script src="/js/credits.js"></script>
+<script src="/js/teach.js"></script>
 <script src="/js/math-render.js"></script>
 </body>
 </html>

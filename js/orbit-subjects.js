@@ -17,7 +17,7 @@
 
   const SUBJECTS = [
     { key: 'biology',   name: '生物',     en: 'Biology',     accent: '#059669', motif: 'dna',    enabled: true,  note: '光合呼吸 · 神经调节 · 遗传育种' },
-    { key: 'chemistry', name: '化学',     en: 'Chemistry',   accent: '#7c3aed', motif: 'atom',   enabled: true,  note: '化学键 · 化学平衡 · 有机化学' },
+    { key: 'chemistry', name: '化学',     en: 'Chemistry',   accent: '#7c3aed', motif: 'atom',   enabled: true,  teach: true, note: '化学键 · 化学平衡 · 有机化学' },
     { key: 'physics',   name: '物理',     en: 'Physics',     accent: '#0284c7', motif: 'car',    enabled: true,  note: '力学 · 电磁学 · 光学' },
     { key: 'math',      name: '高级数学', en: 'Adv. Maths',  accent: '#d97706', motif: 'golden', enabled: true,  note: '高数Ⅰ · 高数Ⅱ · 函数到微积分' },
   ];
@@ -109,6 +109,7 @@
     `<div class="panel-bar"><i></i></div>` +
     `<div class="panel-stat"></div>` +
     `<button class="panel-enter" type="button">进入</button>` +
+    `<button class="panel-teach" type="button" hidden>教学：闯关地图</button>` +
     `<div class="panel-hint">点其他地方取消</div>`;
   stage.appendChild(panel);
 
@@ -117,6 +118,7 @@
   const panelBar = panel.querySelector('.panel-bar i');
   const panelStat = panel.querySelector('.panel-stat');
   const panelEnter = panel.querySelector('.panel-enter');
+  const panelTeach = panel.querySelector('.panel-teach');
 
   /* ---------- 进度（已掌握的选择题 ÷ 该科总题数） ---------- */
   function masteredCount(key) {
@@ -207,7 +209,10 @@
     // 零题科目：面板上最显眼的主按钮不该通向一个空的地方
     const empty = s.enabled && s.any === 0;
     panelEnter.classList.toggle('is-quiet', empty);
-    panelEnter.textContent = !s.enabled ? '尚未开放' : empty ? '看章节大纲' : `进入${s.name}`;
+    // 有教学地图的科目：两个并列的按钮 刷题／教学；其他科目面板不变
+    const teach = !!(s.enabled && s.teach);
+    panelTeach.hidden = !teach;
+    panelEnter.textContent = !s.enabled ? '尚未开放' : empty ? '看章节大纲' : teach ? `刷题：${s.name}题库` : `进入${s.name}`;
   }
 
   /* ---------- 选中 / 取消 ---------- */
@@ -258,6 +263,13 @@
   }
 
   panelEnter.addEventListener('click', enterSelected);
+  panelTeach.addEventListener('click', () => {
+    if (selected === null) return;
+    const s = SUBJECTS[selected];
+    if (!s.enabled || !s.teach) return;
+    deselect();
+    if (typeof openTeach === 'function') openTeach(s.key);
+  });
   // 「点其他地方取消」——整个页面都算，不只是轨道区域
   document.addEventListener('click', (e) => {
     if (selected === null) return;
