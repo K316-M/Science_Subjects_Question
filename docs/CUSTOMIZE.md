@@ -149,7 +149,7 @@
 | 教学：一般关卡答对几成算过关（3 题要对 2 题；全对 3 星） | `js/teach.js` | `PASS_RATIO` | `0.6` | 🟢 论述题自评「勾到几成要点算对」也用这个数 |
 | 教学：魔王关的门槛（5 题要对 4 题）与从小节题池抽几题（外加 1 道专属终局题） | `js/teach.js` | `BOSS_RATIO`、`BOSS_POOL` | `0.8`、`4` | 🟡 `BOSS_POOL` 改了，`scripts/check_repo.py` 检查的「小节题池至少 4 题」也要对得上 |
 | 教学：计算题允许的相对误差（资料里每题可以写自己的 `tol`） | `js/teach.js` | `DEFAULT_TOL` | `0.02`（2%） | 🟢 老师的 22.4 L/mol、R = 8.314、F = 96500 都已经照课本，不要放太宽 |
-| 教学关卡与题目的内容（关卡、知识卡、反应式、题目、魔王关的专属题） | `data/teach/chemistry.json` | `maps`、`nodes`、`challenges`、`bosses` | 3 张地图、21 关、73 题（全部是草稿，待审） | 🟡 格式与怎么加关见 [OPERATIONS 三之四](OPERATIONS.md#三之四教学模式化学闯关地图)；合并前检查会验证 |
+| 教学关卡与题目的内容（关卡、知识卡、反应式、题目、魔王关的专属题） | `data/teach/chemistry.json` | `maps`、`nodes`、`challenges`、`bosses` | 3 张地图、30 关、114 题（全部是草稿，待审；有机地图 16 关、4 个小节） | 🟡 格式与怎么加关见 [OPERATIONS 三之四](OPERATIONS.md#三之四教学模式化学闯关地图)；合并前检查会验证 |
 | 教学：反应式的类别（制取反应分简单／复杂、转化反应、性质反应、鉴别与检验） | `data/teach/chemistry.json` | `reaction_categories` | 4 类 | 🔴 关卡里每条反应式的 `category`／`level` 要和这里一致，写错合并前检查会挡下来 |
 | 教学：进度存在学生浏览器哪个键 | `js/teach.js`、`dev/dev.js` | `STORE_KEY`（teach.js）、`UEC_TEACH_v1`（dev.js） | `UEC_TEACH_v1` | 🔴 改了，所有学生的教学进度归零；两个档要一起改 |
 | 哪一科有「教学」按钮 | `js/orbit-subjects.js`、`js/teach.js` | `teach: true`（`SUBJECTS` 的那一行）、`SUBJECT_NAME`（teach.js） | 只有化学 | 🟡 再开一科要有 `data/teach/<科目>.json`，还要加进 `sw.js` 的 `OFFLINE_EXTRAS` |
