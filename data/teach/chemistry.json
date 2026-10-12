@@ -614,12 +614,12 @@
         "level": "复杂"
        },
        {
-        "name": "氨碱法制纯碱（名称待确认）",
+        "name": "氨碱法（苏尔发法）制纯碱",
         "equation": "NaCl + NH₃ + CO₂ + H₂O → NaHCO₃↓ + NH₄Cl；2NaHCO₃ → Na₂CO₃ + H₂O + CO₂↑",
         "conditions": "加热",
         "category": "prep",
         "level": "复杂",
-        "note": "PPT 只写了「氨碱法 p280」，方程式是课本的标准写法，请对照课本；人名叫法（索尔维法）也待你确认。"
+        "note": "PPT 只写了「氨碱法 p280」，方程式是课本的标准写法，请对照课本。"
        }
       ]
      },
