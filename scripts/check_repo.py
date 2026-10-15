@@ -308,6 +308,14 @@ def _teach_art(data_ids):
     for f in files:
         m = re.fullmatch(r'(cover|node|boss)-(.+)\.webp', f) if isinstance(f, str) else None
         deco = re.fullmatch(r'deco-(.+)-\d+\.webp', f) if isinstance(f, str) else None
+        fx = isinstance(f, str) and re.fullmatch(r'fx-(star|sparkle|confetti-a|confetti-b)\.webp', f)
+        pose = re.fullmatch(r'boss-(.+)-(hit|atk)\.webp', f) if isinstance(f, str) else None
+        if fx or pose:    # 特效小图 fx-<star|sparkle|confetti-a|confetti-b>.webp；魔王受击／攻击姿势 boss-<魔王 id>-<hit|atk>.webp
+            if pose and pose.group(1) not in data_ids.get('boss', set()):
+                problems.append(f'assets/teach/manifest.json：{f} 找不到对应的魔王 id')
+            elif not os.path.isfile(os.path.join(ROOT, 'assets', 'teach', f)):
+                problems.append(f'assets/teach/manifest.json：登记了 {f}，但 assets/teach/ 里没有这个档案')
+            continue
         if deco:    # 地图上的装饰贴纸：deco-<地图 id>-<序号>.webp
             if deco.group(1) not in data_ids.get('cover', set()):
                 problems.append(f'assets/teach/manifest.json：{f} 找不到对应的地图 id')
@@ -315,7 +323,7 @@ def _teach_art(data_ids):
                 problems.append(f'assets/teach/manifest.json：登记了 {f}，但 assets/teach/ 里没有这个档案')
             continue
         if not m:
-            problems.append(f'assets/teach/manifest.json：{f!r} 不是 <cover|node|boss>-<id>.webp 或 deco-<地图 id>-<序号>.webp')
+            problems.append(f'assets/teach/manifest.json：{f!r} 不是 <cover|node|boss>-<id>.webp、boss-<魔王 id>-<hit|atk>.webp、deco-<地图 id>-<序号>.webp 或 fx-<star|sparkle|confetti-a|confetti-b>.webp')
         elif m.group(2) not in data_ids.get(m.group(1), set()):
             problems.append(f'assets/teach/manifest.json：{f} 找不到对应的{ {"cover": "地图", "node": "关卡", "boss": "魔王"}[m.group(1)] } id')
         elif not os.path.isfile(os.path.join(ROOT, 'assets', 'teach', f)):

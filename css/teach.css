@@ -15,6 +15,7 @@
   --tm-bad: #f8d7d3;
   --tm-dot: rgba(42, 40, 35, .12);
   --tm-hl: rgba(255, 255, 255, .85);   /* 圆盘左上角的高光 */
+  --tm-hp: #d9483f;         /* 魔王的血条 */
 }
 
 /* --tm-a = 地图颜色；要写在每个会改 --tm-accent 的元素上，才会各自重新算（护眼模式会把它调亮） */
@@ -101,11 +102,11 @@
 @keyframes tm-drift { to { transform: translateX(80px); } }
 
 /* 路：外圈墨线＋石板色＋中间虚线；走通了的路染上地图的颜色，虚线会流动 */
-.tm-road-b, .tm-road-f, .tm-road-d { fill: none; stroke-linecap: round; }
+.tm-road-b, .tm-road-f, .tm-road-p, .tm-road-d { fill: none; stroke-linecap: round; }
 .tm-road-b { stroke: var(--tm-ink); stroke-width: 26; }
 .tm-road-f { stroke: var(--tm-road); stroke-width: 20; }
 .tm-road-d { stroke: var(--tm-road-dash); stroke-width: 3; stroke-dasharray: 2 10; stroke-opacity: .85; }
-.tm-edge.is-open .tm-road-f { stroke: color-mix(in oklab, var(--tm-a) 42%, var(--tm-road)); }
+.tm-road-p { stroke: color-mix(in oklab, var(--tm-a) 42%, var(--tm-road)); stroke-width: 20; }   /* 走通的路：染色层盖在石板上，刚走通时由 js 让它从起点「染」过去 */
 .tm-edge.is-open .tm-road-d { stroke-opacity: 1; animation: tm-flow 1.2s linear infinite; }
 @keyframes tm-flow { to { stroke-dashoffset: -12; } }
 
@@ -199,6 +200,19 @@
 .tm-stage[data-zoom="far"] .tm-label, .tm-stage[data-zoom="far"] .tm-stars, .tm-stage[data-zoom="far"] .tm-no,
 .tm-stage[data-zoom="far"] .tm-island-prog, .tm-stage[data-zoom="far"] .tm-fold { display: none; }
 
+/* 风景轻轻摇；小精灵沿路飞的时候拍子快一点；「下一步」隔几秒点点头提醒你；刚解锁的关图标弹出来；打开着的魔王在原地晃 */
+.tm-sway { transform-box: fill-box; transform-origin: 50% 90%; animation: tm-sway 4.5s ease-in-out infinite alternate; }
+@keyframes tm-sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+.tm-pin.is-walking { animation-duration: .45s; }
+body.tm-lock .tm-sway, body.tm-lock .tm-cloud, body.tm-lock .tm-road-d, body.tm-lock .tm-pin, body.tm-lock .tm-next, body.tm-lock .tm-ncard::before { animation-play-state: paused; }   /* 面板盖着地图时，底下的环境动画先暂停 */
+.tm-next { animation: tm-nudge 2.6s ease-in-out infinite; }
+.tm-next:active { animation: none; }
+@keyframes tm-nudge { 0%, 86%, 100% { transform: none; } 92% { transform: translateY(-4px); } }
+.tm-ncard.is-new .tm-disc-art { animation: tm-unlock .7s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes tm-unlock { 0% { transform: scale(.2) rotate(-30deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.tm-ncard.is-boss[data-state="open"] .tm-art-img { animation: tm-boss-bob-map 2.4s ease-in-out infinite alternate; }
+@keyframes tm-boss-bob-map { to { transform: translate(-50%, -4px); } }   /* 地图上的魔王图靠 translateX(-50%) 居中，动画要把它带上 */
+
 /* 你在这里 */
 .tm-pin { position: absolute; z-index: 4; display: flex; align-items: center; gap: 4px; pointer-events: none; animation: tm-bob 1.6s ease-in-out infinite alternate; }
 .tm-pin img { display: block; width: 48px; height: 48px; }
@@ -267,10 +281,21 @@ body.tm-lock { overflow: hidden; }
 .tm-primary:disabled, .tm-ghost:disabled { opacity: .55; cursor: default; }
 
 /* 闯关 */
-.tm-qhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.tm-qhead { display: flex; align-items: center; gap: 12px; }
+.tm-qmain { display: flex; flex-wrap: wrap; align-items: baseline; flex: 1; min-width: 0; gap: 4px 12px; }
 .tm-qtitle { font-size: 12px; font-weight: 800; line-height: 1.4; }
 .tm-qno { margin-left: auto; font-size: 12px; font-weight: 700; line-height: 1.4; }
 .tm-qhead .tm-bar { flex: 1 1 100%; }
+.tm-bar-q i { transition: width .45s cubic-bezier(.3, 1.3, .5, 1); }
+/* 小精灵：陪你闯关，答对高兴地弹一下、答错来讲解时抖一下 */
+.tm-mascot { display: block; flex: none; width: 48px; height: 48px; object-fit: contain; transform-origin: 50% 90%; }
+.tm-mascot-r { width: 96px; height: 96px; align-self: center; }
+.tm-mascot.is-hop { animation: tm-hop .6s cubic-bezier(.3, 1.6, .5, 1); }
+.tm-mascot.is-shake { animation: tm-shake .45s ease; }
+.tm-streak { display: inline-flex; align-items: center; gap: 2px; padding: 0 8px; border: 2px solid var(--tm-ink); border-radius: 10px; background: var(--tm-b); color: var(--tm-on-b); font-size: 12px; font-weight: 800; line-height: 1.4; }
+.tm-streak-ico { width: 14px; height: 14px; }
+.tm-streak.is-pop { animation: tm-streak-pop .5s cubic-bezier(.3, 1.8, .5, 1); }
+.tm-streak.is-lost { animation: tm-streak-lost .45s ease-in forwards; }
 .tm-q { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.75; white-space: pre-line; }
 .tm-q:focus { outline: none; }
 .tm-options { display: flex; flex-direction: column; gap: 8px; }
@@ -280,6 +305,8 @@ body.tm-lock { overflow: hidden; }
 .tm-option:disabled { cursor: default; }
 .tm-option.is-right { background: var(--tm-ok); }
 .tm-option.is-wrong { background: var(--tm-bad); }
+.tm-option.is-right { animation: tm-pop-ok .45s cubic-bezier(.3, 1.6, .5, 1); }
+.tm-option.is-wrong { animation: tm-shake .45s ease; }
 .tm-opt-badge { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--tm-ink); border-radius: 50%; background: var(--tm-paper); font-size: 12px; font-weight: 800; line-height: 1; }
 .tm-opt-text { flex: 1; min-width: 0; }
 .tm-answer-row { display: flex; align-items: center; gap: 8px; }
@@ -293,6 +320,9 @@ body.tm-lock { overflow: hidden; }
 .tm-feedback { padding: 12px 14px; border: 3px solid var(--tm-ink); border-radius: 14px; }
 .tm-feedback.is-ok { background: var(--tm-ok); }
 .tm-feedback.is-bad { background: var(--tm-bad); }
+.tm-feedback.is-ok, .tm-feedback.is-bad { animation: tm-slide-in .3s ease-out; }
+.tm-input.is-wrong { animation: tm-shake .45s ease; }
+.tm-sheet.is-shiver { animation: tm-shiver .36s ease; }
 .tm-verdict { margin: 0 0 4px; font-size: 16px; font-weight: 800; line-height: 1.4; }
 .tm-answer { margin: 0 0 4px; font-size: 14px; font-weight: 800; line-height: 1.6; }
 .tm-steps, .tm-explain { margin: 0; font-size: 14px; line-height: 1.75; white-space: pre-line; }
@@ -302,6 +332,49 @@ body.tm-lock { overflow: hidden; }
 .tm-check input { flex: none; width: 20px; height: 20px; margin-top: 2px; accent-color: var(--tm-a); }
 .tm-count { margin: 4px 0 0; font-size: 12px; font-weight: 700; line-height: 1.4; }
 .tm-result-stars { display: flex; gap: 6px; }
+.tm-star.is-lit { animation: tm-star-pop .5s cubic-bezier(.3, 1.7, .5, 1) both; animation-delay: calc(var(--i, 0) * 220ms + 200ms); }
+.tm-points li { animation: tm-slide-in .35s ease-out both; animation-delay: calc(var(--i, 0) * 60ms); }
+
+/* 魔王战：横幅（魔王的图＋血条）。血条的格数 = 过关要答对的题数，答对掉一格，答错魔王反击 */
+.tm-boss { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 3px solid var(--tm-ink); border-radius: 18px;
+  background: repeating-linear-gradient(135deg, color-mix(in oklab, var(--tm-b) 35%, var(--tm-paper)) 0 10px, var(--tm-paper) 10px 20px); }
+.tm-boss-art { position: relative; flex: none; display: grid; place-items: center; width: 72px; height: 72px; }
+.tm-boss-art .tm-art { width: 52px; height: 52px; }
+.tm-boss-img { transform-origin: 50% 90%; animation: tm-boss-bob 2.2s ease-in-out infinite alternate; }
+.tm-boss-art.is-hit { animation: tm-boss-hit .46s ease; }
+.tm-boss-art.is-atk { animation: tm-boss-atk .56s ease; }
+.tm-boss-main { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.tm-boss-name { font-family: var(--font-display, serif); font-size: 14px; font-weight: 800; line-height: 1.2; }
+.tm-hp { display: flex; gap: 4px; }
+.tm-hp-seg { flex: 1; height: 12px; border: 2px solid var(--tm-ink); border-radius: 6px; background: var(--tm-paper-2); }
+.tm-hp-seg.is-on { background: var(--tm-hp); }
+.tm-hp-seg.is-break { animation: tm-seg-break .6s ease-out; }
+.tm-hp-note { font-size: 12px; line-height: 1.4; }
+.tm-dmg { position: absolute; left: 50%; top: 0; font-size: 16px; font-weight: 800; line-height: 1; color: var(--tm-hp); white-space: nowrap; pointer-events: none; animation: tm-float-up .9s ease-out forwards; }
+.tm-result-boss { position: relative; display: grid; place-items: center; width: 120px; height: 120px; align-self: center; }
+.tm-result-boss .tm-art { width: 80px; height: 80px; }
+.tm-result-boss.is-defeated .tm-boss-img { animation: tm-boss-defeat 1s ease-in forwards; }
+.tm-result-boss.is-taunt .tm-boss-img { animation: tm-boss-taunt .8s ease-in-out infinite alternate; }
+
+/* 迸出来的星星、彩带（js 临时放进来，播完就移掉） */
+.tm-fxlayer { --tm-a: var(--tm-accent); position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none; }
+.tm-fxp { position: absolute; width: 20px; height: 20px; pointer-events: none; will-change: transform, opacity; }
+
+@keyframes tm-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+@keyframes tm-shiver { 0%, 100% { transform: none; } 25% { transform: translate(-3px, 1px) rotate(-.4deg); } 50% { transform: translate(3px, -1px) rotate(.4deg); } 75% { transform: translate(-2px, 0); } }
+@keyframes tm-hop { 0% { transform: none; } 35% { transform: translateY(-14px) scale(1.12); } 70% { transform: translateY(0) scale(.95); } 100% { transform: none; } }
+@keyframes tm-pop-ok { 50% { transform: scale(1.04); } }
+@keyframes tm-slide-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes tm-streak-pop { 0% { transform: scale(.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@keyframes tm-streak-lost { to { transform: translateY(8px) rotate(12deg) scale(.5); opacity: 0; } }
+@keyframes tm-star-pop { 0% { transform: scale(0) rotate(-60deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes tm-boss-bob { to { transform: translateY(-4px); } }
+@keyframes tm-boss-hit { 0% { transform: none; filter: none; } 20% { transform: translateX(-10px) rotate(-6deg) scale(.94); filter: brightness(2); } 50% { transform: translateX(8px) rotate(4deg); } 100% { transform: none; filter: none; } }
+@keyframes tm-boss-atk { 0% { transform: none; } 35% { transform: scale(1.3) translateY(10px); } 55% { transform: scale(1.3) translateY(10px) rotate(-3deg); } 100% { transform: none; } }
+@keyframes tm-boss-defeat { 0% { transform: none; filter: none; } 40% { transform: rotate(-12deg) scale(1.1); filter: brightness(1.8); } 100% { transform: rotate(78deg) translate(18px, 14px) scale(.8); filter: grayscale(.8); opacity: .55; } }
+@keyframes tm-boss-taunt { to { transform: translateY(-6px) scale(1.04); } }
+@keyframes tm-seg-break { 0% { transform: scale(1); background: var(--tm-hp); } 40% { transform: scale(1.4, 1.8); background: #fff; } 100% { transform: scale(1); background: var(--tm-paper-2); } }
+@keyframes tm-float-up { 0% { transform: translate(-50%, 0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-50%, -34px); opacity: 0; } }
 
 /* 反应式（按类别分组） */
 .tm-rx { display: flex; flex-direction: column; gap: 12px; }
@@ -340,6 +413,7 @@ body.tm-lock { overflow: hidden; }
 @keyframes tm-swing { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
 @media (prefers-reduced-motion: reduce) {
   .tm-svg *, .tm-edge *, .tm-cloud, .tm-bubble, .tm-ncard, .tm-ncard::before, .tm-ncard::after, .tm-card, .tm-pin { animation: none !important; transition: none !important; }
+  .tm-mascot, .tm-streak, .tm-option, .tm-input, .tm-feedback, .tm-sheet, .tm-star, .tm-points li, .tm-boss-art, .tm-boss-img, .tm-hp-seg, .tm-dmg, .tm-result-boss, .tm-sway, .tm-next, .tm-disc-art, .tm-art-img, .tm-bar-q i { animation: none !important; transition: none !important; }
 }
 
 /* ---------- 护眼模式 ---------- */
@@ -354,6 +428,7 @@ body.tm-lock { overflow: hidden; }
   --tm-bad: #4a2623;
   --tm-dot: rgba(232, 225, 212, .09);
   --tm-hl: rgba(255, 255, 255, .1);
+  --tm-hp: #ef6a60;
 }
 /* 护眼：夜里的海与岛——深蓝灰的海，岛是暗一点的同色系，路是暗石板 */
 [data-theme="night"] .tm-stage {
@@ -369,7 +444,7 @@ body.tm-lock { overflow: hidden; }
 [data-theme="night"] .tm-cloud { fill-opacity: .12; }
 [data-theme="night"] .tm-prop { opacity: .55; }
 /* 护眼：把地图颜色调亮，深色字压在上面才看得清 */
-[data-theme="night"] .tm-root, [data-theme="night"] .tm-card, [data-theme="night"] .tm-sheet { --tm-a: color-mix(in oklab, var(--tm-accent) 55%, #fff); }
+[data-theme="night"] .tm-root, [data-theme="night"] .tm-card, [data-theme="night"] .tm-sheet, [data-theme="night"] .tm-fxlayer { --tm-a: color-mix(in oklab, var(--tm-accent) 55%, #fff); }
 [data-theme="night"] .tm-input, [data-theme="night"] .tm-textarea { background: #1c1a17; color: #e8e1d4; }
 [data-theme="night"] .tm-warn { color: #f2aaa6; }
 [data-theme="night"] .tm-mask { background: rgba(0, 0, 0, .65); }

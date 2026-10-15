@@ -1059,6 +1059,7 @@ async function run() {
       await page.waitForTimeout(350);   // 气泡淡入要 0.18 秒；等它停稳再量对比度
       await contrast(page, `${theme} 教学：介绍气泡`, '.tm-bubble', R);
       await page.click('.tm-bubble-go'); await page.waitForSelector('.tm-sheet');
+      await page.waitForTimeout(900);   // 知识卡的要点一条一条淡入，等最後一条停稳再量对比度
       await contrast(page, `${theme} 教学：知识卡`, '.tm-sheet', R);
       await page.click('.tm-sheet .tm-primary'); await page.waitForTimeout(150);
       const qtext = (await page.$eval('.tm-q', e => e.textContent)).trim();
@@ -1066,7 +1067,7 @@ async function run() {
       await contrast(page, `${theme} 教学：作答`, '.tm-sheet', R);
       const ov = await page.evaluate(() => { const a = document.querySelector('.tm-x').getBoundingClientRect(), b = document.querySelector('.tm-qno').getBoundingClientRect(); return !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top); });
       check(G, `${theme}：× 和「第 N / M 题」不重叠`, !ov);
-      await page.fill('.tm-input', '9999'); await page.click('.tm-primary'); await page.waitForTimeout(150);
+      await page.fill('.tm-input', '9999'); await page.click('.tm-primary'); await page.waitForTimeout(500);   // 反馈条要 0.3 秒滑进来
       await contrast(page, `${theme} 教学：答错解析`, '.tm-sheet', R);
       await page.keyboard.press('Escape'); await page.waitForTimeout(300);
       check(G, `${theme}：作答到一半按 Esc 先出现面板内的确认条（不是原生对话框），面板还开着`, !!(await page.$('.tm-leave')) && !!(await page.$('.tm-sheet')));

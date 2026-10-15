@@ -27,6 +27,11 @@
   const FLY_MS = 480;            // 镜头飞到某一关要多久（毫秒）；系统开了「减少动态」就直接跳过去
   const DRAG_PX = 6;             // 手指／鼠标移动超过几像素才算「拖动」，没超过算点击
   const HORIZONTAL_MIN = 720;    // 画面宽度 ≥ 这个值用左→右排；窄的（手机竖拿）用上→下
+  // 动效（系统开了「减少动态」就全部不动，只换状态）
+  const FX_BURST = 14;           // 答对时从按钮迸出几颗星
+  const FX_CONFETTI = 40;        // 过关时撒几片彩带（魔王倒下时 1.5 倍）
+  const WALK_MS = 1100;          // 通关後小精灵沿路走到新关要多久（毫秒）
+  const ROAD_PAINT_MS = 800;     // 新走通的路「染色」要多久（毫秒）
   const FIT_PAD = 28;            // 「适配」时四周留多宽
   const REGION_GAP = 110;        // 小节与小节之间（沿前进方向）隔多远
 
@@ -194,6 +199,96 @@
     return img;
   }
 
+  /* ---------- 动效：星星迸发、彩带、小精灵的表情（都是临时元素，播完就移除；「减少动态」时不播） ---------- */
+  // 你给的 fx-star／fx-sparkle／fx-confetti-a／fx-confetti-b（assets/teach/，登记在 manifest）优先，没有就用下面内置的小图形
+  const FX_SHAPES = {
+    star: ICON.star,
+    sparkle: '<path class="ink fb" d="M32 4l6 22 22 6-22 6-6 22-6-22-22-6 22-6z"/>',
+  };
+  const CONFETTI_COLORS = ['var(--tm-b)', 'var(--tm-c)', 'var(--tm-a)', '#ffffff'];
+  function fxPiece(kind, i) {
+    const file = kind === 'confetti' ? (state.art && state.art.has(`fx-confetti-${i % 2 ? 'b' : 'a'}.webp`) ? `fx-confetti-${i % 2 ? 'b' : 'a'}` : null) : (state.art && state.art.has(`fx-${kind}.webp`) ? `fx-${kind}` : null);
+    if (file) {
+      const img = h('img', { class: 'tm-fxp', src: `/assets/teach/${file}.webp`, alt: '' });
+      img.addEventListener('error', () => img.remove());
+      return img;
+    }
+    if (kind === 'confetti') {
+      const el = svgOf('<rect x="1" y="1" width="8" height="12" rx="2" class="cf"/>', 'tm-fxp');
+      el.setAttribute('viewBox', '0 0 10 14');
+      el.querySelector('.cf').style.fill = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      return el;
+    }
+    return svgOf(FX_SHAPES[kind] || FX_SHAPES.star, 'tm-fxp');
+  }
+  function fxLayer() {
+    if (!sheet) return null;
+    if (!sheet.fx) sheet.fx = sheet.mask.appendChild(h('div', { class: 'tm-fxlayer', 'aria-hidden': 'true', style: `--tm-accent:${state.mapAccent || '#0f766e'}` }));   // 彩带的主色跟着这张地图
+    return sheet.fx;
+  }
+  const canFx = () => !reduced() && typeof Element !== 'undefined' && !!Element.prototype.animate;
+  // 从屏幕上 (x, y) 迸出 n 个小东西
+  function burst(x, y, kind = 'star', n = FX_BURST, spread = 96) {
+    const layer = fxLayer();
+    if (!layer || !canFx()) return;
+    for (let i = 0; i < n; i++) {
+      const el = fxPiece(kind, i);
+      const a = Math.random() * Math.PI * 2, d = spread * (0.5 + Math.random()), sc = 0.5 + Math.random() * 0.7, rot = (Math.random() - 0.5) * 540;
+      const dx = Math.cos(a) * d, dy = Math.sin(a) * d - 30;
+      el.style.left = `${x}px`; el.style.top = `${y}px`;
+      layer.append(el);
+      const at = (f, extra) => `translate(calc(-50% + ${dx * f}px), calc(-50% + ${dy * f + extra}px))`;
+      const an = el.animate([
+        { transform: 'translate(-50%, -50%) scale(0) rotate(0deg)', opacity: 1 },
+        { transform: `${at(0.6, 0)} scale(${sc}) rotate(${rot / 2}deg)`, opacity: 1, offset: 0.35 },
+        { transform: `${at(1, 70)} scale(${sc * 0.8}) rotate(${rot}deg)`, opacity: 0 }],
+      { duration: 800 + Math.random() * 500, easing: 'cubic-bezier(.2,.7,.4,1)' });
+      an.onfinish = () => el.remove();
+    }
+  }
+  const burstAt = (el, kind, n, spread) => { if (!el || !document.contains(el)) return; const r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, kind, n, spread); };
+  // 彩带从上面落下来
+  function confetti(n = FX_CONFETTI) {
+    const layer = fxLayer();
+    if (!layer || !canFx()) return;
+    const W = window.innerWidth, H = window.innerHeight;
+    for (let i = 0; i < n; i++) {
+      const el = fxPiece('confetti', i), x = Math.random() * W, sway = (Math.random() - 0.5) * 160, rot = (Math.random() - 0.5) * 900;
+      el.style.left = `${x}px`; el.style.top = '-24px';
+      layer.append(el);
+      const an = el.animate([
+        { transform: 'translate(-50%, 0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(calc(-50% + ${sway}px), ${H * 0.55}px) rotate(${rot / 2}deg)`, opacity: 1, offset: 0.6 },
+        { transform: `translate(calc(-50% + ${sway * 1.4}px), ${H + 40}px) rotate(${rot}deg)`, opacity: 0.9 }],
+      { duration: 1800 + Math.random() * 1600, delay: Math.random() * 500, easing: 'cubic-bezier(.3,.1,.6,1)', fill: 'backwards' });
+      an.onfinish = () => el.remove();
+    }
+  }
+  // 小精灵：闯关时陪着你，答对高兴、答错来讲解、算题时在写字；眨眼是隔几秒换一张
+  const POSES = { idle: 'idle', ok: 'happy', bad: 'talk', think: 'write', win: 'wave', gift: 'present' };
+  function mascot(cls, size) {
+    const img = h('img', { class: `tm-mascot ${cls || ''}`, src: '/assets/sprite/idle.webp', alt: '', width: String(size || 48), height: String(size || 48), decoding: 'async', 'data-pose': 'idle' });
+    img.addEventListener('error', () => img.remove());
+    const t = setInterval(() => {
+      if (!document.contains(img)) { clearInterval(t); return; }
+      if (img.dataset.pose !== 'idle' || reduced()) return;
+      img.src = '/assets/sprite/blink.webp';
+      setTimeout(() => { if (img.dataset.pose === 'idle') img.src = '/assets/sprite/idle.webp'; }, 150);
+    }, 3800);
+    return img;
+  }
+  function pose(img, name) {
+    if (!img || !document.contains(img)) return;
+    img.dataset.pose = name === 'idle' || name === 'think' ? name : 'busy';
+    img.src = `/assets/sprite/${POSES[name] || 'idle'}.webp`;
+    img.classList.remove('is-hop', 'is-shake');
+    void img.offsetWidth;   // 重新触发动画
+    if (name === 'ok' || name === 'win' || name === 'gift') img.classList.add('is-hop');
+    else if (name === 'bad') img.classList.add('is-shake');
+  }
+  // 进教学模式时先把要换的几个姿势载进缓存（不在首页载入时就抓，省流量）
+  const preloadPoses = () => ['happy', 'talk', 'write', 'wave', 'present', 'blink'].forEach(n => { const i = new Image(); i.src = `/assets/sprite/${n}.webp`; });
+
   /* ---------- 资料 ---------- */
   const cache = {};
   async function loadData(subject) {
@@ -238,7 +333,7 @@
   }
 
   /* ---------- 画面状态 ---------- */
-  let state = { subject: null, data: null, mapId: null, cams: {}, view: null, celebrate: null, art: null, msg: null };
+  let state = { subject: null, data: null, mapId: null, cams: {}, view: null, celebrate: null, art: null, msg: null, roadOpen: {} };
   let sheet = null;   // 目前开着的面板
 
   function setCrumbs(items) {
@@ -604,14 +699,17 @@
       const rnd = rngOf(`${map.id}-${rg.sec.id}-p`);
       scatter(rg.plate, rnd, SCENERY_PER_ZONE, avoid, [46, 74]).forEach((p, i) => {
         const g = sv('g', { class: 'tm-prop', transform: `rotate(${p.rot.toFixed(1)} ${p.x.toFixed(1)} ${p.y.toFixed(1)})` });
+        const sway = sv('g', { class: 'tm-sway' });
+        sway.style.animationDelay = `${-(rnd() * 4).toFixed(2)}s`;
+        g.append(sway);
         if (decos.length && i % 2 === 0) {
           const im = sv('image', { href: `/assets/teach/${decos[(i / 2 | 0) % decos.length]}`, x: p.x - p.s * 0.7, y: p.y - p.s * 0.7, width: p.s * 1.4, height: p.s * 1.4 });
           im.addEventListener('error', () => im.remove());
-          g.append(im);
+          sway.append(im);
         } else {
           const ic = svgOf(MOTIFS[motifs[Math.floor(rnd() * motifs.length)]], 'tm-prop-svg');
           ic.setAttribute('x', p.x - p.s / 2); ic.setAttribute('y', p.y - p.s / 2); ic.setAttribute('width', p.s); ic.setAttribute('height', p.s);
-          g.append(ic);
+          sway.append(ic);
         }
         gProps.append(g);
       });
@@ -625,13 +723,25 @@
     }
     svg.append(gCloud);
     const gRoad = sv('g', { class: 'tm-roads' });
+    const wasOpen = state.roadOpen[map.id], paint = [];
     roads.forEach(({ e, g }) => {
       const d = geomPath(g), grp = sv('g', { class: `tm-edge${e.open ? ' is-open' : ''}` });
-      grp.append(sv('path', { class: 'tm-road-b', d }), sv('path', { class: 'tm-road-f', d }), sv('path', { class: 'tm-road-d', d }));
+      grp.append(sv('path', { class: 'tm-road-b', d }), sv('path', { class: 'tm-road-f', d }));
+      if (e.open) {
+        const pt = sv('path', { class: 'tm-road-p', d });
+        grp.append(pt);
+        if (state.celebrate && wasOpen && !wasOpen.has(`${e.from}>${e.to}`)) paint.push(pt);   // 刚走通的路：染色动画
+      }
+      grp.append(sv('path', { class: 'tm-road-d', d }));
       gRoad.append(grp);
     });
     svg.append(gRoad);
     world.append(svg);
+    state.roadOpen[map.id] = new Set(roads.filter(r => r.e.open).map(r => `${r.e.from}>${r.e.to}`));
+    v.roads = roads;
+    // 刚走通的路先藏起来（染色层缩成 0 长），等结果面板关掉、镜头飞过去的时候再由 runCelebrate 让它「染」过去
+    v.pendingPaint = canFx() ? paint : [];
+    v.pendingPaint.forEach(pt => { const len = pt.getTotalLength(); pt.style.strokeDasharray = `${len} ${len}`; pt.style.strokeDashoffset = String(len); });
 
     // 起点：地图封面＋通关进度环
     const pct = st.total ? st.done / st.total : 0, R = 46, C = 2 * Math.PI * R;
@@ -811,15 +921,55 @@
     });
   }
 
-  // 通关回到地图：镜头飞到刚解锁的关，那几关弹一下
+  // 通关回到地图：镜头框住「刚通的关」和「刚解锁的关」，小精灵沿着路飞过去，新关弹一下
+  function walkPin(v, c) {
+    const pin = v.world.querySelector('.tm-pin'), to = c.ids[0], rf = v.rects[c.from], rt = v.rects[to];
+    if (!pin || !rf || !rt || !canFx()) return;
+    const edge = (v.roads || []).find(r => r.e.from === c.from && r.e.to === to);
+    const A = centerOf(rf, c.from), B = centerOf(rt, to);
+    const pts = [];
+    if (edge) for (let i = 0; i <= 40; i++) pts.push(bez(edge.g, i / 40)); else pts.push(A, B);
+    const lens = [0];
+    for (let i = 1; i < pts.length; i++) lens.push(lens[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
+    const total = lens[lens.length - 1] || 1;
+    const lift = (r, id) => -(r.h / 2 + (bossOf(v.map, id) ? 70 : 58));
+    const o0 = lift(rf, c.from), o1 = lift(rt, to);
+    const at = f => { const d = f * total; let i = 1; while (i < lens.length - 1 && lens[i] < d) i++; const u = (d - lens[i - 1]) / ((lens[i] - lens[i - 1]) || 1); return { x: pts[i - 1].x + (pts[i].x - pts[i - 1].x) * u, y: pts[i - 1].y + (pts[i].y - pts[i - 1].y) * u }; };
+    const img = pin.querySelector('img'), endL = pin.style.left, endT = pin.style.top;
+    const place = (p, oy) => { pin.style.left = `${p.x - 24}px`; pin.style.top = `${p.y + oy}px`; };
+    place(pts[0], o0);                       // 先停在刚通的那一关上（下一帧才开始走，镜头先飞）
+    pin.classList.add('is-walking');
+    if (img) img.src = '/assets/sprite/happy.webp';
+    const t0 = performance.now() + 380;      // 等镜头先飞一小段
+    const step = now => {
+      if (!document.contains(pin)) return;
+      const t = Math.max(0, Math.min(1, (now - t0) / WALK_MS)), e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      place(at(e), o0 + (o1 - o0) * e);
+      if (t < 1) { requestAnimationFrame(step); return; }
+      pin.style.left = endL; pin.style.top = endT;
+      pin.classList.remove('is-walking');
+      if (img) setTimeout(() => { if (document.contains(img)) img.src = '/assets/sprite/idle.webp'; }, 700);
+    };
+    requestAnimationFrame(step);
+  }
+  function startPaint(v) {
+    const list = v.pendingPaint || [];
+    v.pendingPaint = [];
+    list.forEach(pt => { if (document.contains(pt)) { pt.style.transition = `stroke-dashoffset ${ROAD_PAINT_MS}ms ease-out`; pt.style.strokeDashoffset = '0'; } });
+  }
   function runCelebrate() {
     const c = state.celebrate; state.celebrate = null;
     const v = state.view;
-    if (!c || !v || !c.ids.length || !document.contains(v.stage)) return false;
+    if (!c || !v || !c.ids.length || !document.contains(v.stage)) { if (v && document.contains(v.stage)) startPaint(v); return false; }   // 没有要庆祝的，也要把藏起来的新路染出来
     const sec = sectionOfNode(v.map, c.ids[0]);
     if (sec && !v.expanded.has(sec.id)) { v.expanded.add(sec.id); buildWorld(); }
-    const r = v.rects[c.ids[0]];
-    if (r) flyTo(r.x + r.w / 2, r.y + r.h / 2, Math.max(v.cam.k, 0.9));
+    const r = v.rects[c.ids[0]], rf = c.from && v.rects[c.from];
+    if (r && rf) {
+      const x0 = Math.min(r.x, rf.x) - 140, y0 = Math.min(r.y, rf.y) - 140, x1 = Math.max(r.x + r.w, rf.x + rf.w) + 140, y1 = Math.max(r.y + r.h, rf.y + rf.h) + 140;
+      flyToRect({ x: x0, y: y0, w: x1 - x0, h: y1 - y0 }, Math.max(v.cam.k, 0.9));
+    } else if (r) flyTo(r.x + r.w / 2, r.y + r.h / 2, Math.max(v.cam.k, 0.9));
+    walkPin(v, c);
+    setTimeout(() => startPaint(v), 380);   // 镜头先飞一小段，路再染色，小精灵跟着走
     c.ids.forEach(id => {
       const n = v.world.querySelector(`.tm-node[data-id="${id}"]`);
       if (n) { n.classList.add('is-new'); setTimeout(() => n.classList.remove('is-new'), 4200); }
@@ -1017,7 +1167,7 @@
       put(body, 
         h('h3', { class: 'tm-sheet-title', 'data-autofocus': '', tabindex: '-1', text: node.title }),
         h('p', { class: 'tm-lead', text: L.summary || '' }),
-        h('ul', { class: 'tm-points' }, (L.points || []).map(p => h('li', { text: p }))),
+        h('ul', { class: 'tm-points' }, (L.points || []).map((p, i) => h('li', { style: `--i:${i}`, text: p }))),
         L.tip ? h('p', { class: 'tm-tip' }, h('b', { text: '记住：' }), L.tip) : null,
         (L.reactions || []).length ? h('div', { class: 'tm-rx-wrap' }, h('h4', { class: 'tm-sub-title', text: '这一关的反应式' }), renderReactions(L.reactions)) : null,
         (node.sources || []).length ? h('p', { class: 'tm-src', text: `资料来源：${node.sources.join('；')}` }) : null,
@@ -1068,23 +1218,92 @@
   }
 
   /* ---------- 闯关 ---------- */
+  // 魔王战：血条的格数 = 过关要答对的题数；答对 = 打中一下（掉一格），答错 = 魔王反击（不扣进度，规则没变）
+  const bossNeed = run => needed(run.items.length, run.ratio);
+  function bossBanner(run) {
+    const boss = bossOf(run.map, run.id), need = bossNeed(run), hp = Math.max(0, need - run.correct);
+    const pic = artImg('boss', run.id, 'tm-boss-img', () => motifSvg('flag', 'tm-art')) || motifSvg('flag', 'tm-art');
+    const segs = Array.from({ length: need }, (_, i) => h('i', { class: `tm-hp-seg${i < hp ? ' is-on' : ''}` }));
+    return h('div', { class: 'tm-boss', 'data-id': run.id },
+      h('span', { class: 'tm-boss-art' }, pic),
+      h('div', { class: 'tm-boss-main' },
+        h('span', { class: 'tm-boss-name', text: boss ? boss.title : '魔王' }),
+        h('span', { class: 'tm-hp', role: 'img', 'aria-label': hp ? `魔王还剩 ${hp} 格血` : '魔王的血被打光了' }, segs),
+        h('span', { class: 'tm-hp-note', text: hp ? `答对 ${need} 题就能打倒它（还差 ${hp} 题）` : '魔王撑不住了，再来一击！' })));
+  }
+  // 你给了 boss-<id>-hit／boss-<id>-atk（受击、攻击的姿势图）就在那一瞬间换上，没给就只用动画
+  function bossPose(banner, name, ms) {
+    const img = banner && banner.querySelector('img.tm-boss-img');
+    if (!img) return;
+    const file = `boss-${banner.dataset.id}-${name}.webp`;
+    if (!state.art || !state.art.has(file)) return;
+    const back = img.getAttribute('src');
+    img.src = `/assets/teach/${file}`;
+    setTimeout(() => { if (document.contains(img)) img.src = back; }, ms);
+  }
+  function bossReact(banner, run, ok, s) {
+    if (!banner || !document.contains(banner)) return;
+    const need = bossNeed(run), art = banner.querySelector('.tm-boss-art');
+    const again = (el, cls, ms) => { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(() => el.classList.remove(cls), ms); };
+    if (ok) {
+      const before = Math.max(0, need - (run.correct - 1)), after = Math.max(0, need - run.correct);
+      banner.querySelectorAll('.tm-hp-seg').forEach((seg, i) => { if (i >= after && i < before) { seg.classList.remove('is-on'); again(seg, 'is-break', 600); } });
+      const note = banner.querySelector('.tm-hp-note');
+      if (note) note.textContent = after ? `打中了！答对 ${need} 题就能打倒它（还差 ${after} 题）` : '魔王撑不住了，再来一击！';
+      banner.querySelector('.tm-hp').setAttribute('aria-label', after ? `魔王还剩 ${after} 格血` : '魔王的血被打光了');
+      again(art, 'is-hit', 460); bossPose(banner, 'hit', 520);
+      if (canFx()) { const dmg = h('span', { class: 'tm-dmg', 'aria-hidden': 'true', text: before > after ? '−1' : '暴击！' }); art.append(dmg); setTimeout(() => dmg.remove(), 900); }
+      burstAt(art, 'sparkle', 8, 56);
+    } else {
+      again(art, 'is-atk', 560); bossPose(banner, 'atk', 560);
+      if (s && s.box) again(s.box, 'is-shiver', 360);
+    }
+  }
+
   function startQuiz(ctx) {
-    const run = { ...ctx, index: 0, correct: 0 };
+    const run = { ...ctx, index: 0, correct: 0, streak: 0 };
     openSheet(ctx.from, (body, s) => { s.confirmClose = true; showQuestion(body, s, run); });
   }
 
-  function progressBar(run) {
+  // 答完一题，连对徽章当场更新（对：弹一下；错：碎掉）
+  function updateStreak(s, run, ok) {
+    const head = s.top && s.top.querySelector('.tm-qmain');
+    if (!head) return;
+    let el = head.querySelector('.tm-streak');
+    if (ok && run.streak >= 2) {
+      if (!el) { el = h('span', { class: 'tm-streak' }, svgOf(MOTIFS.flame, 'tm-streak-ico'), ''); head.insertBefore(el, head.querySelector('.tm-bar')); }
+      el.lastChild.textContent = `连对 ${run.streak}`;
+      el.classList.remove('is-pop'); void el.offsetWidth; el.classList.add('is-pop');
+    } else if (!ok && el) {
+      el.classList.add('is-lost');
+      setTimeout(() => el.remove(), 500);
+    }
+  }
+
+  function progressBar(run, s) {
+    if (!s.mascot) s.mascot = mascot('tm-mascot-q', 48);
+    const prev = run.shown == null ? Math.round(run.index / run.items.length * 100) : run.shown;   // 上一题进度条画到哪里，这一题从那里长到新的位置
+    const now = Math.round(run.index / run.items.length * 100);
+    const fill = h('i', { style: `width:${prev}%` });
+    if (prev !== now) requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = `${now}%`; }));
+    run.shown = now;
     return h('div', { class: 'tm-qhead' },
-      h('span', { class: 'tm-qtitle', text: run.title }),
-      h('span', { class: 'tm-qno', text: `第 ${run.index + 1} / ${run.items.length} 题` }),
-      h('span', { class: 'tm-bar tm-bar-q', 'aria-hidden': 'true' }, h('i', { style: `width:${Math.round(run.index / run.items.length * 100)}%` })));
+      s.mascot,
+      h('div', { class: 'tm-qmain' },
+        h('span', { class: 'tm-qtitle', text: run.title }),
+        h('span', { class: 'tm-qno', text: `第 ${run.index + 1} / ${run.items.length} 题` }),
+        run.streak >= 2 ? h('span', { class: 'tm-streak' }, svgOf(MOTIFS.flame, 'tm-streak-ico'), `连对 ${run.streak}`) : null,
+        h('span', { class: 'tm-bar tm-bar-q', 'aria-hidden': 'true' }, fill)));
   }
 
   function showQuestion(body, s, run) {
     clear(body);
-    put(clear(s.top), progressBar(run));
+    put(clear(s.top), progressBar(run, s));
     const q = run.items[run.index];
+    const bossEl = run.kind === 'boss' ? bossBanner(run) : null;
+    pose(s.mascot, q.type === 'term' ? 'idle' : 'think');
     put(body,
+      bossEl,
       h('div', { class: 'tm-eyebrow' }, h('span', { class: 'tm-chip', text: KIND_LABEL[q.type] || '' })),
       h('p', { class: 'tm-q', 'data-autofocus': '', tabindex: '-1', text: q.q }));
     const feedback = h('div', { class: 'tm-feedback', role: 'status', 'aria-live': 'polite' });
@@ -1092,12 +1311,17 @@
       run.index += 1;
       if (run.index >= run.items.length) showResult(body, s, run); else showQuestion(body, s, run);
     } }, run.index + 1 >= run.items.length ? '看结果' : '下一题');
-    const settle = (ok, extra) => {
+    const settle = (ok, extra, src) => {
       if (ok) run.correct += 1;
+      run.streak = ok ? (run.streak || 0) + 1 : 0;
       sound(ok ? 'correct' : 'wrong');
       feedback.className = `tm-feedback ${ok ? 'is-ok' : 'is-bad'}`;
       put(clear(feedback), h('p', { class: 'tm-verdict', text: ok ? '答对了' : '再想想' }), ...extra, h('div', { class: 'tm-actions' }, nextBtn()));
       const nb = feedback.querySelector('.tm-primary'); if (nb) nb.focus();
+      pose(s.mascot, ok ? 'ok' : 'bad');
+      if (ok) burstAt(src, 'star', FX_BURST);
+      updateStreak(s, run, ok);
+      if (bossEl) bossReact(bossEl, run, ok, s);
     };
 
     if (q.type === 'term') {
@@ -1109,7 +1333,7 @@
             if (j === q.answer) b.classList.add('is-right');
             else if (j === i) b.classList.add('is-wrong');
           });
-          settle(i === q.answer, [h('p', { class: 'tm-explain', text: q.explain || '' })]);
+          settle(i === q.answer, [h('p', { class: 'tm-explain', text: q.explain || '' })], list.children[i]);
         } }, h('span', { class: 'tm-opt-badge', text: 'ABCD'[i] }), h('span', { class: 'tm-opt-text', text: text })));
       });
       put(body, list, feedback);
@@ -1120,7 +1344,8 @@
       const giveUp = h('button', { type: 'button', class: 'btn-nav tm-ghost', text: '不会，看解法' });
       const finish = ok => {
         input.disabled = true; submit.disabled = true; giveUp.disabled = true;
-        settle(ok, [h('p', { class: 'tm-answer', text: `标准答案：${numText(q.answer, q.unit)}` }), h('p', { class: 'tm-steps', text: q.steps || '' })]);
+        input.classList.add(ok ? 'is-right' : 'is-wrong');
+        settle(ok, [h('p', { class: 'tm-answer', text: `标准答案：${numText(q.answer, q.unit)}` }), h('p', { class: 'tm-steps', text: q.steps || '' })], submit);
       };
       const check = () => {
         const v = parseNumber(input.value);
@@ -1152,7 +1377,7 @@
           const got = boxArea.querySelectorAll('input:checked').length;
           boxArea.querySelectorAll('input').forEach(i => { i.disabled = true; });
           done.remove();
-          settle(got >= need, [h('p', { class: 'tm-explain', text: `你勾了 ${got} / ${q.points.length} 个要点。` })]);
+          settle(got >= need, [h('p', { class: 'tm-explain', text: `你勾了 ${got} / ${q.points.length} 个要点。` })], boxArea);
         });
         const first = boxArea.querySelector('input'); if (first) first.focus();
       });
@@ -1180,11 +1405,19 @@
     const unlockedNodes = map.nodes.filter(n => lockedBefore.includes(n.id) && !isLocked(subject, map, n));
     const unlocked = unlockedNodes.map(n => n.title);
     const fresh = unlockedNodes.filter(n => starsOf(subject, n.id) === 0);   // 跳级过去的不算「新」解锁
-    state.celebrate = passed && unlockedNodes.length ? { ids: (fresh.length ? fresh : unlockedNodes).map(n => n.id) } : null;
+    state.celebrate = passed && unlockedNodes.length ? { ids: (fresh.length ? fresh : unlockedNodes).map(n => n.id), from: run.id } : null;
     sound(passed ? 'correct' : 'wrong');
+    if (passed && run.kind === 'boss') sound('achieve');
+    // 结果页的主角：魔王倒下／得意地晃（用魔王的图），一般关卡是小精灵挥手或来鼓励
+    const bossPic = run.kind === 'boss' ? (artImg('boss', run.id, 'tm-boss-img', () => motifSvg('flag', 'tm-art')) || motifSvg('flag', 'tm-art')) : null;
+    const star = (i) => { const el = svgOf(i <= stars ? ICON.star : ICON.starOff, `tm-star tm-star-big${i <= stars ? ' is-lit' : ''}`); el.style.setProperty('--i', String(i - 1)); return el; };
+    const hero = bossPic
+      ? h('div', { class: `tm-result-boss ${passed ? 'is-defeated' : 'is-taunt'}`, 'aria-hidden': 'true' }, bossPic)
+      : (s.mascot ? (() => { const m = mascot('tm-mascot-r', 96); pose(m, passed ? (stars === 3 ? 'gift' : 'win') : 'bad'); return m; })() : null);
     put(body, 
+      hero,
       h('h3', { class: 'tm-sheet-title', 'data-autofocus': '', tabindex: '-1', text: passed ? (run.kind === 'boss' ? '魔王倒下了！' : '过关！') : '差一点' }),
-      h('div', { class: 'tm-result-stars', 'aria-label': `${stars} 颗星` }, [1, 2, 3].map(i => svgOf(i <= stars ? ICON.star : ICON.starOff, 'tm-star tm-star-big'))),
+      h('div', { class: 'tm-result-stars', 'aria-label': `${stars} 颗星` }, [1, 2, 3].map(star)),
       h('p', { class: 'tm-lead', text: `答对 ${run.correct} / ${total} 题（过关要 ${needed(total, run.ratio)} 题）。` }),
       passed && run.kind === 'boss' ? h('p', { class: 'tm-tip', text: '本小节的所有关卡已标成「跳级」，知识卡和反应册随时还能回头翻。' }) : null,
       passed && unlocked.length ? h('p', { class: 'tm-tip' }, h('b', { text: '解锁了：' }), unlocked.join('、')) : null,
@@ -1196,12 +1429,17 @@
           const items = run.kind === 'boss'
             ? (() => { const sec = map.sections.find(x => x.id === run.sectionId); const pool = sec.nodes.flatMap(id => nodeIndex(map)[id].challenges); return [...shuffle(pool).slice(0, BOSS_POOL).map(prepare), prepare(bossOf(map, run.id).extra)]; })()
             : nodeIndex(map)[run.id].challenges.map(prepare);
-          const next = { ...run, items, index: 0, correct: 0 };
+          const next = { ...run, items, index: 0, correct: 0, streak: 0, shown: null };
           state.celebrate = null;
           s.confirmClose = true; showQuestion(body, s, next);
         } }, '再来一次')));
     // 面板後面的地图先更新（星星、解锁），关掉面板就看得到
     refreshMap();
+    // 动效：过关撒彩带，亮着的星星一颗一颗弹出来、各迸一点火花
+    if (passed) {
+      setTimeout(() => confetti(run.kind === 'boss' ? Math.round(FX_CONFETTI * 1.5) : FX_CONFETTI), 120);
+      body.querySelectorAll('.tm-star.is-lit').forEach((el, i) => setTimeout(() => burstAt(el, 'sparkle', 6, 44), 260 + i * 220));
+    }
   }
 
   /* ---------- 反应册 ---------- */
@@ -1220,13 +1458,14 @@
   async function open(subject) {
     const box = root();
     if (!box) return;
-    state = { subject, data: null, mapId: null, cams: {}, view: null, celebrate: null, art: null, msg: null };
+    state = { subject, data: null, mapId: null, cams: {}, view: null, celebrate: null, art: null, msg: null, roadOpen: {} };
     clear(box);
     box.className = 'tm-root';
     put(box, h('p', { class: 'page-hint', role: 'status', text: '载入教学地图…' }));
     try {
       state.data = await loadData(subject);
       await loadArt();
+      preloadPoses();
       renderHome();
     } catch (e) {
       put(clear(box), h('p', { class: 'page-hint', text: '教学地图载入失败（可能没有网络）。' }),
