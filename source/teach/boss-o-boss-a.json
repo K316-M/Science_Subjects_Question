@@ -1,0 +1,4 @@
+{
+ "note": "蛇：原图已是透明底的 PNG，只是左边带了一小截邻居贴纸的碎片，所以 region 从 x=30 起，把碎片排除在外",
+ "items": [ { "name": "boss-o-boss-a", "region": [30, 0, 420, 453], "kind": "square", "size": 320 } ]
+}

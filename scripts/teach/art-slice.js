@@ -7,8 +7,11 @@
  *   3. square：缩成 size×size；banner：往里缩 inset 去掉圆角，再裁成 ratio
  * 两种特殊情况（写在 spec 里）：
  *   "key": "checker"  原图是 JPG／没有透明通道、棋盘格是画进像素里的（贴纸外面一圈奶白边）：先把棋盘格抠掉再切。
- *                     抠法：从四边往里涂满「中性灰（两种灰块）」，被奶白贴纸边围住的灰块洞也算（要整块都是那两种灰才算），
- *                     贴纸边外缘混了灰的那一圈像素按亮度还原成半透明。真透明的 PNG／WebP 永远比这个干净，能重发就重发。
+ *                     棋盘格的两种灰自动从四边数出来（深灰、浅灰的都行；数错了才在 spec 顶层写 "tones": [172, 222]）。
+ *                     抠法：从四边往里涂满「中性灰」；被贴纸围住的灰块洞（手脚之间的空隙）也算——整块几乎都是那两种灰，
+ *                     或四周一圈是奶白贴纸边（角色自己的灰零件外面是深色描边，不会被误删）；
+ *                     贴纸边外缘混了灰的那一圈像素，用「棋盘灰 → 奶白」这条线算出混了多少，还原成半透明。
+ *                     真透明的 PNG／WebP 永远比这个干净，能重发就重发。
  *   kind "photo"      整张图不抠、只缩小（封面这种铺满的图）：size = 宽度，高度按比例。
  */
 const fs = require('fs'), path = require('path');
@@ -17,13 +20,13 @@ const ROOT = path.join(__dirname, '..', '..');
 const [src, specPath] = process.argv.slice(2);
 if (!src || !specPath) { console.log('用法：node scripts/teach/art-slice.js <拼图> <spec.json>'); process.exit(1); }
 const specFile = JSON.parse(fs.readFileSync(specPath, 'utf8'));
-const spec = specFile.items, KEY = specFile.key || '';
+const spec = specFile.items, KEY = specFile.key || '', TONES = specFile.tones || null;
 const OUT = path.join(ROOT, 'assets', 'teach');
 (async () => {
   const b = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
   const p = await b.newPage();
   const data = fs.readFileSync(src).toString('base64');
-  const out = await p.evaluate(async ({ d, spec, KEY, mime }) => {
+  const out = await p.evaluate(async ({ d, spec, KEY, TONES: specTones, mime }) => {
     const img = new Image(); img.src = `data:${mime};base64,` + d; await img.decode();
     const W = img.naturalWidth, H = img.naturalHeight;
     const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.drawImage(img, 0, 0);
@@ -37,29 +40,57 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       photoOut.push({ name: sp.name, bytes: buf.length, b64: btoa(bin), w: f.width, h: f.height });
     }
     if (KEY === 'checker') {
-      const N0 = W * H, near = (v, c) => Math.abs(v - c) <= 8;
-      const gray = i => { const r = id[i * 4], g = id[i * 4 + 1], b = id[i * 4 + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b), L = (r + g + b) / 3; return mx - mn <= 10 && L >= 60 && L <= 112; };
+      const N0 = W * H, neutral = i => Math.max(id[i * 4], id[i * 4 + 1], id[i * 4 + 2]) - Math.min(id[i * 4], id[i * 4 + 1], id[i * 4 + 2]) <= 10;
+      // 棋盘格的两种灰：spec 的 tones 有写就用；没写就从四边 40 像素里数「中性灰」最多的两种（相差要 ≥ 16）
+      let tones = specTones;
+      if (!tones) {
+        const hist = {}; const add = (xx, yy) => { const i = yy * W + xx; if (neutral(i)) { const k = Math.round(id[i * 4] / 4) * 4; hist[k] = (hist[k] || 0) + 1; } };
+        for (let t = 0; t < 40; t++) for (let u = 0; u < W; u++) { add(u, t); add(u, H - 1 - t); }
+        const top = Object.entries(hist).map(([k, v]) => [+k, v]).sort((a, b) => b[1] - a[1]);
+        tones = [top[0][0], (top.find(e => Math.abs(e[0] - top[0][0]) >= 16) || top[0])[0]];
+      }
+      const lo = Math.min(...tones) - 12, hi = Math.max(...tones) + 12, near = (v, c) => Math.abs(v - c) <= 10;
+      const gray = i => neutral(i) && id[i * 4] >= lo && id[i * 4] <= hi;
+      // 洞里的灰块靠近奶白边时 JPG 会带一点暖色（max-min 到 20 上下），所以找洞时用放宽的 gray2
+      const gray2 = i => { const r = id[i * 4], g = id[i * 4 + 1], bl = id[i * 4 + 2], L = (r + g + bl) / 3; return Math.max(r, g, bl) - Math.min(r, g, bl) <= 22 && L >= lo - 14 && L <= hi; };
       const bg = new Uint8Array(N0), st = [];
       const seed = i => { if (!bg[i] && gray(i)) { bg[i] = 1; st.push(i); } };
       for (let xx = 0; xx < W; xx++) { seed(xx); seed((H - 1) * W + xx); } for (let yy = 0; yy < H; yy++) { seed(yy * W); seed(yy * W + W - 1); }
       while (st.length) { const q = st.pop(), qx = q % W, qy = (q / W) | 0; if (qx > 0) seed(q - 1); if (qx < W - 1) seed(q + 1); if (qy > 0) seed(q - W); if (qy < H - 1) seed(q + W); }
-      // 被围住的灰块洞：整块几乎都是那两种棋盘灰才算背景（角色自己的灰石头有色偏，不会被误删）
-      const seen = new Uint8Array(N0);
+      // 被围住的灰块洞（手脚之间的空隙）：两种情况才算背景——
+      //   ① 整块几乎都是那两种棋盘灰（≥ 150 像素、92% 以上）；
+      //   ② 面积小一点也行，但四周一圈是贴纸的奶白边（角色自己的灰色零件外面是深色描边，不会被误删）
+      const seen = new Uint8Array(N0), creamish = i => { const r = id[i * 4], g = id[i * 4 + 1], bl = id[i * 4 + 2]; return r >= 228 && g >= 218 && bl >= 188 && r - bl >= 12; };
       for (let s = 0; s < N0; s++) {
-        if (bg[s] || seen[s] || !gray(s)) continue;
+        if (bg[s] || seen[s] || !gray2(s)) continue;
         const comp = [s]; seen[s] = 1; let k = 0, ok = 0;
-        while (k < comp.length) { const q = comp[k++], qx = q % W, qy = (q / W) | 0; const v = id[q * 4]; if (near(v, 75) || near(v, 98)) ok++;
-          for (const t of [qx > 0 ? q - 1 : -1, qx < W - 1 ? q + 1 : -1, qy > 0 ? q - W : -1, qy < H - 1 ? q + W : -1]) if (t >= 0 && !seen[t] && !bg[t] && gray(t)) { seen[t] = 1; comp.push(t); } }
-        if (comp.length >= 150 && ok / comp.length >= 0.92) comp.forEach(q => { bg[q] = 1; });
+        while (k < comp.length) { const q = comp[k++], qx = q % W, qy = (q / W) | 0; const v = id[q * 4]; if (near(v, tones[0]) || near(v, tones[1])) ok++;
+          for (const t of [qx > 0 ? q - 1 : -1, qx < W - 1 ? q + 1 : -1, qy > 0 ? q - W : -1, qy < H - 1 ? q + W : -1]) if (t >= 0 && !seen[t] && !bg[t] && gray2(t)) { seen[t] = 1; comp.push(t); } }
+        let isBg = comp.length >= 150 && ok / comp.length >= 0.92;
+        if (!isBg && comp.length >= 8 && ok / comp.length >= 0.5) {
+          const mark = new Set(comp); let tot = 0, cr = 0;
+          for (const q of comp) { const qx = q % W, qy = (q / W) | 0;
+            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const x2 = qx + 2 * dx, y2 = qy + 2 * dy; if (x2 < 0 || y2 < 0 || x2 >= W || y2 >= H) continue; const t = y2 * W + x2; if (mark.has(t) || gray2(t)) continue; tot++; if (creamish(t)) cr++; } }
+          isBg = tot >= 6 && cr / tot >= 0.6;
+        }
+        if (isBg) comp.forEach(q => { bg[q] = 1; });
       }
-      // 贴纸外缘 2 像素：奶白混了灰 → 按亮度还原成半透明、颜色定成奶白
-      const edge = new Uint8Array(N0);
+      // 贴纸外缘 2 像素：奶白混了灰 → 用「附近棋盘灰 → 奶白」这条线算出混了多少，还原成半透明、颜色定成奶白
+      const edge = new Uint8Array(N0), CREAM = [251, 243, 223];
       for (let yy = 2; yy < H - 2; yy++) for (let xx = 2; xx < W - 2; xx++) { const i = yy * W + xx; if (bg[i]) continue;
         let near_bg = false; for (let dy = -2; dy <= 2 && !near_bg; dy++) for (let dx = -2; dx <= 2; dx++) if (bg[i + dy * W + dx]) { near_bg = true; break; } if (near_bg) edge[i] = 1; }
+      const alphaOf = (xx, yy) => {   // 这个像素里奶白占几成（0～1）；附近没有背景灰就当整个是奶白
+        let n = 0, g = 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const j = (yy + dy) * W + xx + dx; if (bg[j]) { n++; g += id[j * 4]; } }
+        if (!n) return 1; g /= n; const k = (yy * W + xx) * 4;
+        const vx = CREAM[0] - g, vy = CREAM[1] - g, vz = CREAM[2] - g;
+        return Math.max(0, Math.min(1, ((id[k] - g) * vx + (id[k + 1] - g) * vy + (id[k + 2] - g) * vz) / (vx * vx + vy * vy + vz * vz)));
+      };
+      const alpha = new Float32Array(N0).fill(1);
+      for (let yy = 2; yy < H - 2; yy++) for (let xx = 2; xx < W - 2; xx++) { const i = yy * W + xx; if (edge[i]) alpha[i] = alphaOf(xx, yy); }
       for (let i = 0; i < N0; i++) { const k = i * 4;
         if (bg[i]) { id[k + 3] = 0; continue; }
         id[k + 3] = 255;
-        if (edge[i]) { const L = (id[k] + id[k + 1] + id[k + 2]) / 3; if (L > 110) { const a = Math.max(0, Math.min(1, (L - 86) / (236 - 86))); if (a < 0.98) { id[k] = 251; id[k + 1] = 243; id[k + 2] = 223; id[k + 3] = Math.round(a * 255); } } else if (L < 90 && Math.max(id[k], id[k + 1], id[k + 2]) - Math.min(id[k], id[k + 1], id[k + 2]) > 4) { id[k + 3] = 0; } }
+        if (edge[i] && alpha[i] < 0.98) { id[k] = CREAM[0]; id[k + 1] = CREAM[1]; id[k + 2] = CREAM[2]; id[k + 3] = Math.round(alpha[i] * 255); }
       }
     }
     // 连通块（alpha > 8）
@@ -117,7 +148,7 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       result.push({ name: sp.name, filled: sp.filled || 0, box: [bx0, by0, bx1, by1], comps: mine.length, bytes: buf.length, b64: btoa(bin), w: sw, h: sh });
     }
     return { W, H, comps: big.map(k => [k.x0, k.y0, k.x1, k.y1, k.cnt]), result };
-  }, { d: data, spec, KEY, mime: /\.jpe?g$/i.test(src) ? 'image/jpeg' : /\.png$/i.test(src) ? 'image/png' : 'image/webp' });
+  }, { d: data, spec, KEY, TONES, mime: /\.jpe?g$/i.test(src) ? 'image/jpeg' : /\.png$/i.test(src) ? 'image/png' : 'image/webp' });
   console.log('拼图', out.W, '×', out.H);
   fs.mkdirSync(OUT, { recursive: true });
   const made = [];

@@ -138,7 +138,7 @@
 .tm-lockbadge .tm-art { width: 14px; height: 14px; }
 .is-boss .tm-disc.has-pic { margin-right: 4px; }
 .is-boss .tm-disc.has-pic .tm-disc-art { width: 72px; height: 72px; background: none; }
-.is-boss .tm-disc.has-pic .tm-disc-art .tm-art-img { width: 92px; height: 92px; max-width: none; margin: -10px; }
+.is-boss .tm-disc.has-pic .tm-disc-art .tm-art-img { width: 84px; height: 84px; max-width: none; margin: -6px; }
 .tm-root-art .tm-art-img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
 /* 封面铺满那个 100px 高的框；手机上卡片比较宽，图按比例会比 100px 高，所以绝对定位＋裁掉多的，不然会盖到下面的标题 */
 .tm-card-art { position: relative; overflow: hidden; }
