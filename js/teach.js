@@ -33,7 +33,7 @@
   const WALK_MS = 1100;          // 通关後小精灵沿路走到新关要多久（毫秒）
   // 魔王逐帧动画每一格停多久（毫秒）。待机来回播（1→2→3→2→1…），慢慢呼吸；受击、攻击每一格单独设：撞击那格快、定格那格久、收招再慢一点。
   // 数字比格数少（或以後多画了几格）就一直用最後一个
-  const FRAME_MS = { idle: 500, hit: [120, 300, 220], atk: [320, 140, 260] };
+  const FRAME_MS = { idle: 500, hit: [120, 300, 220], atk: [320, 130, 170, 200, 260] };
   const FRAME_BASE = 320;        // 切图 spec 里 size 的值（单张魔王图的边长）：逐帧图按它当「1 倍」放进格子，比单张图宽／高的部分（冲刺、速度线）露在格子外面
   const ROAD_PAINT_MS = 800;     // 新走通的路「染色」要多久（毫秒）
   const FIT_PAD = 28;            // 「适配」时四周留多宽
@@ -213,9 +213,10 @@
   function stopFrames(img) { if (img._tmFrames) { clearTimeout(img._tmFrames); img._tmFrames = 0; } }
   const pingPong = a => (a.length > 2 ? [...a, ...a.slice(1, -1).reverse()] : a);   // 1,2,3 → 1,2,3,2：循环时来回，不会从最後一格「跳」回第一格
   // 帧图的画布比单张魔王图宽／高（装得下冲刺、速度线）：角色要和单张图一样大，就按「画布 ÷ FRAME_BASE」放大格子、底边对齐、水平居中
-  function fitFrame(img) {
-    if (!img.dataset.fr || !img.naturalWidth) return;
-    const w = img.naturalWidth / FRAME_BASE * 100, hh = img.naturalHeight / FRAME_BASE * 100;
+  const frameDims = new Map();   // 帧网址 → [宽, 高]（预载时记下；换图之前就把格子调好，不会有一瞬间拉伸）
+  function fitFrame(img, nw = img.naturalWidth, nh = img.naturalHeight) {
+    if (!img.dataset.fr || !nw) return;
+    const w = nw / FRAME_BASE * 100, hh = nh / FRAME_BASE * 100;
     img.style.cssText = `position:absolute;bottom:0;left:50%;width:${w}%;height:${hh}%;margin-left:${-w / 2}%;max-width:none;object-fit:fill`;
   }
   function playFrames(img, urls, loop, done, ms) {
@@ -223,13 +224,14 @@
     let i = 0;
     img.dataset.fr = '1';
     if (!img._tmFit) { img._tmFit = 1; img.addEventListener('load', () => fitFrame(img)); }
-    img.src = urls[0];
+    const show = u => { const d = frameDims.get(u); if (d) fitFrame(img, d[0], d[1]); img.src = u; };
+    show(urls[0]);
     const wait = k => (Array.isArray(ms) ? ms[Math.min(k, ms.length - 1)] : ms);
     const next = () => {
       img._tmFrames = setTimeout(() => {
         if (!document.contains(img)) return stopFrames(img);   // 画面换掉了就自己停
         if (++i >= urls.length) { if (!loop) { stopFrames(img); if (done) done(); return; } i = 0; }
-        img.src = urls[i];
+        show(urls[i]);
         next();
       }, wait(i));
     };
@@ -238,7 +240,7 @@
   // 魔王图出现时：预载全部帧，有待机帧就开始循环
   function bossAlive(img, id) {
     if (!img || !canFx()) return;
-    ['idle', 'hit', 'atk'].forEach(a => frameList(id, a).forEach(u => { new Image().src = u; }));
+    ['idle', 'hit', 'atk'].forEach(a => frameList(id, a).forEach(u => { const im = new Image(); im.onload = () => frameDims.set(u, [im.naturalWidth, im.naturalHeight]); im.src = u; }));
     img.dataset.base = img.getAttribute('src');
     const idle = frameList(id, 'idle');
     if (idle.length > 1) { img.classList.add('is-framed'); playFrames(img, pingPong(idle), true, null, FRAME_MS.idle); }

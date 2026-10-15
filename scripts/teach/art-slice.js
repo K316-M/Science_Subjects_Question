@@ -20,6 +20,7 @@
  *                     并且把「角色身体（这格里最大的那一块）」的脚底中点对在同一个位置，播起来角色不会忽大忽小、跳来跳去。
  *                     name = 输出档名，例如 boss-i-boss-a-hit-1；group 随便取（同一魔王的所有格取同一个，连待机／受击／攻击也一起对齐）。
  *                     这一组的第一格当「中立姿势」：缩成和单张魔王图一样大（size = 单张图的边长）；其余格同一个比例。
+ *                     想让第二张拼图的格子和第一张对上：每张拼图的第一格都放中立姿势；不想输出那一格就加 "ref": true（只定比例，不输出）。
  *                     输出画布不是方的：以锚点（躯干重心、脚底）为中心，宽高刚好装下这一组里伸出去最远的一格，网站按同样的比例放回原来的格子（js/teach.js 的 FRAME_BASE）。
  *                     不同拼图之间也能对上——只要各自的第一格都是中立姿势、size 一样。
  */
@@ -196,10 +197,11 @@ const OUT = path.join(ROOT, 'assets', 'teach');
     for (const list of Object.values(frames)) {
       // 缩放比例：这一组的第一格（中立姿势）和单张魔王图一样大（长边占 1 - 2×pad）；整组共用，所以挥手、冲刺不会让角色忽大忽小。
       // 画布：以锚点为中心左右对称，宽度取这一组里伸出去最远的一格，高度取最高的一格——冲刺、速度线放得下，角色不会为了它们缩小
-      const size = list[0].sp.size, pad = list[0].sp.pad || 0.02, ref = list[0], pp = size * pad;
+      // spec 里写了 "ref": true 的格子只用来定缩放比例（例如另一张拼图里的中立姿势），不输出、也不算画布范围
+      const size = list[0].sp.size, pad = list[0].sp.pad || 0.02, ref = list.find(g => g.sp.ref) || list[0], pp = size * pad, out = list.filter(g => !g.sp.ref);
       const sc = size * (1 - 2 * pad) / Math.max(ref.w, ref.h);
-      const Wc = Math.ceil(2 * (Math.max(...list.map(g => Math.max(g.ax, g.w - g.ax))) * sc + pp)), Hc = Math.ceil(Math.max(...list.map(g => g.ay)) * sc + 2 * pp);
-      for (const g of list) {
+      const Wc = Math.ceil(2 * (Math.max(...out.map(g => Math.max(g.ax, g.w - g.ax))) * sc + pp)), Hc = Math.ceil(Math.max(...out.map(g => g.ay)) * sc + 2 * pp);
+      for (const g of out) {
         const f = document.createElement('canvas'); f.width = Wc; f.height = Hc; const fx = f.getContext('2d'); fx.imageSmoothingQuality = 'high';
         fx.drawImage(g.tmp, 0, 0, g.w, g.h, Wc / 2 - g.ax * sc, Hc - pp - g.ay * sc, g.w * sc, g.h * sc);
         const [b64, bytes] = await toB64(f);

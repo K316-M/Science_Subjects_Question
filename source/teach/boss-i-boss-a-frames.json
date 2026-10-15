@@ -1,9 +1,10 @@
 {
- "note": "i-boss-a 的逐帧动作拼图（即梦生成，纯洋红底、3×3：第 1 行待机、第 2 行受击、第 3 行攻击）；key = color 抠掉洋红底；kind frame＋同一个 group = 整组共用缩放、躯干与脚底对齐",
+ "note": "i-boss-a 的逐帧动作拼图 ①（3×3：第 1 行待机、第 2 行受击、第 3 行攻击）。只用受击 3 格＋攻击的出击（atk-3）、收招（atk-5）；第 1 行第 1 格是中立姿势，ref = 只定缩放比例；key = color 抠掉洋红底",
  "key": "color",
  "items": [
   {
-   "name": "boss-i-boss-a-idle-1",
+   "name": "ref-neutral",
+   "ref": true,
    "group": "i-boss-a",
    "kind": "frame",
    "size": 320,
@@ -11,30 +12,6 @@
     0,
     0,
     418,
-    418
-   ]
-  },
-  {
-   "name": "boss-i-boss-a-idle-2",
-   "group": "i-boss-a",
-   "kind": "frame",
-   "size": 320,
-   "region": [
-    418,
-    0,
-    836,
-    418
-   ]
-  },
-  {
-   "name": "boss-i-boss-a-idle-3",
-   "group": "i-boss-a",
-   "kind": "frame",
-   "size": 320,
-   "region": [
-    836,
-    0,
-    1254,
     418
    ]
   },
@@ -75,31 +52,19 @@
    ]
   },
   {
-   "name": "boss-i-boss-a-atk-1",
-   "group": "i-boss-a",
-   "kind": "frame",
-   "size": 320,
-   "region": [
-    0,
-    836,
-    418,
-    1254
-   ]
-  },
-  {
-   "name": "boss-i-boss-a-atk-2",
-   "group": "i-boss-a",
-   "kind": "frame",
-   "size": 320,
-   "region": [
-    418,
-    836,
-    836,
-    1254
-   ]
-  },
-  {
    "name": "boss-i-boss-a-atk-3",
+   "group": "i-boss-a",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    418,
+    836,
+    836,
+    1254
+   ]
+  },
+  {
+   "name": "boss-i-boss-a-atk-5",
    "group": "i-boss-a",
    "kind": "frame",
    "size": 320,
