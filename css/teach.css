@@ -79,7 +79,7 @@
   --tm-road-dash: #fff8e4;     /* 路中间的虚线 */
   --tm-sign: #ecd29b;          /* 小节牌子（木牌） */
   --tm-sparkle: rgba(255, 255, 255, .6);
-  position: relative; margin: 12px 0 0; scroll-margin-top: 96px; height: 70vh; height: clamp(420px, calc(100dvh - 260px), 880px);
+  position: relative; margin: 12px 0 0; scroll-margin-top: calc(56px + 40px); height: 70vh; height: clamp(420px, calc(100dvh - 260px), 880px);
   width: max(100%, min(calc(100vw - 48px), 1400px)); margin-left: calc(50% - max(100%, min(calc(100vw - 48px), 1400px)) / 2);   /* 比文字栏宽：画布越大越像一张世界地图 */
   border: 3px solid var(--tm-ink); border-radius: 24px; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
   background: radial-gradient(var(--tm-sparkle) 1.2px, transparent 1.5px) 0 0 / 16px 16px, var(--tm-sea); box-shadow: 4px 4px 0 var(--tm-ink);
