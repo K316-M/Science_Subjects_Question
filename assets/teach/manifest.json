@@ -1,6 +1,15 @@
 {
  "note": "放进 assets/teach/ 的插画文件名（<cover|node|boss>-<id>.webp）。登记了的才会载入，没登记的用内置图案。清单见 docs/ART_BRIEF.md",
  "files": [
+  "boss-i-boss-a-atk-1.webp",
+  "boss-i-boss-a-atk-2.webp",
+  "boss-i-boss-a-atk-3.webp",
+  "boss-i-boss-a-hit-1.webp",
+  "boss-i-boss-a-hit-2.webp",
+  "boss-i-boss-a-hit-3.webp",
+  "boss-i-boss-a-idle-1.webp",
+  "boss-i-boss-a-idle-2.webp",
+  "boss-i-boss-a-idle-3.webp",
   "boss-i-boss-a.webp",
   "boss-i-boss-b.webp",
   "boss-i-boss-c.webp",

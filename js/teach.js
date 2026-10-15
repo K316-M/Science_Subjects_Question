@@ -32,6 +32,7 @@
   const FX_CONFETTI = 40;        // 过关时撒几片彩带（魔王倒下时 1.5 倍）
   const WALK_MS = 1100;          // 通关後小精灵沿路走到新关要多久（毫秒）
   const FRAME_MS = 140;          // 魔王逐帧动画每一格停多久（毫秒）；越小越快，7 格/秒左右最像手绘
+  const FRAME_BASE = 320;        // 切图 spec 里 size 的值（单张魔王图的边长）：逐帧图按它当「1 倍」放进格子，比单张图宽／高的部分（冲刺、速度线）露在格子外面
   const ROAD_PAINT_MS = 800;     // 新走通的路「染色」要多久（毫秒）
   const FIT_PAD = 28;            // 「适配」时四周留多宽
   const REGION_GAP = 110;        // 小节与小节之间（沿前进方向）隔多远
@@ -208,9 +209,17 @@
     return out;
   }
   function stopFrames(img) { if (img._tmFrames) { clearInterval(img._tmFrames); img._tmFrames = 0; } }
+  // 帧图的画布比单张魔王图宽／高（装得下冲刺、速度线）：角色要和单张图一样大，就按「画布 ÷ FRAME_BASE」放大格子、底边对齐、水平居中
+  function fitFrame(img) {
+    if (!img.dataset.fr || !img.naturalWidth) return;
+    const w = img.naturalWidth / FRAME_BASE * 100, hh = img.naturalHeight / FRAME_BASE * 100;
+    img.style.cssText = `position:absolute;bottom:0;left:50%;width:${w}%;height:${hh}%;margin-left:${-w / 2}%;max-width:none;object-fit:fill`;
+  }
   function playFrames(img, urls, loop, done) {
     stopFrames(img);
     let i = 0;
+    img.dataset.fr = '1';
+    if (!img._tmFit) { img._tmFit = 1; img.addEventListener('load', () => fitFrame(img)); }
     img.src = urls[0];
     img._tmFrames = setInterval(() => {
       if (!document.contains(img)) return stopFrames(img);   // 画面换掉了就自己停
@@ -229,7 +238,7 @@
   // 回到待机：有待机帧就循环，没有就换回原来那张
   function bossRest(img, id) {
     const idle = canFx() ? frameList(id, 'idle') : [];
-    if (idle.length > 1) playFrames(img, idle, true); else { stopFrames(img); if (img.dataset.base) img.src = img.dataset.base; }
+    if (idle.length > 1) playFrames(img, idle, true); else { stopFrames(img); delete img.dataset.fr; img.style.cssText = ''; if (img.dataset.base) img.src = img.dataset.base; }
   }
 
   /* ---------- 动效：星星迸发、彩带、小精灵的表情（都是临时元素，播完就移除；「减少动态」时不播） ---------- */

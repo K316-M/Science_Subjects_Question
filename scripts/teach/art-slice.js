@@ -19,7 +19,9 @@
  *   kind "frame"      逐帧动画的一格（一张拼图里排一排，或每格一个 spec 都行）：同一个 "group" 的所有格共用一个缩放比例，
  *                     并且把「角色身体（这格里最大的那一块）」的脚底中点对在同一个位置，播起来角色不会忽大忽小、跳来跳去。
  *                     name = 输出档名，例如 boss-i-boss-a-hit-1；group 随便取（同一魔王的所有格取同一个，连待机／受击／攻击也一起对齐）。
- *                     size = 画布边长（方形）。不同拼图里的格子对不齐——想让待机、受击、攻击彼此对齐，放进同一张拼图。
+ *                     这一组的第一格当「中立姿势」：缩成和单张魔王图一样大（size = 单张图的边长）；其余格同一个比例。
+ *                     输出画布不是方的：以锚点（躯干重心、脚底）为中心，宽高刚好装下这一组里伸出去最远的一格，网站按同样的比例放回原来的格子（js/teach.js 的 FRAME_BASE）。
+ *                     不同拼图之间也能对上——只要各自的第一格都是中立姿势、size 一样。
  */
 const fs = require('fs'), path = require('path');
 let chromium; try { ({ chromium } = require('playwright-core')); } catch (e) { ({ chromium } = require('playwright')); }
@@ -51,7 +53,7 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       const bg = new Uint8Array(N0), st = [];
       if (KEY === 'color') {
         // 纯色背景（请绘图 AI 画成洋红 #FF00FF 这类角色身上没有的颜色）：背景色 = 四边 40 像素里最多的那个颜色；
-        // 离背景色 tol 以内、和四边连着的像素是背景；被围住的背景色空隙（手脚之间）≥ 150 像素的也是背景
+        // 离背景色 tol 以内、和四边连着的像素是背景；被围住的背景色空隙（手脚之间、速度线圈起来的小洞）也是背景
         const hist = {}, q8 = v => Math.round(v / 8) * 8;
         for (let t = 0; t < 40; t++) for (let u = 0; u < W; u++) for (const yy of [t, H - 1 - t]) { const k = (yy * W + u) * 4, key = q8(id[k]) + ',' + q8(id[k + 1]) + ',' + q8(id[k + 2]); hist[key] = (hist[key] || 0) + 1; }
         const bgc = Object.entries(hist).sort((a, b) => b[1] - a[1])[0][0].split(',').map(Number), cd = Math.hypot(bgc[0] - 251, bgc[1] - 243, bgc[2] - 223), tol = specTol || Math.min(70, Math.round(cd * 0.6)), tol2 = tol * tol;   // 背景色离奶白越近（白底）容许范围越小，不然会吃掉贴纸边
@@ -64,7 +66,7 @@ const OUT = path.join(ROOT, 'assets', 'teach');
           if (bg[s0] || seen[s0] || !like(s0)) continue;
           const comp = [s0]; seen[s0] = 1; let k = 0;
           while (k < comp.length) { const q = comp[k++], qx = q % W, qy = (q / W) | 0; for (const t of [qx > 0 ? q - 1 : -1, qx < W - 1 ? q + 1 : -1, qy > 0 ? q - W : -1, qy < H - 1 ? q + W : -1]) if (t >= 0 && !seen[t] && !bg[t] && like(t)) { seen[t] = 1; comp.push(t); } }
-          if (comp.length >= 150) comp.forEach(q => { bg[q] = 1; });
+          if (comp.length >= 6) comp.forEach(q => { bg[q] = 1; });   // 被围住的背景色空隙（速度线、星星、手脚之间），再小也是背景：角色身上没有这个颜色
         }
       } else {
       // 棋盘格的两种灰：spec 的 tones 有写就用；没写就从四边 40 像素里数「中性灰」最多的两种（相差要 ≥ 16）
@@ -104,16 +106,17 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       }
       // 贴纸外缘 2 像素：奶白混了灰 → 用「附近棋盘灰 → 奶白」这条线算出混了多少，还原成半透明、颜色定成奶白
       const edge = new Uint8Array(N0), CREAM = [251, 243, 223];
-      for (let yy = 2; yy < H - 2; yy++) for (let xx = 2; xx < W - 2; xx++) { const i = yy * W + xx; if (bg[i]) continue;
-        let near_bg = false; for (let dy = -2; dy <= 2 && !near_bg; dy++) for (let dx = -2; dx <= 2; dx++) if (bg[i + dy * W + dx]) { near_bg = true; break; } if (near_bg) edge[i] = 1; }
+      const R = 2;   // 贴纸外缘往里算几像素
+      for (let yy = R; yy < H - R; yy++) for (let xx = R; xx < W - R; xx++) { const i = yy * W + xx; if (bg[i]) continue;
+        let near_bg = false; for (let dy = -R; dy <= R && !near_bg; dy++) for (let dx = -R; dx <= R; dx++) if (bg[i + dy * W + dx]) { near_bg = true; break; } if (near_bg) edge[i] = 1; }
       const alphaOf = (xx, yy) => {   // 这个像素里奶白占几成（0～1）；附近没有背景灰就当整个是奶白
-        let n = 0, gr = 0, gg = 0, gb = 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const j = (yy + dy) * W + xx + dx; if (bg[j]) { n++; gr += id[j * 4]; gg += id[j * 4 + 1]; gb += id[j * 4 + 2]; } }
+        let n = 0, gr = 0, gg = 0, gb = 0; for (let dy = -R; dy <= R; dy++) for (let dx = -R; dx <= R; dx++) { const j = (yy + dy) * W + xx + dx; if (bg[j]) { n++; gr += id[j * 4]; gg += id[j * 4 + 1]; gb += id[j * 4 + 2]; } }
         if (!n) return 1; gr /= n; gg /= n; gb /= n; const k = (yy * W + xx) * 4;
         const vx = CREAM[0] - gr, vy = CREAM[1] - gg, vz = CREAM[2] - gb;
         return Math.max(0, Math.min(1, ((id[k] - gr) * vx + (id[k + 1] - gg) * vy + (id[k + 2] - gb) * vz) / (vx * vx + vy * vy + vz * vz)));
       };
       const alpha = new Float32Array(N0).fill(1);
-      for (let yy = 2; yy < H - 2; yy++) for (let xx = 2; xx < W - 2; xx++) { const i = yy * W + xx; if (edge[i]) alpha[i] = alphaOf(xx, yy); }
+      for (let yy = R; yy < H - R; yy++) for (let xx = R; xx < W - R; xx++) { const i = yy * W + xx; if (edge[i]) alpha[i] = alphaOf(xx, yy); }
       for (let i = 0; i < N0; i++) { const k = i * 4;
         if (bg[i]) { id[k + 3] = 0; continue; }
         id[k + 3] = 255;
@@ -159,9 +162,19 @@ const OUT = path.join(ROOT, 'assets', 'teach');
         sp.filled = filled;
       }
       tx.putImageData(o, 0, 0);
-      if (sp.kind === 'frame') {   // 先收着，这一组的格子都切完再一起排（要知道最大的范围才能定缩放比例）
-        const body = mine.reduce((a, k) => (k.cnt > a.cnt ? k : a));
-        (frames[sp.group || sp.name] = frames[sp.group || sp.name] || []).push({ sp, tmp, w, h, ax: (body.x0 + body.x1 + 1) / 2 - bx0, ay: body.y1 + 1 - by0 });
+      if (sp.kind === 'frame') {   // 先收着，这一组的格子都切完再一起排（要知道最大的范围才能定画布大小）
+        // 锚点：x = 「粗壮的部分」（躯干和脚）的重心——手臂、速度线、星星太细，离边缘不够远，不算；y = 整个贴纸的最低点（脚底）。
+        // 这样角色冲刺、後仰时锚点还在躯干上，不会被伸出去的天平、速度线拖着跑
+        const INF = 1e9, dist = new Float32Array(N);
+        for (let i = 0; i < N; i++) dist[i] = D[i * 4 + 3] >= 128 ? INF : 0;
+        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) { const i = yy * w + xx; if (!dist[i]) continue;
+          dist[i] = Math.min(dist[i], (xx > 0 ? dist[i - 1] : 0) + 3, (yy > 0 ? dist[i - w] : 0) + 3, (xx > 0 && yy > 0 ? dist[i - w - 1] : 0) + 4, (xx < w - 1 && yy > 0 ? dist[i - w + 1] : 0) + 4); }
+        for (let yy = h - 1; yy >= 0; yy--) for (let xx = w - 1; xx >= 0; xx--) { const i = yy * w + xx; if (!dist[i]) continue;
+          dist[i] = Math.min(dist[i], (xx < w - 1 ? dist[i + 1] : 0) + 3, (yy < h - 1 ? dist[i + w] : 0) + 3, (xx < w - 1 && yy < h - 1 ? dist[i + w + 1] : 0) + 4, (xx > 0 && yy < h - 1 ? dist[i + w - 1] : 0) + 4); }
+        let mx = 0; for (let i = 0; i < N; i++) if (dist[i] < INF && dist[i] > mx) mx = dist[i];
+        let sx = 0, cn = 0, bottom = 0;
+        for (let i = 0; i < N; i++) { if (dist[i] >= mx * 0.5) { sx += i % w; cn++; } if (D[i * 4 + 3] >= 128) bottom = Math.max(bottom, (i / w) | 0); }
+        (frames[sp.group || sp.name] = frames[sp.group || sp.name] || []).push({ sp, tmp, w, h, ax: sx / cn + 0.5, ay: bottom + 1 });
         continue;
       }
       const f = document.createElement('canvas');
@@ -181,16 +194,16 @@ const OUT = path.join(ROOT, 'assets', 'teach');
     }
     const toB64 = async cv => { const blob = await new Promise(r => cv.toBlob(r, 'image/webp', 0.92)); const buf = new Uint8Array(await blob.arrayBuffer()); let bin = ''; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000)); return [btoa(bin), buf.length]; };
     for (const list of Object.values(frames)) {
-      // 以脚底中点为锚：每格往左／右／上／下各伸出多远，取这一组里最远的；缩放比例让最大的范围刚好放进画布，整组共用
-      const size = list[0].sp.size, pad = list[0].sp.pad || 0.02;
-      const L = Math.max(...list.map(g => g.ax)), R = Math.max(...list.map(g => g.w - g.ax)), U = Math.max(...list.map(g => g.ay)), D = Math.max(...list.map(g => g.h - g.ay));
-      const sc = Math.min(size * (1 - 2 * pad) / (L + R), size * (1 - 2 * pad) / (U + D));
-      const cx = (size - sc * (R - L)) / 2, cy = (size - sc * (D - U)) / 2;   // 锚点落在画布的哪里（整组一样）
+      // 缩放比例：这一组的第一格（中立姿势）和单张魔王图一样大（长边占 1 - 2×pad）；整组共用，所以挥手、冲刺不会让角色忽大忽小。
+      // 画布：以锚点为中心左右对称，宽度取这一组里伸出去最远的一格，高度取最高的一格——冲刺、速度线放得下，角色不会为了它们缩小
+      const size = list[0].sp.size, pad = list[0].sp.pad || 0.02, ref = list[0], pp = size * pad;
+      const sc = size * (1 - 2 * pad) / Math.max(ref.w, ref.h);
+      const Wc = Math.ceil(2 * (Math.max(...list.map(g => Math.max(g.ax, g.w - g.ax))) * sc + pp)), Hc = Math.ceil(Math.max(...list.map(g => g.ay)) * sc + 2 * pp);
       for (const g of list) {
-        const f = document.createElement('canvas'); f.width = f.height = size; const fx = f.getContext('2d'); fx.imageSmoothingQuality = 'high';
-        fx.drawImage(g.tmp, 0, 0, g.w, g.h, cx - g.ax * sc, cy - g.ay * sc, g.w * sc, g.h * sc);
+        const f = document.createElement('canvas'); f.width = Wc; f.height = Hc; const fx = f.getContext('2d'); fx.imageSmoothingQuality = 'high';
+        fx.drawImage(g.tmp, 0, 0, g.w, g.h, Wc / 2 - g.ax * sc, Hc - pp - g.ay * sc, g.w * sc, g.h * sc);
         const [b64, bytes] = await toB64(f);
-        result.push({ name: g.sp.name, filled: g.sp.filled || 0, bytes, b64, w: size, h: size });
+        result.push({ name: g.sp.name, filled: g.sp.filled || 0, bytes, b64, w: Wc, h: Hc });
       }
     }
     return { W, H, comps: big.map(k => [k.x0, k.y0, k.x1, k.y1, k.cnt]), result };
