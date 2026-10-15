@@ -58,15 +58,16 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       for (let xx = 0; xx < W; xx++) { seed(xx); seed((H - 1) * W + xx); } for (let yy = 0; yy < H; yy++) { seed(yy * W); seed(yy * W + W - 1); }
       while (st.length) { const q = st.pop(), qx = q % W, qy = (q / W) | 0; if (qx > 0) seed(q - 1); if (qx < W - 1) seed(q + 1); if (qy > 0) seed(q - W); if (qy < H - 1) seed(q + W); }
       // 被围住的灰块洞（手脚之间的空隙）：两种情况才算背景——
-      //   ① 整块几乎都是那两种棋盘灰（≥ 150 像素、92% 以上）；
+      //   ① 整块几乎都是那两种棋盘灰（≥ 150 像素、92% 以上；大块的两种灰都有就放宽到 68%）；
       //   ② 面积小一点也行，但四周一圈是贴纸的奶白边（角色自己的灰色零件外面是深色描边，不会被误删）
       const seen = new Uint8Array(N0), creamish = i => { const r = id[i * 4], g = id[i * 4 + 1], bl = id[i * 4 + 2]; return r >= 228 && g >= 218 && bl >= 188 && r - bl >= 12; };
       for (let s = 0; s < N0; s++) {
         if (bg[s] || seen[s] || !gray2(s)) continue;
-        const comp = [s]; seen[s] = 1; let k = 0, ok = 0;
-        while (k < comp.length) { const q = comp[k++], qx = q % W, qy = (q / W) | 0; const v = id[q * 4]; if (near(v, tones[0]) || near(v, tones[1])) ok++;
+        const comp = [s]; seen[s] = 1; let k = 0, ok = 0, n0 = 0, n1 = 0;
+        while (k < comp.length) { const q = comp[k++], qx = q % W, qy = (q / W) | 0; const v = id[q * 4]; if (near(v, tones[0])) { ok++; n0++; } else if (near(v, tones[1])) { ok++; n1++; }
           for (const t of [qx > 0 ? q - 1 : -1, qx < W - 1 ? q + 1 : -1, qy > 0 ? q - W : -1, qy < H - 1 ? q + W : -1]) if (t >= 0 && !seen[t] && !bg[t] && gray2(t)) { seen[t] = 1; comp.push(t); } }
-        let isBg = comp.length >= 150 && ok / comp.length >= 0.92;
+        // 大块的空隙：两种灰都占一定比例就算（格子交界处 JPG 会糊出中间灰，所以门槛比小块低）
+        let isBg = (comp.length >= 150 && ok / comp.length >= 0.92) || (comp.length >= 300 && ok / comp.length >= 0.68 && n0 / comp.length >= 0.15 && n1 / comp.length >= 0.15);
         if (!isBg && comp.length >= 8 && ok / comp.length >= 0.5) {
           const mark = new Set(comp); let tot = 0, cr = 0;
           for (const q of comp) { const qx = q % W, qy = (q / W) | 0;
