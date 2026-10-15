@@ -31,7 +31,9 @@
   const FX_BURST = 14;           // 答对时从按钮迸出几颗星
   const FX_CONFETTI = 40;        // 过关时撒几片彩带（魔王倒下时 1.5 倍）
   const WALK_MS = 1100;          // 通关後小精灵沿路走到新关要多久（毫秒）
-  const FRAME_MS = 140;          // 魔王逐帧动画每一格停多久（毫秒）；越小越快，7 格/秒左右最像手绘
+  // 魔王逐帧动画每一格停多久（毫秒）。待机来回播（1→2→3→2→1…），慢慢呼吸；受击、攻击每一格单独设：撞击那格快、定格那格久、收招再慢一点。
+  // 数字比格数少（或以後多画了几格）就一直用最後一个
+  const FRAME_MS = { idle: 500, hit: [120, 300, 220], atk: [320, 140, 260] };
   const FRAME_BASE = 320;        // 切图 spec 里 size 的值（单张魔王图的边长）：逐帧图按它当「1 倍」放进格子，比单张图宽／高的部分（冲刺、速度线）露在格子外面
   const ROAD_PAINT_MS = 800;     // 新走通的路「染色」要多久（毫秒）
   const FIT_PAD = 28;            // 「适配」时四周留多宽
@@ -208,24 +210,30 @@
     while (state.art && state.art.has(`boss-${id}-${anim}-${out.length + 1}.webp`)) out.push(`/assets/teach/boss-${id}-${anim}-${out.length + 1}.webp`);
     return out;
   }
-  function stopFrames(img) { if (img._tmFrames) { clearInterval(img._tmFrames); img._tmFrames = 0; } }
+  function stopFrames(img) { if (img._tmFrames) { clearTimeout(img._tmFrames); img._tmFrames = 0; } }
+  const pingPong = a => (a.length > 2 ? [...a, ...a.slice(1, -1).reverse()] : a);   // 1,2,3 → 1,2,3,2：循环时来回，不会从最後一格「跳」回第一格
   // 帧图的画布比单张魔王图宽／高（装得下冲刺、速度线）：角色要和单张图一样大，就按「画布 ÷ FRAME_BASE」放大格子、底边对齐、水平居中
   function fitFrame(img) {
     if (!img.dataset.fr || !img.naturalWidth) return;
     const w = img.naturalWidth / FRAME_BASE * 100, hh = img.naturalHeight / FRAME_BASE * 100;
     img.style.cssText = `position:absolute;bottom:0;left:50%;width:${w}%;height:${hh}%;margin-left:${-w / 2}%;max-width:none;object-fit:fill`;
   }
-  function playFrames(img, urls, loop, done) {
+  function playFrames(img, urls, loop, done, ms) {
     stopFrames(img);
     let i = 0;
     img.dataset.fr = '1';
     if (!img._tmFit) { img._tmFit = 1; img.addEventListener('load', () => fitFrame(img)); }
     img.src = urls[0];
-    img._tmFrames = setInterval(() => {
-      if (!document.contains(img)) return stopFrames(img);   // 画面换掉了就自己停
-      if (++i >= urls.length) { if (!loop) { stopFrames(img); if (done) done(); return; } i = 0; }
-      img.src = urls[i];
-    }, FRAME_MS);
+    const wait = k => (Array.isArray(ms) ? ms[Math.min(k, ms.length - 1)] : ms);
+    const next = () => {
+      img._tmFrames = setTimeout(() => {
+        if (!document.contains(img)) return stopFrames(img);   // 画面换掉了就自己停
+        if (++i >= urls.length) { if (!loop) { stopFrames(img); if (done) done(); return; } i = 0; }
+        img.src = urls[i];
+        next();
+      }, wait(i));
+    };
+    next();
   }
   // 魔王图出现时：预载全部帧，有待机帧就开始循环
   function bossAlive(img, id) {
@@ -233,12 +241,12 @@
     ['idle', 'hit', 'atk'].forEach(a => frameList(id, a).forEach(u => { new Image().src = u; }));
     img.dataset.base = img.getAttribute('src');
     const idle = frameList(id, 'idle');
-    if (idle.length > 1) { img.classList.add('is-framed'); playFrames(img, idle, true); }
+    if (idle.length > 1) { img.classList.add('is-framed'); playFrames(img, pingPong(idle), true, null, FRAME_MS.idle); }
   }
   // 回到待机：有待机帧就循环，没有就换回原来那张
   function bossRest(img, id) {
     const idle = canFx() ? frameList(id, 'idle') : [];
-    if (idle.length > 1) playFrames(img, idle, true); else { stopFrames(img); delete img.dataset.fr; img.style.cssText = ''; if (img.dataset.base) img.src = img.dataset.base; }
+    if (idle.length > 1) playFrames(img, pingPong(idle), true, null, FRAME_MS.idle); else { stopFrames(img); delete img.dataset.fr; img.style.cssText = ''; if (img.dataset.base) img.src = img.dataset.base; }
   }
 
   /* ---------- 动效：星星迸发、彩带、小精灵的表情（都是临时元素，播完就移除；「减少动态」时不播） ---------- */
@@ -1279,7 +1287,7 @@
     const img = banner && banner.querySelector('img.tm-boss-img');
     if (!img) return;
     const id = banner.dataset.id, frames = canFx() ? frameList(id, name) : [];
-    if (frames.length) { playFrames(img, frames, false, () => bossRest(img, id)); return; }
+    if (frames.length) { playFrames(img, frames, false, () => bossRest(img, id), FRAME_MS[name]); return; }
     const file = `boss-${id}-${name}.webp`;
     if (!state.art || !state.art.has(file)) return;
     img.src = `/assets/teach/${file}`;
@@ -1457,7 +1465,7 @@
     if (bossPic && bossPic.tagName === 'IMG' && canFx()) {   // 倒下：播受击帧停在最後一格；没过：先反击一下再待机
       const once = frameList(run.id, passed ? 'hit' : 'atk');
       bossPic.dataset.base = bossPic.getAttribute('src');
-      if (once.length) { bossPic.classList.add('is-framed'); playFrames(bossPic, once, false, passed ? null : () => bossRest(bossPic, run.id)); }
+      if (once.length) { bossPic.classList.add('is-framed'); playFrames(bossPic, once, false, passed ? null : () => bossRest(bossPic, run.id), FRAME_MS[passed ? 'hit' : 'atk']); }
       else if (!passed) bossAlive(bossPic, run.id);
     }
     const star = (i) => { const el = svgOf(i <= stars ? ICON.star : ICON.starOff, `tm-star tm-star-big${i <= stars ? ' is-lit' : ''}`); el.style.setProperty('--i', String(i - 1)); return el; };

@@ -338,8 +338,8 @@ body.tm-lock { overflow: hidden; }
 /* 魔王战：横幅（魔王的图＋血条）。血条的格数 = 过关要答对的题数，答对掉一格，答错魔王反击 */
 .tm-boss { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 3px solid var(--tm-ink); border-radius: 18px;
   background: repeating-linear-gradient(135deg, color-mix(in oklab, var(--tm-b) 35%, var(--tm-paper)) 0 10px, var(--tm-paper) 10px 20px); }
-.tm-boss-art { position: relative; flex: none; display: grid; place-items: center; width: 72px; height: 72px; }
-.tm-boss-art .tm-art { width: 52px; height: 52px; }
+.tm-boss-art { --tm-boss-size: 104px; position: relative; flex: none; display: grid; place-items: center; width: var(--tm-boss-size); height: var(--tm-boss-size); }   /* 魔王战横幅里的魔王多大 */
+.tm-boss-art .tm-art { width: 72%; height: 72%; }
 .tm-boss-img { transform-origin: 50% 90%; animation: tm-boss-bob 2.2s ease-in-out infinite alternate; }
 .tm-boss-img.is-framed { animation: none; }   /* 有逐帧动画就不再晃（帧里自己会动） */
 .tm-boss-art.is-hit { animation: tm-boss-hit .46s ease; }
@@ -352,8 +352,8 @@ body.tm-lock { overflow: hidden; }
 .tm-hp-seg.is-break { animation: tm-seg-break .6s ease-out; }
 .tm-hp-note { font-size: 12px; line-height: 1.4; }
 .tm-dmg { position: absolute; left: 50%; top: 0; font-size: 16px; font-weight: 800; line-height: 1; color: var(--tm-hp); white-space: nowrap; pointer-events: none; animation: tm-float-up .9s ease-out forwards; }
-.tm-result-boss { position: relative; display: grid; place-items: center; width: 120px; height: 120px; align-self: center; }
-.tm-result-boss .tm-art { width: 80px; height: 80px; }
+.tm-result-boss { --tm-boss-big: 160px; position: relative; display: grid; place-items: center; width: var(--tm-boss-big); height: var(--tm-boss-big); align-self: center; }   /* 结果页的魔王多大 */
+.tm-result-boss .tm-art { width: 67%; height: 67%; }
 .tm-result-boss.is-defeated .tm-boss-img { animation: tm-boss-defeat 1s ease-in forwards; }
 .tm-result-boss.is-taunt .tm-boss-img { animation: tm-boss-taunt .8s ease-in-out infinite alternate; }
 
