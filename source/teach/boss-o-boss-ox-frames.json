@@ -1,0 +1,115 @@
+{
+ "note": "o-boss-ox 的逐帧动作拼图（3×3：第 1 行 待机［中立、吸气、呼气］、第 2 行 受击、第 3 行 攻击［蓄力、出击、收招］）；待机 = 呼气→中立→吸气（来回播）；key = color 抠掉洋红底；第一格（中立）定缩放比例；hit-2（受击最大幅度那格）AI 把身体後仰的方向画反了（量出来：受击 1 的躯干偏向 +17.7°、受击 2 偏向 −24.6°、中立 +9°），所以 flip 镜像；受击 3 量出来是直立的（+8.7°，和中立一样），不翻",
+ "key": "color",
+ "items": [
+  {
+   "name": "boss-o-boss-ox-idle-2",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    0,
+    0,
+    418,
+    418
+   ]
+  },
+  {
+   "name": "boss-o-boss-ox-idle-3",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    418,
+    0,
+    836,
+    418
+   ]
+  },
+  {
+   "name": "boss-o-boss-ox-idle-1",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    836,
+    0,
+    1254,
+    418
+   ]
+  },
+  {
+   "name": "boss-o-boss-ox-hit-1",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    0,
+    418,
+    418,
+    836
+   ]
+  },
+  {
+   "name": "boss-o-boss-ox-hit-2",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    418,
+    418,
+    836,
+    836
+   ],
+   "flip": true
+  },
+  {
+   "name": "boss-o-boss-ox-hit-3",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    836,
+    418,
+    1254,
+    836
+   ]
+  },
+  {
+   "name": "boss-o-boss-ox-atk-1",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    0,
+    836,
+    418,
+    1254
+   ]
+  },
+  {
+   "name": "boss-o-boss-ox-atk-2",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    418,
+    836,
+    836,
+    1254
+   ]
+  },
+  {
+   "name": "boss-o-boss-ox-atk-3",
+   "group": "o-boss-ox",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    836,
+    836,
+    1254,
+    1254
+   ]
+  }
+ ]
+}
