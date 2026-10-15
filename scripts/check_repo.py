@@ -307,8 +307,15 @@ def _teach_art(data_ids):
         return
     for f in files:
         m = re.fullmatch(r'(cover|node|boss)-(.+)\.webp', f) if isinstance(f, str) else None
+        deco = re.fullmatch(r'deco-(.+)-\d+\.webp', f) if isinstance(f, str) else None
+        if deco:    # 地图上的装饰贴纸：deco-<地图 id>-<序号>.webp
+            if deco.group(1) not in data_ids.get('cover', set()):
+                problems.append(f'assets/teach/manifest.json：{f} 找不到对应的地图 id')
+            elif not os.path.isfile(os.path.join(ROOT, 'assets', 'teach', f)):
+                problems.append(f'assets/teach/manifest.json：登记了 {f}，但 assets/teach/ 里没有这个档案')
+            continue
         if not m:
-            problems.append(f'assets/teach/manifest.json：{f!r} 不是 <cover|node|boss>-<id>.webp')
+            problems.append(f'assets/teach/manifest.json：{f!r} 不是 <cover|node|boss>-<id>.webp 或 deco-<地图 id>-<序号>.webp')
         elif m.group(2) not in data_ids.get(m.group(1), set()):
             problems.append(f'assets/teach/manifest.json：{f} 找不到对应的{ {"cover": "地图", "node": "关卡", "boss": "魔王"}[m.group(1)] } id')
         elif not os.path.isfile(os.path.join(ROOT, 'assets', 'teach', f)):
@@ -343,6 +350,9 @@ def check_teach():
                 seen_node.add(ident)
             if motifs and m.get('cover') not in motifs:
                 problems.append(f'{at}：cover 图案 {m.get("cover")} 不在 js/teach.js 的 MOTIFS 里')
+            for sc in m.get('scenery') or []:
+                if motifs and sc not in motifs:
+                    problems.append(f'{at}：scenery 图案 {sc} 不在 js/teach.js 的 MOTIFS 里')
             for n in list(nodes.values()) + list(bosses.values()):
                 nat = f'{at}/{n.get("id")}'
                 for k in ('col', 'row'):

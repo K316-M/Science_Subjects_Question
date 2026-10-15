@@ -1045,7 +1045,20 @@ async function run() {
       await page.evaluate(() => { const b = document.querySelector('.tm-tool-wide'); if (b && /全部展开/.test(b.textContent)) b.click(); }); await page.waitForTimeout(450);
       const lay = await page.evaluate(() => ({ nodes: document.querySelectorAll('.tm-node').length, over: document.documentElement.scrollWidth > innerWidth }));
       check(G, `${theme}：全部展开後有 11 个节点、没有横向溢出`, lay.nodes === 11 && !lay.over, JSON.stringify(lay));
-      await page.evaluate(() => document.querySelector('.tm-node[data-id="i-mole"]').click()); await page.waitForSelector('.tm-sheet');
+      const clash = await page.evaluate(() => {   // 名牌、圆盘彼此不能叠在一起
+        const items = [...document.querySelectorAll('.tm-ncard')].map(n => ({ id: n.dataset.id, d: n.getBoundingClientRect(), l: n.querySelector('.tm-label').getBoundingClientRect() }));
+        const hit = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+        const bad = [];
+        items.forEach((x, i) => items.forEach((y, j) => { if (j > i && (hit(x.d, y.d) || hit(x.l, y.l) || hit(x.d, y.l) || hit(x.l, y.d))) bad.push(`${x.id}×${y.id}`); }));
+        return bad;
+      });
+      check(G, `${theme}：关卡圆盘与名牌彼此不重叠`, clash.length === 0, clash.join('、'));
+      await page.evaluate(() => document.querySelector('.tm-node[data-id="i-mole"]').click()); await page.waitForSelector('.tm-bubble');
+      const bub = await page.evaluate(() => { const b = document.querySelector('.tm-bubble').getBoundingClientRect(), s = document.querySelector('.tm-stage').getBoundingClientRect(); return { inStage: b.left >= s.left - 1 && b.right <= s.right + 1 && b.top >= s.top - 1 && b.bottom <= s.bottom + 1, title: document.querySelector('.tm-bubble-title').textContent, go: document.querySelector('.tm-bubble-go').textContent, sheet: !!document.querySelector('.tm-sheet') }; });
+      check(G, `${theme}：点关卡先弹出介绍气泡（名称、开始键），气泡在画布里，还没开知识卡`, bub.inStage && /化学反应方程式/.test(bub.title) && /开始闯关/.test(bub.go) && !bub.sheet, JSON.stringify(bub));
+      await page.waitForTimeout(350);   // 气泡淡入要 0.18 秒；等它停稳再量对比度
+      await contrast(page, `${theme} 教学：介绍气泡`, '.tm-bubble', R);
+      await page.click('.tm-bubble-go'); await page.waitForSelector('.tm-sheet');
       await contrast(page, `${theme} 教学：知识卡`, '.tm-sheet', R);
       await page.click('.tm-sheet .tm-primary'); await page.waitForTimeout(150);
       const qtext = (await page.$eval('.tm-q', e => e.textContent)).trim();
@@ -1061,6 +1074,7 @@ async function run() {
       await page.click('.tm-leave-go'); await page.waitForTimeout(300);
       check(G, `${theme}：点「退出」关掉面板`, !(await page.$('.tm-sheet')));
       await page.evaluate(() => { const b = document.querySelector('.tm-node[data-id="i-boss-a"]'); if (b) b.click(); });
+      await page.waitForSelector('.tm-bubble'); await page.click('.tm-bubble-go');
       await page.waitForSelector('.tm-sheet');
       await contrast(page, `${theme} 教学：魔王关`, '.tm-sheet', R);
       await page.keyboard.press('Escape'); await page.waitForTimeout(300);

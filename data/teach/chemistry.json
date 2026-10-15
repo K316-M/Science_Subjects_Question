@@ -31,6 +31,16 @@
    "blurb": "从摩尔、气体、溶液走到工业制法与电解，一路练计算题与催化剂、条件这类名词题。",
    "accent": "#0f766e",
    "cover": "flask",
+   "scenery": [
+    "factory",
+    "balloon",
+    "bubbles",
+    "beaker",
+    "tubes",
+    "cylinder",
+    "flask",
+    "electrolysis"
+   ],
    "sections": [
     {
      "id": "i-sec-a",
@@ -831,6 +841,18 @@
    "blurb": "先认识各类烃与含氧衍生物，再按「功能」闯关：简单制取、增碳、生成 NH₃、鉴别、高分子，最後把它们串成合成路线。",
    "accent": "#7c3aed",
    "cover": "benzene",
+   "scenery": [
+    "benzene",
+    "chain",
+    "molecule",
+    "tetra",
+    "flame",
+    "lamp",
+    "refinery",
+    "polymer",
+    "torch",
+    "testtube"
+   ],
    "sections": [
     {
      "id": "o-sec-a",
@@ -2757,6 +2779,17 @@
    "blurb": "从化学键、氢键与晶体，到反应热、速率与平衡：名词题、计算题和「说明原因」的论述题都在这里。",
    "accent": "#b45309",
    "cover": "energy",
+   "scenery": [
+    "crystal",
+    "energy",
+    "stopwatch",
+    "molecule",
+    "equilibrium",
+    "flame",
+    "bubbles",
+    "balance",
+    "tetra"
+   ],
    "sections": [
     {
      "id": "p-sec-a",
