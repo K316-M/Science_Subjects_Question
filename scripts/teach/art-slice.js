@@ -20,6 +20,7 @@
  *                     并且把「角色身体（这格里最大的那一块）」的脚底中点对在同一个位置，播起来角色不会忽大忽小、跳来跳去。
  *                     name = 输出档名，例如 boss-i-boss-a-hit-1；group 随便取（同一魔王的所有格取同一个，连待机／受击／攻击也一起对齐）。
  *                     这一组的第一格当「中立姿势」：缩成和单张魔王图一样大（size = 单张图的边长）；其余格同一个比例。
+ *                     某一格被 AI 画成相反的朝向：那一格加 "flip": true，左右镜像後再对齐。
  *                     想让第二张拼图的格子和第一张对上：每张拼图的第一格都放中立姿势；不想输出那一格就加 "ref": true（只定比例，不输出）。
  *                     输出画布不是方的：以锚点（躯干重心、脚底）为中心，宽高刚好装下这一组里伸出去最远的一格，网站按同样的比例放回原来的格子（js/teach.js 的 FRAME_BASE）。
  *                     不同拼图之间也能对上——只要各自的第一格都是中立姿势、size 一样。
@@ -161,6 +162,9 @@ const OUT = path.join(ROOT, 'assets', 'teach');
         let filled = 0;
         for (let i = 0; i < N; i++) { if (outside[i] || D[i * 4 + 3] >= 250) continue; const a = D[i * 4 + 3] / 255, k = i * 4; D[k] = D[k] * a + 251 * (1 - a); D[k + 1] = D[k + 1] * a + 243 * (1 - a); D[k + 2] = D[k + 2] * a + 223 * (1 - a); D[k + 3] = 255; filled++; }
         sp.filled = filled;
+      }
+      if (sp.flip) {   // "flip": true — 这一格左右镜像（AI 有时把某几格画成相反的朝向）；在算锚点、排版之前翻，所以对齐照常
+        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < (w >> 1); xx++) for (let c = 0; c < 4; c++) { const i1 = (yy * w + xx) * 4 + c, i2 = (yy * w + (w - 1 - xx)) * 4 + c, t = D[i1]; D[i1] = D[i2]; D[i2] = t; }
       }
       tx.putImageData(o, 0, 0);
       if (sp.kind === 'frame') {   // 先收着，这一组的格子都切完再一起排（要知道最大的范围才能定画布大小）

@@ -32,8 +32,9 @@
   const FX_CONFETTI = 40;        // 过关时撒几片彩带（魔王倒下时 1.5 倍）
   const WALK_MS = 1100;          // 通关後小精灵沿路走到新关要多久（毫秒）
   // 魔王逐帧动画每一格停多久（毫秒）。待机来回播（1→2→3→2→1…），慢慢呼吸；受击、攻击每一格单独设：撞击那格快、定格那格久、收招再慢一点。
-  // 数字比格数少（或以後多画了几格）就一直用最後一个
-  const FRAME_MS = { idle: 500, hit: [120, 300, 220], atk: [320, 130, 170, 200, 260] };
+  // 数字比格数少（或以後多画了几格）就一直用最後一个；攻击按格数分别设（3 格＝蓄力、出击、收招；5 格多了挥下、余势），没有对应格数的就用最後一组
+  const FRAME_MS = { idle: 500, hit: [120, 300, 220], atk: { 3: [320, 200, 260], 5: [320, 130, 170, 200, 260] } };
+  const msOf = (anim, n) => { const v = FRAME_MS[anim]; return v && typeof v === 'object' && !Array.isArray(v) ? (v[n] || Object.values(v).pop()) : v; };
   const FRAME_BASE = 320;        // 切图 spec 里 size 的值（单张魔王图的边长）：逐帧图按它当「1 倍」放进格子，比单张图宽／高的部分（冲刺、速度线）露在格子外面
   const ROAD_PAINT_MS = 800;     // 新走通的路「染色」要多久（毫秒）
   const FIT_PAD = 28;            // 「适配」时四周留多宽
@@ -1289,7 +1290,7 @@
     const img = banner && banner.querySelector('img.tm-boss-img');
     if (!img) return;
     const id = banner.dataset.id, frames = canFx() ? frameList(id, name) : [];
-    if (frames.length) { playFrames(img, frames, false, () => bossRest(img, id), FRAME_MS[name]); return; }
+    if (frames.length) { playFrames(img, frames, false, () => bossRest(img, id), msOf(name, frames.length)); return; }
     const file = `boss-${id}-${name}.webp`;
     if (!state.art || !state.art.has(file)) return;
     img.src = `/assets/teach/${file}`;
@@ -1467,7 +1468,7 @@
     if (bossPic && bossPic.tagName === 'IMG' && canFx()) {   // 倒下：播受击帧停在最後一格；没过：先反击一下再待机
       const once = frameList(run.id, passed ? 'hit' : 'atk');
       bossPic.dataset.base = bossPic.getAttribute('src');
-      if (once.length) { bossPic.classList.add('is-framed'); playFrames(bossPic, once, false, passed ? null : () => bossRest(bossPic, run.id), FRAME_MS[passed ? 'hit' : 'atk']); }
+      if (once.length) { bossPic.classList.add('is-framed'); playFrames(bossPic, once, false, passed ? null : () => bossRest(bossPic, run.id), msOf(passed ? 'hit' : 'atk', once.length)); }
       else if (!passed) bossAlive(bossPic, run.id);
     }
     const star = (i) => { const el = svgOf(i <= stars ? ICON.star : ICON.starOff, `tm-star tm-star-big${i <= stars ? ' is-lit' : ''}`); el.style.setProperty('--i', String(i - 1)); return el; };
