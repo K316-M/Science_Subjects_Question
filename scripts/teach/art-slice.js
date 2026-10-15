@@ -12,6 +12,9 @@
  *                     或四周一圈是奶白贴纸边（角色自己的灰零件外面是深色描边，不会被误删）；
  *                     贴纸边外缘混了灰的那一圈像素，用「棋盘灰 → 奶白」这条线算出混了多少，还原成半透明。
  *                     真透明的 PNG／WebP 永远比这个干净，能重发就重发。
+ *   "key": "color"    原图是 JPG／没有透明通道、背景是一整片纯色（请绘图 AI 把背景画成洋红 #FF00FF 这类角色身上没有的颜色）：
+ *                     背景色自动从四边数出来；离它多远算背景写 "tol"（不写就自动：洋红这类远离奶白的 70，白底会自动缩到约 20；背景有渐层、有杂色时再调大，调太大会吃到贴纸边）。
+ *                     抠法和 checker 一样（和四边连着的、被围住的空隙；贴纸外缘混了背景色的像素还原成半透明奶白）。
  *   kind "photo"      整张图不抠、只缩小（封面这种铺满的图）：size = 宽度，高度按比例。
  *   kind "frame"      逐帧动画的一格（一张拼图里排一排，或每格一个 spec 都行）：同一个 "group" 的所有格共用一个缩放比例，
  *                     并且把「角色身体（这格里最大的那一块）」的脚底中点对在同一个位置，播起来角色不会忽大忽小、跳来跳去。
@@ -24,13 +27,13 @@ const ROOT = path.join(__dirname, '..', '..');
 const [src, specPath] = process.argv.slice(2);
 if (!src || !specPath) { console.log('用法：node scripts/teach/art-slice.js <拼图> <spec.json>'); process.exit(1); }
 const specFile = JSON.parse(fs.readFileSync(specPath, 'utf8'));
-const spec = specFile.items, KEY = specFile.key || '', TONES = specFile.tones || null;
+const spec = specFile.items, KEY = specFile.key || '', TONES = specFile.tones || null, TOL = specFile.tol || 0;
 const OUT = path.join(ROOT, 'assets', 'teach');
 (async () => {
   const b = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
   const p = await b.newPage();
   const data = fs.readFileSync(src).toString('base64');
-  const out = await p.evaluate(async ({ d, spec, KEY, TONES: specTones, mime }) => {
+  const out = await p.evaluate(async ({ d, spec, KEY, TONES: specTones, TOL: specTol, mime }) => {
     const img = new Image(); img.src = `data:${mime};base64,` + d; await img.decode();
     const W = img.naturalWidth, H = img.naturalHeight;
     const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.drawImage(img, 0, 0);
@@ -43,8 +46,27 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       const buf = new Uint8Array(await blob.arrayBuffer()); let bin = ''; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
       photoOut.push({ name: sp.name, bytes: buf.length, b64: btoa(bin), w: f.width, h: f.height });
     }
-    if (KEY === 'checker') {
+    if (KEY === 'checker' || KEY === 'color') {
       const N0 = W * H, neutral = i => Math.max(id[i * 4], id[i * 4 + 1], id[i * 4 + 2]) - Math.min(id[i * 4], id[i * 4 + 1], id[i * 4 + 2]) <= 10;
+      const bg = new Uint8Array(N0), st = [];
+      if (KEY === 'color') {
+        // 纯色背景（请绘图 AI 画成洋红 #FF00FF 这类角色身上没有的颜色）：背景色 = 四边 40 像素里最多的那个颜色；
+        // 离背景色 tol 以内、和四边连着的像素是背景；被围住的背景色空隙（手脚之间）≥ 150 像素的也是背景
+        const hist = {}, q8 = v => Math.round(v / 8) * 8;
+        for (let t = 0; t < 40; t++) for (let u = 0; u < W; u++) for (const yy of [t, H - 1 - t]) { const k = (yy * W + u) * 4, key = q8(id[k]) + ',' + q8(id[k + 1]) + ',' + q8(id[k + 2]); hist[key] = (hist[key] || 0) + 1; }
+        const bgc = Object.entries(hist).sort((a, b) => b[1] - a[1])[0][0].split(',').map(Number), cd = Math.hypot(bgc[0] - 251, bgc[1] - 243, bgc[2] - 223), tol = specTol || Math.min(70, Math.round(cd * 0.6)), tol2 = tol * tol;   // 背景色离奶白越近（白底）容许范围越小，不然会吃掉贴纸边
+        const like = i => { const dr = id[i * 4] - bgc[0], dg = id[i * 4 + 1] - bgc[1], db = id[i * 4 + 2] - bgc[2]; return dr * dr + dg * dg + db * db <= tol2; };
+        const seed = i => { if (!bg[i] && like(i)) { bg[i] = 1; st.push(i); } };
+        for (let xx = 0; xx < W; xx++) { seed(xx); seed((H - 1) * W + xx); } for (let yy = 0; yy < H; yy++) { seed(yy * W); seed(yy * W + W - 1); }
+        while (st.length) { const q = st.pop(), qx = q % W, qy = (q / W) | 0; if (qx > 0) seed(q - 1); if (qx < W - 1) seed(q + 1); if (qy > 0) seed(q - W); if (qy < H - 1) seed(q + W); }
+        const seen = new Uint8Array(N0);
+        for (let s0 = 0; s0 < N0; s0++) {
+          if (bg[s0] || seen[s0] || !like(s0)) continue;
+          const comp = [s0]; seen[s0] = 1; let k = 0;
+          while (k < comp.length) { const q = comp[k++], qx = q % W, qy = (q / W) | 0; for (const t of [qx > 0 ? q - 1 : -1, qx < W - 1 ? q + 1 : -1, qy > 0 ? q - W : -1, qy < H - 1 ? q + W : -1]) if (t >= 0 && !seen[t] && !bg[t] && like(t)) { seen[t] = 1; comp.push(t); } }
+          if (comp.length >= 150) comp.forEach(q => { bg[q] = 1; });
+        }
+      } else {
       // 棋盘格的两种灰：spec 的 tones 有写就用；没写就从四边 40 像素里数「中性灰」最多的两种（相差要 ≥ 16）
       let tones = specTones;
       if (!tones) {
@@ -57,7 +79,6 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       const gray = i => neutral(i) && id[i * 4] >= lo && id[i * 4] <= hi;
       // 洞里的灰块靠近奶白边时 JPG 会带一点暖色（max-min 到 20 上下），所以找洞时用放宽的 gray2
       const gray2 = i => { const r = id[i * 4], g = id[i * 4 + 1], bl = id[i * 4 + 2], L = (r + g + bl) / 3; return Math.max(r, g, bl) - Math.min(r, g, bl) <= 22 && L >= lo - 14 && L <= hi; };
-      const bg = new Uint8Array(N0), st = [];
       const seed = i => { if (!bg[i] && gray(i)) { bg[i] = 1; st.push(i); } };
       for (let xx = 0; xx < W; xx++) { seed(xx); seed((H - 1) * W + xx); } for (let yy = 0; yy < H; yy++) { seed(yy * W); seed(yy * W + W - 1); }
       while (st.length) { const q = st.pop(), qx = q % W, qy = (q / W) | 0; if (qx > 0) seed(q - 1); if (qx < W - 1) seed(q + 1); if (qy > 0) seed(q - W); if (qy < H - 1) seed(q + W); }
@@ -80,15 +101,16 @@ const OUT = path.join(ROOT, 'assets', 'teach');
         }
         if (isBg) comp.forEach(q => { bg[q] = 1; });
       }
+      }
       // 贴纸外缘 2 像素：奶白混了灰 → 用「附近棋盘灰 → 奶白」这条线算出混了多少，还原成半透明、颜色定成奶白
       const edge = new Uint8Array(N0), CREAM = [251, 243, 223];
       for (let yy = 2; yy < H - 2; yy++) for (let xx = 2; xx < W - 2; xx++) { const i = yy * W + xx; if (bg[i]) continue;
         let near_bg = false; for (let dy = -2; dy <= 2 && !near_bg; dy++) for (let dx = -2; dx <= 2; dx++) if (bg[i + dy * W + dx]) { near_bg = true; break; } if (near_bg) edge[i] = 1; }
       const alphaOf = (xx, yy) => {   // 这个像素里奶白占几成（0～1）；附近没有背景灰就当整个是奶白
-        let n = 0, g = 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const j = (yy + dy) * W + xx + dx; if (bg[j]) { n++; g += id[j * 4]; } }
-        if (!n) return 1; g /= n; const k = (yy * W + xx) * 4;
-        const vx = CREAM[0] - g, vy = CREAM[1] - g, vz = CREAM[2] - g;
-        return Math.max(0, Math.min(1, ((id[k] - g) * vx + (id[k + 1] - g) * vy + (id[k + 2] - g) * vz) / (vx * vx + vy * vy + vz * vz)));
+        let n = 0, gr = 0, gg = 0, gb = 0; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const j = (yy + dy) * W + xx + dx; if (bg[j]) { n++; gr += id[j * 4]; gg += id[j * 4 + 1]; gb += id[j * 4 + 2]; } }
+        if (!n) return 1; gr /= n; gg /= n; gb /= n; const k = (yy * W + xx) * 4;
+        const vx = CREAM[0] - gr, vy = CREAM[1] - gg, vz = CREAM[2] - gb;
+        return Math.max(0, Math.min(1, ((id[k] - gr) * vx + (id[k + 1] - gg) * vy + (id[k + 2] - gb) * vz) / (vx * vx + vy * vy + vz * vz)));
       };
       const alpha = new Float32Array(N0).fill(1);
       for (let yy = 2; yy < H - 2; yy++) for (let xx = 2; xx < W - 2; xx++) { const i = yy * W + xx; if (edge[i]) alpha[i] = alphaOf(xx, yy); }
@@ -172,7 +194,7 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       }
     }
     return { W, H, comps: big.map(k => [k.x0, k.y0, k.x1, k.y1, k.cnt]), result };
-  }, { d: data, spec, KEY, TONES, mime: /\.jpe?g$/i.test(src) ? 'image/jpeg' : /\.png$/i.test(src) ? 'image/png' : 'image/webp' });
+  }, { d: data, spec, KEY, TONES, TOL, mime: /\.jpe?g$/i.test(src) ? 'image/jpeg' : /\.png$/i.test(src) ? 'image/png' : 'image/webp' });
   console.log('拼图', out.W, '×', out.H);
   fs.mkdirSync(OUT, { recursive: true });
   const made = [];
