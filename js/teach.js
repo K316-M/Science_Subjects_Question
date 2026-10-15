@@ -31,6 +31,7 @@
   const FX_BURST = 14;           // 答对时从按钮迸出几颗星
   const FX_CONFETTI = 40;        // 过关时撒几片彩带（魔王倒下时 1.5 倍）
   const WALK_MS = 1100;          // 通关後小精灵沿路走到新关要多久（毫秒）
+  const FRAME_MS = 140;          // 魔王逐帧动画每一格停多久（毫秒）；越小越快，7 格/秒左右最像手绘
   const ROAD_PAINT_MS = 800;     // 新走通的路「染色」要多久（毫秒）
   const FIT_PAD = 28;            // 「适配」时四周留多宽
   const REGION_GAP = 110;        // 小节与小节之间（沿前进方向）隔多远
@@ -197,6 +198,38 @@
     const img = h('img', { class: `tm-art-img ${cls || ''}`, src: `/assets/teach/${file}`, alt: '', loading: 'lazy', decoding: 'async' });
     img.addEventListener('error', () => { if (fallback) img.replaceWith(fallback()); else img.remove(); });
     return img;
+  }
+
+  // 魔王逐帧动画：manifest 里登记了 boss-<id>-<idle|hit|atk>-1、-2、-3…（序号要从 1 连续）就按顺序播。
+  // idle 一直循环，hit／atk 播一遍就回到 idle；没登记就退回单张姿势图（boss-<id>-hit.webp）或只用 CSS 动画
+  function frameList(id, anim) {
+    const out = [];
+    while (state.art && state.art.has(`boss-${id}-${anim}-${out.length + 1}.webp`)) out.push(`/assets/teach/boss-${id}-${anim}-${out.length + 1}.webp`);
+    return out;
+  }
+  function stopFrames(img) { if (img._tmFrames) { clearInterval(img._tmFrames); img._tmFrames = 0; } }
+  function playFrames(img, urls, loop, done) {
+    stopFrames(img);
+    let i = 0;
+    img.src = urls[0];
+    img._tmFrames = setInterval(() => {
+      if (!document.contains(img)) return stopFrames(img);   // 画面换掉了就自己停
+      if (++i >= urls.length) { if (!loop) { stopFrames(img); if (done) done(); return; } i = 0; }
+      img.src = urls[i];
+    }, FRAME_MS);
+  }
+  // 魔王图出现时：预载全部帧，有待机帧就开始循环
+  function bossAlive(img, id) {
+    if (!img || !canFx()) return;
+    ['idle', 'hit', 'atk'].forEach(a => frameList(id, a).forEach(u => { new Image().src = u; }));
+    img.dataset.base = img.getAttribute('src');
+    const idle = frameList(id, 'idle');
+    if (idle.length > 1) { img.classList.add('is-framed'); playFrames(img, idle, true); }
+  }
+  // 回到待机：有待机帧就循环，没有就换回原来那张
+  function bossRest(img, id) {
+    const idle = canFx() ? frameList(id, 'idle') : [];
+    if (idle.length > 1) playFrames(img, idle, true); else { stopFrames(img); if (img.dataset.base) img.src = img.dataset.base; }
   }
 
   /* ---------- 动效：星星迸发、彩带、小精灵的表情（都是临时元素，播完就移除；「减少动态」时不播） ---------- */
@@ -1224,6 +1257,7 @@
     const boss = bossOf(run.map, run.id), need = bossNeed(run), hp = Math.max(0, need - run.correct);
     const pic = artImg('boss', run.id, 'tm-boss-img', () => motifSvg('flag', 'tm-art')) || motifSvg('flag', 'tm-art');
     const segs = Array.from({ length: need }, (_, i) => h('i', { class: `tm-hp-seg${i < hp ? ' is-on' : ''}` }));
+    bossAlive(pic.tagName === 'IMG' ? pic : null, run.id);
     return h('div', { class: 'tm-boss', 'data-id': run.id },
       h('span', { class: 'tm-boss-art' }, pic),
       h('div', { class: 'tm-boss-main' },
@@ -1231,15 +1265,16 @@
         h('span', { class: 'tm-hp', role: 'img', 'aria-label': hp ? `魔王还剩 ${hp} 格血` : '魔王的血被打光了' }, segs),
         h('span', { class: 'tm-hp-note', text: hp ? `答对 ${need} 题就能打倒它（还差 ${hp} 题）` : '魔王撑不住了，再来一击！' })));
   }
-  // 你给了 boss-<id>-hit／boss-<id>-atk（受击、攻击的姿势图）就在那一瞬间换上，没给就只用动画
+  // 受击／攻击：有逐帧（boss-<id>-hit-1…）就播一遍再回待机；只给了单张姿势图（boss-<id>-hit.webp）就在那一瞬间换上；都没有就只用动画
   function bossPose(banner, name, ms) {
     const img = banner && banner.querySelector('img.tm-boss-img');
     if (!img) return;
-    const file = `boss-${banner.dataset.id}-${name}.webp`;
+    const id = banner.dataset.id, frames = canFx() ? frameList(id, name) : [];
+    if (frames.length) { playFrames(img, frames, false, () => bossRest(img, id)); return; }
+    const file = `boss-${id}-${name}.webp`;
     if (!state.art || !state.art.has(file)) return;
-    const back = img.getAttribute('src');
     img.src = `/assets/teach/${file}`;
-    setTimeout(() => { if (document.contains(img)) img.src = back; }, ms);
+    setTimeout(() => { if (document.contains(img)) bossRest(img, id); }, ms);
   }
   function bossReact(banner, run, ok, s) {
     if (!banner || !document.contains(banner)) return;
@@ -1410,6 +1445,12 @@
     if (passed && run.kind === 'boss') sound('achieve');
     // 结果页的主角：魔王倒下／得意地晃（用魔王的图），一般关卡是小精灵挥手或来鼓励
     const bossPic = run.kind === 'boss' ? (artImg('boss', run.id, 'tm-boss-img', () => motifSvg('flag', 'tm-art')) || motifSvg('flag', 'tm-art')) : null;
+    if (bossPic && bossPic.tagName === 'IMG' && canFx()) {   // 倒下：播受击帧停在最後一格；没过：先反击一下再待机
+      const once = frameList(run.id, passed ? 'hit' : 'atk');
+      bossPic.dataset.base = bossPic.getAttribute('src');
+      if (once.length) { bossPic.classList.add('is-framed'); playFrames(bossPic, once, false, passed ? null : () => bossRest(bossPic, run.id)); }
+      else if (!passed) bossAlive(bossPic, run.id);
+    }
     const star = (i) => { const el = svgOf(i <= stars ? ICON.star : ICON.starOff, `tm-star tm-star-big${i <= stars ? ' is-lit' : ''}`); el.style.setProperty('--i', String(i - 1)); return el; };
     const hero = bossPic
       ? h('div', { class: `tm-result-boss ${passed ? 'is-defeated' : 'is-taunt'}`, 'aria-hidden': 'true' }, bossPic)

@@ -305,11 +305,16 @@ def _teach_art(data_ids):
     if not isinstance(files, list):
         problems.append('assets/teach/manifest.json：files 要是清单（数组）')
         return
+    seqs = {}
     for f in files:
         m = re.fullmatch(r'(cover|node|boss)-(.+)\.webp', f) if isinstance(f, str) else None
         deco = re.fullmatch(r'deco-(.+)-\d+\.webp', f) if isinstance(f, str) else None
         fx = isinstance(f, str) and re.fullmatch(r'fx-(star|sparkle|confetti-a|confetti-b)\.webp', f)
         pose = re.fullmatch(r'boss-(.+)-(hit|atk)\.webp', f) if isinstance(f, str) else None
+        frame = re.fullmatch(r'boss-(.+)-(idle|hit|atk)-(\d+)\.webp', f) if isinstance(f, str) else None
+        if frame:    # 魔王逐帧动画 boss-<魔王 id>-<idle|hit|atk>-<序号>.webp，序号要从 1 连续（播放器遇到断号就停在那里）
+            seqs.setdefault((frame.group(1), frame.group(2)), []).append(int(frame.group(3)))
+            pose = frame
         if fx or pose:    # 特效小图 fx-<star|sparkle|confetti-a|confetti-b>.webp；魔王受击／攻击姿势 boss-<魔王 id>-<hit|atk>.webp
             if pose and pose.group(1) not in data_ids.get('boss', set()):
                 problems.append(f'assets/teach/manifest.json：{f} 找不到对应的魔王 id')
@@ -323,11 +328,14 @@ def _teach_art(data_ids):
                 problems.append(f'assets/teach/manifest.json：登记了 {f}，但 assets/teach/ 里没有这个档案')
             continue
         if not m:
-            problems.append(f'assets/teach/manifest.json：{f!r} 不是 <cover|node|boss>-<id>.webp、boss-<魔王 id>-<hit|atk>.webp、deco-<地图 id>-<序号>.webp 或 fx-<star|sparkle|confetti-a|confetti-b>.webp')
+            problems.append(f'assets/teach/manifest.json：{f!r} 不是 <cover|node|boss>-<id>.webp、boss-<魔王 id>-<hit|atk>.webp、boss-<魔王 id>-<idle|hit|atk>-<序号>.webp、deco-<地图 id>-<序号>.webp 或 fx-<star|sparkle|confetti-a|confetti-b>.webp')
         elif m.group(2) not in data_ids.get(m.group(1), set()):
             problems.append(f'assets/teach/manifest.json：{f} 找不到对应的{ {"cover": "地图", "node": "关卡", "boss": "魔王"}[m.group(1)] } id')
         elif not os.path.isfile(os.path.join(ROOT, 'assets', 'teach', f)):
             problems.append(f'assets/teach/manifest.json：登记了 {f}，但 assets/teach/ 里没有这个档案')
+    for (bid, anim), nums in seqs.items():
+        if sorted(nums) != list(range(1, len(nums) + 1)):
+            problems.append(f'assets/teach/manifest.json：boss-{bid}-{anim} 的逐帧序号要从 1 连续（现在是 {sorted(nums)}），不然播到断号就停了')
 
 
 def check_teach():

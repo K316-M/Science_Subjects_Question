@@ -341,6 +341,7 @@ body.tm-lock { overflow: hidden; }
 .tm-boss-art { position: relative; flex: none; display: grid; place-items: center; width: 72px; height: 72px; }
 .tm-boss-art .tm-art { width: 52px; height: 52px; }
 .tm-boss-img { transform-origin: 50% 90%; animation: tm-boss-bob 2.2s ease-in-out infinite alternate; }
+.tm-boss-img.is-framed { animation: none; }   /* 有逐帧动画就不再晃（帧里自己会动） */
 .tm-boss-art.is-hit { animation: tm-boss-hit .46s ease; }
 .tm-boss-art.is-atk { animation: tm-boss-atk .56s ease; }
 .tm-boss-main { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }

@@ -13,6 +13,10 @@
  *                     贴纸边外缘混了灰的那一圈像素，用「棋盘灰 → 奶白」这条线算出混了多少，还原成半透明。
  *                     真透明的 PNG／WebP 永远比这个干净，能重发就重发。
  *   kind "photo"      整张图不抠、只缩小（封面这种铺满的图）：size = 宽度，高度按比例。
+ *   kind "frame"      逐帧动画的一格（一张拼图里排一排，或每格一个 spec 都行）：同一个 "group" 的所有格共用一个缩放比例，
+ *                     并且把「角色身体（这格里最大的那一块）」的脚底中点对在同一个位置，播起来角色不会忽大忽小、跳来跳去。
+ *                     name = 输出档名，例如 boss-i-boss-a-hit-1；group 随便取（同一魔王的所有格取同一个，连待机／受击／攻击也一起对齐）。
+ *                     size = 画布边长（方形）。不同拼图里的格子对不齐——想让待机、受击、攻击彼此对齐，放进同一张拼图。
  */
 const fs = require('fs'), path = require('path');
 let chromium; try { ({ chromium } = require('playwright-core')); } catch (e) { ({ chromium } = require('playwright')); }
@@ -105,7 +109,7 @@ const OUT = path.join(ROOT, 'assets', 'teach');
     }
     for (let it = 0; it < 3; it++) { const nl = lab.slice(); for (let yy = 1; yy < H - 1; yy++) for (let xx = 1; xx < W - 1; xx++) { const i = yy * W + xx; if (lab[i] || id[i * 4 + 3] < 28) continue; const nb = lab[i - 1] || lab[i + 1] || lab[i - W] || lab[i + W]; if (nb) nl[i] = nb; } lab.set(nl); }
     const big = comps.filter(k => k.cnt > 400);
-    const result = [...photoOut];
+    const result = [...photoOut], frames = {};
     for (const sp of spec.filter(s => s.kind !== 'photo')) {
       const [rx0, ry0, rx1, ry1] = sp.region;
       const mine = big.filter(k => k.cx >= rx0 && k.cx <= rx1 && k.cy >= ry0 && k.cy <= ry1);
@@ -122,7 +126,7 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       // 不然在深色背景上会变成黑洞
       const D = o.data, CUT = 28, N = w * h;
       for (let i = 0; i < N; i++) if (D[i * 4 + 3] < CUT) D[i * 4 + 3] = 0;
-      if (sp.kind === 'square') {
+      if (sp.kind === 'square' || sp.kind === 'frame') {
         const outside = new Uint8Array(N), st = [];
         const push = q => { if (!outside[q] && D[q * 4 + 3] < 128) { outside[q] = 1; st.push(q); } };
         for (let xx = 0; xx < w; xx++) { push(xx); push((h - 1) * w + xx); }
@@ -133,6 +137,11 @@ const OUT = path.join(ROOT, 'assets', 'teach');
         sp.filled = filled;
       }
       tx.putImageData(o, 0, 0);
+      if (sp.kind === 'frame') {   // 先收着，这一组的格子都切完再一起排（要知道最大的范围才能定缩放比例）
+        const body = mine.reduce((a, k) => (k.cnt > a.cnt ? k : a));
+        (frames[sp.group || sp.name] = frames[sp.group || sp.name] || []).push({ sp, tmp, w, h, ax: (body.x0 + body.x1 + 1) / 2 - bx0, ay: body.y1 + 1 - by0 });
+        continue;
+      }
       const f = document.createElement('canvas');
       let sw, sh, sxs = 0, sys = 0, sww = w, shh = h;
       if (sp.kind === 'square') { sw = sh = sp.size; }
@@ -147,6 +156,20 @@ const OUT = path.join(ROOT, 'assets', 'teach');
       const blob = await new Promise(r => f.toBlob(r, 'image/webp', 0.92));
       const buf = new Uint8Array(await blob.arrayBuffer()); let bin = ''; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
       result.push({ name: sp.name, filled: sp.filled || 0, box: [bx0, by0, bx1, by1], comps: mine.length, bytes: buf.length, b64: btoa(bin), w: sw, h: sh });
+    }
+    const toB64 = async cv => { const blob = await new Promise(r => cv.toBlob(r, 'image/webp', 0.92)); const buf = new Uint8Array(await blob.arrayBuffer()); let bin = ''; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000)); return [btoa(bin), buf.length]; };
+    for (const list of Object.values(frames)) {
+      // 以脚底中点为锚：每格往左／右／上／下各伸出多远，取这一组里最远的；缩放比例让最大的范围刚好放进画布，整组共用
+      const size = list[0].sp.size, pad = list[0].sp.pad || 0.02;
+      const L = Math.max(...list.map(g => g.ax)), R = Math.max(...list.map(g => g.w - g.ax)), U = Math.max(...list.map(g => g.ay)), D = Math.max(...list.map(g => g.h - g.ay));
+      const sc = Math.min(size * (1 - 2 * pad) / (L + R), size * (1 - 2 * pad) / (U + D));
+      const cx = (size - sc * (R - L)) / 2, cy = (size - sc * (D - U)) / 2;   // 锚点落在画布的哪里（整组一样）
+      for (const g of list) {
+        const f = document.createElement('canvas'); f.width = f.height = size; const fx = f.getContext('2d'); fx.imageSmoothingQuality = 'high';
+        fx.drawImage(g.tmp, 0, 0, g.w, g.h, cx - g.ax * sc, cy - g.ay * sc, g.w * sc, g.h * sc);
+        const [b64, bytes] = await toB64(f);
+        result.push({ name: g.sp.name, filled: g.sp.filled || 0, bytes, b64, w: size, h: size });
+      }
     }
     return { W, H, comps: big.map(k => [k.x0, k.y0, k.x1, k.y1, k.cnt]), result };
   }, { d: data, spec, KEY, TONES, mime: /\.jpe?g$/i.test(src) ? 'image/jpeg' : /\.png$/i.test(src) ? 'image/png' : 'image/webp' });
