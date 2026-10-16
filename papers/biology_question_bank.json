@@ -1151,7 +1151,8 @@
             "D. 16"
           ],
           "answer": 2,
-          "explanation": "【解析】：配子种类数 = 2(Aa) × 2(Bb) × 2(Cc) × 1(DD) = 8 种。"
+          "explanation": "【解析】：配子种类数 = 2(Aa) × 2(Bb) × 2(Cc) × 1(DD) = 8 种。",
+          "tag": "school"
         },
         {
           "q": "将基因型为 AaBbCc 和 AABbcc 的向日葵杂交，按照自由组合定律规律，后代中基因型为 AABBCc 的个体比例为__________。",
