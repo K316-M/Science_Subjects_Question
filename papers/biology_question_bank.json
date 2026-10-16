@@ -813,7 +813,8 @@
           ],
           "answer": 1,
           "explanation": "水体变绿是因为浮游植物过多，根据表格，鲢鱼以浮游植物为食，最适合投放。在有限的池塘生态系统中，种群增长受资源和空间限制，呈现S型增长曲线。",
-          "image": "./images/biology/biology_979754a9ee_mujqj1hh.webp"
+          "image": "./images/biology/biology_979754a9ee_mujqj1hh.webp",
+          "tag": "school"
         }
       ],
       "subjectives": []
