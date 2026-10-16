@@ -105,7 +105,7 @@ async function run() {
     const FS = [11, 12, 13, 14, 16, 19, 23, 28, 32, 40, 56];
     const LH = ['1', '1.2', '1.4', '1.6', '1.75'];
     const SP = [1, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 36, 40, 48, 56];
-    const files = ['index.html', 'css/features.css', 'css/orbit.css', 'css/night.css',
+    const files = ['index.html', 'css/features.css', 'css/orbit.css', 'css/teach.css', 'css/night.css',
       ...fs.readdirSync(path.join(ROOT, 'js')).filter(f => f.endsWith('.js')).map(f => 'js/' + f)];
     const bad = { 字级: [], 行高: [], 间距: [] };
     for (const rel of files) {
@@ -1021,6 +1021,73 @@ async function run() {
     check('模拟统考', '看过解析再重做没答的题，也不写进复习排程', await page.evaluate(() => localStorage.getItem('UEC_REVIEW_v1')) === rec1);
     check('模拟统考', '没有 JS 错误', errors.length === 0, errors[0]);
     await ctx.close();
+  });
+
+  await section('教学模式', async () => {
+    const G = '教学模式';
+    const TEACH = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'teach', 'chemistry.json'), 'utf8'));
+    const Q = {};
+    TEACH.maps.forEach(m => { m.nodes.forEach(n => n.challenges.forEach(c => { Q[c.q] = c; })); m.bosses.forEach(b => { Q[b.extra.q] = b.extra; }); });
+    for (const [night, theme] of [[false, 'day'], [true, 'night']]) {
+      const { ctx, page, errors } = await open({ width: 390, height: 844, mobile: true });
+      if (night) await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'night'));
+      await page.evaluate(() => document.querySelectorAll('.orbit-node')[1].click()); await page.waitForTimeout(450);
+      const panel = await page.evaluate(() => ({ teach: !document.querySelector('.panel-teach').hidden }));
+      check(G, `${theme}：化学面板有「教学」按钮`, panel.teach);
+      await contrast(page, `${theme} 化学面板（刷题／教学）`, '.orbit-panel', R);
+      await page.evaluate(() => document.querySelector('.panel-teach').click()); await page.waitForTimeout(700);
+      check(G, `${theme}：三张地图卡`, await page.$$eval('.tm-card', e => e.length) === 3);
+      await contrast(page, `${theme} 教学：选地图`, '#teachRoot', R);
+      await page.evaluate(() => document.querySelectorAll('.tm-card')[0].click()); await page.waitForTimeout(500);
+      const first = await page.evaluate(() => ({ islands: document.querySelectorAll('.tm-island').length, pin: !!document.querySelector('.tm-pin'), root: !!document.querySelector('.tm-rootnode'), next: document.querySelector('.tm-next') && document.querySelector('.tm-next').textContent }));
+      check(G, `${theme}：进来只展开现在的小节，其余折成小岛（2 个），有起点、「你在这里」、「下一步」`, first.islands === 2 && first.pin && first.root && /下一步/.test(first.next || ''), JSON.stringify(first));
+      await contrast(page, `${theme} 教学：地图`, '.tm-stage', R);
+      await page.evaluate(() => { const b = document.querySelector('.tm-tool-wide'); if (b && /全部展开/.test(b.textContent)) b.click(); }); await page.waitForTimeout(450);
+      const lay = await page.evaluate(() => ({ nodes: document.querySelectorAll('.tm-node').length, over: document.documentElement.scrollWidth > innerWidth }));
+      check(G, `${theme}：全部展开後有 11 个节点、没有横向溢出`, lay.nodes === 11 && !lay.over, JSON.stringify(lay));
+      const clash = await page.evaluate(() => {   // 名牌、圆盘彼此不能叠在一起
+        const items = [...document.querySelectorAll('.tm-ncard')].map(n => ({ id: n.dataset.id, d: n.getBoundingClientRect(), l: n.querySelector('.tm-label').getBoundingClientRect() }));
+        const hit = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+        const bad = [];
+        items.forEach((x, i) => items.forEach((y, j) => { if (j > i && (hit(x.d, y.d) || hit(x.l, y.l) || hit(x.d, y.l) || hit(x.l, y.d))) bad.push(`${x.id}×${y.id}`); }));
+        return bad;
+      });
+      check(G, `${theme}：关卡圆盘与名牌彼此不重叠`, clash.length === 0, clash.join('、'));
+      await page.evaluate(() => document.querySelector('.tm-node[data-id="i-mole"]').click()); await page.waitForSelector('.tm-bubble');
+      const bub = await page.evaluate(() => { const b = document.querySelector('.tm-bubble').getBoundingClientRect(), s = document.querySelector('.tm-stage').getBoundingClientRect(); return { inStage: b.left >= s.left - 1 && b.right <= s.right + 1 && b.top >= s.top - 1 && b.bottom <= s.bottom + 1, title: document.querySelector('.tm-bubble-title').textContent, go: document.querySelector('.tm-bubble-go').textContent, sheet: !!document.querySelector('.tm-sheet') }; });
+      check(G, `${theme}：点关卡先弹出介绍气泡（名称、开始键），气泡在画布里，还没开知识卡`, bub.inStage && /化学反应方程式/.test(bub.title) && /开始闯关/.test(bub.go) && !bub.sheet, JSON.stringify(bub));
+      await page.waitForTimeout(350);   // 气泡淡入要 0.18 秒；等它停稳再量对比度
+      await contrast(page, `${theme} 教学：介绍气泡`, '.tm-bubble', R);
+      await page.click('.tm-bubble-go'); await page.waitForSelector('.tm-sheet');
+      await page.waitForTimeout(900);   // 知识卡的要点一条一条淡入，等最後一条停稳再量对比度
+      await contrast(page, `${theme} 教学：知识卡`, '.tm-sheet', R);
+      await page.click('.tm-sheet .tm-primary'); await page.waitForTimeout(150);
+      const qtext = (await page.$eval('.tm-q', e => e.textContent)).trim();
+      check(G, `${theme}：进入第一题、没有「null」字样`, !!Q[qtext] && !/\bnull\b/.test(await page.$eval('.tm-sheet', e => e.textContent)));
+      await contrast(page, `${theme} 教学：作答`, '.tm-sheet', R);
+      const ov = await page.evaluate(() => { const a = document.querySelector('.tm-x').getBoundingClientRect(), b = document.querySelector('.tm-qno').getBoundingClientRect(); return !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top); });
+      check(G, `${theme}：× 和「第 N / M 题」不重叠`, !ov);
+      await page.fill('.tm-input', '9999'); await page.click('.tm-primary'); await page.waitForTimeout(500);   // 反馈条要 0.3 秒滑进来
+      await contrast(page, `${theme} 教学：答错解析`, '.tm-sheet', R);
+      await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+      check(G, `${theme}：作答到一半按 Esc 先出现面板内的确认条（不是原生对话框），面板还开着`, !!(await page.$('.tm-leave')) && !!(await page.$('.tm-sheet')));
+      await contrast(page, `${theme} 教学：退出确认条`, '.tm-sheet', R);
+      await page.click('.tm-leave-go'); await page.waitForTimeout(300);
+      check(G, `${theme}：点「退出」关掉面板`, !(await page.$('.tm-sheet')));
+      await page.evaluate(() => { const b = document.querySelector('.tm-node[data-id="i-boss-a"]'); if (b) b.click(); });
+      await page.waitForSelector('.tm-bubble'); await page.click('.tm-bubble-go');
+      await page.waitForSelector('.tm-sheet');
+      await contrast(page, `${theme} 教学：魔王关`, '.tm-sheet', R);
+      await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+      const rb = await page.evaluateHandle(() => [...document.querySelectorAll('button')].find(b => /反应册/.test(b.textContent)));
+      await rb.asElement().click(); await page.waitForSelector('.tm-sheet');
+      await contrast(page, `${theme} 教学：反应册`, '.tm-sheet', R);
+      if (!night) await shot(page, 'teach-rxbook-mobile');
+      await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+      if (!night) await shot(page, 'teach-map-mobile');
+      check(G, `${theme}：没有 JS 错误`, errors.length === 0, errors[0]);
+      await ctx.close();
+    }
   });
 
   // 对比度汇总：同一个元素同一种颜色只算一次，取最差的那个样本

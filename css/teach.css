@@ -1,0 +1,451 @@
+/* 教学模式（js/teach.js）：复古卡通的闯关导图——米黄纸底、深墨线描边、平涂配色、网点底纹。
+ * 颜色全走变数：--tm-ink（墨线与字）、--tm-paper（纸）、--tm-a（这张地图的颜色，JS 依地图设定）、--tm-b（芥末黄）、--tm-c（淡蓝）。
+ * 字级、行高、间距只用阶梯上的值（scripts/ui-check 会检查这个档案）。护眼模式的颜色在最下面。
+ */
+.tm-root, .tm-mask {
+  --tm-ink: #2a2823;
+  --tm-paper: #fbf3df;
+  --tm-paper-2: #f2e6c4;
+  --tm-b: #e9b44c;
+  --tm-c: #9fd3e6;
+  --tm-accent: #0f766e;     /* 这张地图的颜色（JS 依地图写在卡片、地图、面板上） */
+  --tm-on-a: #ffffff;       /* 压在 --tm-a 上的字 */
+  --tm-on-b: #2a2823;       /* 压在 --tm-b 上的字 */
+  --tm-ok: #d6f0dc;
+  --tm-bad: #f8d7d3;
+  --tm-dot: rgba(42, 40, 35, .12);
+  --tm-hl: rgba(255, 255, 255, .85);   /* 圆盘左上角的高光 */
+  --tm-hp: #d9483f;         /* 魔王的血条 */
+}
+
+/* --tm-a = 地图颜色；要写在每个会改 --tm-accent 的元素上，才会各自重新算（护眼模式会把它调亮） */
+.tm-root, .tm-card, .tm-sheet { --tm-a: var(--tm-accent); }
+
+/* ---------- 地图选择 ---------- */
+.tm-root { padding-bottom: 40px; }
+.tm-title { margin-bottom: 4px; }
+.tm-draft {
+  display: inline-block; margin: 8px 0 4px; padding: 4px 12px; border: 2px solid var(--tm-ink); border-radius: 12px;
+  background: var(--tm-b); color: var(--tm-on-b); font-size: 12px; font-weight: 700; line-height: 1.4;
+}
+.tm-cards { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 16px; }
+@media (min-width: 760px) { .tm-cards { grid-template-columns: repeat(3, 1fr); } }
+.tm-card {
+  position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 12px; padding: 20px 16px;
+  border: 3px solid var(--tm-ink); border-radius: 22px; background: var(--tm-paper); color: var(--tm-ink);
+  box-shadow: 4px 4px 0 var(--tm-a); font: inherit; text-align: left; cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.tm-card:hover, .tm-card:focus-visible { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--tm-a); }
+.tm-card:focus-visible { outline: 3px solid var(--tm-ink); outline-offset: 3px; }
+.tm-card-art { display: grid; place-items: center; height: 100px; border: 2px solid var(--tm-ink); border-radius: 16px;
+  background: radial-gradient(var(--tm-dot) 1.2px, transparent 1.5px) 0 0 / 12px 12px, var(--tm-paper-2); }
+.tm-card-art .tm-art { width: 84px; height: 84px; }
+.tm-card-body { display: flex; flex-direction: column; gap: 6px; }
+.tm-card-title { font-family: var(--font-display, serif); font-size: 23px; font-weight: 800; line-height: 1.2; }
+.tm-card-tag { align-self: flex-start; padding: 2px 10px; border-radius: 8px; background: var(--tm-a); color: var(--tm-on-a); font-size: 12px; font-weight: 800; line-height: 1.4; }
+.tm-card-blurb { font-size: 13px; line-height: 1.6; }
+.tm-card-prog { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; line-height: 1.4; }
+.tm-bar { display: block; height: 10px; border: 2px solid var(--tm-ink); border-radius: 8px; background: var(--tm-paper); overflow: hidden; }
+.tm-bar i { display: block; height: 100%; background: var(--tm-a); }
+.tm-bar-q { height: 8px; margin-top: 6px; }
+.tm-go { align-self: flex-end; padding: 6px 16px; border: 2px solid var(--tm-ink); border-radius: 12px; background: var(--tm-b); color: var(--tm-on-b); font-size: 14px; font-weight: 800; line-height: 1.2; }
+
+/* ---------- 地图页 ---------- */
+.tm-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 4px; }
+.tm-head-main { flex: 1 1 160px; min-width: 0; }
+.tm-prog { margin: 0; font-size: 13px; font-weight: 700; line-height: 1.4; }
+.tm-back, .tm-book { padding: 6px 14px; border: 2px solid var(--tm-ink); border-radius: 12px; background: var(--tm-paper); color: var(--tm-ink); font-weight: 800; }
+.tm-msg { margin: 8px 0 0; padding: 8px 12px; border: 2px solid var(--tm-ink); border-radius: 12px; background: var(--tm-paper); color: var(--tm-ink); font-size: 14px; line-height: 1.6; }
+.tm-msg:empty { display: none; }
+.tm-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 8px 0; font-size: 12px; line-height: 1.4; }
+.tm-legend span { padding: 2px 8px; border: 2px solid var(--tm-ink); border-radius: 8px; background: var(--tm-paper); color: var(--tm-ink); font-weight: 700; }
+@media (max-width: 719px) { .tm-legend { display: none; } }
+/* 小节导航：点一下展开那一区并把镜头飞过去 */
+.tm-regions { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+.tm-chip-region { padding: 4px 12px; border: 2px solid var(--tm-ink); border-radius: 10px; background: var(--tm-paper); color: var(--tm-ink); font: inherit; font-size: 12px; font-weight: 700; line-height: 1.4; cursor: pointer; }
+.tm-chip-region:focus-visible { outline: 3px solid var(--tm-a); outline-offset: 2px; }
+.tm-chip-region.is-open { background: var(--tm-a); color: var(--tm-on-a); }
+.tm-chip-region.is-done span::after { content: ' ✓'; }
+
+/* 画布：像植物大战僵尸 2 的关卡地图——海面当底，每个小节是一座岛，路（桥）把岛连起来，关卡是路上的圆盘。
+ * 岛、风景、云、路都画在一张 SVG 里（js/teach.js 的 buildWorld）；海面的亮点跟着镜头走（位置与大小由 applyCam 写）。 */
+.tm-stage {
+  --tm-sea: color-mix(in oklab, var(--tm-a) 10%, #d9ecef);
+  --tm-land-0: color-mix(in oklab, var(--tm-a) 30%, #f1ebcc);
+  --tm-land-1: color-mix(in oklab, var(--tm-b) 52%, #f1ebcc);
+  --tm-land-2: color-mix(in oklab, var(--tm-c) 55%, #f1ebcc);
+  --tm-land-3: color-mix(in oklab, var(--tm-a) 44%, #ebe2bf);
+  --tm-road: #d9c08b;          /* 还没走通的路 */
+  --tm-road-dash: #fff8e4;     /* 路中间的虚线 */
+  --tm-sign: #ecd29b;          /* 小节牌子（木牌） */
+  --tm-sparkle: rgba(255, 255, 255, .6);
+  position: relative; margin: 12px 0 0; scroll-margin-top: calc(56px + 40px); height: 70vh; height: clamp(420px, calc(100dvh - 260px), 880px);
+  width: max(100%, min(calc(100vw - 48px), 1400px)); margin-left: calc(50% - max(100%, min(calc(100vw - 48px), 1400px)) / 2);   /* 比文字栏宽：画布越大越像一张世界地图 */
+  border: 3px solid var(--tm-ink); border-radius: 24px; overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
+  background: radial-gradient(var(--tm-sparkle) 1.2px, transparent 1.5px) 0 0 / 16px 16px, var(--tm-sea); box-shadow: 4px 4px 0 var(--tm-ink);
+}
+.tm-stage:focus-visible { outline: 3px solid var(--tm-a); outline-offset: 3px; }
+.tm-stage.is-dragging { cursor: grabbing; }
+.tm-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.tm-edges { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+
+/* 岛：影子、陆地（四种颜色轮流）、里面一圈浅色草地；风景是淡淡的图案；云慢慢飘 */
+.tm-land-sh { fill: var(--tm-ink); fill-opacity: .18; }
+.tm-land { stroke: var(--tm-ink); stroke-width: 3; stroke-linejoin: round; }
+.tm-land.z0 { fill: var(--tm-land-0); } .tm-land.z1 { fill: var(--tm-land-1); } .tm-land.z2 { fill: var(--tm-land-2); } .tm-land.z3 { fill: var(--tm-land-3); }
+.tm-land-hi { fill-opacity: .6; stroke: none; }
+.tm-land-hi.z0 { fill: color-mix(in oklab, var(--tm-land-0) 55%, #fff); } .tm-land-hi.z1 { fill: color-mix(in oklab, var(--tm-land-1) 55%, #fff); }
+.tm-land-hi.z2 { fill: color-mix(in oklab, var(--tm-land-2) 55%, #fff); } .tm-land-hi.z3 { fill: color-mix(in oklab, var(--tm-land-3) 55%, #fff); }
+.tm-prop { opacity: .7; }
+.tm-cloud { fill: #fff; fill-opacity: .6; animation: tm-drift 26s ease-in-out infinite alternate; }
+@keyframes tm-drift { to { transform: translateX(80px); } }
+
+/* 路：外圈墨线＋石板色＋中间虚线；走通了的路染上地图的颜色，虚线会流动 */
+.tm-road-b, .tm-road-f, .tm-road-p, .tm-road-d { fill: none; stroke-linecap: round; }
+.tm-road-b { stroke: var(--tm-ink); stroke-width: 26; }
+.tm-road-f { stroke: var(--tm-road); stroke-width: 20; }
+.tm-road-d { stroke: var(--tm-road-dash); stroke-width: 3; stroke-dasharray: 2 10; stroke-opacity: .85; }
+.tm-road-p { stroke: color-mix(in oklab, var(--tm-a) 42%, var(--tm-road)); stroke-width: 20; }   /* 走通的路：染色层盖在石板上，刚走通时由 js 让它从起点「染」过去 */
+.tm-edge.is-open .tm-road-d { stroke-opacity: 1; animation: tm-flow 1.2s linear infinite; }
+@keyframes tm-flow { to { stroke-dashoffset: -12; } }
+
+/* 小节牌子（木牌，下面一根柱子插进岛里）与折叠後的小岛 */
+.tm-section-no { padding: 2px 8px; border-radius: 8px; background: var(--tm-ink); color: var(--tm-paper); font-size: 12px; font-weight: 800; line-height: 1.4; }
+.tm-section-name { font-family: var(--font-display, serif); font-size: 14px; font-weight: 800; line-height: 1.4; }
+.tm-region-head { position: absolute; z-index: 2; display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border: 2px solid var(--tm-ink); border-radius: 12px; background: var(--tm-sign); color: var(--tm-ink); font: inherit; cursor: pointer; box-shadow: 2px 3px 0 var(--tm-ink); }
+.tm-region-head::after { content: ''; position: absolute; left: 24px; top: 100%; width: 6px; height: 12px; border: 2px solid var(--tm-ink); border-top: 0; background: var(--tm-sign); }
+.tm-region-head:focus-visible, .tm-island-main:focus-visible { outline: 3px solid var(--tm-a); outline-offset: 3px; }
+.tm-region-prog { padding: 0 6px; border-radius: 6px; background: var(--tm-b); color: var(--tm-on-b); font-size: 12px; font-weight: 800; line-height: 1.4; }
+.tm-region-head.is-done .tm-region-prog { background: var(--tm-a); color: var(--tm-on-a); }
+.tm-fold { font-size: 12px; font-weight: 700; line-height: 1.4; opacity: .8; }
+.tm-island { position: absolute; z-index: 2; border: 3px solid var(--tm-ink); border-radius: 34px; background: var(--tm-land-0); box-shadow: 0 8px 0 color-mix(in oklab, var(--tm-ink) 30%, transparent); }
+.tm-island[data-z="1"] { background: var(--tm-land-1); } .tm-island[data-z="2"] { background: var(--tm-land-2); } .tm-island[data-z="3"] { background: var(--tm-land-3); }
+.tm-island.is-locked { border-style: dashed; filter: saturate(.55); }
+.tm-island-main { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; width: 100%; height: 100%; padding: 8px calc(56px + 20px) 8px 16px; border: 0; border-radius: 30px; background: none; color: var(--tm-ink); font: inherit; text-align: left; cursor: pointer; }
+.tm-island-name { font-family: var(--font-display, serif); font-size: 16px; font-weight: 800; line-height: 1.4; }
+.tm-island-prog { display: flex; align-items: center; gap: 8px; width: 100%; font-size: 12px; font-weight: 700; line-height: 1.4; }
+.tm-island-prog .tm-bar { flex: 1; height: 8px; }
+.tm-island-boss { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; width: 56px; padding: 6px 0; border: 2px solid var(--tm-ink); border-radius: 50%;
+  background: repeating-linear-gradient(135deg, var(--tm-b) 0 6px, var(--tm-paper) 6px 12px); color: var(--tm-ink); font: inherit; font-size: 12px; font-weight: 800; line-height: 1.2; cursor: pointer; }
+.tm-island-boss span { padding: 0 4px; border-radius: 6px; background: var(--tm-paper); }
+.tm-island-boss .tm-art { width: 28px; height: 28px; }
+.tm-island-boss:focus-visible { outline: 3px solid var(--tm-a); outline-offset: 2px; }
+
+/* 起点：地图封面＋通关进度环 */
+.tm-rootnode { position: absolute; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--tm-ink); text-align: center; }
+.tm-root-ring { position: relative; display: grid; place-items: center; width: 112px; height: 112px; }
+.tm-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tm-ring circle { fill: none; stroke-width: 7; }
+.tm-ring .rg-bg { stroke: var(--tm-ink); stroke-opacity: .2; }
+.tm-ring .rg-fg { stroke: var(--tm-a); stroke-linecap: round; }
+.tm-root-art { position: relative; display: grid; place-items: center; width: 80px; height: 80px; border: 3px solid var(--tm-ink); border-radius: 50%; background: var(--tm-paper); overflow: hidden; }
+.tm-root-art .tm-art { width: 56px; height: 56px; }
+.tm-root-name { font-family: var(--font-display, serif); font-size: 19px; font-weight: 800; line-height: 1.2; }
+.tm-root-prog { font-size: 12px; font-weight: 700; line-height: 1.4; }
+
+/* 关卡圆盘：图标在里面，编号挂左上角，星星挂下缘，名牌在下面。三种状态：
+ * 灰的有锁（还没解锁）、外圈亮色＋一圈圈扩散（可以挑战）、金边＋右上角打勾（已通关） */
+.tm-ncard { position: absolute; z-index: 3; display: grid; place-items: center; padding: 0; border: 3px solid var(--tm-ink); border-radius: 50%; color: var(--tm-ink); font: inherit; cursor: pointer;
+  background: radial-gradient(circle at 32% 26%, var(--tm-hl) 0, transparent 55%), var(--tm-paper);
+  box-shadow: 0 5px 0 color-mix(in oklab, var(--tm-ink) 55%, transparent); transition: transform .15s ease, box-shadow .15s ease; }
+.tm-ncard:hover { transform: translateY(-2px); box-shadow: 0 7px 0 color-mix(in oklab, var(--tm-ink) 55%, transparent); }
+.tm-ncard:active { transform: translateY(3px); box-shadow: 0 2px 0 color-mix(in oklab, var(--tm-ink) 55%, transparent); }
+.tm-ncard:focus-visible { outline: 3px solid var(--tm-a); outline-offset: 5px; }
+.tm-ncard[data-state="open"] { box-shadow: 0 0 0 5px var(--tm-a), 0 5px 0 5px color-mix(in oklab, var(--tm-ink) 55%, transparent); }
+.tm-ncard[data-state="open"]::before { content: ''; position: absolute; inset: -9px; border: 3px solid var(--tm-a); border-radius: 50%; pointer-events: none; animation: tm-ring 1.8s ease-out infinite; }
+.tm-ncard[data-state="done"] { box-shadow: 0 0 0 5px var(--tm-b), 0 5px 0 5px color-mix(in oklab, var(--tm-ink) 55%, transparent); }
+.tm-ncard[data-state="done"]::after { content: '✓'; position: absolute; right: -8px; top: -8px; display: grid; place-items: center; width: 22px; height: 22px; border: 2px solid var(--tm-ink); border-radius: 50%; background: var(--tm-a); color: var(--tm-on-a); font-size: 12px; font-weight: 800; line-height: 1; }
+.tm-ncard[data-state="locked"] { border-style: dashed; background: var(--tm-paper-2); box-shadow: none; opacity: .88; }
+.tm-disc-art { display: grid; place-items: center; width: 100%; height: 100%; }
+.tm-disc-art .tm-art { display: block; width: 40px; height: 40px; }
+.tm-art-img { display: block; width: 100%; height: 100%; object-fit: contain; }
+/* 你给的贴纸图：关卡的圆盘里放大一点；魔王的图比圆盘大一圈、从圆盘里「站」出来；锁住的变灰变淡、角上挂锁；起点用封面中间裁成圆 */
+.tm-disc-art.has-pic .tm-art-img { width: 52px; height: 52px; }
+.tm-disc-art.is-fog .tm-art-img { filter: grayscale(1); opacity: .45; }
+.tm-lockbadge { position: absolute; right: -4px; bottom: -4px; display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--tm-ink); border-radius: 50%; background: var(--tm-paper); }
+.tm-lockbadge .tm-art { width: 14px; height: 14px; }
+.tm-root-art .tm-art-img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+/* 封面铺满那个 100px 高的框；手机上卡片比较宽，图按比例会比 100px 高，所以绝对定位＋裁掉多的，不然会盖到下面的标题 */
+.tm-card-art { position: relative; overflow: hidden; }
+.tm-card-art .tm-cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+.tm-no { position: absolute; left: -8px; top: -8px; display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border: 2px solid var(--tm-ink); border-radius: 8px; background: var(--tm-ink); color: var(--tm-paper); font-size: 11px; font-weight: 800; line-height: 1; }
+.tm-stars { position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%); display: flex; gap: 1px; padding: 1px 6px; border: 2px solid var(--tm-ink); border-radius: 10px; background: var(--tm-paper); }
+.tm-stars .tm-star { width: 12px; height: 12px; }
+.tm-label { position: absolute; top: calc(100% + 16px); left: 50%; transform: translateX(-50%); width: max-content; max-width: 128px; padding: 2px 8px; border: 2px solid var(--tm-ink); border-radius: 10px; background: var(--tm-paper); box-shadow: 0 2px 0 var(--tm-ink); text-align: center; }
+.tm-world[data-axis="v"] .tm-label { max-width: 100px; }
+.tm-name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 12px; font-weight: 800; line-height: 1.2; }
+.tm-chip { display: inline-block; padding: 1px 6px; border: 2px solid var(--tm-ink); border-radius: 8px; background: var(--tm-paper); color: var(--tm-ink); font-size: 11px; font-weight: 800; line-height: 1.2; }
+.tm-chip-tier { background: var(--tm-b); color: var(--tm-on-b); }
+.tm-chip-boss { background: var(--tm-a); color: var(--tm-on-a); }
+.tm-star { width: 14px; height: 14px; }
+.tm-star-big { width: 40px; height: 40px; }
+.tm-star-mid { width: 22px; height: 22px; }
+.tm-skip { position: absolute; top: -12px; right: -14px; padding: 1px 6px; border: 2px solid var(--tm-ink); border-radius: 8px; background: var(--tm-c); color: var(--tm-on-b); font-size: 11px; font-weight: 800; line-height: 1.2; }
+/* 魔王：大一圈的斜纹圆盘，贴纸从圆盘里站出来；名牌换成地图的颜色；打倒了插一面旗，贴纸变灰 */
+.tm-ncard.is-boss { border-width: 4px; background: radial-gradient(circle, var(--tm-paper) 0 60%, transparent 61%), repeating-linear-gradient(135deg, var(--tm-b) 0 8px, var(--tm-paper) 8px 16px); }
+.is-boss .tm-disc-art .tm-art { width: 52px; height: 52px; }
+.is-boss .tm-disc-art.has-pic { position: absolute; inset: 0; overflow: visible; }
+.is-boss .tm-disc-art.has-pic .tm-art-img { position: absolute; left: 50%; top: -22px; width: 116px; height: 116px; transform: translateX(-50%); }
+.is-boss[data-state="done"] .tm-art-img { filter: grayscale(.7) brightness(.92); }
+.is-boss .tm-label { max-width: 156px; background: var(--tm-a); color: var(--tm-on-a); }
+.is-boss[data-state="done"]::after { content: none; }
+.tm-flag { position: absolute; right: -16px; top: -30px; width: 40px; height: 40px; }
+.tm-ncard.is-new { animation: tm-pop .6s cubic-bezier(.2, 1.6, .4, 1) 3; }
+.tm-ncard.is-new::after { content: ''; position: absolute; inset: -12px; border: 3px solid var(--tm-b); border-radius: 50%; pointer-events: none; animation: tm-ring 1.2s ease-out 3; }
+@keyframes tm-pop { 0% { transform: scale(.85); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@keyframes tm-ring { from { opacity: 1; transform: scale(.92); } to { opacity: 0; transform: scale(1.25); } }
+
+/* 缩得很小时只留圆盘，看路线；放大了才看得到名牌、编号与星星 */
+.tm-stage[data-zoom="far"] .tm-label, .tm-stage[data-zoom="far"] .tm-stars, .tm-stage[data-zoom="far"] .tm-no,
+.tm-stage[data-zoom="far"] .tm-island-prog, .tm-stage[data-zoom="far"] .tm-fold { display: none; }
+
+/* 风景轻轻摇；小精灵沿路飞的时候拍子快一点；「下一步」隔几秒点点头提醒你；刚解锁的关图标弹出来；打开着的魔王在原地晃 */
+.tm-sway { transform-box: fill-box; transform-origin: 50% 90%; animation: tm-sway 4.5s ease-in-out infinite alternate; }
+@keyframes tm-sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+.tm-pin.is-walking { animation-duration: .45s; }
+body.tm-lock .tm-sway, body.tm-lock .tm-cloud, body.tm-lock .tm-road-d, body.tm-lock .tm-pin, body.tm-lock .tm-next, body.tm-lock .tm-ncard::before { animation-play-state: paused; }   /* 面板盖着地图时，底下的环境动画先暂停 */
+.tm-next { animation: tm-nudge 2.6s ease-in-out infinite; }
+.tm-next:active { animation: none; }
+@keyframes tm-nudge { 0%, 86%, 100% { transform: none; } 92% { transform: translateY(-4px); } }
+.tm-ncard.is-new .tm-disc-art { animation: tm-unlock .7s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes tm-unlock { 0% { transform: scale(.2) rotate(-30deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.tm-ncard.is-boss[data-state="open"] .tm-art-img { animation: tm-boss-bob-map 2.4s ease-in-out infinite alternate; }
+@keyframes tm-boss-bob-map { to { transform: translate(-50%, -4px); } }   /* 地图上的魔王图靠 translateX(-50%) 居中，动画要把它带上 */
+
+/* 你在这里 */
+.tm-pin { position: absolute; z-index: 4; display: flex; align-items: center; gap: 4px; pointer-events: none; animation: tm-bob 1.6s ease-in-out infinite alternate; }
+.tm-pin img { display: block; width: 48px; height: 48px; }
+.tm-pin-tag { padding: 2px 8px; border: 2px solid var(--tm-ink); border-radius: 10px; background: var(--tm-b); color: var(--tm-on-b); font-size: 11px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
+@keyframes tm-bob { to { transform: translateY(-6px); } }
+
+/* 介绍气泡：点关卡弹出（在画布层，不随缩放变大变小） */
+.tm-bubble { position: absolute; z-index: 6; display: flex; flex-direction: column; gap: 8px; padding: 12px 14px 14px; border: 3px solid var(--tm-ink); border-radius: 18px; background: var(--tm-paper); color: var(--tm-ink);
+  box-shadow: 4px 4px 0 var(--tm-a); cursor: default; text-align: left; animation: tm-bubble-in .18s ease-out; }
+@keyframes tm-bubble-in { from { opacity: 0; transform: translateY(6px) scale(.96); } to { opacity: 1; transform: none; } }
+.tm-bubble-head { display: flex; align-items: center; gap: 10px; }
+.tm-bubble-art { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border: 2px solid var(--tm-ink); border-radius: 50%; background: var(--tm-paper-2); overflow: hidden; }
+.tm-bubble-art .tm-art { width: 36px; height: 36px; }
+.tm-bubble-art .tm-art-img { width: 100%; height: 100%; object-fit: contain; }
+.tm-bubble-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tm-bubble-title { margin: 0; font-family: var(--font-display, serif); font-size: 16px; font-weight: 800; line-height: 1.2; }
+.tm-bubble-gist { margin: 0; font-size: 14px; line-height: 1.6; }
+.tm-bubble-stars { display: flex; gap: 2px; }
+.tm-bubble-status { margin: 0; font-size: 13px; line-height: 1.4; opacity: .9; }
+.tm-bubble-go { width: 100%; }
+.tm-bubble-arrow { position: absolute; left: var(--tm-arrow, 50%); width: 16px; height: 16px; margin-left: -8px; border: 3px solid var(--tm-ink); border-top: 0; border-left: 0; background: var(--tm-paper); }
+.tm-bubble[data-pos="above"] .tm-bubble-arrow { bottom: -10px; transform: rotate(45deg); }
+.tm-bubble[data-pos="below"] .tm-bubble-arrow { top: -10px; transform: rotate(225deg); }
+.tm-bubble[data-pos="over"] .tm-bubble-arrow { display: none; }
+
+/* 画布上的按钮：下一步、缩放、适配、全部展开／收起 */
+.tm-hud { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 5; display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; pointer-events: none; }
+.tm-hud > * { display: flex; gap: 6px; pointer-events: auto; }
+.tm-hud-r { flex-wrap: wrap; justify-content: flex-end; }
+.tm-tool { min-width: 40px; height: 40px; padding: 0 12px; border: 2px solid var(--tm-ink); border-radius: 12px; background: var(--tm-paper); color: var(--tm-ink); font: inherit; font-size: 16px; font-weight: 800; line-height: 1; cursor: pointer; box-shadow: 2px 2px 0 var(--tm-ink); }
+.tm-tool-wide { font-size: 12px; }
+.tm-tool:active, .tm-next:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tm-ink); }
+.tm-next { max-width: 100%; text-align: left; }
+.tm-next[hidden] { display: none; }
+/* 手机：双指捏合就能缩放，不放 ＋／－，给地图多留一点位置 */
+@media (max-width: 719px) and (pointer: coarse) { .tm-zoombtn { display: none; } }
+
+/* ---------- 面板 ---------- */
+body.tm-lock { overflow: hidden; }
+.tm-mask { position: fixed; inset: 0; z-index: 1500; display: grid; place-items: center; padding: 16px; background: rgba(20, 18, 15, .55); }
+.tm-sheet { position: relative; width: min(560px, 100%); max-height: 90vh; overflow: auto; padding: 0 20px 24px; border: 3px solid var(--tm-ink); border-radius: 22px;
+  background: var(--tm-paper); color: var(--tm-ink); box-shadow: 6px 6px 0 var(--tm-a); }
+/* 顶栏：左边放小标签／题号与进度条，右边永远是 ×（两者并排，不会叠在一起）；内容滚动时顶栏贴着上缘 */
+.tm-sheet-top { position: sticky; top: 0; z-index: 2; display: flex; align-items: flex-start; gap: 12px; margin: 0 -20px 4px; padding: 12px 12px 8px 20px; background: var(--tm-paper); }
+.tm-top { flex: 1; min-width: 0; padding-top: 8px; }
+.tm-x { flex: none; width: 40px; height: 40px; border: 2px solid var(--tm-ink); border-radius: 12px; background: var(--tm-paper); color: var(--tm-ink); font-size: 23px; line-height: 1; cursor: pointer; }
+.tm-sheet-body { display: flex; flex-direction: column; gap: 12px; }
+.tm-sheet-body.is-asking { opacity: .35; pointer-events: none; }
+.tm-leave { margin: 0 0 12px; padding: 12px 14px; border: 3px dashed var(--tm-ink); border-radius: 14px; background: var(--tm-paper-2); }
+.tm-leave p { margin: 0; font-size: 14px; font-weight: 800; line-height: 1.6; }
+.tm-root sub, .tm-root sup, .tm-mask sub, .tm-mask sup { font-size: .75em; line-height: 1; }
+.tm-eyebrow { display: flex; flex-wrap: wrap; gap: 4px; }
+.tm-sheet-title { margin: 0; font-family: var(--font-display, serif); font-size: 23px; font-weight: 800; line-height: 1.2; }
+.tm-sheet-title:focus { outline: none; }
+.tm-lead { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.75; }
+.tm-points { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.75; }
+.tm-points li + li { margin-top: 4px; }
+.tm-tip { margin: 0; padding: 8px 12px; border: 2px dashed var(--tm-ink); border-radius: 12px; background: var(--tm-paper-2); font-size: 14px; line-height: 1.6; }
+.tm-src { margin: 0; font-size: 12px; line-height: 1.6; opacity: .85; }
+.tm-sub-title { margin: 8px 0 4px; font-size: 14px; font-weight: 800; line-height: 1.4; }
+.tm-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.tm-primary, .tm-ghost, .tm-next { padding: 10px 20px; border: 3px solid var(--tm-ink); border-radius: 14px; font-size: 14px; font-weight: 800; line-height: 1.2; cursor: pointer; box-shadow: 3px 3px 0 var(--tm-ink); }
+.tm-primary, .tm-next { background: var(--tm-b); color: var(--tm-on-b); }
+.tm-ghost { background: var(--tm-paper); color: var(--tm-ink); }
+.tm-primary:active, .tm-ghost:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tm-ink); }
+.tm-primary:disabled, .tm-ghost:disabled { opacity: .55; cursor: default; }
+
+/* 闯关 */
+.tm-qhead { display: flex; align-items: center; gap: 12px; }
+.tm-qmain { display: flex; flex-wrap: wrap; align-items: baseline; flex: 1; min-width: 0; gap: 4px 12px; }
+.tm-qtitle { font-size: 12px; font-weight: 800; line-height: 1.4; }
+.tm-qno { margin-left: auto; font-size: 12px; font-weight: 700; line-height: 1.4; }
+.tm-qhead .tm-bar { flex: 1 1 100%; }
+.tm-bar-q i { transition: width .45s cubic-bezier(.3, 1.3, .5, 1); }
+/* 小精灵：陪你闯关，答对高兴地弹一下、答错来讲解时抖一下 */
+.tm-mascot { display: block; flex: none; width: 48px; height: 48px; object-fit: contain; transform-origin: 50% 90%; }
+.tm-mascot-r { width: 96px; height: 96px; align-self: center; }
+.tm-mascot.is-hop { animation: tm-hop .6s cubic-bezier(.3, 1.6, .5, 1); }
+.tm-mascot.is-shake { animation: tm-shake .45s ease; }
+.tm-streak { display: inline-flex; align-items: center; gap: 2px; padding: 0 8px; border: 2px solid var(--tm-ink); border-radius: 10px; background: var(--tm-b); color: var(--tm-on-b); font-size: 12px; font-weight: 800; line-height: 1.4; }
+.tm-streak-ico { width: 14px; height: 14px; }
+.tm-streak.is-pop { animation: tm-streak-pop .5s cubic-bezier(.3, 1.8, .5, 1); }
+.tm-streak.is-lost { animation: tm-streak-lost .45s ease-in forwards; }
+.tm-q { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.75; white-space: pre-line; }
+.tm-q:focus { outline: none; }
+.tm-options { display: flex; flex-direction: column; gap: 8px; }
+.tm-option { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 10px 12px; border: 2px solid var(--tm-ink); border-radius: 14px; background: var(--tm-paper);
+  color: var(--tm-ink); font: inherit; font-size: 14px; line-height: 1.6; text-align: left; cursor: pointer; }
+.tm-option:hover:not(:disabled) { background: var(--tm-paper-2); }
+.tm-option:disabled { cursor: default; }
+.tm-option.is-right { background: var(--tm-ok); }
+.tm-option.is-wrong { background: var(--tm-bad); }
+.tm-option.is-right { animation: tm-pop-ok .45s cubic-bezier(.3, 1.6, .5, 1); }
+.tm-option.is-wrong { animation: tm-shake .45s ease; }
+.tm-opt-badge { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--tm-ink); border-radius: 50%; background: var(--tm-paper); font-size: 12px; font-weight: 800; line-height: 1; }
+.tm-opt-text { flex: 1; min-width: 0; }
+.tm-answer-row { display: flex; align-items: center; gap: 8px; }
+.tm-input { flex: 1; min-width: 0; padding: 10px 12px; border: 3px solid var(--tm-ink); border-radius: 14px; background: #fffdf6; color: #2a2823; font: inherit; font-size: 16px; line-height: 1.4; }
+.tm-unit { font-size: 16px; font-weight: 800; line-height: 1.2; }
+.tm-textarea { width: 100%; padding: 10px 12px; border: 3px solid var(--tm-ink); border-radius: 14px; background: #fffdf6; color: #2a2823; font: inherit; font-size: 14px; line-height: 1.6; resize: vertical; }
+.tm-warn { margin: 0; min-height: 0; font-size: 13px; font-weight: 700; line-height: 1.4; color: #b91c1c; }
+.tm-warn:empty { display: none; }
+.tm-hint { margin: 0; font-size: 13px; line-height: 1.6; opacity: .9; }
+.tm-feedback:empty { display: none; }
+.tm-feedback { padding: 12px 14px; border: 3px solid var(--tm-ink); border-radius: 14px; }
+.tm-feedback.is-ok { background: var(--tm-ok); }
+.tm-feedback.is-bad { background: var(--tm-bad); }
+.tm-feedback.is-ok, .tm-feedback.is-bad { animation: tm-slide-in .3s ease-out; }
+.tm-input.is-wrong { animation: tm-shake .45s ease; }
+.tm-sheet.is-shiver { animation: tm-shiver .36s ease; }
+.tm-verdict { margin: 0 0 4px; font-size: 16px; font-weight: 800; line-height: 1.4; }
+.tm-answer { margin: 0 0 4px; font-size: 14px; font-weight: 800; line-height: 1.6; }
+.tm-steps, .tm-explain { margin: 0; font-size: 14px; line-height: 1.75; white-space: pre-line; }
+.tm-essay-box:empty { display: none; }
+.tm-essay-box { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 2px dashed var(--tm-ink); border-radius: 14px; background: var(--tm-paper-2); }
+.tm-check { display: flex; align-items: flex-start; gap: 10px; padding: 4px 0; font-size: 14px; line-height: 1.6; cursor: pointer; }
+.tm-check input { flex: none; width: 20px; height: 20px; margin-top: 2px; accent-color: var(--tm-a); }
+.tm-count { margin: 4px 0 0; font-size: 12px; font-weight: 700; line-height: 1.4; }
+.tm-result-stars { display: flex; gap: 6px; }
+.tm-star.is-lit { animation: tm-star-pop .5s cubic-bezier(.3, 1.7, .5, 1) both; animation-delay: calc(var(--i, 0) * 220ms + 200ms); }
+.tm-points li { animation: tm-slide-in .35s ease-out both; animation-delay: calc(var(--i, 0) * 60ms); }
+
+/* 魔王战：横幅（魔王的图＋血条）。血条的格数 = 过关要答对的题数，答对掉一格，答错魔王反击 */
+.tm-boss { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border: 3px solid var(--tm-ink); border-radius: 18px;
+  background: repeating-linear-gradient(135deg, color-mix(in oklab, var(--tm-b) 35%, var(--tm-paper)) 0 10px, var(--tm-paper) 10px 20px); }
+.tm-boss-art { --tm-boss-size: 104px; position: relative; flex: none; display: grid; place-items: center; width: var(--tm-boss-size); height: var(--tm-boss-size); }   /* 魔王战横幅里的魔王多大 */
+.tm-boss-art .tm-art { width: 72%; height: 72%; }
+.tm-boss-img { transform-origin: 50% 90%; animation: tm-boss-bob 2.2s ease-in-out infinite alternate; }
+.tm-boss-img.is-framed { animation: none; }   /* 有逐帧动画就不再晃（帧里自己会动） */
+.tm-boss-art.is-hit { animation: tm-boss-hit .46s ease; }
+.tm-boss-art.is-atk { animation: tm-boss-atk .56s ease; }
+.tm-boss-main { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.tm-boss-name { font-family: var(--font-display, serif); font-size: 14px; font-weight: 800; line-height: 1.2; }
+.tm-hp { display: flex; gap: 4px; }
+.tm-hp-seg { flex: 1; height: 12px; border: 2px solid var(--tm-ink); border-radius: 6px; background: var(--tm-paper-2); }
+.tm-hp-seg.is-on { background: var(--tm-hp); }
+.tm-hp-seg.is-break { animation: tm-seg-break .6s ease-out; }
+.tm-hp-note { font-size: 12px; line-height: 1.4; }
+.tm-dmg { position: absolute; left: 50%; top: 0; font-size: 16px; font-weight: 800; line-height: 1; color: var(--tm-hp); white-space: nowrap; pointer-events: none; animation: tm-float-up .9s ease-out forwards; }
+.tm-result-boss { --tm-boss-big: 160px; position: relative; display: grid; place-items: center; width: var(--tm-boss-big); height: var(--tm-boss-big); align-self: center; }   /* 结果页的魔王多大 */
+.tm-result-boss .tm-art { width: 67%; height: 67%; }
+.tm-result-boss.is-defeated .tm-boss-img { animation: tm-boss-defeat 1s ease-in forwards; }
+.tm-result-boss.is-taunt .tm-boss-img { animation: tm-boss-taunt .8s ease-in-out infinite alternate; }
+
+/* 迸出来的星星、彩带（js 临时放进来，播完就移掉） */
+.tm-fxlayer { --tm-a: var(--tm-accent); position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none; }
+.tm-fxp { position: absolute; width: 20px; height: 20px; pointer-events: none; will-change: transform, opacity; }
+
+@keyframes tm-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+@keyframes tm-shiver { 0%, 100% { transform: none; } 25% { transform: translate(-3px, 1px) rotate(-.4deg); } 50% { transform: translate(3px, -1px) rotate(.4deg); } 75% { transform: translate(-2px, 0); } }
+@keyframes tm-hop { 0% { transform: none; } 35% { transform: translateY(-14px) scale(1.12); } 70% { transform: translateY(0) scale(.95); } 100% { transform: none; } }
+@keyframes tm-pop-ok { 50% { transform: scale(1.04); } }
+@keyframes tm-slide-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes tm-streak-pop { 0% { transform: scale(.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@keyframes tm-streak-lost { to { transform: translateY(8px) rotate(12deg) scale(.5); opacity: 0; } }
+@keyframes tm-star-pop { 0% { transform: scale(0) rotate(-60deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes tm-boss-bob { to { transform: translateY(-4px); } }
+@keyframes tm-boss-hit { 0% { transform: none; filter: none; } 20% { transform: translateX(-10px) rotate(-6deg) scale(.94); filter: brightness(2); } 50% { transform: translateX(8px) rotate(4deg); } 100% { transform: none; filter: none; } }
+@keyframes tm-boss-atk { 0% { transform: none; } 35% { transform: scale(1.3) translateY(10px); } 55% { transform: scale(1.3) translateY(10px) rotate(-3deg); } 100% { transform: none; } }
+@keyframes tm-boss-defeat { 0% { transform: none; filter: none; } 40% { transform: rotate(-12deg) scale(1.1); filter: brightness(1.8); } 100% { transform: rotate(78deg) translate(18px, 14px) scale(.8); filter: grayscale(.8); opacity: .55; } }
+@keyframes tm-boss-taunt { to { transform: translateY(-6px) scale(1.04); } }
+@keyframes tm-seg-break { 0% { transform: scale(1); background: var(--tm-hp); } 40% { transform: scale(1.4, 1.8); background: #fff; } 100% { transform: scale(1); background: var(--tm-paper-2); } }
+@keyframes tm-float-up { 0% { transform: translate(-50%, 0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-50%, -34px); opacity: 0; } }
+
+/* 反应式（按类别分组） */
+.tm-rx { display: flex; flex-direction: column; gap: 12px; }
+.tm-rx-cat { display: inline-block; margin: 0 0 6px; padding: 2px 10px; border-radius: 8px; background: var(--tm-a); color: var(--tm-on-a); font-size: 14px; font-weight: 800; line-height: 1.4; }
+.tm-rx-level { margin: 8px 0 4px; font-size: 12px; font-weight: 800; line-height: 1.4; }
+.tm-rx-row { margin: 6px 0; padding: 8px 12px; border: 2px solid var(--tm-ink); border-radius: 12px; background: var(--tm-paper-2); }
+.tm-rx-name { font-size: 13px; font-weight: 800; line-height: 1.4; }
+.tm-rx-eq { font-size: 14px; font-weight: 700; line-height: 1.6; word-break: break-word; }
+.tm-rx-cond, .tm-rx-note { font-size: 12px; line-height: 1.6; }
+.tm-rx-note { font-weight: 700; }
+
+/* ---------- 图案里的颜色与小动画 ---------- */
+.tm-svg { display: block; overflow: visible; }
+.tm-svg .ink { fill: none; stroke: var(--tm-ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.tm-svg .fa { fill: var(--tm-a); }
+.tm-svg .fb { fill: var(--tm-b); }
+.tm-svg .fc { fill: var(--tm-paper); }
+.tm-svg .fd { fill: var(--tm-c); }
+.tm-svg .dash { stroke-dasharray: 4 5; }
+.tm-svg .bub, .tm-svg .smoke, .tm-svg .flick, .tm-svg .flick2, .tm-svg .hand, .tm-svg .wave, .tm-svg .swing { transform-box: fill-box; }
+.tm-ncard[data-state="open"] .bub, .tm-card:hover .bub { animation: tm-rise 2.4s ease-in infinite; }
+.tm-svg .b2 { animation-delay: .8s !important; }
+.tm-svg .b3 { animation-delay: 1.6s !important; }
+.tm-ncard:not([data-state="locked"]) .smoke, .tm-card:hover .smoke { animation: tm-puff 3s ease-out infinite; }
+.tm-svg .s2 { animation-delay: 1.4s !important; }
+.tm-ncard:not([data-state="locked"]) .flick, .tm-card:hover .flick { transform-origin: 50% 100%; animation: tm-flick .8s ease-in-out infinite alternate; }
+.tm-ncard:not([data-state="locked"]) .flick2, .tm-card:hover .flick2 { transform-origin: 50% 100%; animation: tm-flick .6s ease-in-out infinite alternate-reverse; }
+.tm-ncard:not([data-state="locked"]) .hand, .tm-card:hover .hand { transform-origin: 0 0; animation: tm-spin 6s linear infinite; }
+.tm-ncard:not([data-state="locked"]) .wave { transform-origin: 0 50%; animation: tm-wave 1.6s ease-in-out infinite alternate; }
+.tm-ncard:not([data-state="locked"]) .swing, .tm-card:hover .swing { transform-origin: 50% 0; animation: tm-swing 2.6s ease-in-out infinite alternate; }
+@keyframes tm-rise { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-12px) scale(.6); opacity: 0; } }
+@keyframes tm-puff { 0% { transform: translateY(0) scale(.5); opacity: 1; } 100% { transform: translateY(-10px) scale(1.2); opacity: 0; } }
+@keyframes tm-flick { from { transform: scale(1, 1); } to { transform: scale(.94, 1.07) skewX(-3deg); } }
+@keyframes tm-spin { to { transform: rotate(360deg); } }
+@keyframes tm-wave { from { transform: skewY(-4deg); } to { transform: skewY(4deg); } }
+@keyframes tm-swing { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .tm-svg *, .tm-edge *, .tm-cloud, .tm-bubble, .tm-ncard, .tm-ncard::before, .tm-ncard::after, .tm-card, .tm-pin { animation: none !important; transition: none !important; }
+  .tm-mascot, .tm-streak, .tm-option, .tm-input, .tm-feedback, .tm-sheet, .tm-star, .tm-points li, .tm-boss-art, .tm-boss-img, .tm-hp-seg, .tm-dmg, .tm-result-boss, .tm-sway, .tm-next, .tm-disc-art, .tm-art-img, .tm-bar-q i { animation: none !important; transition: none !important; }
+}
+
+/* ---------- 护眼模式 ---------- */
+[data-theme="night"] .tm-root, [data-theme="night"] .tm-mask {
+  --tm-ink: #e8e1d4;
+  --tm-paper: #2a2722;
+  --tm-paper-2: #34302a;
+  --tm-b: #d9a63f;
+  --tm-c: #4f98b1;
+  --tm-on-a: #14110e;
+  --tm-ok: #1f3a2b;
+  --tm-bad: #4a2623;
+  --tm-dot: rgba(232, 225, 212, .09);
+  --tm-hl: rgba(255, 255, 255, .1);
+  --tm-hp: #ef6a60;
+}
+/* 护眼：夜里的海与岛——深蓝灰的海，岛是暗一点的同色系，路是暗石板 */
+[data-theme="night"] .tm-stage {
+  --tm-sea: color-mix(in oklab, var(--tm-a) 14%, #121c22);
+  --tm-land-0: color-mix(in oklab, var(--tm-a) 20%, #2b2a24);
+  --tm-land-1: color-mix(in oklab, var(--tm-b) 26%, #2b2a24);
+  --tm-land-2: color-mix(in oklab, var(--tm-c) 28%, #2b2a24);
+  --tm-land-3: color-mix(in oklab, var(--tm-a) 30%, #2a2822);
+  --tm-road: #5f5646; --tm-road-dash: #d8cdb4; --tm-sign: #6a5a3b; --tm-sparkle: rgba(255, 255, 255, .07);
+}
+[data-theme="night"] .tm-land-sh { fill-opacity: .35; }
+[data-theme="night"] .tm-land-hi { fill-opacity: .22; }
+[data-theme="night"] .tm-cloud { fill-opacity: .12; }
+[data-theme="night"] .tm-prop { opacity: .55; }
+/* 护眼：把地图颜色调亮，深色字压在上面才看得清 */
+[data-theme="night"] .tm-root, [data-theme="night"] .tm-card, [data-theme="night"] .tm-sheet, [data-theme="night"] .tm-fxlayer { --tm-a: color-mix(in oklab, var(--tm-accent) 55%, #fff); }
+[data-theme="night"] .tm-input, [data-theme="night"] .tm-textarea { background: #1c1a17; color: #e8e1d4; }
+[data-theme="night"] .tm-warn { color: #f2aaa6; }
+[data-theme="night"] .tm-mask { background: rgba(0, 0, 0, .65); }

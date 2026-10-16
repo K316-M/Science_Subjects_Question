@@ -25,6 +25,7 @@
 | 各科的强调色（首页轨道） | `js/orbit-subjects.js` | `SUBJECTS` 里的 `accent` | 生物绿、化学紫、物理蓝、数学琥珀 | | 🟢 |
 | 各科背景光团的颜色 | `index.html` | `SUBJECT_THEME` 的 `blobA` `blobB` | | | 🟢 |
 | 背景插画的浓淡 | `index.html` | `.custom-photo-layer` | | 见 [OPERATIONS 七·背景的浓淡](OPERATIONS.md#背景的浓淡) | 🟢 |
+| 切换科目时背景淡入淡出多久（旧画留着、新画淡入盖上去） | `index.html` | `BG_FADE_MS`；CSS 搜 `.custom-photo-layer`、`.subject-bg-wash` 的 `transition: opacity` | `700`（毫秒）＝ CSS 的 `0.7s` | 🔴 JS 这个数字要和那两处 CSS 的秒数一起改，不然旧画会在新画还没盖满时就被撤掉（闪一下） |
 | 护眼模式背景水彩的亮度 | `scripts/scene/build_scene.py` | `NIGHT_K` | `0.32` | 改完要重跑脚本，见 [OPERATIONS 七](OPERATIONS.md#护眼模式的颜色) | 🟡 |
 | 网站图标（学士帽）的颜色：导航列中间的徽章、首页轨道中心 | `index.html`（白天）、`css/night.css`（护眼） | `--logo-ink`（线条）`--logo-paper`（帽身、车轮、灯泡）`--logo-phys`（帽板左半）`--logo-math`（帽板右半）`--logo-bio` `--logo-bio2`（DNA）`--logo-chem`（原子）`--logo-spark`（电子） | 白天 `#3e4b52` `#ffffff` `#93c2c1` `#efe6a3` `#3f9a66` `#8fd0a4` `#8a78c8` `#e9cf63`；护眼线条换米白 `#e6dfd1`、帽身 `#34302a`，其他压暗一档 | 单色、不用渐层。/dev 与手机桌面图示用的 `assets/icons/logo.svg` 是固定颜色，要一起换的话见「五、换网页图标」 | 🟢 |
 | 首页轨道中心的底色与框 | `css/orbit.css` | `.orbit-core {` | 纸色 `#fffdf8`＋细墨线框；指到哪一科，框与外圈染成那一科的颜色 | 护眼的在 `css/night.css` 搜 `.orbit-core` | 🟢 |
@@ -42,6 +43,17 @@
 | 换题时题卡左右滑进来的距离 | `index.html` | `slideFromRight`、`slideFromLeft` | `12px` | 不要超过 `16px`（手机的页边） | 🔴 超过的话，滑进来那几格会超出萤幕，手机浏览器把整页撑宽、之後一直能左右晃 |
 | 题目旁小标签（统考／额外／校内课件）的颜色 | `index.html`（白天）、`css/night.css`（护眼） | `.q-tag-exam`（另有 `.q-tag-extra`、`.q-tag-school`） | 青、琥珀、紫 | 字与底色要 ≥ 4.5:1；改完跑 UI 检查 | 🟡 |
 | 首页底部制作名单的样子（字级、间距、分隔线） | `index.html` | `.site-credits {` | 13px 小字、上方一条虚线 | 名单内容不在这里改，见第五节 | 🟢 |
+| 教学地图的颜色与排版（纸色、墨线、关卡圆盘、魔王关的黄黑斜纹） | `css/teach.css` | `.tm-root`（最上面的 `--tm-` 开头变数）；护眼版在 `css/night.css` 的 `.tm-root` | 米黄纸＋深墨线；各地图的主色在 `data/teach/chemistry.json` 每张地图的 `accent` | 🟡 字级、间距只能用[阶梯](OPERATIONS.md#字级行高间距的阶梯)上的值；改了纸色要重看护眼模式的对比 |
+| 教学地图的海、岛、路、木牌的颜色 | `css/teach.css` | `.tm-stage {`（里面的 `--tm-sea`、`--tm-land-0`～`--tm-land-3`、`--tm-road`、`--tm-sign`）；护眼版在同一个档案的 `[data-theme="night"] .tm-stage` | 海＝地图主色淡淡地混进浅蓝灰；四座岛轮流用「主色／芥末黄／淡蓝／主色深一点」混奶白；路石板色 `#d9c08b`；木牌 `#ecd29b` | 🟢 岛是画在 SVG 里的，颜色只能走这几个变数；改完看一眼护眼模式（夜里的岛要比海亮一点点，才分得出来） |
+| 教学地图的画布：关卡圆盘多大、前後关隔多远、并排关隔多远、起点与小岛多大、路弯多少、小节之间隔多远 | `js/teach.js` | `DIM`（`d`、`bd`、`rank`、`lane`、`root`、`island`、`wob`）、`REGION_GAP`、`PAD` | 宽屏：圆盘 64、魔王 96、前後 152、并排 150、起点 168、小岛 236×120、弯 22；手机竖拿：64、96、150、108、150、252×104、14；岛间距 `110`，岛的内边 `28` | 🟡 `rank`／`lane` 要比名牌宽（约 128，手机 100）大一些，不然名牌会叠在一起（合并前的界面检查会量）；`d`／`bd` 要和 `css/teach.css` 的 `.tm-ncard`、`.tm-disc-art` 一起看；字级、间距只能用阶梯上的值 |
+| 教学地图的缩放与镜头：最小／最大倍数、每按一下放大几倍、缩到多小只留圆盘、飞行多久、拖多远才算拖、宽于多少用左→右 | `js/teach.js` | `ZOOM_MIN`、`ZOOM_MAX`、`ZOOM_STEP`、`ZOOM_FAR`、`FLY_MS`、`DRAG_PX`、`HORIZONTAL_MIN`、`FIT_PAD` | `0.3`、`1.8`、`1.25`、`0.5`、`480`（毫秒）、`6`（像素）、`720`（像素）、`28` | 🟢 `HORIZONTAL_MIN` 改了，手机／平板的排法分界线就跟着变；系统开了「减少动态」时镜头不飞、直接跳过去；进地图时镜头停在「下一关」上 |
+| 关卡的一句话重点（点关卡弹出的气泡里） | `data/teach/chemistry.json`（每关可选的 `gist`）、`js/teach.js`（`gistOf`） | `gist`、`gistOf` | 没写 `gist` 就用知识卡的「记住」那一句（`lesson.tip`）；目前只有 4 关（气体定律、电解计算、增碳反应、化学键）因为 tip 太长另写了短的 | 🟢 最多 26 字，合并前检查会挡 |
+| 关卡的介绍气泡有多宽 | `js/teach.js` | `BUBBLE_W` | `272`（屏幕像素，不随地图缩放；窄屏会自动缩到画布宽减 16） | 🟢 气泡的样子在 `css/teach.css` 的 `.tm-bubble` |
+| 闯关与地图的动效：答对迸几颗星、过关撒几片彩带、小精灵沿路飞多久、新走通的路染色多久、魔王逐帧动画每一格停多久 | `js/teach.js` | `FX_BURST`、`FX_CONFETTI`、`WALK_MS`、`ROAD_PAINT_MS`、`FRAME_MS`、`FRAME_BASE` | `14`、`40`（魔王倒下 1.5 倍）、`1100`（毫秒）、`800`（毫秒）、`{ idle: 500, hit: [120, 300, 220], atk: { 3: [320, 200, 260], 5: [320, 130, 170, 200, 260] } }`（毫秒；待机每格 500 并且来回播 1→2→3→2；受击、攻击每一格各自的停留时间——攻击 3 格是蓄力、出击、收招，5 格多了挥下、余势；按这个魔王有几格自动选对应的一组，没有对应格数就用最後一组；数字比格数少就一直用最後一个，所以格数不同也不会坏）、`320`（切图 `size`，要和 `source/teach/*.json` 里逐帧格的 `size` 一致，不然帧里的魔王会比单张图大或小） | 🟢 系统开了「减少动态」时全部不播、只换状态（小精灵换表情、血条掉格）；彩带、星星用你给的 `fx-*` 图（见下一行）或内置小图形；动画本身的样子在 `css/teach.css` 的 `@keyframes tm-` 开头那几段 |
+| 魔王战的血条（颜色、格数） | `css/teach.css`、`js/teach.js` | `--tm-hp`（颜色，护眼版另有一个）、`bossNeed`（格数） | 红色 `#d9483f`；格数 = 过关要答对的题数（魔王关 5 题对 4 题 → 4 格） | 🟡 格数跟着 `BOSS_RATIO`、`BOSS_POOL` 走，不要单独改；答错不扣血条、只是魔王反击，规则没变 |
+| 魔王战里魔王的大小（题目上方的横幅、结果页） | `css/teach.css` | `--tm-boss-size`（横幅）、`--tm-boss-big`（结果页） | `104px`、`160px` | 🟢 逐帧动画的魔王按同样的比例跟着放大；手机窄屏上横幅太高就把 `--tm-boss-size` 调小 |
+| 岛上的风景：每座岛摆几件、摆什么 | `js/teach.js`、`data/teach/chemistry.json` | `SCENERY_PER_ZONE`；每张地图的 `scenery`（图案名清单） | 每座展开的岛 `9` 件；无机＝工厂、气球、烧杯、气瓶…，有机＝苯环、碳链、酒精灯、蒸馏塔…，物化＝晶体、秒表、天平、火焰… | 🟢 `scenery` 只能写 `MOTIFS` 里有的名字，写错合并前检查会挡；摆放位置用固定种子算的，重画不会变；填 `0` 就不摆；有你给的 `deco-<地图 id>-<序号>.webp` 时，会和内置图案轮流摆（见 [ART_BRIEF.md](ART_BRIEF.md) 第五批） |
+| 教学地图关卡圆盘里的小图案（烧瓶、气球、工厂、电解、苯环…）与旗帜、星星、锁 | `js/teach.js` | `MOTIFS`、`ICON` | 29 个内嵌 SVG，64×64，墨线＋地图主色（有你给的图时，图优先，见 [ART_BRIEF.md](ART_BRIEF.md)） | 🟢 资料里的 `motif`／`cover`／`scenery` 只能写 `MOTIFS` 里有的名字，写错合并前检查会挡下来；会动的部分在 `css/teach.css` 的 `@keyframes` |
 | 快捷键提示在多宽的视窗才显示 | `index.html` | `.kbd-hint` 那段的 `min-width` | `600px` | 太窄会和笔记按钮叠在一起 | 🟢 |
 | /dev 列表（巡检、待审、题目修改）题与题之间的空隙 | `dev/dev.css` | `--list-gap` | `12px` | 每题一张卡；太小又会看起来连在一起 | 🟢 |
 | 字级、行高、间距 | 各 CSS | — | | **只能用阶梯上的值**，见 [OPERATIONS 七·阶梯](OPERATIONS.md#字级行高间距的阶梯) | 🔴 |
@@ -58,6 +70,9 @@
 | 网站的一句话说明（Google 搜寻结果、分享网址的预览、装到手机桌面） | `index.html`、`manifest.json` | `index.html` 的 `name="description"`、`og:description`；`manifest.json` 的 `description` | 🟡 三处一起改才一致；加科目时记得补上科目名 |
 | 「选择学习学科」与下面的提示 | `index.html` | `page-heading`、`page-hint` | 🟢 |
 | 各科名称、英文名、轨道上的小字说明 | `js/orbit-subjects.js` | `SUBJECTS` 的 `name` `en` `note` | 🟢 |
+| 化学球面板上两个按钮的字（「刷题：化学题库」「教学：闯关地图」） | `js/orbit-subjects.js`、`index.html` | `刷题：`、`教学：闯关地图`；面板的样式搜 `.panel-teach`（在 `css/orbit.css`） | 其他科目的面板还是单一个「进入」 | 🟢 |
+| 教学页的题型名称（计算／名词／理论）与关卡层级（入门／进阶／挑战／终局） | `js/teach.js` | `KIND_LABEL`、`TIER_LABEL` | 完整的字，不用单字或图标 | 🟢 |
+| 教学页顶端的「草稿版」提醒条 | `js/teach.js` | `SHOW_DRAFT_BADGE` | `true` | 🟢 内容审完改成 `false`，提醒条就不再出现 |
 | 做题页上的科目名称（「生物科」） | `index.html` | `SUBJECT_LABELS` | 🟢 |
 | 数学两份卷的名称（按钮「模拟高数Ⅰ · 60 分钟」、/dev 的卷别） | `index.html`、`dev/dev.js` | `PAPER_LABEL` | 🟡 两个档各一份，写一样才对得上 |
 | **每个画面的导览（聚光灯）文字** | `js/onboarding.js` | `TOURS` —— 每一步有 title（标题）和 body（内文），内文可以用 `<strong>` | 🟢 |
@@ -93,7 +108,7 @@
 | 点「有新题」提示框後，题卡从远处滑到定位的时间 | `index.html` | `NEW_TIP_PAN_MS` | `450` 毫秒 | 🟢 太长会像卡住；开了「减少动态」的装置不滑 |
 | 背景音乐音量 | `index.html` | `MUSIC_VOLUME` | `0.35`（0～1，iPhone／iPad 也照这个） | 🟢 |
 | 换科时音乐交叉淡入淡出 | `index.html` | `MUSIC_FADE_MS` | `900` 毫秒 | 🟢 `js/scene-assets.js` 的 `FADE_MS` 只管其他独立页面自己的音乐（目前没有这种页面），主网页不看它 |
-| 背景音乐的响度、剪静音的门槛、循环接头的淡接秒数 | `scripts/audio/build.py` | `LUFS`、`SILENCE_DB`、`XFADE` | `-20`、`-50`、`3.0` 秒 | 🟡 改完到 Actions 手动跑「背景音乐自动处理」、科目留空，全部重做；只重做一首会和其他首不一样大声 |
+| 背景音乐的响度（先 K 加权统一，再按人耳等响曲线补）、剪静音的门槛、循环接头的淡接秒数 | `scripts/audio/build.py` | `LUFS`、`EQ_PHON`、`EQ_LUFS`、`LIMIT`、`SILENCE_DB`、`XFADE` | `-20`、`40`（phon）、`-26.9`、`0.89`、`-50`、`3.0` 秒 | 🔴 改完到 Actions 手动跑「背景音乐自动处理」、科目留空，全部重做；只重做一首会和其他首不一样大声。`EQ_PHON` 或 `LUFS` 一改，`EQ_LUFS` 要重新量（脚本里 `ear_loudness` 量五首取中位数）。听起来整体偏小／偏大，先调 `index.html` 的 `MUSIC_VOLUME`，不要动这里 |
 | 音乐播完接回开头时，头尾交叉叠多久 | `index.html` | `MUSIC_LOOP_XFADE_MS` | `3000` 毫秒 | 🟢 太长会听到结尾和开头叠在一起；曲子短于它的 3 倍就不叠，直接重播 |
 | 同步码自动同步的间隔 | `js/sync.js` | `AUTO_EVERY_MS` | 60 秒 | 🟡 太短会烧 Upstash 免费额度 |
 | 待在做题页、或从背景切回来时，多久检查一次题库有没有更新 | `index.html` | `BANK_RECHECK_MS` | 1 分钟 | 🟢 题库没变时伺服器只回「没变」（0 bytes），几乎不花流量；有变就跳「题库更新了」。旁边的 `setInterval(checkBankUpdate, …)` 是多久看一次到了没，要比它短 |
@@ -117,7 +132,7 @@
 | 每次自动出题照顾几章、每章几题 | `.github/workflows/generate_questions.yml` | `chapters_per_run`、`questions_per_chapter` 的 `default` | 3 章 × 4 题 | 🟢 手动跑时也可以当场填 |
 | 新题和旧题多像就当成重复丢掉 | `scripts/generate_questions.py` | `SIMILARITY_LIMIT` | `0.82`（0～1） | 🟡 调低会丢掉更多题 |
 | 每周自动出题：待审区还有几道 AI 题没审完就先不出 | `scripts/generate_questions.py` | `PAUSE_WHEN_WAITING` | `1`（有 1 道就不出） | 🟢 `0`＝不管，照样出；手动跑不受影响 |
-| 离线用：网站装好後先下载哪些档案 | `sw.js` | `OFFLINE_EXTRAS` | 四科题库＋数学公式排版（约 550KB） | 🟡 学生第一次打开就会下载；背景图（每科约 250KB）、音乐（每科约 2MB）要加进来前先想想学生的流量 |
+| 离线用：网站装好後先下载哪些档案 | `sw.js` | `OFFLINE_EXTRAS` | 四科题库＋教学地图资料＋数学公式排版（约 550KB） | 🟡 学生第一次打开就会下载；背景图（每科约 250KB）、音乐（每科约 2MB）要加进来前先想想学生的流量 |
 | 一章老师讲义最多塞多少字进出题提示词 | `scripts/generate_questions.py` | `NOTES_CHAR_LIMIT` | `24000`（化学最长的电化学约 1.9 万字，整章都带上） | 🟢 超过的部分截掉；调太大会让每次呼叫变慢、更快用完额度 |
 | 老师 PPT 的章号要减几才对到题库的章 | `scripts/ppt_notes.py` | `CHAPTER_OFFSET` | 化学 `1`（课本第一章是绪论，题库没有） | 🔴 对错了，Gemini 出第五章时看到的是第六章的讲义；跑完看印出来的对照表 |
 | 哪几份 PPT 不做成讲义、或指定对到哪一章 | `scripts/ppt_notes.py` | `CHAPTER_OVERRIDE` | 不要：绪论、芳香烃精简版、五份习题答案讲解（第二～五章、第12章碳和硅练习题） | 🟢 档名（不含 .pptx）→ 章节 id，写 `None` 就跳过；改完重跑，跳过的那章旧讲义档要自己删 |
@@ -140,6 +155,14 @@
 | 模拟统考一份几题 | `index.html` | `MOCK_QUESTIONS`；个别科目在 `MOCK_QUESTIONS_BY_SUBJECT` | 理科 `40`；数学 `15`（高数Ⅰ、Ⅱ 评量规格） | 🟡 时间照统考时间表的试卷一；题库不够就按比例缩短。真卷题数不同就改这里 |
 | 时间表的科目名称（统考闹钟、模拟统考都靠它对应） | `js/exam-timetable.js` | `subject` | 「物理」「高级数学（Ⅰ）」… | 🔴 学生设的闹钟存的是科目名称：改了名，那一科已设的闹钟会失效、要重设；`index.html` 的 `EXAM_SUBJECT` 也要跟着改 |
 | 一台装置最多几个闹钟 | `js/exam-alarm.js`、`api/_lib/alarms.js` | `MAX_ALARMS` | 网站 `10`、伺服器 `20` | 🔴 网站的不能大于伺服器的：超过的话伺服器把那台装置的整批闹钟拒收，只剩开着网站时会响 |
+| 教学：一般关卡答对几成算过关（3 题要对 2 题；全对 3 星） | `js/teach.js` | `PASS_RATIO` | `0.6` | 🟢 论述题自评「勾到几成要点算对」也用这个数 |
+| 教学：魔王关的门槛（5 题要对 4 题）与从小节题池抽几题（外加 1 道专属终局题） | `js/teach.js` | `BOSS_RATIO`、`BOSS_POOL` | `0.8`、`4` | 🟡 `BOSS_POOL` 改了，`scripts/check_repo.py` 检查的「小节题池至少 4 题」也要对得上 |
+| 教学：计算题允许的相对误差（资料里每题可以写自己的 `tol`） | `js/teach.js` | `DEFAULT_TOL` | `0.02`（2%） | 🟢 老师的 22.4 L/mol、R = 8.314、F = 96500 都已经照课本，不要放太宽 |
+| 教学关卡与题目的内容（关卡、知识卡、反应式、题目、魔王关的专属题） | `data/teach/chemistry.json` | `maps`、`nodes`、`challenges`、`bosses` | 3 张地图、31 关、119 题（全部是草稿，待审；无机 8 关、有机 16 关、物化 7 关） | 🟡 格式与怎么加关见 [OPERATIONS 三之四](OPERATIONS.md#三之四教学模式化学闯关地图)；合并前检查会验证 |
+| 教学资料文字里的上下标写法 | `data/teach/chemistry.json`、`js/teach.js` | `function rich`（teach.js）；资料里写 `_{c}`、`^{2+}` | `_{…}` 下标、`^{…}` 上标；Unicode（₂ ²）照常可用 | 🔴 直接写 `K_c`、`A^(y+)` 会原样露在网页上；合并前检查会挡下来（`_teach_markup`，在 `scripts/check_repo.py`） |
+| 教学：反应式的类别（制取反应分简单／复杂、转化反应、性质反应、鉴别与检验） | `data/teach/chemistry.json` | `reaction_categories` | 4 类 | 🔴 关卡里每条反应式的 `category`／`level` 要和这里一致，写错合并前检查会挡下来 |
+| 教学：进度存在学生浏览器哪个键 | `js/teach.js`、`dev/dev.js` | `STORE_KEY`（teach.js）、`UEC_TEACH_v1`（dev.js） | `UEC_TEACH_v1` | 🔴 改了，所有学生的教学进度归零；两个档要一起改 |
+| 哪一科有「教学」按钮 | `js/orbit-subjects.js`、`js/teach.js` | `teach: true`（`SUBJECTS` 的那一行）、`SUBJECT_NAME`（teach.js） | 只有化学 | 🟡 再开一科要有 `data/teach/<科目>.json`，还要加进 `sw.js` 的 `OFFLINE_EXTRAS` |
 | 闹钟资料在伺服器存多久（那台装置一直没再打开网站） | `api/_lib/alarms.js` | `DEVICE_TTL_SECONDS` | 60 天 | 🟢 统考一年一次，考完就没用了 |
 | 同一个网络每分钟最多登记几次闹钟 | `api/alarm.js` | `MAX_PER_WINDOW` | `30` | 🟢 |
 | 推播只送到哪几家推播服务 | `api/_lib/webpush.js` | `PUSH_HOSTS`、`PUSH_HOST_SUFFIXES` | Google（Chrome、Android）、Mozilla（Firefox）、Apple（iPhone、Mac）、Microsoft（电脑版 Edge） | 🔴 只加推播服务的网址：这份清单挡的是有人拿假订阅叫伺服器去打任意网址。学生回报某个浏览器收不到、记录里是被挡时才加 |
@@ -171,7 +194,7 @@
 | 错题要在几个不同的日子答对才移出错题本 | `js/review.js` | `WEAK_EXIT_DAYS` | `2` | 🟢 |
 | 删掉的笔记要记住多久（防止另一台装置同步回来） | `js/sync.js` | `NOTE_TOMBSTONE_DAYS` | `365` | 🟢 |
 | 错几次标成「顽固」 | `js/review.js` | `STUBBORN_LAPSES` | `3` | 🟢 |
-| 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～6，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize`、`check_devlog` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
+| 合并前检查挡哪些问题（每个 PR 自动跑） | `scripts/check_repo.py` | 最上面的说明 1～8，对应 `check_bank`、`check_pending`、`check_python`、`check_js`、`check_customize`、`check_devlog`、`check_teach` | 只挡会让网站坏掉的 | 🟡 提醒类（缺解析、疑似缺图）放 /dev 巡检，别加在这里，不然每个 PR 都是红的 |
 | 申诉要寄到哪个信箱 | Vercel 环境变数（`api/feedback.js` 读它） | `FEEDBACK_FORMSPREE_ID` | 新表单（编号只放在 Vercel，程式里没有备用） | 🔴 一定要设：没设的话申诉全部送不出去（学生看到「申诉信箱暂时没有设定好」）。换信箱：Formspree 开新表单 → 把 `formspree.io/f/` 後面那串填进来 → Redeploy → 送一则测试 → 删旧表单。步骤见 [OPERATIONS 九](OPERATIONS.md#九安全) |
 | 申诉：每台装置每小时最多送几则 | `api/feedback.js` | `PER_DEVICE_PER_HOUR` | `3` | 🟢 超过时学生会看到「几分钟後再按重新发送」，申诉留在他的浏览器 |
 | 申诉：同一个网络（全校 Wi-Fi）每小时合计几则 | `api/feedback.js` | `PER_NETWORK_PER_HOUR` | `10` | 🟡 挡有人换装置码洗版；Formspree 免费方案每月能收的信有限，调太高等於没挡 |
@@ -192,6 +215,7 @@
 | 放官方考纲（让 AI 出题更准） | `syllabus/<科目>.md` | [syllabus/README.md](../syllabus/README.md) |
 | 放老师的教学 PPT（让 AI 出题贴近课堂讲法） | `source/*.pptx`，再跑 `python3 scripts/ppt_notes.py chemistry source/*.pptx` | 🟡 产出 `syllabus/chemistry-notes/` 一章一档，跟着 commit。内容会送给 Gemini；图片不读。见 [syllabus/README.md](../syllabus/README.md#老师讲义与出题重点) |
 | 换背景图 | `assets/visual/<科目>/` | [assets/README.md](../assets/README.md) |
+| 换教学地图的插画（封面、关卡图标、魔王、小特效） | `source/teach/<拼图>.webp` ＋ 同名 `.json`（切法），跑 `node scripts/teach/art-slice.js` → 产出 `assets/teach/<cover｜node｜boss>-<id>.webp`（或装饰贴纸 `deco-<地图 id>-<序号>.webp`、特效小图 `fx-star／fx-sparkle／fx-confetti-a／fx-confetti-b.webp`、魔王姿势 `boss-<魔王 id>-hit／atk.webp`，魔王逐帧动画 `boss-<魔王 id>-<idle｜hit｜atk>-<序号>.webp`，序号要从 1 连续） 并登记到 `assets/teach/manifest.json` | 🟡 清单、尺寸、提示词见 [ART_BRIEF.md](ART_BRIEF.md)；要真正透明的 PNG／WebP（JPG 棋盘格的在 `.json` 写 `"key": "checker"`，两种灰自动认，认错才写 `"tones"`；纯色背景的写 `"key": "color"`，背景色自动认，抠不干净才写 `"tol"`）；逐帧动画的拼图在 `.json` 里每格写 `"kind": "frame"` ＋ 同一个 `"group"`（某格朝向画反了就加 `"flip": true` 镜像）（同一组共用缩放、脚底对齐，见 [OPERATIONS](OPERATIONS.md) 的「魔王逐帧动画」）；没图的关卡自动用内置的 SVG；`manifest.json` 登记了但档案不在、逐帧序号断号，合并前检查会挡 |
 | 换背景音乐 | `source/audio/<科目>/ambient.mp3`（上传就好） | 🟢 「背景音乐自动处理」工作流会剪静音、做无缝循环、调音量，推到 `assets/audio/`；档名一定要叫 `ambient` |
 | 换网页图标（浏览器分页、装到手机桌面） | `assets/icons/` 的 5 个档：`favicon-16x16.png`、`favicon-32x32.png`（分页）、`apple-touch-icon.png`（iPhone 桌面）、`android-chrome-192x192.png`、`android-chrome-512x512.png`（Android 桌面） | 🟡 档名不变、直接覆盖就好（`index.html`、`dev/index.html`、`dev/login.html`、`manifest.json` 都指到这些档名）。现在这五张是从 `assets/icons/logo.svg` 输出的：16／32 透明底、铺满；180／192／512 纸色底 `#fffdf8`、图占 84%（iPhone 会把透明的地方填黑）。学士帽的车子、电路在 16px 只剩一顶彩色帽子的轮廓，是尺寸限制。🔴 浏览器会一直用快取的旧分页图标：换完 16／32 要把 `index.html`、`dev/index.html`、`dev/login.html` 里 `favicon-32x32.png?v=`、`favicon-16x16.png?v=` 的数字一起加一（现在是 2，`index.html` 搜 `FAVICON_VERSION` 有说明）。已经装到手机桌面的图示要删掉重装才会换。**网页里的徽章**（导航列中间、首页轨道中心、/dev 左上角）是 SVG：🔴 形状在 `index.html` 的 `id="i-logo"` 和 `assets/icons/logo.svg` 各一份，两边要一起改 |
 | 会动的分层背景 | `assets/visual/<科目>/scene.json` | [OPERATIONS 七·scene.json](OPERATIONS.md#会动的分层背景scenejson) |

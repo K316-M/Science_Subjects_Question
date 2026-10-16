@@ -1,0 +1,5 @@
+{
+ "note": "整张图就是一个魔王；原图是 JPG、棋盘格画进了像素里，所以 key = checker 先抠掉棋盘格",
+ "key": "checker",
+ "items": [ { "name": "boss-i-boss-b", "region": [0, 0, 1024, 1024], "kind": "square", "size": 320 } ]
+}
