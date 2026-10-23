@@ -1,0 +1,114 @@
+{
+ "note": "o-boss-hc 的逐帧动作拼图（3×3：第 1 行 待机［中立、吸气、呼气］、第 2 行 受击、第 3 行 攻击［蓄力、出击、收招］）；待机 = 呼气→中立→吸气（来回播）；key = color 抠掉洋红底；第一格（中立）定缩放比例",
+ "key": "color",
+ "items": [
+  {
+   "name": "boss-o-boss-hc-idle-2",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    0,
+    0,
+    418,
+    418
+   ]
+  },
+  {
+   "name": "boss-o-boss-hc-idle-3",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    418,
+    0,
+    836,
+    418
+   ]
+  },
+  {
+   "name": "boss-o-boss-hc-idle-1",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    836,
+    0,
+    1254,
+    418
+   ]
+  },
+  {
+   "name": "boss-o-boss-hc-hit-1",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    0,
+    418,
+    418,
+    836
+   ]
+  },
+  {
+   "name": "boss-o-boss-hc-hit-2",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    418,
+    418,
+    836,
+    836
+   ]
+  },
+  {
+   "name": "boss-o-boss-hc-hit-3",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    836,
+    418,
+    1254,
+    836
+   ]
+  },
+  {
+   "name": "boss-o-boss-hc-atk-1",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    0,
+    836,
+    418,
+    1254
+   ]
+  },
+  {
+   "name": "boss-o-boss-hc-atk-2",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    418,
+    836,
+    836,
+    1254
+   ]
+  },
+  {
+   "name": "boss-o-boss-hc-atk-3",
+   "group": "o-boss-hc",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    836,
+    836,
+    1254,
+    1254
+   ]
+  }
+ ]
+}

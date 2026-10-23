@@ -1540,6 +1540,11 @@ const STORAGE_KEYS = [
     return `${r.length} 条 · 已解决 ${r.filter(x => x.status === 'resolved').length} 条`;
   } },
   { key: 'UEC_LAST_VISIT_v1', label: '继续学习', describe: v => (v && v.subject ? `${SUBJECT_LABEL[v.subject] || v.subject} · ${v.chapterTitle || ''}` : '—') },
+  { key: 'UEC_TEACH_v1', label: '教学进度', describe: v => {
+    let cleared = 0, stars = 0;
+    Object.values(v || {}).forEach(subj => Object.values(subj || {}).forEach(p => { if (p && p.s) { cleared++; stars += p.s; } }));
+    return `已通关 ${cleared} 关 · ${stars} 星`;
+  } },
   { key: 'UEC_BIO_HL_STORE_OFFICIAL_19', label: '荧光笔标记', describe: () => 'HTML 快照', raw: true },
 ];
 

@@ -1,10 +1,11 @@
-const CACHE_NAME = 'uec-science-cache-v22';
+const CACHE_NAME = 'uec-science-cache-v23';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
   '/css/features.css',
   '/css/orbit.css',
+  '/css/teach.css',
   '/css/night.css',
   '/js/scene-assets.js',
   '/js/safe-html.js',
@@ -22,6 +23,7 @@ const APP_SHELL = [
   '/js/sync-ui.js',
   '/js/devlog.js',
   '/js/credits.js',
+  '/js/teach.js',
   '/js/theme.js',
   '/js/math-render.js',
 ];
@@ -39,6 +41,7 @@ const OFFLINE_EXTRAS = [
   '/papers/chemistry_question_bank.json',
   '/papers/physics_question_bank.json',
   '/papers/math_question_bank.json',
+  '/data/teach/chemistry.json',
   '/vendor/katex/katex.min.js',
   '/vendor/katex/katex-swap.min.css',
   '/vendor/katex/contrib/auto-render.min.js',

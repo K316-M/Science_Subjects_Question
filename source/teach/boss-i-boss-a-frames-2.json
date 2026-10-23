@@ -1,0 +1,78 @@
+{
+ "note": "i-boss-a 的逐帧动作拼图 ②（3×2，补充：第 1 行 中立、吸气、呼气；第 2 行 蓄力、挥下、余势）。待机 = 呼气→中立→吸气（来回播）；攻击 = 蓄力→挥下→出击(①)→余势→收招(①)；第 1 格是中立姿势，定缩放比例",
+ "key": "color",
+ "items": [
+  {
+   "name": "boss-i-boss-a-idle-2",
+   "group": "i-boss-a",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    0,
+    0,
+    512,
+    512
+   ]
+  },
+  {
+   "name": "boss-i-boss-a-idle-3",
+   "group": "i-boss-a",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    512,
+    0,
+    1024,
+    512
+   ]
+  },
+  {
+   "name": "boss-i-boss-a-idle-1",
+   "group": "i-boss-a",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    1024,
+    0,
+    1536,
+    512
+   ]
+  },
+  {
+   "name": "boss-i-boss-a-atk-1",
+   "group": "i-boss-a",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    0,
+    512,
+    512,
+    1024
+   ]
+  },
+  {
+   "name": "boss-i-boss-a-atk-2",
+   "group": "i-boss-a",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    512,
+    512,
+    1024,
+    1024
+   ]
+  },
+  {
+   "name": "boss-i-boss-a-atk-4",
+   "group": "i-boss-a",
+   "kind": "frame",
+   "size": 320,
+   "region": [
+    1024,
+    512,
+    1536,
+    1024
+   ]
+  }
+ ]
+}

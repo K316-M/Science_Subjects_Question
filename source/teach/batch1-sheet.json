@@ -1,0 +1,10 @@
+{
+ "note": "批次一拼图（5 个元素）怎么切：region = [x0, y0, x1, y1]，连通块的中心点落在这个框里就算这一件；kind square = 缩成正方形图标，banner = 去掉圆角後裁成 ratio 的横幅",
+ "items": [
+  { "name": "node-o-arene", "region": [0, 0, 560, 470], "kind": "square", "size": 256 },
+  { "name": "node-p-polar", "region": [560, 0, 1010, 470], "kind": "square", "size": 256 },
+  { "name": "node-i-elec", "region": [1010, 0, 1536, 470], "kind": "square", "size": 256 },
+  { "name": "boss-o-boss-b", "region": [0, 470, 640, 1024], "kind": "square", "size": 320 },
+  { "name": "cover-organic", "region": [650, 470, 1536, 1024], "kind": "banner", "size": 1000, "ratio": 2.5, "inset": 16 }
+ ]
+}
